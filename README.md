@@ -5,11 +5,11 @@ Learning Angular and Spring-Boot in this project using a e-commerce usecase.
 
 #Softwares to install:
 
-github, ecllipse(or any IDE)
-mysql server
-mysql workbench
-jdk8
-maven
-node
-angular cli
-postman
+1. github, ecllipse(or any IDE)
+2. mysql server
+3. mysql workbench
+4. jdk8
+5. maven
+6. node
+7. angular cli
+8. postman
