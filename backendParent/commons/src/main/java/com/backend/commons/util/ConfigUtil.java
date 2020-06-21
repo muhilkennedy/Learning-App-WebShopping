@@ -3,14 +3,22 @@ package com.backend.commons.util;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+/**
+ * @author muhil
+ *
+ */
 @Component
 public class ConfigUtil {
 
 	@Value("${spring.application.name}")
 	private String appName;
 
-	@Value("${project.deployment.mode}")
+	@Value("${app.deployment.mode}")
 	private String deploymentMode;
+	
+	private enum deploymentModes {
+		prod, dev
+	}
 
 	public String getApplicationName() {
 		return appName;
@@ -18,6 +26,10 @@ public class ConfigUtil {
 
 	public String getDeploymentMode() {
 		return deploymentMode;
+	}
+	
+	public boolean isProdMode() {
+		return deploymentMode.equals(deploymentModes.prod.toString());
 	}
 
 }
