@@ -37,13 +37,12 @@ public class FeatureToggleLoading {
 	private void loadFeaturetoggleIntoDatabase() {
 		logger.info("Loading feature toggle informations");
 		Map<String, FeatureToggle> featureMap = getFeatureMap();
-		for(String feature : features.getFt()) {
+		for (String feature : features.getFt()) {
 			String[] featureDetails = feature.split(",");
 			FeatureToggle fToggle = featureMap.get(featureDetails[0]);
-			if(fToggle!=null) {
+			if (fToggle != null) {
 				fToggle.setActive(Boolean.parseBoolean(featureDetails[1].trim()));
-			}
-			else {
+			} else {
 				fToggle = new FeatureToggle(featureDetails[0], Boolean.parseBoolean(featureDetails[1].trim()));
 			}
 			featureService.save(fToggle);
@@ -61,7 +60,7 @@ public class FeatureToggleLoading {
 
 	private Map<String, FeatureToggle> getFeatureMap() {
 		List<FeatureToggle> fToggleList = featureService.findAllFeatures();
-		Map featureMap = new HashMap<String, FeatureToggle>();
+		Map<String, FeatureToggle> featureMap = new HashMap<String, FeatureToggle>();
 		fToggleList.parallelStream().forEach(feature -> {
 			featureMap.put(feature.getFeatureName(), feature);
 		});
