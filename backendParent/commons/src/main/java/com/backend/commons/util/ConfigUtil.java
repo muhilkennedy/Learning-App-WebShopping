@@ -16,6 +16,9 @@ public class ConfigUtil {
 	@Value("${app.deployment.mode}")
 	private String deploymentMode;
 	
+	@Value("${cors.allowed-origin}")
+	private String allowedOrigin;
+	
 	private enum deploymentModes {
 		prod, dev
 	}
@@ -30,6 +33,10 @@ public class ConfigUtil {
 	
 	public boolean isProdMode() {
 		return deploymentMode.equals(deploymentModes.prod.toString());
+	}
+
+	public String getAllowedOrigin() {
+		return allowedOrigin;
 	}
 
 }
