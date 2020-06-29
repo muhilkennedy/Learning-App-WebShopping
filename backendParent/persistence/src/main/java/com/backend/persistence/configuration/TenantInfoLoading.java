@@ -45,7 +45,7 @@ public class TenantInfoLoading {
 			if (realm != null) {
 				realm.setUniqueName(tenantDetails[0].trim());
 				realm.setActive(Boolean.parseBoolean(tenantDetails[2].trim()));
-				String origins = tenantDetails[3];
+				String origins = tenantDetails[3].trim();
 				String originsList = origins.replace("[", "").replace("]", "");
 				String[] allowedOrigins = originsList.split("-");
 				tenantService.removeOrigins(realm.getTenantID());
