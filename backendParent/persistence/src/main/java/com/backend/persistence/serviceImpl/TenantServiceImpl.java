@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.backend.persistence.dao.TenantDao;
 import com.backend.persistence.entity.Tenant;
-import com.backend.persistence.entity.TenantCorsMapping;
 import com.backend.persistence.repository.TenantRepository;
 import com.backend.persistence.service.TenantService;
 

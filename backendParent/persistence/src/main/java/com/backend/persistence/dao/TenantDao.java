@@ -22,20 +22,20 @@ public class TenantDao {
 	private DBUtil dbUtil;
 	
 	public List<String> getAllowedOrigins(String tenantId) throws Exception {
-		List<String> corsMapList = new ArrayList<String>();
+		List<String> corsList = new ArrayList<String>();
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con
-					.prepareStatement("select maps from TENANTCORSMAPPING as maps where maps.tenantid = ?");
+					.prepareStatement("select origin from TENANTCORSMAPPING where tenantid = ?");
 			stmt.setString(1, tenantId);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-				corsMapList.add(rs.getString(1));
+				corsList.add(rs.getString(1));
 			}
 		} catch (Exception ex) {
 			logger.error("Error in fetching CORS Mapping for realm -> " + tenantId + " :: " + ex.getMessage());
 			throw new Exception(ex.getMessage());
 		}
-		return corsMapList;
+		return corsList;
 	}
 	
 	public void removeOrigins(String tenantId) throws Exception {
