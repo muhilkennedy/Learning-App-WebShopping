@@ -19,6 +19,9 @@ public class ConfigUtil {
 	@Value("${cors.allowed-origin}")
 	private String allowedOrigin;
 	
+	@Value("${spring.security.jwt.secret}")
+	private String jwtSecret;
+	
 	private enum deploymentModes {
 		prod, dev
 	}
@@ -37,6 +40,10 @@ public class ConfigUtil {
 
 	public String getAllowedOrigin() {
 		return allowedOrigin;
+	}
+
+	public String getJwtSecret() {
+		return jwtSecret;
 	}
 
 }
