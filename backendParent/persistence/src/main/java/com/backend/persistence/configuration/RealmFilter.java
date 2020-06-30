@@ -60,9 +60,8 @@ public class RealmFilter implements Filter {
 							"Access to Realm Restricted");
 					return;
 				}
-			}
-			else {
-				if (StringUtils.isNotEmpty(req.getHeader(Constants.Header_TenantId))){
+			} else {
+				if (StringUtils.isNotEmpty(req.getHeader(Constants.Header_TenantId))) {
 					tenantId = req.getHeader(Constants.Header_TenantId);
 					if (tenantUtil.isTenantActive(tenantId)) {
 						chain.doFilter(request, response);
@@ -71,8 +70,7 @@ public class RealmFilter implements Filter {
 								"Tenant is Disabled");
 						return;
 					}
-				}
-				else {
+				} else {
 					((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST,
 							"TenantId Header is Missing");
 					return;
