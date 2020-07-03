@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import com.backend.commons.util.ConfigUtil;
 import com.backend.commons.util.Constants;
+import com.backend.persistence.entity.Tenant;
 import com.backend.persistence.util.TenantUtil;
 
 @Component
@@ -54,6 +55,7 @@ public class RealmFilter implements Filter {
 				}
 				// Check for active tenant and allowed origins
 				if (tenantUtil.isTenantActive(tenantId) && tenantUtil.isAllowedOriginForTenant(tenantId, origin)) {
+					setSession(tenantId, req);
 					chain.doFilter(request, response);
 				} else {
 					((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
@@ -64,6 +66,7 @@ public class RealmFilter implements Filter {
 				if (StringUtils.isNotEmpty(req.getHeader(Constants.Header_TenantId))) {
 					tenantId = req.getHeader(Constants.Header_TenantId);
 					if (tenantUtil.isTenantActive(tenantId)) {
+						setSession(tenantId, req);
 						chain.doFilter(request, response);
 					} else {
 						((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
@@ -79,6 +82,12 @@ public class RealmFilter implements Filter {
 		} catch (Exception ex) {
 			((HttpServletResponse) response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
 			return;
+		}
+	}
+	
+	private void setSession(String tenantId, HttpServletRequest request) {
+		if (((Tenant) request.getSession().getAttribute(tenantId)) == null) {
+			request.getSession().setAttribute(tenantId, tenantUtil.getTenantInfo(tenantId));
 		}
 	}
 

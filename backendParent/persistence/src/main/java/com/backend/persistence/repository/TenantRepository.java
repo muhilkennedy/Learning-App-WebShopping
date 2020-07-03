@@ -7,6 +7,10 @@ import org.springframework.stereotype.Repository;
 
 import com.backend.persistence.entity.Tenant;
 
+/**
+ * @author Muhil
+ *
+ */
 @Repository
 public interface TenantRepository extends JpaRepository<Tenant, Integer> {
 

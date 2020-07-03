@@ -7,6 +7,10 @@ import org.springframework.stereotype.Repository;
 
 import com.backend.persistence.entity.FeatureToggle;
 
+/**
+ * @author Muhil
+ *
+ */
 @Repository
 public interface FeatureRepository extends JpaRepository<FeatureToggle, Integer> {
 	
