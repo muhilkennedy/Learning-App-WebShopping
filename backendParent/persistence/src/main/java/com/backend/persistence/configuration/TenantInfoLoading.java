@@ -54,7 +54,7 @@ public class TenantInfoLoading {
 				}
 			} else {
 				realm = new Tenant(tenantDetails[1].trim(), tenantDetails[0].trim(),
-						Boolean.parseBoolean(tenantDetails[1].trim()));
+						Boolean.parseBoolean(tenantDetails[2].trim()));
 			}
 			tenantService.save(realm);
 			tenantMap.remove(tenantDetails[1].trim());

@@ -1,5 +1,9 @@
 package com.backend.persistence.entity;
 
+/**
+ * @author Muhil
+ *
+ */
 public class TenantCorsMapping {
 
 	private String tenant;
