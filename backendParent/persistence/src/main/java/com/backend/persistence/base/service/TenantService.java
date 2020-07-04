@@ -1,8 +1,8 @@
-package com.backend.persistence.service;
+package com.backend.persistence.base.service;
 
 import java.util.List;
 
-import com.backend.persistence.entity.Tenant;
+import com.backend.persistence.base.entity.Tenant;
 
 public interface TenantService {
 

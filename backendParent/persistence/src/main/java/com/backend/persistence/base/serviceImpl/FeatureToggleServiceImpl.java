@@ -1,4 +1,4 @@
-package com.backend.persistence.serviceImpl;
+package com.backend.persistence.base.serviceImpl;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -6,9 +6,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.backend.persistence.entity.FeatureToggle;
-import com.backend.persistence.repository.FeatureRepository;
-import com.backend.persistence.service.FeatureToggleService;
+import com.backend.persistence.base.entity.FeatureToggle;
+import com.backend.persistence.base.repository.FeatureRepository;
+import com.backend.persistence.base.service.FeatureToggleService;
 
 /**
  * @author muhil

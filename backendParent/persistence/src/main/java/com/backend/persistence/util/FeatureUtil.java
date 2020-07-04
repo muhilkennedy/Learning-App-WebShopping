@@ -3,7 +3,7 @@ package com.backend.persistence.util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.backend.persistence.service.FeatureToggleService;
+import com.backend.persistence.base.service.FeatureToggleService;
 
 /**
  * @author muhil
