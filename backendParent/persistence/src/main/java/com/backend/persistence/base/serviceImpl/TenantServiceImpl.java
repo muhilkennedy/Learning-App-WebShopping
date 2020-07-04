@@ -1,4 +1,4 @@
-package com.backend.persistence.serviceImpl;
+package com.backend.persistence.base.serviceImpl;
 
 import java.util.List;
 
@@ -7,10 +7,10 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.backend.persistence.base.entity.Tenant;
+import com.backend.persistence.base.repository.TenantRepository;
+import com.backend.persistence.base.service.TenantService;
 import com.backend.persistence.dao.TenantDao;
-import com.backend.persistence.entity.Tenant;
-import com.backend.persistence.repository.TenantRepository;
-import com.backend.persistence.service.TenantService;
 
 /**
  * @author muhil

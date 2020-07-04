@@ -8,13 +8,21 @@ import org.springframework.stereotype.Component;
 
 import com.backend.commons.configuration.DataSourceProperties;
 
+/**
+ * @author Muhil
+ *
+ */
 @Component
 public class DBUtil {
 
+	private static DataSourceProperties dbProperties;
+	
 	@Autowired
-	private DataSourceProperties dbProperties;
+	public void setDbProperties(DataSourceProperties props) {
+		DBUtil.dbProperties = props;
+	}
 
-	public Connection getConnectionInstance() throws Exception {
+	public static Connection getConnectionInstance() throws Exception {
 		return DriverManager.getConnection(dbProperties.getUrl(), dbProperties.getUsername(),
 				dbProperties.getPassword());
 	}

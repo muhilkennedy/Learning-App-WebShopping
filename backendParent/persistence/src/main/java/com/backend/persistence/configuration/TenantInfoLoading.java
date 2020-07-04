@@ -12,9 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.backend.commons.configuration.TenantProperties;
+import com.backend.persistence.base.entity.Tenant;
+import com.backend.persistence.base.service.TenantService;
 import com.backend.persistence.dao.TenantDao;
-import com.backend.persistence.entity.Tenant;
-import com.backend.persistence.service.TenantService;
 
 /**
  * @author muhil
@@ -45,8 +45,8 @@ public class TenantInfoLoading {
 			if (realm != null) {
 				realm.setUniqueName(tenantDetails[0].trim());
 				realm.setActive(Boolean.parseBoolean(tenantDetails[2].trim()));
-				String origins = tenantDetails[3].trim();
-				String originsList = origins.replace("[", "").replace("]", "");
+				realm.setPurge(Boolean.parseBoolean(tenantDetails[4].trim()));
+				String originsList = tenantDetails[3].trim().replace("[", "").replace("]", "");
 				String[] allowedOrigins = originsList.split("-");
 				tenantService.removeOrigins(realm.getTenantID());
 				for (String origin : allowedOrigins) {
@@ -54,16 +54,16 @@ public class TenantInfoLoading {
 				}
 			} else {
 				realm = new Tenant(tenantDetails[1].trim(), tenantDetails[0].trim(),
-						Boolean.parseBoolean(tenantDetails[1].trim()));
+						Boolean.parseBoolean(tenantDetails[2].trim()), Boolean.parseBoolean(tenantDetails[4].trim()));
 			}
 			tenantService.save(realm);
 			tenantMap.remove(tenantDetails[1].trim());
 			logger.info("loaded tenant -> " + realm.getUniqueName());
 		}
-		// remaing tenants are considered Inactive.
+		// remaing tenants are considered removed.
 		if (!tenantMap.isEmpty()) {
 			tenantMap.entrySet().parallelStream().forEach(tenant -> {
-				tenant.getValue().setActive(false);
+				tenant.getValue().setPurge(false);
 				tenantService.save(tenant.getValue());
 				logger.info("Tenant Deactivated -> " + tenant.getValue().getUniqueName());
 			});

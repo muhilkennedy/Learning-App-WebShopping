@@ -1,4 +1,4 @@
-package com.backend.persistence.entity;
+package com.backend.persistence.base.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,6 +7,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * @author Muhil
+ *
+ */
 @Entity
 @Table(name = "FEATURETOGGLE")
 public class FeatureToggle {
