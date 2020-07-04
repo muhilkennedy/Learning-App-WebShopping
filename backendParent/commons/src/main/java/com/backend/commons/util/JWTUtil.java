@@ -22,8 +22,12 @@ public class JWTUtil {
 	// 2hours validity
 	public static final long JWT_TOKEN_VALIDITY = 2 * 60 * 60;
 
+	private static ConfigUtil configUtil;
+	
 	@Autowired
-	private ConfigUtil configUtil;
+	public void setConfigUtil(ConfigUtil config) {
+		JWTUtil.configUtil = config;
+	}
 
 	// retrieve email from jwt token
 	public String getUserEmailFromToken(String token) throws Exception {

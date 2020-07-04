@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.backend.persistence.entity.Tenant;
-import com.backend.persistence.service.TenantService;
+import com.backend.persistence.base.entity.Tenant;
+import com.backend.persistence.base.service.TenantService;
 
 /**
  * @author muhil
@@ -17,21 +17,25 @@ import com.backend.persistence.service.TenantService;
 @Component
 public class TenantUtil {
 	
-	private Logger logger = LoggerFactory.getLogger(TenantUtil.class);
+	private static Logger logger = LoggerFactory.getLogger(TenantUtil.class);
+
+	private static TenantService tenantService;
 	
 	@Autowired
-	private TenantService tenantService;
+	public void setTenantService(TenantService tenantService) {
+		TenantUtil.tenantService = tenantService;
+	}
 	
-	public Tenant getTenantInfo(String tenantId) {
+	public static Tenant getTenantInfo(String tenantId) {
 		return tenantService.findTenantByID(tenantId);
 	}
 	
-	public boolean isTenantActive(String tenantId) {
+	public static boolean isTenantActive(String tenantId) {
 		Tenant tenant = getTenantInfo(tenantId);
 		return tenant != null ? tenant.isActive() : false;
 	}
 	
-	public boolean isAllowedOriginForTenant(String tenantId, String origin) {
+	public static boolean isAllowedOriginForTenant(String tenantId, String origin) {
 		try {
 			List<String> allowedOrigins = tenantService.getAllowedOriginsForTenant(tenantId);
 			return allowedOrigins.contains(origin);
@@ -39,5 +43,9 @@ public class TenantUtil {
 			logger.error("Exception in fetching origins - " + e.getMessage());
 		}
 		return false;
+	}
+	
+	public static List<Tenant> getAllTenants(){
+		return tenantService.getAllTenants();
 	}
 }

@@ -1,4 +1,4 @@
-package com.backend.persistence.entity;
+package com.backend.persistence.app.entity;
 
 import java.io.Serializable;
 import java.sql.Blob;
@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.backend.persistence.base.entity.Tenant;
 
 /**
  * @author Muhil
@@ -55,6 +57,24 @@ public class EmployeeInfo implements Serializable{
 	
 	@Column(name = "PROFILEPIC")
 	private Blob profilePic;
+
+	public EmployeeInfo() {
+		super();
+	}
+
+	public EmployeeInfo(Tenant tenant, String firstName, String lastName, String emailId, String mobile,
+			String designation, boolean active, Date lastLogin, Blob profilePic) {
+		super();
+		this.tenant = tenant;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.emailId = emailId;
+		this.mobile = mobile;
+		this.designation = designation;
+		this.active = active;
+		this.lastLogin = lastLogin;
+		this.profilePic = profilePic;
+	}
 
 	public String getEmployeeId() {
 		return employeeId;
