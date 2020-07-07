@@ -1,6 +1,7 @@
 package com.backend.commons.util;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -30,7 +31,7 @@ public class JWTUtil {
 	}
 
 	// retrieve email from jwt token
-	public String getUserEmailFromToken(String token) throws Exception {
+	public static String getUserEmailFromToken(String token) throws Exception {
 		return getClaimFromToken(token, Claims::getSubject);
 	}
 
@@ -43,22 +44,22 @@ public class JWTUtil {
 	 */
 
 	// retrieve expiration date from jwt token
-	public Date getExpirationDateFromToken(String token) throws Exception {
+	public static Date getExpirationDateFromToken(String token) throws Exception {
 		return getClaimFromToken(token, Claims::getExpiration);
 	}
 
-	public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) throws Exception {
+	public static <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) throws Exception {
 		final Claims claims = getAllClaimsFromToken(token);
 		return claimsResolver.apply(claims);
 	}
 
 	// for retrieveing any information from token we will need the secret key
-	private Claims getAllClaimsFromToken(String token) throws Exception {
+	private static Claims getAllClaimsFromToken(String token) throws Exception {
 		return Jwts.parser().setSigningKey(configUtil.getJwtSecret()).parseClaimsJws(token).getBody();
 	}
 
 	// check if the token has expired
-	private Boolean isTokenExpired(String token) throws Exception {
+	private static Boolean isTokenExpired(String token) throws Exception {
 		final Date expiration = getExpirationDateFromToken(token);
 		return expiration.before(new Date());
 	}
@@ -68,19 +69,19 @@ public class JWTUtil {
 	 * @return JWT token for users
 	 */
 	// implement later when user entity is created.
-//	public String generateToken(User userDetails) {
-//		Map<String, Object> claims = new HashMap<>();
-//		claims.put(Constants.Token_UserPosition, userDetails.getRole());
-//		//we can add more details about user in future in Claims map if needed.
-//		return doGenerateToken(claims, userDetails.getEmailId());
-//	}
+	public static String generateToken(String emailId, String tenant) {
+		Map<String, Object> claims = new HashMap<>();
+		claims.put(CommonUtil.Key_Tenant, tenant);
+		//we can add more details about user in future in Claims map if needed.
+		return doGenerateToken(claims, emailId);
+	}
 
 	/**
 	 * @param claims  map for additional data
 	 * @param subject user email
 	 * @return JWT
 	 */
-	private String doGenerateToken(Map<String, Object> claims, String subject) {
+	private static String doGenerateToken(Map<String, Object> claims, String subject) {
 		return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
 				.signWith(SignatureAlgorithm.HS512, configUtil.getJwtSecret()).compact();
@@ -90,12 +91,12 @@ public class JWTUtil {
 	 * @param token
 	 * @return true if token is valid.
 	 */
-	public Boolean validateToken(String token) throws Exception {
+	public static Boolean validateToken(String token) throws Exception {
 		String email = getUserEmailFromToken(token);
 		return (!(StringUtils.isEmpty(email)) && !(isTokenExpired(token)));
 	}
 
-	public String extractToken(String token) {
+	public static String extractToken(String token) {
 		return token.replace(Constants.Token_Bearer + " ", "");
 	}
 }
