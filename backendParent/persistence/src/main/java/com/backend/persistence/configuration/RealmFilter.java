@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import com.backend.commons.util.CommonUtil;
 import com.backend.commons.util.ConfigUtil;
 import com.backend.commons.util.Constants;
 import com.backend.persistence.base.entity.Tenant;
@@ -84,7 +85,8 @@ public class RealmFilter implements Filter {
 	
 	private void setSession(String tenantId, HttpServletRequest request) {
 		if (((Tenant) request.getSession().getAttribute(tenantId)) == null) {
-			request.getSession().setAttribute(tenantId, TenantUtil.getTenantInfo(tenantId));
+			Tenant tenant = TenantUtil.getTenantInfo(tenantId);
+			request.getSession().setAttribute(tenantId, tenant);
 		}
 	}
 

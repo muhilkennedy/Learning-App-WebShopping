@@ -11,7 +11,6 @@ import com.backend.persistence.app.entity.EmployeeInfo;
 import com.backend.persistence.app.repository.EmployeeInfoRepository;
 import com.backend.persistence.app.service.EmployeeService;
 import com.backend.persistence.base.entity.Tenant;
-import com.backend.persistence.base.service.TenantService;
 
 /**
  * @author Muhil
@@ -22,10 +21,7 @@ import com.backend.persistence.base.service.TenantService;
 public class EmployeeServiceImpl implements EmployeeService {
 	
 	@Autowired
-	EmployeeInfoRepository employeeRepo;
-	
-	@Autowired
-	TenantService tenant;
+	private EmployeeInfoRepository employeeRepo;
 	
 	@Override
 	public void save(EmployeeInfo emp) {
