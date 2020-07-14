@@ -49,6 +49,7 @@ import { NgxLoadingModule, ngxLoadingAnimationTypes } from 'ngx-loading';
 import { FeaturedComponent } from './component/featured/featured.component';
 import { HomepageComponent } from './component/homepage/homepage.component';
 import { ContactComponent } from './component/contact/contact.component';
+import { MediaComponent } from './component/media/media.component';
 
 @NgModule({
   declarations: [
@@ -56,7 +57,8 @@ import { ContactComponent } from './component/contact/contact.component';
     HomeComponent,
     FeaturedComponent,
     HomepageComponent,
-    ContactComponent
+    ContactComponent,
+    MediaComponent
   ],
   imports: [
     SharedModule,
