@@ -6,8 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.backend.persistence.app.service.EmployeeService;
-import com.backend.persistence.util.TenantUtil;
+import com.backend.core.service.BaseService;
+import com.backend.core.util.TenantUtil;
+import com.backend.persistence.service.EmployeeService;
 
 /**
  * @author Muhil Kennedy
@@ -19,6 +20,9 @@ import com.backend.persistence.util.TenantUtil;
 public class PurgeTenantScheduledTask extends ScheduledTask {
 
 	private Logger logger = LoggerFactory.getLogger(PurgeTenantScheduledTask.class);
+	
+	@Autowired
+	private BaseService baseService;
 
 	@Autowired
 	private EmployeeService empService;
@@ -27,12 +31,23 @@ public class PurgeTenantScheduledTask extends ScheduledTask {
 	@Scheduled(cron = " 0 0 0 * * * ")
 	public void execute() {
 		logger.info("Scheduled Task - " + PurgeTenantScheduledTask.class.getCanonicalName() + " Started");
-		TenantUtil.getAllTenants().stream().filter(tenant -> tenant.isPurge()).forEach(tenant -> {
+		TenantUtil.getAllTenants().stream().filter(tenant -> tenant.doPurge()).forEach(tenant -> {
 			try {
-				newTaskAudit(tenant);
+				newTaskAudit(tenant, PurgeTenantScheduledTask.class.getCanonicalName());
 				markInProgress();
+				baseService.setTenantInfo(tenant);
 				// perform purge operations
-				empService.deleteAllEmployeeForTenant(tenant);
+				//remove employees information for tenant
+				empService.findAllEmployeeForTenant().stream().forEach(employee -> {
+					empService.delete(employee);
+				});
+				
+				//remove sales information 
+				
+				//remove product information
+				
+				//remove user information
+				
 				markCompleted();
 			} catch (Exception e) {
 				audit.setFailureInfo(e.getMessage());
@@ -40,7 +55,7 @@ public class PurgeTenantScheduledTask extends ScheduledTask {
 				logger.error("Scheduled Task - " + PurgeTenantScheduledTask.class.getCanonicalName() + " Exception ",
 						e.getMessage());
 			}
-
+			baseService.clear();
 		});
 		logger.info("Scheduled Task - " + PurgeTenantScheduledTask.class.getCanonicalName() + " Completed");
 	}

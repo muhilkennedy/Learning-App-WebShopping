@@ -18,17 +18,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import com.backend.commons.util.ConfigUtil;
 import com.backend.commons.util.JWTUtil;
+import com.backend.core.util.ConfigUtil;
 
 @Component
 @Order(2)
 public class TokenFilter implements Filter {
 
 	private static Logger logger = LoggerFactory.getLogger(TokenFilter.class);
-	
-	@Autowired
-	private JWTUtil jwtUtil;
 	
 	@Autowired
 	private ConfigUtil configUtil;
@@ -40,9 +37,9 @@ public class TokenFilter implements Filter {
 		logger.info("doFilter :: JWT Token Filter");
 		if (configUtil.isProdMode()) {
 			String token = req.getHeader(HttpHeaders.AUTHORIZATION);
-			if (token != null && StringUtils.isEmpty(jwtUtil.extractToken(token))) {
+			if (token != null && !StringUtils.isEmpty(JWTUtil.extractToken(token))) {
 				try {
-					if (jwtUtil.validateToken(jwtUtil.extractToken(token))) {
+					if (JWTUtil.validateToken(JWTUtil.extractToken(token))) {
 						chain.doFilter(request, response);
 					} else {
 						((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,

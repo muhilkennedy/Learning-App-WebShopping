@@ -18,11 +18,12 @@ import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.JWTResponse;
 import com.backend.api.messages.Response;
 import com.backend.api.service.LoginService;
-import com.backend.commons.util.Constants;
 import com.backend.commons.util.JWTUtil;
-import com.backend.persistence.app.entity.EmployeeInfo;
-import com.backend.persistence.base.entity.Tenant;
-import com.backend.persistence.base.interfaces.User;
+import com.backend.core.entity.Tenant;
+import com.backend.core.interfaces.User;
+import com.backend.core.service.BaseService;
+import com.backend.core.util.Constants;
+import com.backend.persistence.entity.EmployeeInfo;
 
 /**
  * @author Muhil
@@ -42,7 +43,7 @@ public class LoginController {
 		GenericResponse<JWTResponse> response = new GenericResponse<JWTResponse>();
 		Tenant tenant = (Tenant)request.getSession().getAttribute(request.getHeader(Constants.Header_TenantId));
 		try {
-			User empInfo = loginService.loginUser(empObj, tenant);
+			User empInfo = loginService.loginUser(empObj);
 			if (empInfo != null) {
 				JWTResponse token = new JWTResponse();
 				token.setToken(JWTUtil.generateToken(empObj.getEmailId(), tenant.getTenantID()));
@@ -68,8 +69,7 @@ public class LoginController {
 			@RequestBody EmployeeInfo empObj) {
 		GenericResponse<EmployeeInfo> response = new GenericResponse<EmployeeInfo>();
 		try {
-			if (loginService.createUser(empObj,
-					(Tenant) request.getSession().getAttribute(request.getHeader(Constants.Header_TenantId)))) {
+			if (loginService.createUser(empObj)) {
 				response.setStatus(Response.Status.OK);
 				response.setData(empObj);
 			} else {
