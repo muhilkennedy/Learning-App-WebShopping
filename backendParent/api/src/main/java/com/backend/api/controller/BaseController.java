@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.api.messages.GenericResponse;
+import com.backend.api.messages.PingInfo;
 import com.backend.api.messages.Response;
 import com.backend.core.service.BaseService;
 import com.backend.core.util.Constants;
@@ -28,11 +29,17 @@ public class BaseController {
 	private BaseService baseService;
 	
 	@RequestMapping("/ping")
-	public GenericResponse<String> pingService(HttpServletRequest request) {
+	public GenericResponse<PingInfo> pingService(HttpServletRequest request) {
 		logger.info("Ping for Tenant -" + request.getHeader(Constants.Header_TenantId));
-		GenericResponse<String> response = new GenericResponse<String>();
+		GenericResponse<PingInfo> response = new GenericResponse<PingInfo>();
+		PingInfo info = new PingInfo();
+		info.setMessage("Connection OK");
+		info.setTenantId(baseService.getTenantInfo().getTenantID());
+		info.setTenantUniqueName(baseService.getTenantInfo().getUniqueName());
+		info.setTenantActive(baseService.getTenantInfo().isActive());
+		info.setPublicKey(baseService.getTenantInfo().fetchPublicKey());
 		response.setStatus(Response.Status.OK);
-		response.setData(baseService.getTenantInfo().getUniqueName() + " - Connection OK!");
+		response.setData(info);
 		return response;
 	}
 

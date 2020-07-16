@@ -1,10 +1,14 @@
 package com.backend.api.controller;
 
+import java.io.File;
+import java.sql.Blob;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.sql.rowset.serial.SerialBlob;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,7 @@ import com.backend.api.messages.JWTResponse;
 import com.backend.api.messages.Response;
 import com.backend.api.service.LoginService;
 import com.backend.commons.util.JWTUtil;
+import com.backend.commons.util.RSAUtil;
 import com.backend.core.entity.Tenant;
 import com.backend.core.interfaces.User;
 import com.backend.core.service.BaseService;
@@ -36,6 +41,9 @@ public class LoginController {
 	private static Logger logger = LoggerFactory.getLogger(LoginController.class);
 	
 	@Autowired
+	private BaseService baseService;
+	
+	@Autowired
 	private LoginService loginService;
 	
 	@RequestMapping(value = "/employeeAuthentication", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -43,6 +51,7 @@ public class LoginController {
 		GenericResponse<JWTResponse> response = new GenericResponse<JWTResponse>();
 		Tenant tenant = (Tenant)request.getSession().getAttribute(request.getHeader(Constants.Header_TenantId));
 		try {
+			empObj.setPassword(RSAUtil.decrypt(empObj.fetchPassword(), baseService.getTenantInfo().fetchPrivateKey()));
 			User empInfo = loginService.loginUser(empObj);
 			if (empInfo != null) {
 				JWTResponse token = new JWTResponse();
@@ -69,6 +78,10 @@ public class LoginController {
 			@RequestBody EmployeeInfo empObj) {
 		GenericResponse<EmployeeInfo> response = new GenericResponse<EmployeeInfo>();
 		try {
+//			for testing puposes only
+//			File img = new File("E:\\Old Disk\\Photos\\scan\\DSC_0150.jpg");
+//			Blob blob = new SerialBlob(FileUtils.readFileToByteArray(img));
+//			empObj.setProfilePic(blob); 
 			if (loginService.createUser(empObj)) {
 				response.setStatus(Response.Status.OK);
 				response.setData(empObj);

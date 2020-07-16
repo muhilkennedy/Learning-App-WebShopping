@@ -1,7 +1,10 @@
 package com.backend.persistence.entity;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import java.sql.Blob;
+import java.sql.SQLException;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +22,7 @@ import javax.persistence.Table;
 
 import com.backend.core.entity.Tenant;
 import com.backend.core.interfaces.User;
+import com.google.common.io.ByteStreams;
 
 /**
  * @author Muhil
@@ -167,8 +171,20 @@ public class EmployeeInfo implements Serializable, User{
 		this.lastLogin = lastLogin;
 	}
 
-	public Blob getProfilePic() {
-		return profilePic;
+	public String getProfilePic() {
+		if (profilePic != null) {
+			InputStream in;
+			StringBuilder base64 = new StringBuilder();
+			try {
+				in = profilePic.getBinaryStream();
+				base64 = new StringBuilder("data:image/jpeg;base64,");
+				base64.append(Base64.getEncoder().encodeToString(ByteStreams.toByteArray(in)));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return base64.toString();
+		}
+		return null;
 	}
 
 	public void setProfilePic(Blob profilePic) {
