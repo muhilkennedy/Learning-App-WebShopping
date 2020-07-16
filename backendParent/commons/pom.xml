@@ -6,4 +6,11 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>commons</artifactId>
+  <dependencies>
+  	<dependency>
+  		<groupId>com.backend</groupId>
+  		<artifactId>core</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  </dependencies>
 </project>
