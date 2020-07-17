@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER, Injectable } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -50,6 +50,45 @@ import { FeaturedComponent } from './component/featured/featured.component';
 import { HomepageComponent } from './component/homepage/homepage.component';
 import { ContactComponent } from './component/contact/contact.component';
 import { MediaComponent } from './component/media/media.component';
+import { environment } from 'src/environments/environment';
+import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { TenantStoreService } from './service/tenantStore/tenant-store.service';
+import { InterceptorService } from './service/interceptor/interceptor.service';
+
+
+@Injectable()
+export class TenantInitializer {
+
+  constructor(private http: HttpClient, private tenantStore: TenantStoreService) { }
+
+  initializeApp(): Promise<any> {
+    return new Promise((resolve, reject) => {
+          console.log(`initializeApp:: Setting up Tenant`);
+          this.http.get(environment.backendBaseUrl + '/base/ping')
+              .subscribe(
+                (resp:any) => {
+                  this.tenantStore.tenantId = resp.data.tenantId;
+                  this.tenantStore.tenantName = resp.data.tenantUniqueName;
+                  this.tenantStore.tenantActive = resp.data.tenantActive;
+                  this.tenantStore.publicKey = resp.data.publicKey;
+                },
+                (error:any) => {
+                    console.log("error in loading tenant");
+                }
+              );
+          //load app only if tenant is active.
+          setTimeout(() => {
+            if(this.tenantStore.tenantActive === true){
+              resolve();
+            }
+          }, 500);
+    });
+  }
+}
+
+export function init_tenant(initializer: TenantInitializer) {
+  return () => initializer.initializeApp();
+}
 
 @NgModule({
   declarations: [
@@ -64,6 +103,7 @@ import { MediaComponent } from './component/media/media.component';
     SharedModule,
     BrowserModule,
     AppRoutingModule,
+    HttpClientModule,
     NgbModule,
     BrowserAnimationsModule,
     MatAutocompleteModule,
@@ -110,7 +150,20 @@ import { MediaComponent } from './component/media/media.component';
       tertiaryColour: 'brown'
     })
   ],
-  providers: [],
+  providers: [
+    TenantInitializer,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: init_tenant,
+      multi: true,
+      deps: [TenantInitializer]
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: InterceptorService,
+      multi: true 
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
