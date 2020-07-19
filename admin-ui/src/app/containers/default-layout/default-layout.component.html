@@ -16,7 +16,7 @@
     </li>
     <li class="nav-item dropdown" dropdown placement="bottom right">
       <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" dropdownToggle (click)="false">
-        <img src="assets/img/avatars/Blank-Profile.jpg" class="img-avatar" alt="admin@bootstrapmaster.com"/>
+        <img src={{profilePic}} class="img-avatar" alt="admin@bootstrapmaster.com"/>
       </a>
       <div class="dropdown-menu dropdown-menu-right" *dropdownMenu aria-labelledby="simple-dropdown">
         <div class="dropdown-header text-center"><strong>Account</strong></div>
@@ -60,17 +60,13 @@
       <tab>
         <ng-template tabHeading><i class="icon-speech"></i></ng-template>
         <div class="p-3">
-          <h6>Messages</h6>
+          <h6>User Information</h6>
           <div class="aside-options">
             <div class="clearfix mt-4">
-              <small><b>Enable Messaging</b></small>
-              <label class="switch switch-label switch-pill switch-success switch-sm float-right">
-                <input type="checkbox" class="switch-input" checked>
-                <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
-              </label>
+              <small><b>Welcome {{userStore.firstName}} !</b></small>
             </div>
             <div>
-              <small class="text-muted">Has to to be implemented in future</small>
+              <small class="text-muted">{{userStore.designation}}</small>
             </div>
           </div>
         </div>

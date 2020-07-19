@@ -18,7 +18,7 @@ public class SecurityConfiguration {
 	public FilterRegistrationBean<TokenFilter> TokenFilterRegistration() {
 	    FilterRegistrationBean<TokenFilter> registration = new  FilterRegistrationBean<TokenFilter>();
 	    registration.setFilter(tokenFilter);
-	    registration.addUrlPatterns("/base/*");
+	    registration.addUrlPatterns("/secure/*");
 	    return registration;
 	}
 	

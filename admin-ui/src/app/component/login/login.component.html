@@ -10,16 +10,29 @@
                   <h1>Login</h1>
                   <p class="text-muted">Sign In to your account</p>
                   <div class="input-group mb-3">
-                    <div class="input-group-prepend">
+                    <!-- <div class="input-group-prepend">
                       <span class="input-group-text"><i class="icon-user"></i></span>
-                    </div>
-                    <input type="text" class="form-control" placeholder="Email" autocomplete="username" required name="email" [(ngModel)] = 'email' >
+                    </div> -->
+                    <mat-form-field style="width: inherit;">
+                    <input matInput [formControl]="emailFormControl" placeholder="Email" name="email" [(ngModel)] = 'email'>
+                      <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+                        Please enter a valid email address
+                      </mat-error>
+                      <mat-error *ngIf="emailFormControl.hasError('required')">
+                        Email is <strong>required</strong>
+                      </mat-error></mat-form-field>
+                    <!-- <input type="text" class="form-control" placeholder="Email" autocomplete="username" required name="email" [(ngModel)] = 'email' > -->
                   </div>
                   <div class="input-group mb-4">
-                    <div class="input-group-prepend">
+                    <!-- <div class="input-group-prepend">
                       <span class="input-group-text"><i class="icon-lock"></i></span>
                     </div>
-                    <input type="password" class="form-control" placeholder="Password" autocomplete="current-password" required name="pass" [(ngModel)] = 'password'>
+                    <input type="password" class="form-control" placeholder="Password" autocomplete="current-password" required name="pass" [(ngModel)] = 'password'> -->
+                    <mat-form-field style="width: inherit;">
+                    <input type="password" matInput [formControl]="passwordFormControl" placeholder="Password" name="pass" [(ngModel)] = 'password'>
+                      <mat-error *ngIf="passwordFormControl.hasError('required')">
+                        Password is <strong>required</strong>
+                      </mat-error></mat-form-field>
                   </div>
                   <div class="row">
                     <div class="col-6">
@@ -46,3 +59,4 @@
     </div>
   </main>
 </div>
+<ngx-loading [show]="loading"></ngx-loading>
