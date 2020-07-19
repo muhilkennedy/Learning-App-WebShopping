@@ -32,7 +32,8 @@
               ]
             },
             "scripts": [
-              "node_modules/chart.js/dist/Chart.min.js"
+              "node_modules/chart.js/dist/Chart.min.js",
+              "node_modules/jsencrypt/bin/jsencrypt.min.js"
             ]
           },
           "configurations": {

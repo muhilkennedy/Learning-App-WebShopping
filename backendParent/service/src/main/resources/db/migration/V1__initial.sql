@@ -1,5 +1,5 @@
 /* BASE TRANSACTION TABLES */
-CREATE TABLE IF NOT EXISTS TENANT (TENANTID varchar(50) NOT NULL PRIMARY KEY, TENANTUNIQUENAME varchar(50) NOT NULL UNIQUE, ACTIVE BOOL DEFAULT TRUE, PURGETENANT BOOL DEFAULT FALSE);
+CREATE TABLE IF NOT EXISTS TENANT (TENANTID varchar(50) NOT NULL PRIMARY KEY, TENANTUNIQUENAME varchar(50) NOT NULL UNIQUE, ACTIVE BOOL DEFAULT TRUE, PURGETENANT BOOL DEFAULT FALSE, PUBLICKEY varchar(2000), PRIVATEKEY varchar(2000));
 CREATE TABLE IF NOT EXISTS TENANTCORSMAPPING (TENANTID varchar(50) NOT NULL, ORIGIN varchar(300), CONSTRAINT FOREIGN KEY(TENANTID) REFERENCES TENANT(TENANTID));
 CREATE TABLE IF NOT EXISTS SCHEDULEDTASKAUDIT (TENANTID varchar(50) NOT NULL, AUDITID int NOT NULL AUTO_INCREMENT PRIMARY KEY, TASKNAME varchar(75) NOT NULL, STARTTIME DATETIME DEFAULT CURRENT_TIMESTAMP, ENDTIME DATETIME , STATUS varchar(25), FAILUREINFO varchar(1000), CONSTRAINT FOREIGN KEY(TENANTID) REFERENCES TENANT(TENANTID));
 CREATE TABLE IF NOT EXISTS FEATURETOGGLE (FEATUREID int NOT NULL AUTO_INCREMENT PRIMARY KEY, FEATURENAME varchar(30) NOT NULL UNIQUE, ACTIVE BOOL DEFAULT FALSE);
@@ -15,9 +15,9 @@ CREATE TABLE IF NOT EXISTS COUPONS (TENANTID varchar(50), COUPONID int NOT NULL 
 
 /* Standard Permissions load*/
 INSERT INTO EMPLOYEEPERMISSIONS (PERMISSIONID, PERMISSIONNAME) VALUES (1, 'ADMIN');
-INSERT INTO EMPLOYEEPERMISSIONS (PERMISSIONNAME) VALUES ('MANAGER');
-INSERT INTO EMPLOYEEPERMISSIONS (PERMISSIONNAME) VALUES ('MARKETING');
-INSERT INTO EMPLOYEEPERMISSIONS (PERMISSIONNAME) VALUES ('SUPPORT');
+INSERT INTO EMPLOYEEPERMISSIONS (PERMISSIONID, PERMISSIONNAME) VALUES (2, 'MANAGER');
+INSERT INTO EMPLOYEEPERMISSIONS (PERMISSIONID, PERMISSIONNAME) VALUES (3, 'MARKETING');
+INSERT INTO EMPLOYEEPERMISSIONS (PERMISSIONID, PERMISSIONNAME) VALUES (4, 'SUPPORT');
 
 
 /* initial data load */
@@ -25,3 +25,6 @@ insert into tenant (tenantid, tenantuniquename) values ('devTenant', 'devRealm')
 insert into employeeinfo (tenantid, employeeid ,fname, lname, emailid, mobile, password, designation) values ('devTenant', 1, 'SUPERUSER', 'DEV', 'do.not.reply.application.ordering@gmail.com', '1234567890', '$2a$05$FueeaV.hfKbv/m6kG6GM../gKdRPOoihCQF1WBjpAPZNDlGPOxSha', 'SUPPORTADMIN'); /* password is test*/
 insert into employeeaddress (tenantid, employeeid, doornumber, street, city, state, pincode) values ('devTenant', 1, 'No:13', 'street', 'city', 'state', 'pin007');
 insert into employeepermissionsmap (tenantid, employeeid, permissionid) values ('devTenant', 1, 1);
+insert into employeepermissionsmap (tenantid, employeeid, permissionid) values ('devTenant', 1, 2);
+insert into employeepermissionsmap (tenantid, employeeid, permissionid) values ('devTenant', 1, 3);
+insert into employeepermissionsmap (tenantid, employeeid, permissionid) values ('devTenant', 1, 4);

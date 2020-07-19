@@ -9,6 +9,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.backend.core.util.ConfigUtil;
+import com.backend.core.util.Constants;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -97,6 +100,6 @@ public class JWTUtil {
 	}
 
 	public static String extractToken(String token) {
-		return token.replace(Constants.Token_Bearer + " ", "");
+		return token.replace(Constants.Token_Bearer, "").trim();
 	}
 }

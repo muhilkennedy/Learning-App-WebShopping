@@ -12,25 +12,28 @@ import org.springframework.transaction.annotation.Transactional;
 import com.backend.api.service.LoginService;
 import com.backend.commons.exceptions.InvalidUserException;
 import com.backend.commons.util.CommonUtil;
-import com.backend.persistence.app.entity.EmployeeInfo;
-import com.backend.persistence.app.service.EmployeeService;
-import com.backend.persistence.base.entity.Tenant;
-import com.backend.persistence.base.interfaces.User;
+import com.backend.core.interfaces.User;
+import com.backend.core.service.BaseService;
+import com.backend.persistence.entity.EmployeeInfo;
+import com.backend.persistence.service.EmployeeService;
 
 @Service
 @Transactional
 public class LoginServiceImpl implements LoginService {
 
 	private static Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
+	
+	@Autowired
+	private BaseService baseService;
 
 	@Autowired
 	private EmployeeService empService;
 
 	@Override
-	public User loginUser(User user, Tenant tenant) {
+	public User loginUser(User user) {
 		if (user instanceof EmployeeInfo) {
 			EmployeeInfo empInfo = (EmployeeInfo) user;
-			EmployeeInfo actualUser = empService.findEmployeeByEmail(empInfo.getEmailId(), tenant);
+			EmployeeInfo actualUser = empService.findEmployeeByEmail(empInfo.getEmailId());
 			if (actualUser != null && BCrypt.checkpw(empInfo.fetchPassword(), actualUser.fetchPassword())) {
 				actualUser.setLastLogin(new Date());
 				return actualUser;
@@ -40,10 +43,10 @@ public class LoginServiceImpl implements LoginService {
 	}
 
 	@Override
-	public void updateUserPassword(User user, Tenant tenant) throws InvalidUserException {
+	public void updateUserPassword(User user) throws InvalidUserException {
 		if (user instanceof EmployeeInfo) {
 			EmployeeInfo empInfo = (EmployeeInfo) user;
-			EmployeeInfo actualUser = empService.findEmployeeByEmail(empInfo.getEmailId(), tenant);
+			EmployeeInfo actualUser = empService.findEmployeeByEmail(empInfo.getEmailId());
 			if (actualUser != null) {
 				String encrptedPassword = BCrypt.hashpw(empInfo.fetchPassword(), BCrypt.gensalt(CommonUtil.saltRounds));
 				actualUser.setPassword(encrptedPassword);
@@ -56,11 +59,11 @@ public class LoginServiceImpl implements LoginService {
 	}
 
 	@Override
-	public boolean createUser(User user, Tenant tenant) {
+	public boolean createUser(User user) {
 		try {
 			if (user instanceof EmployeeInfo) {
 				EmployeeInfo empInfo = (EmployeeInfo) user;
-				empInfo.setTenant(tenant);
+				empInfo.setTenant(baseService.getTenantInfo());
 				String encrptedPassword = BCrypt.hashpw(empInfo.fetchPassword(), BCrypt.gensalt(CommonUtil.saltRounds));
 				empInfo.setPassword(encrptedPassword);
 				empService.save(empInfo);
