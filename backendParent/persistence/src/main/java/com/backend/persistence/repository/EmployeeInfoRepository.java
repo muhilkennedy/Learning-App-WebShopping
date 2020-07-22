@@ -23,11 +23,16 @@ import com.backend.persistence.entity.EmployeeInfo;
 public interface EmployeeInfoRepository extends JpaRepository<EmployeeInfo, Integer> {
 
 	String findEmployeeByEmailQuery = "select emp from EmployeeInfo emp where emp.emailId = :emailId and emp.tenant = :tenant";
+	String findEmployeeByIdQuery = "select emp from EmployeeInfo emp where emp.employeeId = :employeeId and emp.tenant = :tenant";
 	String findAllEmployeesQuery = "select emp from EmployeeInfo emp where emp.tenant = :tenant";
 	String deleteAllEmployeesQuery = "delete from EmployeeInfo where tenant = :tenant";
+	String findEmployeeByEmailOrIdQuery = "select emp from EmployeeInfo emp where emp.emailId = :emailId OR emp.employeeId = :emailId and emp.tenant = :tenant";
 	
 	@Query(findEmployeeByEmailQuery)
 	EmployeeInfo findEmployeeByEmail(@Param("emailId") String emailId, @Param("tenant") Tenant realm);
+	
+	@Query(findEmployeeByIdQuery)
+	EmployeeInfo findEmployeeById(@Param("employeeId") int employeeId, @Param("tenant") Tenant realm);
 	
 	@Query(findAllEmployeesQuery)
 	List<EmployeeInfo> findAllEmployees(@Param("tenant") Tenant realm);
@@ -36,5 +41,8 @@ public interface EmployeeInfoRepository extends JpaRepository<EmployeeInfo, Inte
 	@Cascade(CascadeType.DELETE)
 	@Query(deleteAllEmployeesQuery)
 	void deleteAllEmployees(@Param("tenant") Tenant realm);
+
+	@Query(findEmployeeByEmailOrIdQuery)
+	EmployeeInfo findEmployeeByEmailOrId(@Param("emailId") String emailOrId, @Param("tenant") Tenant realm);
 	
 }

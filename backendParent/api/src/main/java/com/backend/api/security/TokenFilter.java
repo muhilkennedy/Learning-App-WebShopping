@@ -1,4 +1,4 @@
-package com.backend.commons.security;
+package com.backend.api.security;
 
 import java.io.IOException;
 
@@ -19,7 +19,10 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.backend.commons.util.JWTUtil;
+import com.backend.core.service.BaseService;
 import com.backend.core.util.ConfigUtil;
+import com.backend.persistence.entity.EmployeeInfo;
+import com.backend.persistence.service.EmployeeService;
 
 @Component
 @Order(2)
@@ -28,7 +31,13 @@ public class TokenFilter implements Filter {
 	private static Logger logger = LoggerFactory.getLogger(TokenFilter.class);
 	
 	@Autowired
+	private BaseService baseService;
+	
+	@Autowired
 	private ConfigUtil configUtil;
+	
+	@Autowired
+	private EmployeeService empService;
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -39,7 +48,22 @@ public class TokenFilter implements Filter {
 			String token = req.getHeader(HttpHeaders.AUTHORIZATION);
 			if (token != null && !StringUtils.isEmpty(JWTUtil.extractToken(token))) {
 				try {
-					if (JWTUtil.validateToken(JWTUtil.extractToken(token))) {
+					String jwtToken = JWTUtil.extractToken(token);
+					if (JWTUtil.validateToken(jwtToken)) {
+						String email = JWTUtil.getUserEmailFromToken(jwtToken);
+						if (JWTUtil.isEmployeeUser(jwtToken)) {
+							EmployeeInfo empInfo = empService.findEmployeeByEmail(email);
+							empInfo.setEmployeePermissions(empService.getEmployeePermissionsForTenant(empInfo));
+							if (empInfo != null) {
+								baseService.setUserInfo(empInfo);
+							} else {
+								((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
+										"Invalid User Request.... token might have been tampered");
+								return;
+							}
+						} else {
+							// load client user data
+						}
 						chain.doFilter(request, response);
 					} else {
 						((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
@@ -47,8 +71,9 @@ public class TokenFilter implements Filter {
 						return;
 					}
 				} catch (Exception e) {
+					logger.error("doFilter :: Exception - " + e.getMessage());
 					((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST,
-							"Authorization Header is Missing");
+							"Error in handling the request - " + e.getMessage());
 					return;
 				}
 			} else {

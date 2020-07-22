@@ -3,7 +3,6 @@ package com.backend.persistence.entity;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.sql.Blob;
-import java.sql.SQLException;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -67,24 +66,31 @@ public class EmployeeInfo implements Serializable, User{
 	@Column(name = "LASTLOGIN")
 	private Date lastLogin;
 	
-	@Column(name = "LOGINVIA")
-	private String loginVia;
+	@Column(name = "ISLOGGEDIN")
+	private boolean isLoggedIn;
+	
+	@Column(name = "DOB")
+	private Date dob;
+	
+	@Column(name = "GENDER")
+	private String gender;
 	
 	@Column(name = "PROFILEPIC")
 	private Blob profilePic;
 	
-	@OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
 	private List<EmployeeAddress> employeeAddress;
 	
-	@OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
 	private List<EmployeePermissionsMap> employeePermissions;
 
 	public EmployeeInfo() {
 		super();
 	}
-
-	public EmployeeInfo(Tenant tenant, String firstName, String lastName, String emailId, String mobile,
-			String password, String designation, boolean active, Date lastLogin, Blob profilePic, String loginVia) {
+	
+	public EmployeeInfo(Tenant tenant, String firstName, String lastName, String emailId, String password,
+			String mobile, String designation, boolean active, Date dob, String gender, Blob profilePic,
+			List<EmployeeAddress> employeeAddress, List<EmployeePermissionsMap> employeePermissions) {
 		super();
 		this.tenant = tenant;
 		this.firstName = firstName;
@@ -94,11 +100,13 @@ public class EmployeeInfo implements Serializable, User{
 		this.mobile = mobile;
 		this.designation = designation;
 		this.active = active;
-		this.lastLogin = lastLogin;
+		this.dob = dob;
+		this.gender = gender;
 		this.profilePic = profilePic;
-		this.loginVia = loginVia;
+		this.employeeAddress = employeeAddress;
+		this.employeePermissions = employeePermissions;
 	}
-	
+
 	public Tenant getTenant() {
 		return tenant;
 	}
@@ -215,14 +223,35 @@ public class EmployeeInfo implements Serializable, User{
 		this.password = password;
 	}
 
-	public String getLoginVia() {
-		return loginVia;
+	public boolean isLoggedIn() {
+		return isLoggedIn;
 	}
 
-	public void setLoginVia(String loginVia) {
-		this.loginVia = loginVia;
+	public void setLoggedIn(boolean isLoggedIn) {
+		this.isLoggedIn = isLoggedIn;
 	}
-	
+
+
+	public Date getDob() {
+		return dob;
+	}
+
+
+	public void setDob(Date dob) {
+		this.dob = dob;
+	}
+
+
+	public String getGender() {
+		return gender;
+	}
+
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+
 	/**
 	 * Perform default actions before final persist.
 	 */

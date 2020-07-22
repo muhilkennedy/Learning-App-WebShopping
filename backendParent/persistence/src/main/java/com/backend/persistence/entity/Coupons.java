@@ -36,6 +36,9 @@ public class Coupons implements Serializable{
 	@Column(name = "TITLE")
 	private String title;
 	
+	@Column(name = "CODE")
+	private String code;
+	
 	@Column(name = "DISCOUNT")
 	private int discount;
 	
@@ -49,7 +52,7 @@ public class Coupons implements Serializable{
 	private boolean freeShipping;
 	
 	@Column(name = "USERUSAGE")
-	private boolean perUserUsage;
+	private int perUserUsage;
 	
 	@Column(name = "ACTIVE")
 	private boolean active;
@@ -59,7 +62,7 @@ public class Coupons implements Serializable{
 	}
 
 	public Coupons(Tenant tenant, String title, int discount, Date startdate, Date endDate, boolean freeShipping,
-			boolean perUserUsage, boolean active) {
+			int perUserUsage, boolean active, String code) {
 		super();
 		this.tenant = tenant;
 		this.title = title;
@@ -69,6 +72,7 @@ public class Coupons implements Serializable{
 		this.freeShipping = freeShipping;
 		this.perUserUsage = perUserUsage;
 		this.active = active;
+		this.code = code;
 	}
 
 	public void setTenant(Tenant tenant) {
@@ -115,11 +119,11 @@ public class Coupons implements Serializable{
 		this.freeShipping = freeShipping;
 	}
 
-	public boolean isPerUserUsage() {
+	public int getPerUserUsage() {
 		return perUserUsage;
 	}
 
-	public void setPerUserUsage(boolean perUserUsage) {
+	public void setPerUserUsage(int perUserUsage) {
 		this.perUserUsage = perUserUsage;
 	}
 
@@ -129,6 +133,18 @@ public class Coupons implements Serializable{
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public int getCouponId() {
+		return couponId;
 	}
 	
 }

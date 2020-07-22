@@ -4,11 +4,7 @@ export const navItems: INavData[] = [
   {
     name: 'Dashboard',
     url: '/dashboard',
-    icon: 'icon-speedometer',
-    // badge: {
-    //   variant: 'info',
-    //   text: 'NEW'
-    // }
+    icon: 'icon-globe',
   },
   {
     title: true,
@@ -22,7 +18,7 @@ export const navItems: INavData[] = [
       {
         name: 'Category',
         url: '/product/category',
-        icon: 'icon-puzzle'
+        icon: 'icon-list'
       },
       {
         name: 'Products list',
@@ -44,7 +40,7 @@ export const navItems: INavData[] = [
   {
     name: 'Sales',
     url: '/sales',
-    icon: 'icon-globe',
+    icon: 'icon-wallet',
     children: [
       {
         name: 'Orders',
@@ -61,17 +57,41 @@ export const navItems: INavData[] = [
   {
     name: 'Coupons',
     url: '/coupon',
-    icon: 'icon-magic-wand'
+    icon: 'icon-magic-wand',
+    children: [
+      {
+        name: 'Manage',
+        url: '/coupon/coupon',
+        icon: 'icon-list'
+      },
+      {
+        name: 'Create',
+        url: '/coupon/createCoupon',
+        icon: 'icon-plus'
+      }
+    ]
   },
   {
-    name: 'Onboard Employee',
-    url: '/add-employee',
-    icon: 'icon-user-follow'
-  },
-  {
-    name: 'User Permissions',
-    url: '/user-permissions',
-    icon: 'icon-user-following'
+    name: 'Employee Actions',
+    url: '/employee',
+    icon: 'icon-people',
+    children: [
+      {
+        name: 'Manage Employee',
+        url: '/employee/employee',
+        icon: 'icon-user-follow'
+      },
+      {
+        name: 'Onboard Employee',
+        url: '/employee/OnboardEmployee',
+        icon: 'icon-user-follow'
+      },
+      {
+        name: 'Employee Permissions',
+        url: '/employee/EmployeePermissions',
+        icon: 'icon-user-following'
+      },
+    ]
   },
   {
     name: 'Report',

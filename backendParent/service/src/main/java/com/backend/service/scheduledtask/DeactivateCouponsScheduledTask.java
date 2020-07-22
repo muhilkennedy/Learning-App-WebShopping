@@ -38,7 +38,7 @@ public class DeactivateCouponsScheduledTask extends ScheduledTask {
 				markInProgress();
 				baseService.setTenantInfo(tenant);
 				//deactivate coupons.
-				coupService.findExpiredCoupons(tenant).stream().forEach(coupon -> {
+				coupService.findExpiredCoupons().stream().forEach(coupon -> {
 					coupon.setActive(CommonUtil.Key_inactive);
 					coupService.save(coupon);
 				});

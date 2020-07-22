@@ -2,6 +2,7 @@ package com.backend.api.serviceImpl;
 
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import com.backend.commons.exceptions.InvalidUserException;
 import com.backend.commons.util.CommonUtil;
 import com.backend.core.interfaces.User;
 import com.backend.core.service.BaseService;
+import com.backend.core.util.ConfigUtil;
+import com.backend.persistence.entity.EmployeeAddress;
 import com.backend.persistence.entity.EmployeeInfo;
 import com.backend.persistence.service.EmployeeService;
 
@@ -25,6 +28,9 @@ public class LoginServiceImpl implements LoginService {
 	
 	@Autowired
 	private BaseService baseService;
+	
+	@Autowired
+	private ConfigUtil configUtil;
 
 	@Autowired
 	private EmployeeService empService;
@@ -64,8 +70,22 @@ public class LoginServiceImpl implements LoginService {
 			if (user instanceof EmployeeInfo) {
 				EmployeeInfo empInfo = (EmployeeInfo) user;
 				empInfo.setTenant(baseService.getTenantInfo());
+				//Autogenerate password if not present.
+				if(StringUtils.isEmpty(empInfo.fetchPassword()))
+				{
+					String generatedPassword = CommonUtil.generateRandomPassword();
+					empInfo.setPassword(generatedPassword.trim());
+					if (!configUtil.isProdMode()) {
+						System.out.println(" Generated Password for Employee - " + empInfo.getEmailId() + " is = "
+								+ generatedPassword.trim());
+					}
+				}
 				String encrptedPassword = BCrypt.hashpw(empInfo.fetchPassword(), BCrypt.gensalt(CommonUtil.saltRounds));
 				empInfo.setPassword(encrptedPassword);
+				//considering only one address at the time of creation.
+				EmployeeAddress address = empInfo.getEmployeeAddress().get(0);
+				address.setTenant(baseService.getTenantInfo());
+				address.setEmployee(empInfo);
 				empService.save(empInfo);
 				return true;
 			}
