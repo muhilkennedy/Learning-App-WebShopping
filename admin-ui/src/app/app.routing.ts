@@ -5,13 +5,10 @@ import { Routes, RouterModule } from '@angular/router';
 import { DefaultLayoutComponent } from './containers';
 
 import { LoginComponent } from './component/login/login.component';
+import { NotFoundComponent } from './component/not-found/not-found.component';
+import { match } from 'assert';
 
 export const routes: Routes = [
-  {
-    path: '',
-    redirectTo: 'login',
-    pathMatch: 'full',
-  },
   {
     path: 'login',
     component: LoginComponent,
@@ -27,12 +24,28 @@ export const routes: Routes = [
     },
     children: [
       {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+      {
         path: 'dashboard',
         loadChildren: () => import('./views/dashboard/dashboard.module').then(m => m.DashboardModule)
+      },
+      {
+        path: 'coupon',
+        loadChildren: () => import('./views/coupon/coupon.module').then(m => m.CouponModule)
+      },
+      {
+        path: 'employee',
+        loadChildren: () => import('./views/employee/employee.module').then(m => m.EmployeeModule)
       }
     ]
+  },
+  {
+    path: '**',
+    component: NotFoundComponent
   }
-  // { path: '**', component: P404Component }
 ];
 
 @NgModule({

@@ -1,0 +1,84 @@
+<ngx-loading [show]="loading"></ngx-loading>
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          Create your Coupon
+          <button mat-button class="btn btn-ghost-success float-right" style="border: 1px solid;" (click)="createCoupon()">
+            <i class="fa fa-gift"></i> Create Coupon
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <table class="table table-responsive-sm">
+              <tr>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>Coupon Title</mat-label>
+                    <input matInput placeholder="Title" [(ngModel)]="title" required>
+                  </mat-form-field>
+                </td>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>Coupon Code</mat-label>
+                    <input matInput placeholder="Code" [(ngModel)]="code" required>
+                    <mat-hint>Must be unique for active coupons</mat-hint>
+                  </mat-form-field>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>Discount</mat-label>
+                    <input matInput type="number" class="example-right-align" [(ngModel)]="discount" required>
+                    <span matPrefix>%&nbsp;</span>
+                  </mat-form-field>
+                </td>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>PerUser Usage</mat-label>
+                    <input matInput type="number" class="example-right-align" [(ngModel)]="userUsage" required>
+                    <mat-hint>Number of times user can apply this code</mat-hint>
+                  </mat-form-field>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>Start Date</mat-label>
+                    <input matInput [min]="minDateToBegin" [matDatepicker]="pickerBegin" (dateChange)="setStartDate('change', $event)" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="pickerBegin"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerBegin disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </td>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>End Date</mat-label>
+                    <input matInput [min]="minDateToEnd" [matDatepicker]="pickerEnd" (dateChange)="setEndDate('change', $event)" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerEnd disabled={{!EndDateActive}}></mat-datepicker>
+                  </mat-form-field>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <mat-slide-toggle
+                    color="primary"
+                    [checked]="freeShipping"
+                    (change)="toggleShipping()">
+                    <button mat-button [disabled]="true" style="text-align: inherit;">
+                      <mat-icon class="with-icon">local_shipping</mat-icon>
+                      <span class="icon-text"> Free Shipping</span><br/>
+                    </button>
+                  </mat-slide-toggle>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

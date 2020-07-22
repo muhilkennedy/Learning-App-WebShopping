@@ -1,0 +1,17 @@
+.table th, .table td {
+  border-top: 0px !important;
+}
+
+.matitem{
+  width: 100%;
+}
+
+.example-radio-group {
+  display: flex;
+  flex-direction: row;
+  margin: 15px 0;
+}
+
+.example-radio-button {
+  margin: 5px;
+}

@@ -1,5 +1,7 @@
 package com.backend.persistence.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,7 +19,9 @@ import com.backend.core.entity.Tenant;
  */
 @Entity
 @Table(name = "EMPLOYEEPERMISSIONSMAP")
-public class EmployeePermissionsMap {
+public class EmployeePermissionsMap implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 
 	@ManyToOne
 	@JoinColumn(name = "TENANTID", nullable = false)

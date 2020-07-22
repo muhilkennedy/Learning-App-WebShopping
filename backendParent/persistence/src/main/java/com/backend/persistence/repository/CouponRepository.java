@@ -20,9 +20,13 @@ public interface CouponRepository extends JpaRepository<Coupons, Integer> {
 	
 	String findAllActiveCouponsQuery = "select coup from Coupons coup where coup.active = true and coup.tenant = :tenant";
 	String findExpiredCouponsQuery = "select coup from Coupons coup where coup.active = true and coup.tenant = :tenant and coup.endDate < :endDate";
+	String findAllCouponsQuery = "select coup from Coupons coup where coup.tenant = :tenant";
 	
 	@Query(findAllActiveCouponsQuery)
 	List<Coupons> findAllActiveCoupons(@Param("tenant") Tenant realm);
+	
+	@Query(findAllCouponsQuery)
+	List<Coupons> findAllCouponsForTenant(@Param("tenant") Tenant realm);
 	
 	@Query(findExpiredCouponsQuery)
 	List<Coupons> findExpiredCoupons(@Param("tenant") Tenant realm, @Param("endDate") Date endDate);

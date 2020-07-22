@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
+import { ModalDirective } from 'ngx-bootstrap/modal';
+import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgModule } from '@angular/core';
 import { FormControl, Validators} from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { LoginService } from '../../service/login/login.service';
 import { UserStoreService } from '../../service/userStore/user-store.service';
 import { TenantStoreService } from '../../service/tenantStore/tenant-store.service';
+import { AlertService } from '../../shared/_alert';
+
 declare var rsaencrypt: Function;
 
 @Component({
@@ -13,6 +14,13 @@ declare var rsaencrypt: Function;
   templateUrl: 'login.component.html'
 })
 export class LoginComponent {
+
+  options = {
+    autoClose: true,
+    keepAfterRouteChange: false
+  };
+
+  @ViewChild('primaryModal') public primaryModal: ModalDirective;
 
   public loading = false;
 
@@ -22,7 +30,8 @@ export class LoginComponent {
   constructor(private router: Router,
       private tenantStore: TenantStoreService,
       private userService: UserStoreService,
-      private loginService: LoginService){
+      private loginService: LoginService,
+      protected alertService: AlertService){
   }
 
   emailFormControl = new FormControl('', [
@@ -35,7 +44,13 @@ export class LoginComponent {
   ])
 
   login(){
-    if(this.email!=undefined && this.password!=undefined){
+    if(this.emailFormControl.hasError('email') || this.emailFormControl.hasError('required')){
+      this.alertService.warn('Email Field has Errors', this.options);
+    }
+    else if(this.passwordFormControl.hasError('required')){
+      this.alertService.warn('Password is Required', this.options);
+    }
+    else if(this.email!=undefined && this.password!=undefined){
       this.loading = true;
       this.loginService.employeeLogin(this.email, rsaencrypt(this.password, this.tenantStore.publicKey))
           .subscribe(
@@ -56,19 +71,18 @@ export class LoginComponent {
                 this.router.navigate(['/dashboard']);
               }
               else{
-                alert(resp.status + " : " + resp.errorMessages)
+                this.alertService.error(resp.status + " : " + resp.errorMessages);
               }
-              console.log(resp);
               this.loading=false;
           },
           (error) => {
-              alert("Login failed");
-              this.loading=false;
+            this.alertService.error('Login failed!');
+            this.loading=false;
           }
       );
     }
     else{
-      alert("login error");
+      this.alertService.info('something is wrong.... try refreshing!');
     }
   }
 

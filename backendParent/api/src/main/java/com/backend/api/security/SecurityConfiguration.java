@@ -1,4 +1,4 @@
-package com.backend.commons.security;
+package com.backend.api.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -26,7 +26,7 @@ public class SecurityConfiguration {
 	public FilterRegistrationBean<AdminFilter> AdminFilterRegistration() {
 	    FilterRegistrationBean<AdminFilter> registration = new  FilterRegistrationBean<AdminFilter>();
 	    registration.setFilter(adminFilter);
-	    registration.addUrlPatterns("/admin/*");
+	    registration.addUrlPatterns("/secure/admin/*","/admin/*");
 	    return registration;
 	}
 
