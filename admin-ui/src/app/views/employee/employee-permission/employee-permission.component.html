@@ -7,6 +7,7 @@
           Modify Employee Access Permissions
         </div>
         <div class="card-body">
+          <alert class="p-4 text-center"></alert>
           <div class="row">
             <table class="table table-responsive-sm">
               <tr>
@@ -33,6 +34,9 @@
                   <div class="card">
                     <div class="card-header">
                       {{employeeName}}
+                    </div>
+                    <div class="card-header float-right">
+                      EMP-ID : {{employeeInfo.employeeId}}
                     </div>
                     <div class="card-body">
                       <button mat-button [disabled]="true" style="text-align: inherit; color: gray;">

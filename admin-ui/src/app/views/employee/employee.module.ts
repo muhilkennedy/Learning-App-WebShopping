@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ChartsModule } from 'ng2-charts';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
-
+import { AlertModule } from '../../shared/_alert/alert.module';
 // Material modules
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatBadgeModule} from '@angular/material/badge';
@@ -104,7 +104,8 @@ import { EmployeeComponent } from './employee.component';
       secondaryColour: 'chocolate',
       tertiaryColour: 'darkred'
     }),
-    SharedModule
+    SharedModule,
+    AlertModule
   ]
 })
 export class EmployeeModule { }

@@ -15,7 +15,7 @@ declare var rsaencrypt: Function;
 })
 export class LoginComponent {
 
-  options = {
+  alertoptions = {
     autoClose: true,
     keepAfterRouteChange: false
   };
@@ -45,10 +45,10 @@ export class LoginComponent {
 
   login(){
     if(this.emailFormControl.hasError('email') || this.emailFormControl.hasError('required')){
-      this.alertService.warn('Email Field has Errors', this.options);
+      this.alertService.warn('Email Field has Errors', this.alertoptions);
     }
     else if(this.passwordFormControl.hasError('required')){
-      this.alertService.warn('Password is Required', this.options);
+      this.alertService.warn('Password is Required', this.alertoptions);
     }
     else if(this.email!=undefined && this.password!=undefined){
       this.loading = true;
