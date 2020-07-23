@@ -9,6 +9,6 @@ public interface LoginService {
 
 	void updateUserPassword(User user) throws InvalidUserException;
 
-	boolean createUser(User user);
+	String createUser(User user);
 
 }

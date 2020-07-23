@@ -23,7 +23,7 @@ import com.backend.core.util.ConfigUtil;
 @ComponentScan(basePackages = { "com.backend.core", "com.backend.commons", "com.backend.api", "com.backend.service",
 		"com.backend.persistence" })
 @EnableConfigurationProperties
-@ConfigurationPropertiesScan( basePackages = {"com.backend.commons" ,"com.backend.core" })
+@ConfigurationPropertiesScan( basePackages = {"com.backend.commons" ,"com.backend.core", "com.backend.api"  })
 @EntityScan(basePackages = { "com.backend.core", "com.backend.persistence" })
 @EnableJpaRepositories(basePackages = { "com.backend.core", "com.backend.persistence" })
 @EnableScheduling

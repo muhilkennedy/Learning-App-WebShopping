@@ -3,6 +3,8 @@ package com.backend.persistence.service;
 import java.util.List;
 
 import com.backend.persistence.entity.EmployeeInfo;
+import com.backend.persistence.entity.EmployeePermissions;
+import com.backend.persistence.entity.EmployeePermissionsMap;
 
 public interface EmployeeService {
 
@@ -15,5 +17,17 @@ public interface EmployeeService {
 	void delete(EmployeeInfo emp);
 
 	void deleteAllEmployeeForTenant();
+
+	List<EmployeePermissionsMap> getEmployeePermissionsForTenant(EmployeeInfo emp);
+
+	List<EmployeePermissions> getAllGenericPermissions();
+
+	EmployeeInfo findEmployeeByEmailOrId(String emailOrId);
+
+	EmployeeInfo findEmployeeById(int id);
+
+	void overrirdePermissions(EmployeeInfo empInfo, List<Integer> permissionIds);
+
+	void employeeStatus(EmployeeInfo emp, boolean status);
 
 }

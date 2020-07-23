@@ -1,0 +1,102 @@
+<ngx-loading [show]="loading"></ngx-loading>
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          Modify Employee Access Permissions
+        </div>
+        <div class="card-body">
+          <alert class="p-4 text-center"></alert>
+          <div class="row">
+            <table class="table table-responsive-sm">
+              <tr>
+                <td>
+                  <div class="col-md-12">
+                    <div class="input-group">
+                      <input type="text" [(ngModel)]="email" id="input1-group2" name="input1-group2" class="form-control" placeholder="Email (or) Employee-ID">
+                      <span class="input-group-prepend">
+                        <button type="button" class="btn btn-primary" (click)="searchAction()"><i class="fa fa-search"></i> Search Employee </button>
+                      </span>
+                    </div>
+                  </div>
+                </td>
+                <td></td>
+              </tr>
+              <tr *ngIf="!showcard()">
+                <td></td>
+                <td></td>
+              </tr>
+            </table>
+            <table class="table table-responsive-sm">
+              <tr *ngIf="showcard()">
+                <td>
+                  <div class="card">
+                    <div class="card-header">
+                      {{employeeName}}
+                    </div>
+                    <div class="card-header float-right">
+                      EMP-ID : {{employeeInfo.employeeId}}
+                    </div>
+                    <div class="card-body">
+                      <button mat-button [disabled]="true" style="text-align: inherit; color: gray;">
+                        <mat-icon class="with-icon">verified_user</mat-icon>
+                        <span class="icon-text"> Activate Employee</span><br/>
+                      </button>
+                      <mat-slide-toggle
+                        color="warn"
+                        [checked]="getEmployeeActive()"
+                        (change)="slidetoggle()">
+                      </mat-slide-toggle>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <!-- <div class="col-lg-6 col-lg-4"> -->
+                    <div class="card">
+                      <div class="card-header">
+                        Employee Permissions
+                        <div class="card-header-actions">
+                          <span class="badge badge-warning">{{activePermissions}}</span>
+                        </div>
+                      </div>
+                      <div class="card-body">
+                        <p>
+                          <mat-checkbox [(ngModel)]="adminEnabled">
+                            {{allPermissions[0].permissionName}}
+                          </mat-checkbox>
+                        </p>
+                        <p>
+                          <mat-checkbox [(ngModel)]="managerEnabled">
+                            {{allPermissions[1].permissionName}}
+                          </mat-checkbox>
+                        </p>
+                        <p>
+                          <mat-checkbox [(ngModel)]="marketingEnabled">
+                            {{allPermissions[2].permissionName}}
+                          </mat-checkbox>
+                        </p>
+                        <p>
+                          <mat-checkbox [(ngModel)]="supportEnabled">
+                            {{allPermissions[3].permissionName}}
+                          </mat-checkbox>
+                        </p>
+                        <div class="float-right">
+                          <button mat-button class="btn btn-ghost-warning" style="border: 1px solid;" (click)="overridePermissions()">
+                            <i class="fa fa-key"></i> Update Permissions
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  <!-- </div> -->
+                </td>
+              </tr>
+            </table>
+            <div >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

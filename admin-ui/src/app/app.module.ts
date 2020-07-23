@@ -8,6 +8,7 @@ import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS } from '@angular/common
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true
@@ -51,11 +52,11 @@ import {MatTreeModule} from '@angular/material/tree';
 import { NgxLoadingModule, ngxLoadingAnimationTypes } from 'ngx-loading';
 import { CookieService } from 'ngx-cookie-service';
 
+import { SharedModule } from './shared/shared.module';
+import { AlertModule } from './shared/_alert/alert.module';
 import { AppComponent } from './app.component';
-
 // Import containers
 import { DefaultLayoutComponent } from './containers';
-
 import { LoginComponent } from './component/login/login.component';
 
 const APP_CONTAINERS = [
@@ -80,6 +81,7 @@ import { ChartsModule } from 'ng2-charts';
 import { InterceptorService } from './service/interceptor/interceptor.service';
 import { TenantStoreService } from './service/tenantStore/tenant-store.service';
 import { environment } from '../environments/environment';
+import { NotFoundComponent } from './component/not-found/not-found.component';
 
 
 @Injectable()
@@ -103,11 +105,12 @@ export class TenantInitializer {
                 }
               );
           //load app only if tenant is active.
-          setTimeout(() => {
-            if(this.tenantStore.tenantActive === true){
-              resolve();
-            }
-          }, 500);
+          // setTimeout(() => {
+          //   if(this.tenantStore.tenantActive === true){
+          //     resolve();
+          //   }
+          // }, 3000);
+          resolve();
     });
   }
 }
@@ -175,12 +178,16 @@ export function init_tenant(initializer: TenantInitializer) {
     PerfectScrollbarModule,
     BsDropdownModule.forRoot(),
     TabsModule.forRoot(),
-    ChartsModule
+    ChartsModule,
+    SharedModule,
+    AlertModule,
+    ModalModule
   ],
   declarations: [
     AppComponent,
     ...APP_CONTAINERS,
-    LoginComponent
+    LoginComponent,
+    NotFoundComponent
   ],
   providers: [{
     provide: LocationStrategy,
