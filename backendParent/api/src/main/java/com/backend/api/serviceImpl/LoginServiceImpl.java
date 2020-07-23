@@ -2,6 +2,7 @@ package com.backend.api.serviceImpl;
 
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,25 +13,33 @@ import org.springframework.transaction.annotation.Transactional;
 import com.backend.api.service.LoginService;
 import com.backend.commons.exceptions.InvalidUserException;
 import com.backend.commons.util.CommonUtil;
-import com.backend.persistence.app.entity.EmployeeInfo;
-import com.backend.persistence.app.service.EmployeeService;
-import com.backend.persistence.base.entity.Tenant;
-import com.backend.persistence.base.interfaces.User;
+import com.backend.core.interfaces.User;
+import com.backend.core.service.BaseService;
+import com.backend.core.util.ConfigUtil;
+import com.backend.persistence.entity.EmployeeAddress;
+import com.backend.persistence.entity.EmployeeInfo;
+import com.backend.persistence.service.EmployeeService;
 
 @Service
 @Transactional
 public class LoginServiceImpl implements LoginService {
 
 	private static Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
+	
+	@Autowired
+	private BaseService baseService;
+	
+	@Autowired
+	private ConfigUtil configUtil;
 
 	@Autowired
 	private EmployeeService empService;
 
 	@Override
-	public User loginUser(User user, Tenant tenant) {
+	public User loginUser(User user) {
 		if (user instanceof EmployeeInfo) {
 			EmployeeInfo empInfo = (EmployeeInfo) user;
-			EmployeeInfo actualUser = empService.findEmployeeByEmail(empInfo.getEmailId(), tenant);
+			EmployeeInfo actualUser = empService.findEmployeeByEmail(empInfo.getEmailId());
 			if (actualUser != null && BCrypt.checkpw(empInfo.fetchPassword(), actualUser.fetchPassword())) {
 				actualUser.setLastLogin(new Date());
 				return actualUser;
@@ -40,10 +49,10 @@ public class LoginServiceImpl implements LoginService {
 	}
 
 	@Override
-	public void updateUserPassword(User user, Tenant tenant) throws InvalidUserException {
+	public void updateUserPassword(User user) throws InvalidUserException {
 		if (user instanceof EmployeeInfo) {
 			EmployeeInfo empInfo = (EmployeeInfo) user;
-			EmployeeInfo actualUser = empService.findEmployeeByEmail(empInfo.getEmailId(), tenant);
+			EmployeeInfo actualUser = empService.findEmployeeByEmail(empInfo.getEmailId());
 			if (actualUser != null) {
 				String encrptedPassword = BCrypt.hashpw(empInfo.fetchPassword(), BCrypt.gensalt(CommonUtil.saltRounds));
 				actualUser.setPassword(encrptedPassword);
@@ -55,23 +64,41 @@ public class LoginServiceImpl implements LoginService {
 		}
 	}
 
+	/**
+	 * @return - generated password incase of successfull creation else null.
+	 */
 	@Override
-	public boolean createUser(User user, Tenant tenant) {
+	public String createUser(User user) {
+		String generatedPassword = null;
 		try {
 			if (user instanceof EmployeeInfo) {
 				EmployeeInfo empInfo = (EmployeeInfo) user;
-				empInfo.setTenant(tenant);
+				empInfo.setTenant(baseService.getTenantInfo());
+				//Autogenerate password if not present.
+				if(StringUtils.isEmpty(empInfo.fetchPassword()))
+				{
+					generatedPassword = CommonUtil.generateRandomPassword();
+					empInfo.setPassword(generatedPassword.trim());
+					if (!configUtil.isProdMode()) {
+						System.out.println(" Generated Password for Employee - " + empInfo.getEmailId() + " is = "
+								+ generatedPassword.trim());
+					}
+				}
 				String encrptedPassword = BCrypt.hashpw(empInfo.fetchPassword(), BCrypt.gensalt(CommonUtil.saltRounds));
 				empInfo.setPassword(encrptedPassword);
+				//considering only one address at the time of creation.
+				EmployeeAddress address = empInfo.getEmployeeAddress().get(0);
+				address.setTenant(baseService.getTenantInfo());
+				address.setEmployee(empInfo);
 				empService.save(empInfo);
-				return true;
+				return generatedPassword;
 			}
 
 		} catch (Exception ex) {
 			logger.error("Error Creating user - Exception :", ex.getMessage());
 			ex.printStackTrace();
 		}
-		return false;
+		return generatedPassword;
 	}
 
 }

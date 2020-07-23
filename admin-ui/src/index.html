@@ -16,10 +16,19 @@
   <meta name="author" content="Łukasz Holeczek">
   <meta name="keyword" content="Bootstrap,Admin,Template,Free,Angular,Dashboard,Typescript">
 	<link rel="shortcut icon" href="assets/img/brand/Brand-Icon.png">
-	<title>CoreUI - Free Angular Admin Template</title>
+	<title>AdminUI</title>
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-118965717-3"></script>
   <script>
+
+    //RSA encryption
+    function rsaencrypt(password, publicKey) {
+        let RSAEncrypt = new JSEncrypt();
+        RSAEncrypt.setPublicKey(publicKey);
+        let encryptedPass = RSAEncrypt.encrypt(password);
+        return encryptedPass;
+    }
+
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
@@ -28,17 +37,20 @@
     // Angular ID
     gtag('config', 'UA-118965717-4');
   </script>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body class="app">
-  <!-- App Loading... -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/2.3.1/jsencrypt.min.js" async></script>
   <!-- The core Firebase JS SDK is always required and must be listed first -->
-  <script src="/__/firebase/7.16.0/firebase-app.js"></script>
+  <!-- <script src="/__/firebase/7.16.0/firebase-app.js"></script> -->
 
   <!-- TODO: Add SDKs for Firebase products that you want to use
       https://firebase.google.com/docs/web/setup#available-libraries -->
-  <script src="/__/firebase/7.16.0/firebase-analytics.js"></script>
+  <!-- <script src="/__/firebase/7.16.0/firebase-analytics.js"></script> -->
 
   <!-- Initialize Firebase -->
-  <script src="/__/firebase/init.js"></script>
+  <!-- <script src="/__/firebase/init.js"></script> -->
 </body>
 </html>
+

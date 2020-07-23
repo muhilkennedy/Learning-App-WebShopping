@@ -1,3 +1,4 @@
+<!-- <alert class="jumbotron p-4 container text-center"></alert> -->
 <div class="app-body">
   <main class="main d-flex align-items-center">
     <div class="container">
@@ -7,26 +8,35 @@
             <div class="card p-4">
               <div class="card-body">
                 <form>
+                  <alert class="p-4 text-center"></alert>
                   <h1>Login</h1>
                   <p class="text-muted">Sign In to your account</p>
                   <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="icon-user"></i></span>
-                    </div>
-                    <input type="text" class="form-control" placeholder="Email" autocomplete="username" required name="email" [(ngModel)] = 'email' >
+                    <mat-form-field style="width: inherit;">
+                      <input matInput [formControl]="emailFormControl" placeholder="Email" name="email" [(ngModel)] = 'email' required>
+                      <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+                        Please enter a valid email address
+                      </mat-error>
+                      <mat-error *ngIf="emailFormControl.hasError('required')">
+                        Email is <strong>required</strong>
+                      </mat-error>
+                    </mat-form-field>
                   </div>
                   <div class="input-group mb-4">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="icon-lock"></i></span>
-                    </div>
-                    <input type="password" class="form-control" placeholder="Password" autocomplete="current-password" required name="pass" [(ngModel)] = 'password'>
+                    <mat-form-field style="width: inherit;">
+                    <input type="password" matInput [formControl]="passwordFormControl" placeholder="Password" name="pass" [(ngModel)] = 'password' required>
+                      <mat-error *ngIf="passwordFormControl.hasError('required')">
+                        Password is <strong>required</strong>
+                      </mat-error></mat-form-field>
                   </div>
                   <div class="row">
                     <div class="col-6">
-                      <button type="button" class="btn btn-primary px-4" (click)="login()">Login</button>
+                      <button type="button" class="btn btn-primary px-4" (click)="login()">
+                        <i class="fa fa-sign-in"></i> Login
+                      </button>
                     </div>
                     <div class="col-6 text-right">
-                      <button type="button" class="btn btn-link px-0">Forgot password?</button>
+                      <button type="button" class="btn btn-link px-0" (click)="primaryModal.show()">Forgot password?</button>
                     </div>
                   </div>
                 </form>
@@ -46,3 +56,34 @@
     </div>
   </main>
 </div>
+<ngx-loading [show]="loading"></ngx-loading>
+
+<div bsModal #primaryModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-primary" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Forgot Password</h4>
+        <button type="button" class="close" (click)="primaryModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <mat-form-field appearance="outline" class="matitem" style="width: 100%;">
+          <mat-label>Email-ID</mat-label>
+          <input matInput [formControl]="emailFormControl" placeholder="Email" name="email" [(ngModel)]="email" required>
+          <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+            Please enter a valid email address
+          </mat-error>
+          <mat-error *ngIf="emailFormControl.hasError('required')">
+            Email is <strong>required</strong>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="primaryModal.hide()">Close</button>
+        <button type="button" class="btn btn-primary">Send Email OTP</button>
+      </div>
+    </div>
+  </div>
+</div>
+

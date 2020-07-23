@@ -13,19 +13,19 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import com.backend.commons.util.ConfigUtil;
+import com.backend.core.util.ConfigUtil;
 
 /**
  * @author muhil
  * Entry point for the Spring-Boot application.
  */
 @SpringBootApplication
-@ComponentScan(basePackages = { "com.backend.commons", "com.backend.api", "com.backend.service",
+@ComponentScan(basePackages = { "com.backend.core", "com.backend.commons", "com.backend.api", "com.backend.service",
 		"com.backend.persistence" })
 @EnableConfigurationProperties
-@ConfigurationPropertiesScan("com.backend.commons")
-@EntityScan(basePackages = { "com.backend.persistence" })
-@EnableJpaRepositories("com.backend.persistence")
+@ConfigurationPropertiesScan( basePackages = {"com.backend.commons" ,"com.backend.core", "com.backend.api"  })
+@EntityScan(basePackages = { "com.backend.core", "com.backend.persistence" })
+@EnableJpaRepositories(basePackages = { "com.backend.core", "com.backend.persistence" })
 @EnableScheduling
 @Configuration
 public class Application {

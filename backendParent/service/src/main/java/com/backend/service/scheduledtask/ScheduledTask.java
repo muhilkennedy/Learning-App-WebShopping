@@ -4,10 +4,10 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.backend.commons.util.Constants;
-import com.backend.persistence.base.entity.ScheduledTaskAudit;
-import com.backend.persistence.base.entity.Tenant;
-import com.backend.persistence.base.service.ScheduledTaskAuditService;
+import com.backend.core.entity.ScheduledTaskAudit;
+import com.backend.core.entity.Tenant;
+import com.backend.core.service.ScheduledTaskAuditService;
+import com.backend.core.util.Constants;
 
 public abstract class ScheduledTask {
 	
@@ -18,8 +18,8 @@ public abstract class ScheduledTask {
 	
 	public abstract void execute();
 	
-	protected void newTaskAudit (Tenant tenant) {
-		audit = new ScheduledTaskAudit(tenant, PurgeTenantScheduledTask.class.getSimpleName());
+	protected void newTaskAudit (Tenant tenant, String taskName) {
+		audit = new ScheduledTaskAudit(tenant,taskName);
 		markSubmitted();
 	}
 	

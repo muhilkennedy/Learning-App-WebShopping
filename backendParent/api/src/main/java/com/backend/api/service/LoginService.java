@@ -1,15 +1,14 @@
 package com.backend.api.service;
 
 import com.backend.commons.exceptions.InvalidUserException;
-import com.backend.persistence.base.entity.Tenant;
-import com.backend.persistence.base.interfaces.User;
+import com.backend.core.interfaces.User;
 
 public interface LoginService {
 
-	User loginUser(User user, Tenant tenant);
+	User loginUser(User user);
 
-	void updateUserPassword(User user, Tenant tenant) throws InvalidUserException;
+	void updateUserPassword(User user) throws InvalidUserException;
 
-	boolean createUser(User user, Tenant tenant);
+	String createUser(User user);
 
 }

@@ -9,6 +9,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.backend.core.util.ConfigUtil;
+import com.backend.core.util.Constants;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -35,13 +38,16 @@ public class JWTUtil {
 		return getClaimFromToken(token, Claims::getSubject);
 	}
 
-	/*
-	 * public boolean isAdminScope(String token) throws Exception { Claims claims =
-	 * getAllClaimsFromToken(token); String scope = (String)
-	 * claims.get(CommonUtil.Header_Scope);
-	 * if(scope.equalsIgnoreCase(CommonUtil.Key_adminPermission)) { return true; }
-	 * return false; }
-	 */
+	
+	public static boolean isEmployeeUser(String token) throws Exception {
+		Claims claims = getAllClaimsFromToken(token);
+		String type = (String) claims.get(CommonUtil.Key_userType);
+		if (type.equalsIgnoreCase(CommonUtil.Key_employeeUser)) {
+			return true;
+		}
+		return false;
+	}
+	 
 
 	// retrieve expiration date from jwt token
 	public static Date getExpirationDateFromToken(String token) throws Exception {
@@ -69,9 +75,9 @@ public class JWTUtil {
 	 * @return JWT token for users
 	 */
 	// implement later when user entity is created.
-	public static String generateToken(String emailId, String tenant) {
+	public static String generateToken(String emailId, String userType) {
 		Map<String, Object> claims = new HashMap<>();
-		claims.put(CommonUtil.Key_Tenant, tenant);
+		claims.put(CommonUtil.Key_userType, userType);
 		//we can add more details about user in future in Claims map if needed.
 		return doGenerateToken(claims, emailId);
 	}
@@ -97,6 +103,6 @@ public class JWTUtil {
 	}
 
 	public static String extractToken(String token) {
-		return token.replace(Constants.Token_Bearer + " ", "");
+		return token.replace(Constants.Token_Bearer, "").trim();
 	}
 }
