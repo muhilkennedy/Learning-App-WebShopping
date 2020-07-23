@@ -1,7 +1,8 @@
-package com.backend.commons.communication;
+package com.backend.commons.util;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -25,23 +26,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
 
 import com.backend.commons.configuration.SpringSocialProperties;
+import com.backend.core.service.BaseService;
 import com.backend.core.util.ConfigUtil;
 
 /**
  * @author muhil
  *
  */
-public class Email {
+@Service
+public class EmailUtil {
 	
-	private static Logger logger = LoggerFactory.getLogger(Email.class);
+	private static Logger logger = LoggerFactory.getLogger(EmailUtil.class);
 	
 	@Autowired
 	private SpringSocialProperties props;
 	
 	@Autowired
 	private ConfigUtil configUtil;
+	
+	@Autowired
+	private BaseService baseService;
+	
+	
+	public void sendEmail(String recipientEmail, String subject, String body, File attachment) {
+		sendEmail(Arrays.asList(recipientEmail) , subject, body, attachment);
+	}
 	
 	/**
 	 * @param recipientEmail
@@ -72,7 +84,8 @@ public class Email {
 			try {
 				Message message = new MimeMessage(session);
 				message.setFrom(new InternetAddress(emailId));
-				message.setSubject(configUtil.getApplicationName() + " : " + subject);
+				message.setSubject(configUtil.getApplicationName() + " : " + baseService.getTenantInfo().getUniqueName()
+						+ " : " + subject);
 				Multipart multipartObject = new MimeMultipart();
 				// Creating first MimeBodyPart object which contains body text.
 				InternetHeaders headers = new InternetHeaders();
@@ -88,7 +101,7 @@ public class Email {
 					multipartObject.addBodyPart(fileBodyPart);
 				}
 				// Attach body text and file attachment to the email.
-				message.setContent(multipartObject, MediaType.TEXT_HTML_VALUE);
+				message.setContent(multipartObject, MediaType.MULTIPART_MIXED_VALUE);
 				recipientEmail.stream().forEach(recipient -> {
 					try {
 						message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient));

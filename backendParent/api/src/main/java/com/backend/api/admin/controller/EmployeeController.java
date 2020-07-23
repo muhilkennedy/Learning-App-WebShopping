@@ -19,6 +19,8 @@ import com.backend.api.admin.messages.EmployeePOJOHelper;
 import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.Response;
 import com.backend.api.service.LoginService;
+import com.backend.commons.service.EmailService;
+import com.backend.core.util.Constants;
 import com.backend.persistence.entity.EmployeeInfo;
 import com.backend.persistence.entity.EmployeePermissions;
 import com.backend.persistence.service.EmployeeService;
@@ -38,14 +40,20 @@ public class EmployeeController {
 	
 	@Autowired
 	private EmployeeService empService;
+	
+	@Autowired
+	private EmailService emailService;
 
 	@RequestMapping(value = "/createEmployee", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<EmployeeInfo> employeeCreation(HttpServletRequest request,
 			@RequestBody EmployeeInfo empObj) {
 		GenericResponse<EmployeeInfo> response = new GenericResponse<EmployeeInfo>();
 		try {
-			if (loginService.createUser(empObj)) {
+			String generatedaPassword = loginService.createUser(empObj);
+			if (generatedaPassword != null) {
 				//send a onboard email to the employee.
+				emailService.sendEmail(empObj.getEmailId(), " Welcome Homie! " , 
+						emailService.constructOnboardEmailBody(empObj.getFirstName(), empObj.getLastName(), empObj.getEmployeeId(), generatedaPassword, request.getHeader(Constants.Header_Origin)), null);
 				response.setStatus(Response.Status.OK);
 				response.setData(empObj);
 			} else {

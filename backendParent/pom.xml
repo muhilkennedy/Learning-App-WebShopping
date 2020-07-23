@@ -195,6 +195,15 @@
 		    <artifactId>SparseBitSet</artifactId>
 		    <version>1.2</version>
 		</dependency>
+		<!-- Apache email template -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-context-support</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.freemarker</groupId>
+		    <artifactId>freemarker</artifactId>
+		</dependency>
 		<!-- Docx4j for PDF conversion -->
 		<dependency>
 		    <groupId>org.docx4j</groupId>

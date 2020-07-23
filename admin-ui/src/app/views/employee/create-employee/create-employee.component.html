@@ -1,4 +1,5 @@
 <ngx-loading [show]="loading"></ngx-loading>
+<alert class="p-4 text-center"></alert>
 <div class="animated fadeIn">
   <div class="row">
     <div class="col-md-12">
@@ -29,7 +30,7 @@
                 <td>
                   <mat-form-field appearance="outline" class="matitem">
                     <mat-label>First Name</mat-label>
-                    <input matInput placeholder="First Name" [formControl]="fnameFormControl" name="fname" [(ngModel)] = 'firstName'>
+                    <input required matInput placeholder="First Name" [formControl]="fnameFormControl" name="fname" [(ngModel)] = 'firstName'>
                     <mat-error *ngIf="fnameFormControl.hasError('required')">
                       First Name is <strong>required</strong>
                     </mat-error>
@@ -38,7 +39,7 @@
                 <td>
                   <mat-form-field appearance="outline" class="matitem">
                     <mat-label>Last Name</mat-label>
-                    <input matInput placeholder="Last Name" [formControl]="lnameFormControl" name="lname" [(ngModel)] = 'lastName'>
+                    <input required matInput placeholder="Last Name" [formControl]="lnameFormControl" name="lname" [(ngModel)] = 'lastName'>
                     <mat-error *ngIf="lnameFormControl.hasError('required')">
                       Last Name is <strong>required</strong>
                     </mat-error>
@@ -49,7 +50,7 @@
                 <td>
                   <mat-form-field appearance="outline" class="matitem">
                     <mat-label>Email-ID</mat-label>
-                    <input matInput placeholder="EmailID" [formControl]="emailFormControl" name="email" [(ngModel)] = 'email'>
+                    <input required matInput placeholder="EmailID" [formControl]="emailFormControl" name="email" [(ngModel)] = 'email'>
                     <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
                       Please enter a valid email address
                     </mat-error>
@@ -61,7 +62,7 @@
                 <td>
                   <mat-form-field appearance="outline" class="matitem">
                     <mat-label>Mobile</mat-label>
-                    <input type="number" matInput placeholder="Mobile" [formControl]="mobileFormControl" name="mobile" [(ngModel)] = 'mobile'>
+                    <input required type="number" matInput placeholder="Mobile" [formControl]="mobileFormControl" name="mobile" [(ngModel)] = 'mobile'>
                     <mat-error *ngIf="mobileFormControl.hasError('required')">
                       Mobile Number is <strong>required</strong>
                     </mat-error>
@@ -75,7 +76,7 @@
                 <td>
                   <mat-form-field appearance="outline" class="matitem">
                     <mat-label>Designation</mat-label>
-                    <input matInput placeholder="Designation" [formControl]="designationFormControl" name="desig" [(ngModel)] = 'designation'>
+                    <input required matInput placeholder="Designation" [formControl]="designationFormControl" name="desig" [(ngModel)] = 'designation'>
                     <mat-error *ngIf="designationFormControl.hasError('required')">
                       Designation<strong> cannot be Empty </strong>
                     </mat-error>
@@ -96,7 +97,7 @@
                 <td>
                   <mat-form-field appearance="outline" class="matitem">
                     <mat-label>Date of Birth</mat-label>
-                    <input matInput [matDatepicker]="dobpicker" [formControl]="dobFormControl" (dateChange)="setDob('change', $event)" disabled>
+                    <input required matInput [matDatepicker]="dobpicker" [formControl]="dobFormControl" (dateChange)="setDob('change', $event)" disabled>
                     <mat-datepicker-toggle matSuffix [for]="dobpicker"></mat-datepicker-toggle>
                     <mat-datepicker #dobpicker disabled="false"></mat-datepicker>
                   </mat-form-field>
@@ -111,7 +112,7 @@
                 <td>
                   <mat-form-field appearance="outline" class="matitem">
                     <mat-label>Door Number</mat-label>
-                    <input matInput placeholder="Door Number" [formControl]="doorFormControl" name="door" [(ngModel)] = 'door'>
+                    <input required matInput placeholder="Door Number" [formControl]="doorFormControl" name="door" [(ngModel)] = 'door'>
                     <mat-error *ngIf="doorFormControl.hasError('required')">
                       Door Number is <strong>required</strong>
                     </mat-error>
@@ -120,7 +121,7 @@
                 <td>
                   <mat-form-field appearance="outline" class="matitem">
                     <mat-label>Street</mat-label>
-                    <input matInput placeholder="Street" [formControl]="streetFormControl" name="street" [(ngModel)] = 'street' >
+                    <input required matInput placeholder="Street" [formControl]="streetFormControl" name="street" [(ngModel)] = 'street' >
                     <mat-error *ngIf="streetFormControl.hasError('required')">
                       Street Name is <strong>required</strong>
                     </mat-error>
@@ -131,7 +132,7 @@
                 <td>
                   <mat-form-field appearance="outline" class="matitem">
                     <mat-label>City</mat-label>
-                    <input matInput placeholder="city" [formControl]="cityFormControl" name="city" [(ngModel)] = 'city'>
+                    <input required matInput placeholder="city" [formControl]="cityFormControl" name="city" [(ngModel)] = 'city'>
                     <mat-error *ngIf="cityFormControl.hasError('required')">
                       City Name is <strong>required</strong>
                     </mat-error>
@@ -140,7 +141,7 @@
                 <td>
                   <mat-form-field appearance="outline" class="matitem">
                     <mat-label>State</mat-label>
-                    <input matInput placeholder="State" [formControl]="stateFormControl" name="state" [(ngModel)] = 'state'>
+                    <input required matInput placeholder="State" [formControl]="stateFormControl" name="state" [(ngModel)] = 'state'>
                     <mat-error *ngIf="stateFormControl.hasError('required')">
                       State Name is <strong>required</strong>
                     </mat-error>
@@ -151,7 +152,7 @@
                 <td>
                   <mat-form-field appearance="outline" class="matitem">
                     <mat-label>PIN Code</mat-label>
-                    <input matInput placeholder="PIN" [formControl]="pinFormControl" name="pin" [(ngModel)] = 'pincode'>
+                    <input required matInput placeholder="PIN" [formControl]="pinFormControl" name="pin" [(ngModel)] = 'pincode'>
                     <mat-error *ngIf="pinFormControl.hasError('required')">
                       PIN code is <strong>required</strong>
                     </mat-error>

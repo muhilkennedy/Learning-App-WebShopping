@@ -64,8 +64,12 @@ public class LoginServiceImpl implements LoginService {
 		}
 	}
 
+	/**
+	 * @return - generated password incase of successfull creation else null.
+	 */
 	@Override
-	public boolean createUser(User user) {
+	public String createUser(User user) {
+		String generatedPassword = null;
 		try {
 			if (user instanceof EmployeeInfo) {
 				EmployeeInfo empInfo = (EmployeeInfo) user;
@@ -73,7 +77,7 @@ public class LoginServiceImpl implements LoginService {
 				//Autogenerate password if not present.
 				if(StringUtils.isEmpty(empInfo.fetchPassword()))
 				{
-					String generatedPassword = CommonUtil.generateRandomPassword();
+					generatedPassword = CommonUtil.generateRandomPassword();
 					empInfo.setPassword(generatedPassword.trim());
 					if (!configUtil.isProdMode()) {
 						System.out.println(" Generated Password for Employee - " + empInfo.getEmailId() + " is = "
@@ -87,14 +91,14 @@ public class LoginServiceImpl implements LoginService {
 				address.setTenant(baseService.getTenantInfo());
 				address.setEmployee(empInfo);
 				empService.save(empInfo);
-				return true;
+				return generatedPassword;
 			}
 
 		} catch (Exception ex) {
 			logger.error("Error Creating user - Exception :", ex.getMessage());
 			ex.printStackTrace();
 		}
-		return false;
+		return generatedPassword;
 	}
 
 }

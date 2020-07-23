@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { EmployeeService } from '../../../shared/employee/employee.service';
+import { AlertService } from '../../../shared/_alert';
 
 @Component({
   selector: 'app-employee-permission',
@@ -24,7 +25,12 @@ export class EmployeePermissionComponent implements OnInit {
     Validators.required
   ]);
 
-  constructor(private emplService: EmployeeService) { }
+  alertoptions = {
+    autoClose: false,
+    keepAfterRouteChange: false
+  };
+
+  constructor(private emplService: EmployeeService, private alertService: AlertService) { }
 
   ngOnInit(): void {
     this.loading = true;
@@ -48,15 +54,17 @@ export class EmployeePermissionComponent implements OnInit {
     this.emplService.changeEmployeeStatus(this.employeeInfo.employeeId, this.employeeInfo.active)
                     .subscribe((resp:any) => {
                       if(resp.statusCode === 200){
-                        //done snack bar
+                        (this.employeeInfo.active === true) ?
+                        this.alertService.success('Employee Account is Active' , this.alertoptions)
+                        : this.alertService.warn('Employee Account is Blocked' , this.alertoptions);
                       }
                       else if(resp.statusCode === 503){
-                        alert(resp.errorMessages);
+                        this.alertService.error('Operation Failed : ' + resp.errorMessages);
                       }
                       this.loading = false;
                     },
                     (error:any) => {
-                      alert("status change failed");
+                      this.alertService.error('Something went wrong... Try again later!');
                       this.loading = false;
                     });
   }
@@ -137,11 +145,11 @@ export class EmployeePermissionComponent implements OnInit {
                       this.employeeName = this.employeeInfo.firstName + " " + this.employeeInfo.lastName;
                       this.activePermissions = this.employeeInfo.employeePermissions.length;
                       this.setPermissions();
-                      alert("Permissions updated successfully");
+                      this.alertService.success("Permissions updated successfully", this.alertoptions);
                       this.loading = false;
                     },
                     (error:any) => {
-                      alert("failed to update permissions");
+                      this.alertService.error("Failed to update permissions... Try again later!");
                     });
 
   }

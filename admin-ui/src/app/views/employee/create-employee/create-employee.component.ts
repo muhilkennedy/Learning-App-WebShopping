@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators} from '@angular/forms';
 import { EmployeeService } from '../../../shared/employee/employee.service';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { Alert, AlertService } from '../../../shared/_alert';
 
 @Component({
   selector: 'app-create-employee',
@@ -11,6 +12,10 @@ import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 export class CreateEmployeeComponent implements OnInit {
 
   loading = false;
+  alertoptions = {
+    autoClose: false,
+    keepAfterRouteChange: false
+  };
 
   activeUser:boolean;
   selectedGender = 'male';
@@ -74,7 +79,8 @@ export class CreateEmployeeComponent implements OnInit {
     Validators.required
   ]);
 
-  constructor(private empService: EmployeeService) {
+  constructor(private empService: EmployeeService,
+              private alertService: AlertService) {
     this.activeUser = true;
   }
 
@@ -90,25 +96,74 @@ export class CreateEmployeeComponent implements OnInit {
   }
 
   onboard(){
-    this.loading = true;
-    this.empService.createEmployee(this.firstName, this.lastName,
-      this.email, this.mobile, this.designation, this.activeUser, this.dob, this.selectedGender,
-      this.door, this.street, this.state, this.city, this.pincode)
-        .subscribe(
-          (resp:any) => {
-            if(resp.statusCode === 200){
-              alert("user creation successfull");
+    let hasError = false;
+    if(this.emailFormControl.hasError('email') || this.emailFormControl.hasError('required')){
+      this.alertService.warn('Email Field has Errors', this.alertoptions);
+      hasError = true;
+    }
+    if(this.fnameFormControl.hasError('required')){
+      this.alertService.warn('First Name is Required', this.alertoptions);
+      hasError = true;
+    }
+    if(this.lnameFormControl.hasError('required')){
+      this.alertService.warn('Last Name is Required', this.alertoptions);
+      hasError = true;
+    }
+    if(this.mobileFormControl.hasError('required')){
+      this.alertService.warn('Mobile Number is Required', this.alertoptions);
+      hasError = true;
+    }
+    if(this.designationFormControl.hasError('required')){
+      this.alertService.warn('Designation is Required', this.alertoptions);
+      hasError = true;
+    }
+    if(this.doorFormControl.hasError('required')){
+      this.alertService.warn('Door Number is Required', this.alertoptions);
+      hasError = true;
+    }
+    if(this.streetFormControl.hasError('required')){
+      this.alertService.warn('Street Name is Required', this.alertoptions);
+      hasError = true;
+    }
+    if(this.cityFormControl.hasError('required')){
+      this.alertService.warn('City Name is Required', this.alertoptions);
+      hasError = true;
+    }
+    if(this.stateFormControl.hasError('required')){
+      this.alertService.warn('State Name is Required', this.alertoptions);
+      hasError = true;
+    }
+    if(this.pinFormControl.hasError('required')){
+      this.alertService.warn('PIN Code is Required', this.alertoptions);
+      hasError = true;
+    }
+    if(this.dobFormControl.hasError('required')){
+      this.alertService.warn('DateOfBirth is Required', this.alertoptions);
+      hasError = true;
+    }
+    if(!hasError){
+      this.alertService.clear();
+      this.loading = true;
+      this.empService.createEmployee(this.firstName, this.lastName,
+        this.email, this.mobile, this.designation, this.activeUser, this.dob, this.selectedGender,
+        this.door, this.street, this.state, this.city, this.pincode)
+          .subscribe(
+            (resp:any) => {
+              if(resp.statusCode === 200){
+                this.alertService.success('Employee Onboarded Successfully !', this.alertoptions);
+                this.alertService.info('An onboarding email has been sent. Please assign permissions', this.alertoptions);
+              }
+              else{
+                this.alertService.error("Employee Creation Failed - " + resp.errorMessages);
+              }
+              this.loading = false;
+            },
+            (error:any) => {
+              this.alertService.error("Something went wrong.... Try again Later");
+              this.loading = false;
             }
-            else{
-              alert("user creation failed - " + resp.errorMessages);
-            }
-            this.loading = false;
-          },
-          (error:any) => {
-            alert("user creation failed");
-            this.loading = false;
-          }
-        );
+          );
+    }
   }
 
 
