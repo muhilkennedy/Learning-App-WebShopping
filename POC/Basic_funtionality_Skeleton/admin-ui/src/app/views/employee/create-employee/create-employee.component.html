@@ -1,0 +1,168 @@
+<ngx-loading [show]="loading"></ngx-loading>
+<alert class="p-4 text-center"></alert>
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          Onboard New Employee
+          <div class="float-right">
+            <button mat-button class="btn btn-ghost-success" style="border: 1px solid;" (click)="onboard()">
+              <i class="fa fa-user-o"></i> Create Employee
+            </button>
+          </div>
+          <div class="float-right">
+            <mat-slide-toggle
+              color="warn"
+              [checked]="activeUser"
+              (change)="slidetoggle()">
+            </mat-slide-toggle>
+            <button mat-button [disabled]="true" style="text-align: inherit; color: gray;">
+              <mat-icon class="with-icon">verified_user</mat-icon>
+              <span class="icon-text"> Activate Employee</span><br/>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <table class="table table-responsive-sm">
+              <tr>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>First Name</mat-label>
+                    <input required matInput placeholder="First Name" [formControl]="fnameFormControl" name="fname" [(ngModel)] = 'firstName'>
+                    <mat-error *ngIf="fnameFormControl.hasError('required')">
+                      First Name is <strong>required</strong>
+                    </mat-error>
+                  </mat-form-field>
+                </td>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>Last Name</mat-label>
+                    <input required matInput placeholder="Last Name" [formControl]="lnameFormControl" name="lname" [(ngModel)] = 'lastName'>
+                    <mat-error *ngIf="lnameFormControl.hasError('required')">
+                      Last Name is <strong>required</strong>
+                    </mat-error>
+                  </mat-form-field>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>Email-ID</mat-label>
+                    <input required matInput placeholder="EmailID" [formControl]="emailFormControl" name="email" [(ngModel)] = 'email'>
+                    <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+                      Please enter a valid email address
+                    </mat-error>
+                    <mat-error *ngIf="emailFormControl.hasError('required')">
+                      Email is <strong>required</strong>
+                    </mat-error>
+                  </mat-form-field>
+                </td>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>Mobile</mat-label>
+                    <input required type="number" matInput placeholder="Mobile" [formControl]="mobileFormControl" name="mobile" [(ngModel)] = 'mobile'>
+                    <mat-error *ngIf="mobileFormControl.hasError('required')">
+                      Mobile Number is <strong>required</strong>
+                    </mat-error>
+                    <mat-error *ngIf="mobileFormControl.hasError('max') || mobileFormControl.hasError('min')">
+                      <strong>Invalid</strong> Mobile Number
+                    </mat-error>
+                  </mat-form-field>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>Designation</mat-label>
+                    <input required matInput placeholder="Designation" [formControl]="designationFormControl" name="desig" [(ngModel)] = 'designation'>
+                    <mat-error *ngIf="designationFormControl.hasError('required')">
+                      Designation<strong> cannot be Empty </strong>
+                    </mat-error>
+                  </mat-form-field>
+                </td>
+                <td>
+                  <mat-radio-group
+                    aria-labelledby="example-radio-group-label"
+                    class="example-radio-group"
+                    [(ngModel)]="selectedGender">
+                    <mat-radio-button class="example-radio-button" *ngFor="let gender of genders" [value]="gender">
+                      <i class="fa fa-{{gender}} fa-lg mt-1"></i> {{gender}}
+                    </mat-radio-button>
+                  </mat-radio-group>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>Date of Birth</mat-label>
+                    <input required matInput [matDatepicker]="dobpicker" [formControl]="dobFormControl" (dateChange)="setDob('change', $event)" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="dobpicker"></mat-datepicker-toggle>
+                    <mat-datepicker #dobpicker disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <mat-label> Additional Information</mat-label>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>Door Number</mat-label>
+                    <input required matInput placeholder="Door Number" [formControl]="doorFormControl" name="door" [(ngModel)] = 'door'>
+                    <mat-error *ngIf="doorFormControl.hasError('required')">
+                      Door Number is <strong>required</strong>
+                    </mat-error>
+                  </mat-form-field>
+                </td>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>Street</mat-label>
+                    <input required matInput placeholder="Street" [formControl]="streetFormControl" name="street" [(ngModel)] = 'street' >
+                    <mat-error *ngIf="streetFormControl.hasError('required')">
+                      Street Name is <strong>required</strong>
+                    </mat-error>
+                  </mat-form-field>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>City</mat-label>
+                    <input required matInput placeholder="city" [formControl]="cityFormControl" name="city" [(ngModel)] = 'city'>
+                    <mat-error *ngIf="cityFormControl.hasError('required')">
+                      City Name is <strong>required</strong>
+                    </mat-error>
+                  </mat-form-field>
+                </td>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>State</mat-label>
+                    <input required matInput placeholder="State" [formControl]="stateFormControl" name="state" [(ngModel)] = 'state'>
+                    <mat-error *ngIf="stateFormControl.hasError('required')">
+                      State Name is <strong>required</strong>
+                    </mat-error>
+                  </mat-form-field>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>PIN Code</mat-label>
+                    <input required matInput placeholder="PIN" [formControl]="pinFormControl" name="pin" [(ngModel)] = 'pincode'>
+                    <mat-error *ngIf="pinFormControl.hasError('required')">
+                      PIN code is <strong>required</strong>
+                    </mat-error>
+                  </mat-form-field>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
