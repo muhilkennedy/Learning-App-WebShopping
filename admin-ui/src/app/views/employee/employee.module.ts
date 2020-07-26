@@ -106,6 +106,9 @@ import { EmployeeComponent } from './employee.component';
     }),
     SharedModule,
     AlertModule
+  ],
+  exports:[
+    EmployeeComponent
   ]
 })
 export class EmployeeModule { }

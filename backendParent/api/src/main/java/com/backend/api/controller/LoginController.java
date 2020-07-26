@@ -77,6 +77,21 @@ public class LoginController {
 		return response;
 	}
 	
+	@RequestMapping(value = "/secure/employeeLogout", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> employeeLogout(HttpServletRequest request) {
+		GenericResponse<String> response = new GenericResponse<>();
+		try {
+			loginService.logoutUser();
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("employeePasswordUpdate : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
 	@RequestMapping(value = "/employeeForgotPassword", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<String> employeeForgotPassword(HttpServletRequest request, @RequestBody EmployeePOJOHelper empObj) {
 		GenericResponse<String> response = new GenericResponse<>();

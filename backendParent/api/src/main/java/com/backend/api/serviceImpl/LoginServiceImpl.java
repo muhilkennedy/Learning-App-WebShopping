@@ -42,10 +42,23 @@ public class LoginServiceImpl implements LoginService {
 			EmployeeInfo actualUser = empService.findEmployeeByEmail(empInfo.getEmailId());
 			if (actualUser != null && BCrypt.checkpw(empInfo.fetchPassword(), actualUser.fetchPassword())) {
 				actualUser.setLastLogin(new Date());
+				actualUser.setLoggedIn(true);
 				return actualUser;
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public void logoutUser() {
+		User user = baseService.getUserInfo();
+		if (user instanceof EmployeeInfo) {
+			EmployeeInfo empInfo = (EmployeeInfo) user;
+			empInfo = empService.findEmployeeByEmail(empInfo.getEmailId());
+			empInfo.setLoggedIn(false);
+			empInfo.setLastLogin(new Date());
+			empService.save(empInfo);
+		}
 	}
 
 	@Override

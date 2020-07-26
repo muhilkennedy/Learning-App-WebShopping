@@ -1,10 +1,14 @@
 package com.backend.api.admin.controller;
 
+import java.io.File;
+import java.sql.Blob;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.sql.rowset.serial.SerialBlob;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +53,10 @@ public class EmployeeController {
 			@RequestBody EmployeeInfo empObj) {
 		GenericResponse<EmployeeInfo> response = new GenericResponse<EmployeeInfo>();
 		try {
+			//for dev purposes
+			//File f = new File("E:\\Old Disk\\scanned documents\\DSC_0150.jpg");
+			//Blob blob = new SerialBlob(FileUtils.readFileToByteArray(f));
+			//empObj.setProfilePic(blob);
 			String generatedaPassword = loginService.createUser(empObj);
 			if (generatedaPassword != null) {
 				//send a onboard email to the employee.
@@ -85,7 +93,7 @@ public class EmployeeController {
 	}
 	
 	@RequestMapping(value = "/getEmployee", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<EmployeeInfo> getPermissions(HttpServletRequest request,
+	public GenericResponse<EmployeeInfo> getEmployee(HttpServletRequest request,
 												@RequestParam(value = "emailOrId", required = true) String emailOrId) {
 		GenericResponse<EmployeeInfo> response = new GenericResponse<EmployeeInfo>();
 		try {
@@ -100,7 +108,25 @@ public class EmployeeController {
 			}
 			
 		} catch (Exception ex) {
-			logger.error("employeeCreation : " + ex);
+			logger.error("getEmployee : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/getAllEmployee", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<EmployeeInfo> getAllEmployee(HttpServletRequest request) {
+		GenericResponse<EmployeeInfo> response = new GenericResponse<EmployeeInfo>();
+		try {
+			List<EmployeeInfo> empInfo = empService.findAllEmployeeForTenant();
+			if(empInfo!=null) {
+				response.setDataList(empInfo);
+				response.setStatus(Response.Status.OK);
+			}			
+		} catch (Exception ex) {
+			logger.error("getAllEmployee : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
@@ -124,7 +150,7 @@ public class EmployeeController {
 			}
 			
 		} catch (Exception ex) {
-			logger.error("employeeCreation : " + ex);
+			logger.error("overridePermissions : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
@@ -147,7 +173,7 @@ public class EmployeeController {
 				response.setStatus(Response.Status.ERROR);
 			}
 		} catch (Exception ex) {
-			logger.error("employeeCreation : " + ex);
+			logger.error("updateEmployeeStatus : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);

@@ -12,6 +12,7 @@ import { TenantStoreService } from '../tenantStore/tenant-store.service';
 export class LoginService {
 
   loginEndpoint = "/login/employeeAuthentication";
+  logoutEndPoint = "/login/secure/employeeLogout";
   sendOtpEndpoint = "/login/employeeForgotPassword";
   verifyOtpEndpoint ="/login/employeeOtpVerification";
   updatePasswordEndpoint = "/login/employeePasswordUpdate";
@@ -58,6 +59,15 @@ export class LoginService {
       }),
     };
     return this.http.put(environment.backendBaseUrl+this.updatePasswordEndpoint, body, httpOptions);
+  }
+
+  logout() : Observable<any>{
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+    return this.http.put(environment.backendBaseUrl+this.logoutEndPoint, httpOptions);
   }
 
 }

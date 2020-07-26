@@ -7,6 +7,7 @@ import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { DashboardComponent } from './dashboard.component';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { SharedModule } from '../../shared/shared.module';
+import { EmployeeModule } from '../employee/employee.module';
 
 @NgModule({
   imports: [
@@ -15,8 +16,11 @@ import { SharedModule } from '../../shared/shared.module';
     ChartsModule,
     BsDropdownModule,
     ButtonsModule.forRoot(),
-    SharedModule
+    SharedModule,
+    EmployeeModule
   ],
-  declarations: [ DashboardComponent ]
+  declarations: [
+    DashboardComponent
+  ]
 })
 export class DashboardModule { }
