@@ -114,7 +114,10 @@ export class EmployeePermissionComponent implements OnInit {
                         this.loading = false;
                       });
     }
-
+    else{
+      this.alertService.warn("Empty/Incorrect Entry");
+      this.loading = false;
+    }
   }
 
   reset(){

@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import { navItems } from '../../_nav';
 import { UserStoreService } from '../../service/userStore/user-store.service';
 import { Router } from '@angular/router';
+import { LoginService } from '../../service/login/login.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,7 +15,7 @@ export class DefaultLayoutComponent implements OnInit{
   public profilePic = "assets/img/avatars/Blank-Profile.jpg";
   public userPermissions: any[];
 
-  constructor(public userStore: UserStoreService, private router: Router){
+  constructor(public userStore: UserStoreService, private router: Router, private loginService: LoginService){
 
     if(this.userStore.profilePic != null){
       this.profilePic = this.userStore.profilePic;
@@ -102,7 +103,14 @@ export class DefaultLayoutComponent implements OnInit{
   }
 
   logout(){
-    this.userStore = null;
-    this.router.navigate(['/login']);
+    this.loginService.logout()
+                      .subscribe((resp:any) => {
+                        this.userStore = null;
+                        this.router.navigate(['/login']);
+                      },
+                      (error) => {
+                        alert("logout failed");
+                      });
+
   }
 }
