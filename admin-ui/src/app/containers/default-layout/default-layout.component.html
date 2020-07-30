@@ -30,6 +30,7 @@
     </li>
   </ul>
 </app-header>
+<ngx-loading [show]="loading"></ngx-loading>
 <div class="app-body">
   <!-- Left Side Bar -->
   <app-sidebar #appSidebar [fixed]="true" [display]="'lg'" [minimized]="sidebarMinimized" (minimizedChange)="toggleMinimize($event)">

@@ -1,14 +1,10 @@
 package com.backend.api.admin.controller;
 
-import java.io.File;
-import java.sql.Blob;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.sql.rowset.serial.SerialBlob;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +20,7 @@ import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.Response;
 import com.backend.api.service.LoginService;
 import com.backend.commons.service.EmailService;
+import com.backend.core.service.BaseService;
 import com.backend.core.util.Constants;
 import com.backend.persistence.entity.EmployeeInfo;
 import com.backend.persistence.entity.EmployeePermissions;
@@ -47,16 +44,31 @@ public class EmployeeController {
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private BaseService baseService;
+	
+	@RequestMapping(value = "/employeeTokenAuthentication", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<EmployeeInfo> employeeTokenAuthentication(HttpServletRequest request) {
+		GenericResponse<EmployeeInfo> response = new GenericResponse<EmployeeInfo>();
+		try {
+			EmployeeInfo info = (EmployeeInfo)baseService.getUserInfo();
+			response.setData(empService.findEmployeeByEmail(info.getEmailId()));
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("employeeTokenAuthentication : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
 
 	@RequestMapping(value = "/createEmployee", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<EmployeeInfo> employeeCreation(HttpServletRequest request,
 			@RequestBody EmployeeInfo empObj) {
 		GenericResponse<EmployeeInfo> response = new GenericResponse<EmployeeInfo>();
 		try {
-			//for dev purposes
-			//File f = new File("E:\\Old Disk\\scanned documents\\DSC_0150.jpg");
-			//Blob blob = new SerialBlob(FileUtils.readFileToByteArray(f));
-			//empObj.setProfilePic(blob);
 			String generatedaPassword = loginService.createUser(empObj);
 			if (generatedaPassword != null) {
 				//send a onboard email to the employee.
