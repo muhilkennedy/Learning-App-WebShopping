@@ -27,6 +27,7 @@ import com.backend.commons.util.JWTUtil;
 import com.backend.commons.util.RSAUtil;
 import com.backend.core.interfaces.User;
 import com.backend.core.service.BaseService;
+import com.backend.core.util.ConfigUtil;
 import com.backend.persistence.entity.EmployeeInfo;
 
 /**
@@ -41,6 +42,9 @@ public class LoginController {
 	
 	@Autowired
 	private BaseService baseService;
+	
+	@Autowired
+	private ConfigUtil configUtil;
 	
 	@Autowired
 	private LoginService loginService;
@@ -98,6 +102,9 @@ public class LoginController {
 		try {
 			if (loginService.checkIfUserExists(empObj.getEmailId())) {
 				String otp = otpService.generateOtp(empObj.getEmailId() + CommonUtil.Key_employeeOTP);
+				if(!configUtil.isProdMode()) {
+					logger.info("OTP - " + otp);
+				}
 				emailService.sendOtpEmail(empObj.getEmailId(), otp);
 				response.setStatus(Response.Status.OK);
 			} else {

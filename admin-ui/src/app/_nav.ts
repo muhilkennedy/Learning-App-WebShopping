@@ -110,6 +110,6 @@ export const navItems: INavData[] = [
   {
     name: 'Media',
     url: '/media',
-    icon: 'icon-film'
+    icon: 'icon-film',
   }
 ];

@@ -7,6 +7,8 @@ import { UserStoreService } from '../../service/userStore/user-store.service';
 import { TenantStoreService } from '../../service/tenantStore/tenant-store.service';
 import { AlertService } from '../../shared/_alert';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CookieService } from 'ngx-cookie-service';
+import { constants } from 'buffer';
 
 declare var rsaencrypt: Function;
 
@@ -39,7 +41,8 @@ export class LoginComponent {
       private userService: UserStoreService,
       private loginService: LoginService,
       protected alertService: AlertService,
-      private _snackBar: MatSnackBar){
+      private _snackBar: MatSnackBar,
+      private cookieService: CookieService){
   }
 
   emailFormControl = new FormControl('', [
@@ -88,6 +91,8 @@ export class LoginComponent {
                 this.userService.userId = resp.dataList[0].employeeId;
                 this.userService.employeeAddress = resp.dataList[0].employeeAddress;
                 this.userService.employeePermissions = resp.dataList[0].employeePermissions;
+                this.cookieService.set("EmailId", this.userService.emailId);
+                this.cookieService.set("JWT", this.userService.JwtToken);
                 this.router.navigate(['/dashboard']);
               }
               else{

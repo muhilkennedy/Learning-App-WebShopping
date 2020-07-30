@@ -1,0 +1,169 @@
+<ngx-loading [show]="loading"></ngx-loading>
+<alert class="p-4 text-center"></alert>
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="card-header">
+          Home Slider Images
+          <div class="card-header-actions">
+            <a href="#" target="_blank">
+              <small className="text-muted">View Home</small>
+            </a>
+          </div>
+        </div>
+        <div class="card-body">
+          <carousel [interval]="false" >
+            <slide *ngFor="let slide of sliderImages">
+              <label>Media-ID -> {{slide.mediaId}}</label>
+              <img src={{slide.image}} alt="images" style="display: block; width: 100%;">
+            </slide>
+          </carousel>
+          <hr/>
+          <mat-hint><i class="fa fa-info-circle"></i> Suggested Resolution = 1900 x 700</mat-hint>
+          <div class="form-group">
+            <mat-radio-group
+              aria-labelledby="example-radio-group-label"
+              class="example-radio-group"
+              [(ngModel)]="sliderAction">
+              <mat-radio-button class="example-radio-button" *ngFor="let action of sliderActions" [value]="action">
+                {{action}}
+              </mat-radio-button>
+            </mat-radio-group>
+            <div *ngIf="showSliderUpdate(); else elseBlock">
+              <mat-form-field appearance="fill" class="matitem">
+                <mat-label>Image ID</mat-label>
+                <input matInput placeholder="Image-ID" [(ngModel)]="mediaId" required>
+              </mat-form-field>
+                <input type="file"
+                       id="updateFile"
+                       (change)="handleFileUpdate($event.target.files)">
+                <br/><br/>
+                <button mat-button class="btn btn-ghost-success" style="border: 1px solid;" (click)="updateSliderImage(mediaId)">
+                  <i class="fa fa-upload"></i> Update Image
+                </button>
+                <button mat-button class="btn btn-ghost-danger float-right" style="border: 1px solid;" (click)="removeImage(mediaId)">
+                  <i class="fa fa-remove"></i> Remove Image
+                </button>
+            </div>
+            <ng-template #elseBlock>
+              <hr/>
+              <br/>
+              <label for="file">Add New Image</label>
+              <input type="file"
+                    id="file"
+                    (change)="handleFileAdd($event.target.files)">
+              <button mat-button class="btn btn-ghost-success" style="border: 1px solid;" (click)="addImageToSlider()">
+                <i class="fa fa-upload"></i> Add Image
+              </button>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- SECOND CARD -->
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="card-header">
+          Home Media Images
+          <small> (intial load images)</small>
+        </div>
+        <div class="card-body">
+          <carousel [interval]="false">
+            <slide *ngFor="let slide of homeImages">
+              <label>Media-ID -> {{slide.mediaId}}</label>
+              <img src={{slide.image}} alt="slides" style="display: block; width: 100%;">
+              <div class="carousel-caption d-none d-md-block" style="color: black;">
+                <h3>{{slide.title}}</h3>
+                <p>{{slide.description}}</p>
+              </div>
+            </slide>
+          </carousel>
+          <hr/>
+          <mat-hint><i class="fa fa-info-circle"></i> Suggested Resolution = 1200 X 900</mat-hint><br/>
+          <mat-hint><i class="fa fa-warning"></i>
+            (Default Image Count = 2) Increasing the limit will result in UX change.<br/>
+            Raise a TICKET to increase the Media limit.
+          </mat-hint>
+          <div class="form-group">
+            <mat-radio-group
+              aria-labelledby="example-radio-group-label"
+              class="example-radio-group"
+              [(ngModel)]="homeMediaAction">
+              <mat-radio-button class="example-radio-button" *ngFor="let action of sliderActions" [value]="action">
+                {{action}}
+              </mat-radio-button>
+            </mat-radio-group>
+            <div *ngIf="showHomeUpdate(); else elseBlock1">
+              <mat-form-field appearance="fill" class="matitem">
+                <mat-label>Image ID</mat-label>
+                <input matInput placeholder="Title" [(ngModel)]="mediaId" required>
+              </mat-form-field>
+            <div>
+              <div>
+                <select id="select1" name="select1" class="form-control" [(value)]="selectedValue" (change)="changeSlected($event)">
+                  <option disabled value="">Select the Type of Media</option>
+                  <option value="none">NONE</option>
+                  <option value="shop">SHOP NOW</option>
+                  <option value="contact">CONTACT</option>
+                </select>
+              </div>
+              <br/>
+              <div >
+                <input type="text" id="text-input" name="text-input" class="form-control" placeholder="Media Title" [(ngModel)]="title">
+              </div>
+              <br/>
+              <div >
+                <input type="text" id="text-input" name="text-input" class="form-control" placeholder="Media Message" [(ngModel)]="message">
+              </div>
+              <br/>
+              <div>
+                <textarea id="textarea-input" name="textarea-input" rows="3" class="form-control" placeholder="Description..." [(ngModel)]="description"></textarea>
+              </div>
+              <br/>
+              <input type="file"
+              id="updateFile"
+              (change)="handleFileAdd($event.target.files)"/>
+              <br/><br/>
+              <button mat-button class="btn btn-ghost-success" style="border: 1px solid;" (click)="updateHomeImage(mediaId)">
+                  <i class="fa fa-upload"></i> Update Image
+              </button>
+              <button mat-button class="btn btn-ghost-danger float-right" style="border: 1px solid;" (click)="removeImage(mediaId)">
+                  <i class="fa fa-remove"></i> Remove Image
+              </button>
+            </div>
+          </div>
+          <ng-template #elseBlock1>
+            <div>
+              <select id="select1" name="select1" class="form-control" [(value)]="selectedValue" (change)="changeSlected($event)">
+                <option disabled value="">Select the Type of Media</option>
+                <option value="none">NONE</option>
+                <option value="shop">SHOP NOW</option>
+                <option value="contact">CONTACT</option>
+              </select>
+            </div>
+            <br/>
+            <div >
+              <input type="text" id="text-input" name="text-input" class="form-control" placeholder="Media Title" [(ngModel)]="title"/>
+            </div>
+            <br/>
+              <div >
+                <input type="text" id="text-input" name="text-input" class="form-control" placeholder="Message" [(ngModel)]="message">
+              </div>
+            <br/>
+            <div>
+              <textarea id="textarea-input" name="textarea-input" rows="3" class="form-control" placeholder="Description..." [(ngModel)]="description"></textarea>
+            </div>
+            <br/>
+            <input type="file"
+            id="updateFile"
+            (change)="handleFileAdd($event.target.files)"/>
+            <button mat-button class="btn btn-ghost-success float-right" style="border: 1px solid;" (click)="addImageToHome()">
+              <i class="fa fa-upload"></i> Add Home Image
+          </button>
+          </ng-template>
+      </div>
+    </div>
+
+  </div>
+</div>

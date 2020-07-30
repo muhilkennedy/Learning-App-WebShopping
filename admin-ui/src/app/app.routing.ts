@@ -39,6 +39,10 @@ export const routes: Routes = [
       {
         path: 'employee',
         loadChildren: () => import('./views/employee/employee.module').then(m => m.EmployeeModule)
+      },
+      {
+        path: 'media',
+        loadChildren: () => import('./views/media/media.module').then(m => m.MediaModule)
       }
     ]
   },

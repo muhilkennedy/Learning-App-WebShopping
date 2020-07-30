@@ -16,6 +16,7 @@ export class LoginService {
   sendOtpEndpoint = "/login/employeeForgotPassword";
   verifyOtpEndpoint ="/login/employeeOtpVerification";
   updatePasswordEndpoint = "/login/employeePasswordUpdate";
+  employeeTokenAuthEndpoint = "/secure/admin/employee/employeeTokenAuthentication"
 
   constructor(private http: HttpClient) {
 
@@ -68,6 +69,16 @@ export class LoginService {
       }),
     };
     return this.http.put(environment.backendBaseUrl+this.logoutEndPoint, httpOptions);
+  }
+
+  tokenAuth(token): Observable<any> {
+      const httpOptions = {
+        headers: new HttpHeaders({
+          // 'Authorization': 'Bearer '+token,
+          'Content-Type': 'application/json'
+        }),
+      };
+    return this.http.post(environment.backendBaseUrl+this.employeeTokenAuthEndpoint, '', httpOptions);
   }
 
 }
