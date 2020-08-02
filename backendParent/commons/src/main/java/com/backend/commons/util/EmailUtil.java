@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
 
 import com.backend.commons.configuration.SpringSocialProperties;
 import com.backend.core.service.BaseService;
@@ -70,7 +69,7 @@ public class EmailUtil {
 	 * @param attachments file
 	 */
 	public void sendEmail(List<String> recipientEmail, String subject, String body, Map<String, File> inlineImages, List<File> attachments) {
-		if (configUtil.isProdMode() && props.getGmail().isEnableMailing() ||true) {
+		if (configUtil.isProdMode() && props.getGmail().isEnableMailing()) {
 
 			String emailId = props.getGmail().getId();
 			String password = props.getGmail().getPassword();

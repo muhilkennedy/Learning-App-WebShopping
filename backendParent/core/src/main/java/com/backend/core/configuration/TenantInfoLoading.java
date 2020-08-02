@@ -15,9 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
+import com.backend.core.entity.HomePageMedia;
 import com.backend.core.entity.Tenant;
 import com.backend.core.entity.TenantDetails;
 import com.backend.core.security.RSAKeyPairGenerator;
+import com.backend.core.service.HomeMediaService;
 import com.backend.core.service.TenantService;
 
 /**
@@ -35,6 +37,9 @@ public class TenantInfoLoading {
 	@Autowired
 	private TenantService tenantService;
 	
+	@Autowired
+	private HomeMediaService mediaService;
+	
 	/**
 	 * This method is for dev purposes only. 
 	 * In future ER can be done to implement default data to onboarded tenant.(has to be merged as single method)
@@ -42,15 +47,45 @@ public class TenantInfoLoading {
 	@PostConstruct
 	private void loadTenantDetail() {
 		try {
+			//load Logo
 			File file = ResourceUtils.getFile(
 				      "classpath:devAssets/Brand-Icon.png");
 			Tenant devTenant = tenantService.findTenantByID("devTenant");
 			TenantDetails devTenantDetail = devTenant.getTenantDetail();
 			byte[] test = FileUtils.readFileToByteArray(file);
 			devTenantDetail.setTenantLogo(new SerialBlob(test));
+			
+			
+			//load Home Media
+			file = ResourceUtils.getFile(
+				      "classpath:devAssets/slider1.jpg");
+			// home slider images
+			HomePageMedia media = mediaService.getMediaById(devTenant, 1);
+			media.setImage(new SerialBlob(FileUtils.readFileToByteArray(file)));
+			mediaService.save(media);
+			
+			file = ResourceUtils.getFile(
+				      "classpath:devAssets/slider2.jpg");
+			media = mediaService.getMediaById(devTenant, 2);
+			media.setImage(new SerialBlob(FileUtils.readFileToByteArray(file)));
+			mediaService.save(media);
+			
+			file = ResourceUtils.getFile(
+				      "classpath:devAssets/Media1.jpg");
+			media = mediaService.getMediaById(devTenant, 3);
+			media.setImage(new SerialBlob(FileUtils.readFileToByteArray(file)));
+			mediaService.save(media);
+			
+			file = ResourceUtils.getFile(
+				      "classpath:devAssets/Mediator2.jpg");
+			media = mediaService.getMediaById(devTenant, 4);
+			media.setImage(new SerialBlob(FileUtils.readFileToByteArray(file)));
+			mediaService.save(media);
+			
 			tenantService.save(devTenant);
+			
 		} catch (Exception e) { 
-			e.printStackTrace();
+			logger.error("Exception in loading dev images - " + e.getMessage());
 		}		
 	}
 	

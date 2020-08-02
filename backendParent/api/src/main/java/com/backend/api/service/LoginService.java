@@ -15,4 +15,8 @@ public interface LoginService {
 
 	boolean updateEmployeePassword(String email, String newPassword);
 
+	void logoutUser();
+
+	void toggleUserStatus(boolean status);
+
 }

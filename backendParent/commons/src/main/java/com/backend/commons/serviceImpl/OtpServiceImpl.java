@@ -26,7 +26,7 @@ public class OtpServiceImpl implements OtpService {
  
 	private static final Integer EXPIRE_MINS = 5;
 	private LoadingCache<String, String> otpCache;
-
+	
 	public OtpServiceImpl() {
 		super();
 		otpCache = CacheBuilder.newBuilder().expireAfterWrite(EXPIRE_MINS, TimeUnit.MINUTES)

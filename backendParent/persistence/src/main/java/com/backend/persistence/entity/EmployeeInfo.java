@@ -107,7 +107,7 @@ public class EmployeeInfo implements Serializable, User{
 		this.employeePermissions = employeePermissions;
 	}
 
-	public Tenant getTenant() {
+	public Tenant fetchTenant() {
 		return tenant;
 	}
 

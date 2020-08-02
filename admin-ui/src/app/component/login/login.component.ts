@@ -7,6 +7,8 @@ import { UserStoreService } from '../../service/userStore/user-store.service';
 import { TenantStoreService } from '../../service/tenantStore/tenant-store.service';
 import { AlertService } from '../../shared/_alert';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CookieService } from 'ngx-cookie-service';
+import { constants } from 'buffer';
 
 declare var rsaencrypt: Function;
 
@@ -33,13 +35,15 @@ export class LoginComponent {
   showEmail = true;
   showOtp = false;
   showPassword = false;
+  rememberMe = false;
 
   constructor(private router: Router,
       private tenantStore: TenantStoreService,
       private userService: UserStoreService,
       private loginService: LoginService,
       protected alertService: AlertService,
-      private _snackBar: MatSnackBar){
+      private _snackBar: MatSnackBar,
+      private cookieService: CookieService){
   }
 
   emailFormControl = new FormControl('', [
@@ -63,6 +67,10 @@ export class LoginComponent {
     Validators.required
   ]);
 
+  toggleRememberMe(){
+    this.rememberMe = !this.rememberMe;
+  }
+
   login(){
     if(this.emailFormControl.hasError('email') || this.emailFormControl.hasError('required')){
       this.alertService.warn('Email Field has Errors', this.alertoptions);
@@ -72,7 +80,7 @@ export class LoginComponent {
     }
     else if(this.email!=undefined && this.password!=undefined){
       this.loading = true;
-      this.loginService.employeeLogin(this.email, rsaencrypt(this.password, this.tenantStore.publicKey))
+      this.loginService.employeeLogin(this.email, rsaencrypt(this.password, this.tenantStore.publicKey), this.rememberMe)
           .subscribe(
             (resp:any) => {
               if(resp.statusCode === 200){
@@ -88,6 +96,8 @@ export class LoginComponent {
                 this.userService.userId = resp.dataList[0].employeeId;
                 this.userService.employeeAddress = resp.dataList[0].employeeAddress;
                 this.userService.employeePermissions = resp.dataList[0].employeePermissions;
+                this.cookieService.set("EmailId", this.userService.emailId);
+                this.cookieService.set("JWT", this.userService.JwtToken);
                 this.router.navigate(['/dashboard']);
               }
               else{

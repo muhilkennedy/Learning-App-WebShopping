@@ -12,16 +12,21 @@ import { TenantStoreService } from '../tenantStore/tenant-store.service';
 export class LoginService {
 
   loginEndpoint = "/login/employeeAuthentication";
+  logoutEndPoint = "/login/secure/employeeLogout";
   sendOtpEndpoint = "/login/employeeForgotPassword";
   verifyOtpEndpoint ="/login/employeeOtpVerification";
   updatePasswordEndpoint = "/login/employeePasswordUpdate";
+  employeeTokenAuthEndpoint = "/secure/admin/employee/employeeTokenAuthentication"
 
   constructor(private http: HttpClient) {
 
   }
 
-  employeeLogin(email, pass) : Observable<any>{
-    const body = { emailId: email, password: pass };
+  employeeLogin(email, pass, rememberMe) : Observable<any>{
+    const body = {
+      employeeInfo : { emailId: email, password: pass },
+      rememberMe : rememberMe
+    };
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -58,6 +63,25 @@ export class LoginService {
       }),
     };
     return this.http.put(environment.backendBaseUrl+this.updatePasswordEndpoint, body, httpOptions);
+  }
+
+  logout() : Observable<any>{
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+    return this.http.put(environment.backendBaseUrl+this.logoutEndPoint, httpOptions);
+  }
+
+  tokenAuth(token): Observable<any> {
+      const httpOptions = {
+        headers: new HttpHeaders({
+          // 'Authorization': 'Bearer '+token,
+          'Content-Type': 'application/json'
+        }),
+      };
+    return this.http.post(environment.backendBaseUrl+this.employeeTokenAuthEndpoint, '', httpOptions);
   }
 
 }

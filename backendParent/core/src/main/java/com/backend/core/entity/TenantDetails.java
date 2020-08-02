@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.io.ByteStreams;
 
 /**
@@ -32,6 +33,7 @@ public class TenantDetails implements Serializable{
 	@Column(name="TENANTDETAILID")
 	private Integer tenantDetailId;
 
+	@JsonIgnore
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TENANTID", nullable = false)
 	private Tenant tenantID;
@@ -53,7 +55,16 @@ public class TenantDetails implements Serializable{
 	
 	@Column(name = "TENANTLOGO")
 	private Blob tenantLogo;
-
+	
+	@Column(name = "TENANTFACEBOOK")
+	private String tenantFacebook;
+	
+	@Column(name = "TENANTTWITTER")
+	private String tenantTwitter;
+	
+	@Column(name = "TENANTINSTA")
+	private String tenantInsta;
+	
 	public Integer getTenantDetailId() {
 		return tenantDetailId;
 	}
@@ -132,6 +143,30 @@ public class TenantDetails implements Serializable{
 
 	public void setTenantLogo(Blob tenantLogo) {
 		this.tenantLogo = tenantLogo;
+	}
+
+	public String getTenantFacebook() {
+		return tenantFacebook;
+	}
+
+	public void setTenantFacebook(String tenantFacebook) {
+		this.tenantFacebook = tenantFacebook;
+	}
+
+	public String getTenantTwitter() {
+		return tenantTwitter;
+	}
+
+	public void setTenantTwitter(String tenantTwitter) {
+		this.tenantTwitter = tenantTwitter;
+	}
+
+	public String getTenantInsta() {
+		return tenantInsta;
+	}
+
+	public void setTenantInsta(String tenantInsta) {
+		this.tenantInsta = tenantInsta;
 	}
 
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { CouponService } from '../../../shared/coupon/coupon.service';
+import { AlertService } from '../../../shared/_alert';
 
 @Component({
   selector: 'app-create-coupon',
@@ -27,7 +28,7 @@ export class CreateCouponComponent implements OnInit {
   startDate:Date;
   endDate:Date;
 
-  constructor(private coupService: CouponService) {
+  constructor(private coupService: CouponService, private alertService: AlertService) {
     this.minDateToBegin = new Date();
   }
 
@@ -55,17 +56,28 @@ export class CreateCouponComponent implements OnInit {
                     this.endDate, this.active, this.discount, this.freeShipping, this.userUsage)
                     .subscribe((resp:any) => {
                       if(resp.statusCode === 200){
-                        alert("coupon created");
+                        this.alertService.success('Coupon created successfully');
+                        this.reset();
                       }
                       else{
-                        alert("failure : " + resp.errorMessages );
+                        this.alertService.warn('Error : ' + resp.errorMessages);
                       }
                       this.loading = false;
                     },
                     (error:any)=>{
-                      alert("failed to create coupon");
+                      this.alertService.error('Something went wrong... try again later!');
                       this.loading = false;
                     });
+  }
+
+  reset(){
+    this.freeShipping = false;
+    this.title = '';
+    this.code = '';
+    this.discount = 0;
+    this.userUsage = 0;
+    this.endDate = null;
+    this.startDate = null;
   }
 
 }
