@@ -5,9 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.sql.rowset.serial.SerialBlob;
 import javax.transaction.Transactional;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -115,6 +117,26 @@ public class EmployeeServiceImpl implements EmployeeService {
 			permissionsMap.put(permission.getPermissionId(), permission);
 		});
 		return permissionsMap;
+	}
+	
+	@Override
+	public void updateEmployee(EmployeeInfo actualEmployee, EmployeeInfo updatedEmployee, byte[] profilePic) throws Exception {
+		if(profilePic != null) {
+			actualEmployee.setProfilePic(new SerialBlob(profilePic));
+		}
+		if(!StringUtils.isEmpty(updatedEmployee.getEmailId())) {
+			actualEmployee.setEmailId(updatedEmployee.getEmailId());
+		}
+		if(!StringUtils.isEmpty(updatedEmployee.getMobile())) {
+			actualEmployee.setMobile(updatedEmployee.getMobile());
+		}
+		if(!StringUtils.isEmpty(updatedEmployee.getFirstName())) {
+			actualEmployee.setFirstName(updatedEmployee.getFirstName());
+		}
+		if(!StringUtils.isEmpty(updatedEmployee.getLastName())) {
+			actualEmployee.setLastName(updatedEmployee.getLastName());
+		}
+		employeeRepo.save(actualEmployee);
 	}
 	
 }

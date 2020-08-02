@@ -43,6 +43,10 @@ export const routes: Routes = [
       {
         path: 'media',
         loadChildren: () => import('./views/media/media.module').then(m => m.MediaModule)
+      },
+      {
+        path: 'profile',
+        loadChildren: () => import('./views/profile/profile.module').then(m => m.ProfileModule)
       }
     ]
   },

@@ -1,4 +1,4 @@
-package com.backend.api.admin.controller;
+  package com.backend.api.admin.controller;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.api.admin.messages.EmployeePOJOHelper;
 import com.backend.api.messages.GenericResponse;
@@ -53,8 +54,15 @@ public class EmployeeController {
 		GenericResponse<EmployeeInfo> response = new GenericResponse<EmployeeInfo>();
 		try {
 			EmployeeInfo info = (EmployeeInfo)baseService.getUserInfo();
-			response.setData(empService.findEmployeeByEmail(info.getEmailId()));
-			response.setStatus(Response.Status.OK);
+			info = empService.findEmployeeByEmail(info.getEmailId());
+			response.setData(info);
+			if(info.isActive()) {
+				response.setStatus(Response.Status.OK);
+			}
+			else {
+				response.setErrorMessages(Arrays.asList("Account is Deactivated.. Please contact Admin!"));
+				response.setStatus(Response.Status.FORBIDDEN);
+			}
 		} catch (Exception ex) {
 			logger.error("employeeTokenAuthentication : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
@@ -89,6 +97,36 @@ public class EmployeeController {
 		return response;
 	}
 	
+	@RequestMapping(value = "/deactivateEmployee", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> deactivateEmployee(HttpServletRequest request) {
+		GenericResponse<String> response = new GenericResponse<String>();
+		try {
+			loginService.toggleUserStatus(false);
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("deactivateEmployee : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/activateEmployee", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> activateEmployee(HttpServletRequest request) {
+		GenericResponse<String> response = new GenericResponse<String>();
+		try {
+			loginService.toggleUserStatus(true);
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("activateEmployee : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
 	@RequestMapping(value = "/getAllPermissions", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<EmployeePermissions> getPermissions(HttpServletRequest request) {
 		GenericResponse<EmployeePermissions> response = new GenericResponse<EmployeePermissions>();
@@ -96,7 +134,7 @@ public class EmployeeController {
 			response.setDataList(empService.getAllGenericPermissions());
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
-			logger.error("employeeCreation : " + ex);
+			logger.error("getPermissions : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
@@ -171,7 +209,7 @@ public class EmployeeController {
 	}
 	
 	@RequestMapping(value = "/activateEmployee", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<EmployeeInfo> updateEmployeeStatus(HttpServletRequest request, @RequestBody EmployeePOJOHelper helper) {
+	public GenericResponse<EmployeeInfo> activateEmployee(HttpServletRequest request, @RequestBody EmployeePOJOHelper helper) {
 		GenericResponse<EmployeeInfo> response = new GenericResponse<EmployeeInfo>();
 		try {
 			EmployeeInfo empInfo = empService.findEmployeeById(helper.getEmployeeId());
@@ -185,7 +223,41 @@ public class EmployeeController {
 				response.setStatus(Response.Status.ERROR);
 			}
 		} catch (Exception ex) {
-			logger.error("updateEmployeeStatus : " + ex);
+			logger.error("activateEmployee : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/updateEmployee", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<EmployeeInfo> updateEmployee(HttpServletRequest request, @RequestParam(value = "myFile", required = false) MultipartFile file,
+														@RequestParam(value = "id", required = true) int id,
+														@RequestParam(value = "firstName", required = false) String firstName,
+														@RequestParam(value = "lastName", required = false) String lastName,
+														@RequestParam(value = "emailId", required = false) String emailId,
+														@RequestParam(value = "mobile", required = false) String mobile) {
+		GenericResponse<EmployeeInfo> response = new GenericResponse<EmployeeInfo>();
+		EmployeeInfo employeeInfo = new EmployeeInfo();
+		employeeInfo.setEmployeeId(id);
+		employeeInfo.setFirstName(firstName);
+		employeeInfo.setLastName(lastName);
+		employeeInfo.setEmailId(emailId);
+		employeeInfo.setMobile(mobile);
+		try {
+			EmployeeInfo empInfo = empService.findEmployeeById(employeeInfo.getEmployeeId());
+			if(empInfo!=null) {
+				empService.updateEmployee(empInfo, employeeInfo, (file != null)? file.getBytes() : null);
+				response.setData(empInfo);
+				response.setStatus(Response.Status.OK);
+			}
+			else {
+				response.setErrorMessages(Arrays.asList("No Employee Found"));
+				response.setStatus(Response.Status.ERROR);
+			}
+		} catch (Exception ex) {
+			logger.error("updateEmployee : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);

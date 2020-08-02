@@ -19,6 +19,7 @@ import com.backend.api.admin.messages.EmployeePOJOHelper;
 import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.JWTResponse;
 import com.backend.api.messages.Response;
+import com.backend.api.messages.UserPOJOHelper;
 import com.backend.api.service.LoginService;
 import com.backend.commons.service.EmailService;
 import com.backend.commons.service.OtpService;
@@ -56,14 +57,15 @@ public class LoginController {
 	private EmailService emailService;
 	
 	@RequestMapping(value = "/employeeAuthentication", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<JWTResponse> employeeLogin(HttpServletRequest request, @RequestBody EmployeeInfo empObj) {
+	public GenericResponse<JWTResponse> employeeLogin(HttpServletRequest request, @RequestBody UserPOJOHelper userObj) {
 		GenericResponse<JWTResponse> response = new GenericResponse<JWTResponse>();
 		try {
+			EmployeeInfo empObj = userObj.getEmployeeInfo();
 			empObj.setPassword(RSAUtil.decrypt(empObj.fetchPassword(), baseService.getTenantInfo().fetchPrivateKey()));
 			User empInfo = loginService.loginUser(empObj);
 			if (empInfo != null) {
 				JWTResponse token = new JWTResponse();
-				token.setToken(JWTUtil.generateToken(empObj.getEmailId(), CommonUtil.Key_employeeUser));
+				token.setToken(JWTUtil.generateToken(empObj.getEmailId(), CommonUtil.Key_employeeUser, userObj.isRememberMe()));
 				token.setExpiry(JWTUtil.getExpirationDateFromToken(token.getToken()).getTime());
 				response.setData(token);
 				response.setDataList(Arrays.asList(empInfo));

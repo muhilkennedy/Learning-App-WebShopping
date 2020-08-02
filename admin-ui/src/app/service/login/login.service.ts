@@ -22,8 +22,11 @@ export class LoginService {
 
   }
 
-  employeeLogin(email, pass) : Observable<any>{
-    const body = { emailId: email, password: pass };
+  employeeLogin(email, pass, rememberMe) : Observable<any>{
+    const body = {
+      employeeInfo : { emailId: email, password: pass },
+      rememberMe : rememberMe
+    };
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',

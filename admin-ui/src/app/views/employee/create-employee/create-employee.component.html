@@ -12,15 +12,12 @@
             </button>
           </div>
           <div class="float-right">
-            <mat-slide-toggle
+            <mat-slide-toggle matTooltip="Activate Account"
               color="warn"
               [checked]="activeUser"
               (change)="slidetoggle()">
             </mat-slide-toggle>
-            <button mat-button [disabled]="true" style="text-align: inherit; color: gray;">
-              <mat-icon class="with-icon">verified_user</mat-icon>
-              <span class="icon-text"> Activate Employee</span><br/>
-            </button>
+            <i class="fa fa-shield" style="visibility: hidden;"></i>
           </div>
         </div>
         <div class="card-body">
