@@ -117,6 +117,7 @@ export class MediaComponent implements OnInit {
   }
 
   updateHomeImage(mediaId){
+    this.loading = true;
     this.mediaService.updateImage(this.fileToAdd, mediaId, false, this.isShopNow, this.isContact, this.title, this.description, this.message)
                      .subscribe((resp:any) => {
                       if(resp.statusCode === 200){

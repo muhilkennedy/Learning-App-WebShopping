@@ -17,4 +17,6 @@ public interface LoginService {
 
 	void logoutUser();
 
+	void toggleUserStatus(boolean status);
+
 }

@@ -28,6 +28,9 @@
                       <mat-error *ngIf="passwordFormControl.hasError('required')">
                         Password is <strong>required</strong>
                       </mat-error></mat-form-field>
+                  <div class="alternate-theme">
+                    <mat-checkbox class="example-margin" color="accent" [(ngModel)]="rememberMe" (change)="toggleRememberMe()" name="remember">Remember Me</mat-checkbox>
+                  </div>
                   </div>
                   <div class="row">
                     <div class="col-6">

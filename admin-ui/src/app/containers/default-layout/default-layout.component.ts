@@ -14,7 +14,7 @@ export class DefaultLayoutComponent implements OnInit{
   public sidebarMinimized = false;
   public navItems = navItems;
   public finalNavItems: any[] = new Array();
-  public profilePic = "assets/img/avatars/Blank-Profile.jpg";
+  public defaultAvatar = "assets/img/avatars/Blank-Profile.jpg";
   public userPermissions: any[];
   public loading = false;
 
@@ -23,17 +23,18 @@ export class DefaultLayoutComponent implements OnInit{
               private loginService: LoginService,
               private cookieService: CookieService){
 
-    if(this.userStore.profilePic != null){
-      this.profilePic = this.userStore.profilePic;
-    }
     this.userPermissions = this.userStore.employeePermissions;
-
     this.setViewsBasedOnPermisssions();
 
-    // if(!environment.production && (this.userStore.JwtToken === undefined)){
-    //   this.finalNavItems = navItems;
-    // }
+  }
 
+  checkImage(image){
+    if(image === undefined || image === null){
+      return this.defaultAvatar;
+    }
+    else{
+      return image;
+    }
   }
 
   removeNavItem(itemUrl: string){
@@ -131,10 +132,10 @@ export class DefaultLayoutComponent implements OnInit{
                         }
                         else{
                           alert(resp.status + " : " + resp.errorMessages);
+                          this.router.navigate(['/login']);
                         }
                        },
                        (error) => {
-                         alert('dev login failed!');
                          this.router.navigate(['/login']);
                        })
     }
@@ -161,5 +162,13 @@ export class DefaultLayoutComponent implements OnInit{
                         alert("logout failed");
                       });
 
+  }
+
+  lockProfile(){
+    this.router.navigate(['/lockAccount']);
+  }
+
+  profile(){
+    this.router.navigate(['/profile']);
   }
 }

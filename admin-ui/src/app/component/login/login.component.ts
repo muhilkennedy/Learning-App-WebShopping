@@ -35,6 +35,7 @@ export class LoginComponent {
   showEmail = true;
   showOtp = false;
   showPassword = false;
+  rememberMe = false;
 
   constructor(private router: Router,
       private tenantStore: TenantStoreService,
@@ -66,6 +67,10 @@ export class LoginComponent {
     Validators.required
   ]);
 
+  toggleRememberMe(){
+    this.rememberMe = !this.rememberMe;
+  }
+
   login(){
     if(this.emailFormControl.hasError('email') || this.emailFormControl.hasError('required')){
       this.alertService.warn('Email Field has Errors', this.alertoptions);
@@ -75,7 +80,7 @@ export class LoginComponent {
     }
     else if(this.email!=undefined && this.password!=undefined){
       this.loading = true;
-      this.loginService.employeeLogin(this.email, rsaencrypt(this.password, this.tenantStore.publicKey))
+      this.loginService.employeeLogin(this.email, rsaencrypt(this.password, this.tenantStore.publicKey), this.rememberMe)
           .subscribe(
             (resp:any) => {
               if(resp.statusCode === 200){

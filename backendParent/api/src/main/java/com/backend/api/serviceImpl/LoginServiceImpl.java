@@ -133,5 +133,15 @@ public class LoginServiceImpl implements LoginService {
 		}
 		return false;
 	}
+	
+	@Override
+	public void toggleUserStatus(boolean status) {
+		User user = baseService.getUserInfo();
+		if(user != null && user instanceof EmployeeInfo) {
+			EmployeeInfo info = (EmployeeInfo) baseService.getUserInfo();
+			info.setActive(status);
+			empService.save(info);
+		}
+	}
 
 }
