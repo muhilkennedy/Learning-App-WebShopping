@@ -54,6 +54,8 @@ import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS } from '@angular/common
 import { TenantStoreService } from './service/tenantStore/tenant-store.service';
 import { environment } from 'src/environments/environment';
 import { InterceptorService } from './service/interceptor/interceptor.service';
+import { HomePageComponent } from './components/home-page/home-page.component';
+import { LoginComponent } from './components/login/login.component';
 
 @Injectable()
 export class TenantInitializer {
@@ -88,12 +90,13 @@ export class TenantInitializer {
                 }
               );
           // load app only if tenant is active.
-          // setTimeout(() => {
-          //   if(this.tenantStore.tenantActive === true){
-          //     resolve();
-          //   }
-          // }, 3000);
-          resolve();
+          let sec = 0;
+          setTimeout(() => {
+            if(this.tenantStore.tenantActive === true){
+              resolve();
+            }
+          }, 1000);
+          // resolve();
     });
   }
 }
@@ -107,7 +110,9 @@ export function init_tenant(initializer: TenantInitializer) {
     AppComponent,
     HomeComponent,
     FeaturedComponent,
-    ContactComponent
+    ContactComponent,
+    HomePageComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,

@@ -56,7 +56,7 @@
     "ngx-loading": "^8.0.0",
     "ngx-perfect-scrollbar": "^9.0.0",
     "rxjs": "^6.5.5",
-    "simple-line-icons": "^2.4.1",
+    "simple-line-icons": "2.4.1",
     "ts-helpers": "^1.1.2",
     "tslib": "^1.11.1",
     "web-animations-js": "^2.3.2",
