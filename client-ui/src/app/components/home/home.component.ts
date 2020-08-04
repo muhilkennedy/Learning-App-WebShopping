@@ -3,14 +3,15 @@ import { HomeService } from 'src/app/shared/service/home.service';
 import { TenantStoreService } from 'src/app/service/tenantStore/tenant-store.service';
 import { environment } from 'src/environments/environment';
 
+declare var mainSlider: Function;
+declare var rerun: Function;
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent  {
-
-  // image = [944, 1011, 984].map((n) => `https://picsum.photos/id/${n}/900/500`);
 
   loading = false;
   wait = true;
@@ -20,7 +21,7 @@ export class HomeComponent  {
   homeSlider:any = new Array();
 
   //dummy variable to iterate for home media images.
-  images:any = new Array(environment.homeMediaCount);
+  images:any = new Array();
   shouldShow = false;
   show(media:any): boolean{
     if(media === undefined || media === null){
@@ -32,7 +33,7 @@ export class HomeComponent  {
   }
 
    constructor(private homeService: HomeService, public tenantStore: TenantStoreService) {
-
+    this.images = new Array(this.tenantStore.tenantHomeMediaLength);
     this.loading = true;
     this.homeService.getAllHomeMedia()
             .subscribe((resp:any) => {
@@ -47,6 +48,8 @@ export class HomeComponent  {
               });
               this.images = new Array(this.homeMedia.length);
               this.shouldShow = true;
+              // rerun the main.js script to load the styles.
+              rerun();
             },
             (error) => {
               alert("loading data failed");
@@ -55,6 +58,7 @@ export class HomeComponent  {
 
   ngOnInit(): void {
     console.log("init");
+    // mainSlider();
   }
 
   getBool(value): Boolean{
