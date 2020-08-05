@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AlertService } from '../../shared/_alert';
 import { UserStoreService } from '../../service/userStore/user-store.service';
 import { ProfileService } from '../../shared/profile/profile.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   templateUrl: 'profile.component.html',
@@ -30,10 +31,12 @@ export class ProfileComponent implements OnInit {
   pincode: string;
   empId: number;
   fileToUpdate: File;
+  profilePic: string;
 
   constructor(private userStore: UserStoreService,
               private alertService: AlertService,
-              private profileService: ProfileService){
+              private profileService: ProfileService,
+              private sanitizer: DomSanitizer){
 
   }
 
@@ -45,6 +48,7 @@ export class ProfileComponent implements OnInit {
     this.email = this.userStore.emailId;
     this.designation = this.userStore.designation;
     this.mobile = this.userStore.mobile;
+    this.profilePic = this.userStore.profilePic;
     let address:any[] = this.userStore.employeeAddress;
   }
 
@@ -53,11 +57,12 @@ export class ProfileComponent implements OnInit {
       return this.defaultAvatar;
     }
     else{
-      return image;
+      return this.sanitizer.bypassSecurityTrustUrl(image);;
     }
   }
 
   handleFileUpdate(files: FileList) {
+    this.profilePic = URL.createObjectURL(files.item(0));
     this.fileToUpdate = files.item(0);
   }
 

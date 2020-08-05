@@ -165,7 +165,19 @@ export class DefaultLayoutComponent implements OnInit{
   }
 
   lockProfile(){
-    this.router.navigate(['/lockAccount']);
+    this.loading = true;
+    this.loginService.lockEmployee()
+                    .subscribe((resp:any) => {
+                      this.userStore = null;
+                      this.loading = false;
+                      //in case of remember me functionality this has to modified
+                      this.cookieService.deleteAll();
+                      alert("Account Locked! Please contact admin to activate your account");
+                      this.router.navigate(['/login']);
+                    },
+                    (error) => {
+                      alert("Account Deactivation Failed!");
+                    });
   }
 
   profile(){

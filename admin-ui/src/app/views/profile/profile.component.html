@@ -6,7 +6,7 @@
     <!-- left column -->
     <div class="col-md-3">
       <div class="text-center">
-        <img src={{checkImage(userInfo.profilePic)}} class="avatar img-circle profileImg" alt="avatar">
+        <img [src]='checkImage(profilePic)' class="avatar img-circle profileImg" alt="avatar">
         <h6>Upload a different photo...</h6>
         <input type="file" (change)="handleFileUpdate($event.target.files)">
         <br/>
@@ -50,9 +50,9 @@
         <div class="form-group">
           <label class="col-md-3 control-label"></label>
           <div class="col-md-8">
-            <input type="button" class="btn btn-primary" value="Save Changes" (click) = "save()">
-            <span></span>
-            <input type="reset" class="btn btn-default" value="Cancel">
+            <button class="btn btn-primary float-right" (click) = "save()">
+              <i class="fa fa-save"></i><span> Save Changes</span>
+            </button>
           </div>
         </div>
       </form>
