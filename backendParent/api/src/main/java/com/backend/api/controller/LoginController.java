@@ -64,12 +64,19 @@ public class LoginController {
 			empObj.setPassword(RSAUtil.decrypt(empObj.fetchPassword(), baseService.getTenantInfo().fetchPrivateKey()));
 			User empInfo = loginService.loginUser(empObj);
 			if (empInfo != null) {
-				JWTResponse token = new JWTResponse();
-				token.setToken(JWTUtil.generateToken(empObj.getEmailId(), CommonUtil.Key_employeeUser, userObj.isRememberMe()));
-				token.setExpiry(JWTUtil.getExpirationDateFromToken(token.getToken()).getTime());
-				response.setData(token);
-				response.setDataList(Arrays.asList(empInfo));
-				response.setStatus(Response.Status.OK);
+				EmployeeInfo eInfo = (EmployeeInfo) empInfo;
+				if(eInfo.isActive()) {
+					JWTResponse token = new JWTResponse();
+					token.setToken(JWTUtil.generateToken(empObj.getEmailId(), CommonUtil.Key_employeeUser, userObj.isRememberMe()));
+					token.setExpiry(JWTUtil.getExpirationDateFromToken(token.getToken()).getTime());
+					response.setData(token);
+					response.setDataList(Arrays.asList(empInfo));
+					response.setStatus(Response.Status.OK);
+				}
+				else {
+					response.setErrorMessages(Arrays.asList("Account is Deactivated.. Please contact Admin!"));
+					response.setStatus(Response.Status.FORBIDDEN);
+				}
 			} else {
 				response.setErrorMessages(Arrays.asList("Invalid User Credentials"));
 				response.setStatus(Response.Status.FORBIDDEN);
