@@ -16,7 +16,21 @@ export class DashboardComponent implements OnInit {
  }
 
   ngOnInit(): void {
-    this.userPermissions = this.userStore.employeePermissions;
+    let onLoad = setInterval(() => {
+      this.userPermissions = this.userStore.employeePermissions;
+      if(this.userPermissions != undefined && this.userPermissions.length > 0){
+        let permissionIds = new Array(4);
+        this.userPermissions.forEach(permission => {
+          permissionIds.push(permission.permission.permissionId);
+        });
+        if(permissionIds.includes(1)){
+          this.showAdminCard = true;
+        }
+
+        clearInterval(onLoad);
+      }
+    }, 500);
+
   }
 
 }

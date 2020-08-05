@@ -17,6 +17,7 @@ export class LoginService {
   verifyOtpEndpoint ="/login/employeeOtpVerification";
   updatePasswordEndpoint = "/login/employeePasswordUpdate";
   employeeTokenAuthEndpoint = "/secure/admin/employee/employeeTokenAuthentication"
+  deactivateEmployeeEndpoint = "/secure/admin/employee/deactivateEmployee";
 
   constructor(private http: HttpClient) {
 
@@ -77,11 +78,14 @@ export class LoginService {
   tokenAuth(token): Observable<any> {
       const httpOptions = {
         headers: new HttpHeaders({
-          // 'Authorization': 'Bearer '+token,
           'Content-Type': 'application/json'
         }),
       };
     return this.http.post(environment.backendBaseUrl+this.employeeTokenAuthEndpoint, '', httpOptions);
+  }
+
+  lockEmployee(): Observable<any>{
+    return this.http.put(environment.backendBaseUrl+this.deactivateEmployeeEndpoint, '');
   }
 
 }
