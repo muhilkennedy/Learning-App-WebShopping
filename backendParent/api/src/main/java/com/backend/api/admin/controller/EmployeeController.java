@@ -1,5 +1,6 @@
   package com.backend.api.admin.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -97,7 +98,7 @@ public class EmployeeController {
 		return response;
 	}
 	
-	@RequestMapping(value = "/deactivateEmployee", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/deactivateEmployee", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<String> deactivateEmployee(HttpServletRequest request) {
 		GenericResponse<String> response = new GenericResponse<String>();
 		try {
@@ -105,21 +106,6 @@ public class EmployeeController {
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("deactivateEmployee : " + ex);
-			List<String> msg = Arrays.asList(ex.getMessage());
-			response.setErrorMessages(msg);
-			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
-		}
-		return response;
-	}
-	
-	@RequestMapping(value = "/activateEmployee", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<String> activateEmployee(HttpServletRequest request) {
-		GenericResponse<String> response = new GenericResponse<String>();
-		try {
-			loginService.toggleUserStatus(true);
-			response.setStatus(Response.Status.OK);
-		} catch (Exception ex) {
-			logger.error("activateEmployee : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
@@ -170,11 +156,34 @@ public class EmployeeController {
 	public GenericResponse<EmployeeInfo> getAllEmployee(HttpServletRequest request) {
 		GenericResponse<EmployeeInfo> response = new GenericResponse<EmployeeInfo>();
 		try {
-			List<EmployeeInfo> empInfo = empService.findAllEmployeeForTenant();
+			String limit = request.getHeader(Constants.Header_Limit);
+			String offset = request.getHeader(Constants.Header_Offset);
+			List<EmployeeInfo> empInfo = new ArrayList<EmployeeInfo>();
+			if(limit != null && offset != null) {
+				empInfo = empService.findAllEmployeeForTenant(Integer.parseInt(offset), Integer.parseInt(limit));
+			}
+			else {
+				empInfo	= empService.findAllEmployeeForTenant();
+			}
 			if(empInfo!=null) {
 				response.setDataList(empInfo);
 				response.setStatus(Response.Status.OK);
 			}			
+		} catch (Exception ex) {
+			logger.error("getAllEmployee : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/getAllEmployeesCount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Integer> getAllEmployeesCount(HttpServletRequest request) {
+		GenericResponse<Integer> response = new GenericResponse<Integer>();
+		try {
+			response.setData(empService.findAllEmployeesForTenantCount());
+			response.setStatus(Response.Status.OK);			
 		} catch (Exception ex) {
 			logger.error("getAllEmployee : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());

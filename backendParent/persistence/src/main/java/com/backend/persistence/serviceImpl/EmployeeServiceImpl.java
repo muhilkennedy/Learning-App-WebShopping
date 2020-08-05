@@ -5,12 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.TypedQuery;
 import javax.sql.rowset.serial.SerialBlob;
 import javax.transaction.Transactional;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.backend.core.service.BaseService;
@@ -79,8 +83,18 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 	
 	@Override
-	public List<EmployeeInfo> findAllEmployeeForTenant (){
+	public int findAllEmployeesForTenantCount(){
+		return employeeRepo.findAllEmployeesCount(baseService.getTenantInfo());
+	}
+	
+	@Override
+	public List<EmployeeInfo> findAllEmployeeForTenant() {
 		return employeeRepo.findAllEmployees(baseService.getTenantInfo());
+	}
+	
+	@Override
+	public List<EmployeeInfo> findAllEmployeeForTenant(int offset, int limit) {
+		return employeeRepo.findLimitedEmployees(baseService.getTenantInfo().getTenantID(), limit, offset);
 	}
 	
 	@Override
