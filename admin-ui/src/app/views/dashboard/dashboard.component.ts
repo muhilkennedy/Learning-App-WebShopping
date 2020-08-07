@@ -10,6 +10,7 @@ export class DashboardComponent implements OnInit {
 
  showAdminCard: boolean = false;
  public userPermissions: any[];
+ public date: Date = new Date();
 
  constructor(private userStore: UserStoreService){
 

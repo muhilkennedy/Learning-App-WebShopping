@@ -187,7 +187,7 @@ export function init_tenant(initializer: TenantInitializer) {
     AppComponent,
     ...APP_CONTAINERS,
     LoginComponent,
-    NotFoundComponent
+    NotFoundComponent,
   ],
   providers: [{
     provide: LocationStrategy,
