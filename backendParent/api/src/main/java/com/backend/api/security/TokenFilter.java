@@ -86,7 +86,8 @@ public class TokenFilter implements Filter {
 			// validate token in case of logout and token auth
 			if(req.getRequestURI().contains("employeeLogout") 
 					|| req.getRequestURI().contains("employeeTokenAuthentication")
-					|| req.getRequestURI().contains("deactivateEmployee") ) {
+					|| req.getRequestURI().contains("deactivateEmployee")
+					|| req.getRequestURI().contains("todo")) {
 				String token = req.getHeader(HttpHeaders.AUTHORIZATION);
 				if (token != null && !StringUtils.isEmpty(JWTUtil.extractToken(token))) {
 					try {
