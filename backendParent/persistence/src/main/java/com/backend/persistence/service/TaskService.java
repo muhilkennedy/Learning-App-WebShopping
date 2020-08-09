@@ -21,4 +21,6 @@ public interface TaskService {
 
 	void updateTask(int id, String status);
 
+	List<Task> findAllOverdueTasks();
+
 }

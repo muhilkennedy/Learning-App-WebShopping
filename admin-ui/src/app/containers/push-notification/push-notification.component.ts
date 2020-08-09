@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NotificationService } from '../../shared/notification/notification.service';
 import { AlertService } from '../../shared/_alert';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-push-notification',
@@ -9,15 +10,20 @@ import { AlertService } from '../../shared/_alert';
 })
 export class PushNotificationComponent implements OnInit {
 
-  notifications:any[];
+  notifications:any[] = new Array();
   loading = true;
 
   constructor(private notificationService: NotificationService,
-              private alertService: AlertService) { }
+              private alertService: AlertService,
+              private cookieService: CookieService) { }
 
   ngOnInit(): void {
-    this.getNotifications();
-    setInterval(() => { this.getNotifications() }, 60000);
+    let allowCall =this.cookieService.get('JWT');
+      if(allowCall != null && allowCall != undefined && allowCall != ''){
+        this.getNotifications();
+        setInterval(() => { this.getNotifications() }, 60000);
+    }
+
   }
 
   getNotifications(){

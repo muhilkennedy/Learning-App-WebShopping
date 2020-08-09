@@ -89,7 +89,7 @@ public class TaskServiceImpl implements TaskService {
 	
 	@Override
 	public void updateTask(int id, String status) {
-		Task task = taskRepo.findTaskById(baseService.getTenantInfo(), (EmployeeInfo) baseService.getUserInfo(), id);
+		Task task = taskRepo.findTaskAssignedById(baseService.getTenantInfo(), (EmployeeInfo) baseService.getUserInfo(), id);
 		if(status.equalsIgnoreCase(Key_Status_Completed)) {
 			task.setStatus(Key_Status_Completed);
 		}
@@ -99,6 +99,11 @@ public class TaskServiceImpl implements TaskService {
 		else if(status.equalsIgnoreCase(Key_Status_Pending)) {
 			task.setStatus(Key_Status_Pending);
 		}
+	}
+	
+	@Override
+	public List<Task> findAllOverdueTasks() {
+		return taskRepo.findAllOverdueTasks(baseService.getTenantInfo(), new Date());
 	}
 
 }
