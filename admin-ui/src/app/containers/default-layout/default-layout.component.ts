@@ -8,9 +8,11 @@ import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-dashboard',
-  templateUrl: './default-layout.component.html'
+  templateUrl: './default-layout.component.html',
+  styleUrls: ['default-layout.component.scss']
 })
 export class DefaultLayoutComponent implements OnInit{
+  rightSide = false;
   public sidebarMinimized = false;
   public navItems = navItems;
   public finalNavItems: any[] = new Array();
@@ -26,6 +28,10 @@ export class DefaultLayoutComponent implements OnInit{
     this.userPermissions = this.userStore.employeePermissions;
     this.setViewsBasedOnPermisssions();
 
+  }
+
+  showNotifications(){
+    this.rightSide = true;
   }
 
   checkImage(image){
@@ -182,5 +188,9 @@ export class DefaultLayoutComponent implements OnInit{
 
   profile(){
     this.router.navigate(['/profile']);
+  }
+
+  tasks(){
+    this.router.navigate(['/task',true]);
   }
 }

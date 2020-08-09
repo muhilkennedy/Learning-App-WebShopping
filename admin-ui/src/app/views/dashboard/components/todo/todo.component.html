@@ -2,7 +2,7 @@
 <div class="card">
   <ngx-loading [show]="loading"></ngx-loading>
   <div class="card-header">
-    TODO
+    <i class="fa fa-sticky-note-o"></i>TODO
     <div class="card-header-actions">
       {{date | date : 'fullDate'}}
     </div>
@@ -21,7 +21,7 @@
             <span class="hover-cursor mousestyle" [class.text-success]="item.done" >
               <i class="fa fa-lg" [ngClass]="item.done?'fa-check-circle-o':'fa-circle-thin'" (click)="item.done = !item.done; changeStatus(item)"></i>
             </span>
-            {{item.content}}
+            <span [ngClass]="item.done ? 'strikethrough' : 'null'">{{item.content}}</span>
             <span class="hover-cursor text-danger pull-right mousestyle" >
               <i class="fa fa-trash-o fa-lg" (click)="removeTodo(item)"></i>
             </span>

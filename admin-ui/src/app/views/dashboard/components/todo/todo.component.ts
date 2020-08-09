@@ -43,6 +43,7 @@ export class TodoComponent implements OnInit {
                     .subscribe((resp:any) => {
                       if(resp.statusCode === 200){
                         this.toDoListArray = resp.dataList;
+                        this.content = '';
                       }
                       else{
                         this.alertService.error('Failed : ' + resp.errorMessages);

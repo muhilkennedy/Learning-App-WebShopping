@@ -152,6 +152,22 @@ public class EmployeeController {
 		return response;
 	}
 	
+	@RequestMapping(value = "/getAllEmployeeNames", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<EmployeeInfo> getAllEmployeeNames(HttpServletRequest request) {
+		GenericResponse<EmployeeInfo> response = new GenericResponse<EmployeeInfo>();
+		try {
+			response.setDataList(empService.findAllEmployeeNameAndEmailForTenant());
+			response.setStatus(Response.Status.OK);
+
+		} catch (Exception ex) {
+			logger.error("getEmployee : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
 	@RequestMapping(value = "/getAllEmployee", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<EmployeeInfo> getAllEmployee(HttpServletRequest request) {
 		GenericResponse<EmployeeInfo> response = new GenericResponse<EmployeeInfo>();

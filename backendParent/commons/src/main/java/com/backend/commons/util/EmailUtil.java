@@ -71,8 +71,8 @@ public class EmailUtil {
 	public void sendEmail(List<String> recipientEmail, String subject, String body, Map<String, File> inlineImages, List<File> attachments) {
 		if (configUtil.isProdMode() && props.getGmail().isEnableMailing()) {
 
-			String emailId = props.getGmail().getId();
-			String password = props.getGmail().getPassword();
+			String emailId = baseService.getTenantInfo().getTenantDetail().getBusinessEmail();
+			String password = baseService.getTenantInfo().getTenantDetail().getBusinessEmailPassword();
 			
 			// Set system properties
 			Properties props = new Properties();

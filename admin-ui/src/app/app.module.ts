@@ -82,6 +82,7 @@ import { InterceptorService } from './service/interceptor/interceptor.service';
 import { TenantStoreService } from './service/tenantStore/tenant-store.service';
 import { environment } from '../environments/environment';
 import { NotFoundComponent } from './component/not-found/not-found.component';
+import { PushNotificationComponent } from './containers/push-notification/push-notification.component';
 
 
 @Injectable()
@@ -188,6 +189,7 @@ export function init_tenant(initializer: TenantInitializer) {
     ...APP_CONTAINERS,
     LoginComponent,
     NotFoundComponent,
+    PushNotificationComponent,
   ],
   providers: [{
     provide: LocationStrategy,

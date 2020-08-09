@@ -27,6 +27,8 @@ public interface EmployeeInfoRepository extends JpaRepository<EmployeeInfo, Inte
 	String findLimitedEmployeesQuery = "select * from EmployeeInfo where tenantid = ?1 limit ?2 offset ?3";
 	String deleteAllEmployeesQuery = "delete from EmployeeInfo where tenant = :tenant";
 	String findEmployeeByEmailOrIdQuery = "select emp from EmployeeInfo emp where emp.emailId = :emailId OR emp.employeeId = :emailId and emp.tenant = :tenant";
+	String findAllEmployeeNameAndEmailForTenantQuery = "select employeeId,emailId,fName,lName from EmployeeInfo emp where emp.tenantid = :tenant";
+	String findMatchingEmployeeQuery = "select * from EmployeeInfo where tenantid = ?1 and emailid like %?2%";
 	
 	@Query(findEmployeeByEmailQuery)
 	EmployeeInfo findEmployeeByEmail(@Param("emailId") String emailId, @Param("tenant") Tenant realm);
@@ -37,11 +39,17 @@ public interface EmployeeInfoRepository extends JpaRepository<EmployeeInfo, Inte
 	@Query(value = findLimitedEmployeesQuery, nativeQuery = true)
 	List<EmployeeInfo> findLimitedEmployees(String tenant, int limit, int offset);
 	
+	@Query(value = findMatchingEmployeeQuery, nativeQuery = true)
+	List<EmployeeInfo> findMatchingEmployee(String tenant, String keyword);
+	
 	@Query(findAllEmployeesQuery)
 	List<EmployeeInfo> findAllEmployees(@Param("tenant") Tenant realm);
 	
 	@Query(findAllEmployeesCountQuery)
 	int findAllEmployeesCount(@Param("tenant") Tenant realm);
+	
+	@Query(value = findAllEmployeeNameAndEmailForTenantQuery, nativeQuery = true)
+	List<Object[]> findAllEmployeeNameAndEmailForTenant(@Param("tenant") String tenantId);
 	
 	@Modifying
 	@Cascade(CascadeType.DELETE)
