@@ -1,11 +1,11 @@
-<ngx-loading [show]="loading"></ngx-loading>
 <alert class="p-4 text-center"></alert>
 <div class="animated fadeIn">
   <div class="row">
     <div class="col-md-12">
       <div class="card">
+        <ngx-loading [show]="loading"></ngx-loading>
         <div class="card-header">
-          Create your Coupon
+          <i class="fa fa-ticket"></i>Create your Coupon
           <button mat-button class="btn btn-ghost-success float-right" style="border: 1px solid;" (click)="createCoupon()">
             <i class="fa fa-gift"></i> Create Coupon
           </button>

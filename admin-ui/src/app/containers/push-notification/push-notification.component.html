@@ -1,0 +1,19 @@
+<ng-template tabHeading>
+  <a class="notification">
+    <i class="fa fa-bell-o"></i>
+    <span class="badge">{{notifications.length}}</span>
+  </a>
+</ng-template>
+<div class="p-3">
+  <h6>Notifications</h6>
+</div>
+<div style="margin:5px 0px; width: 100%;">
+  <ul class="list-group">
+    <li class="list-group-item" *ngFor="let item of notifications">
+      <span>{{item.content}}</span>
+      <span class="hover-cursor text-danger pull-right mousestyle" >
+      <i class="fa fa-trash" (click)="clearNotification(item)"></i>
+      </span>
+    </li>
+  </ul>
+</div>

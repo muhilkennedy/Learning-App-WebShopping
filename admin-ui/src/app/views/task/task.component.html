@@ -1,0 +1,139 @@
+<alert class="p-4 text-center"></alert>
+<div class="card">
+  <ngx-loading [show]="loading"></ngx-loading>
+  <div class="card-header">
+    <i class="fa fa-tasks"></i>TASKS
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <table class="table table-responsive-sm table-hover table-outline mb-0">
+        <ngx-loading [show]="loading"></ngx-loading>
+        <thead class="thead-light">
+          <tr>
+            <th>STATUS</th>
+            <th>TASK CONTENT</th>
+            <th>DUE DATE</th>
+            <th>OWNER</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody style="background: white;">
+          <tr *ngFor="let item of assignedTasks">
+            <td>
+              <span *ngIf="item.status === 'Completed' ? true : false" class="badge badge-success">{{item.status}}</span>
+              <span *ngIf="item.status === 'Overdue' ? true : false" class="badge badge-danger">{{item.status}}</span>
+              <span *ngIf="item.status === 'Pending' ? true : false" class="badge badge-warning">{{item.status}}</span>
+            </td>
+            <td>
+              {{item.content}}
+            </td>
+            <td>
+              {{item.enddate | date : 'dd-MM-yyyy'}}
+            </td>
+            <td>
+              {{item.creatorName}}
+            </td>
+            <td>
+              <span title="Mark Complete" class="hover-cursor mousestyle" [class.text-success]="item.status==='Completed' ? true : false" >
+                <i class="fa fa-lg" [ngClass]="item.status==='Completed'?'fa-check-circle-o':'fa-circle-thin'" (click)="item.status = 'Completed'; completeTask(item)"></i>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <mat-paginator [length]="total"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="action($event)">
+      </mat-paginator>
+    </div>
+  </div>
+</div>
+
+<div class="card" *ngIf="showCreateCard()">
+  <ngx-loading [show]="createLoading"></ngx-loading>
+  <div class="card-header">
+    <i class="fa fa-tasks"></i>CREATE TASK
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <form>
+        <textarea id="textarea-input" name="textarea-input" rows="3" class="form-control" placeholder="Type What Has to be Done?" [(ngModel)]="content"></textarea>
+        <br>
+        <mat-form-field appearance="fill" class="matitem">
+          <input type="text"
+                 placeholder="Assign To Employee"
+                 matInput
+                 [formControl]="myControl"
+                 [matAutocomplete]="auto">
+          <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" >
+            <mat-option (onSelectionChange)="setUser(option)" *ngFor="let option of filteredOptions | async" [value]="option.firstName+' '+option.lastName">
+              {{option.firstName}} {{option.lastName}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="matitem">
+          <mat-label>DUE Date</mat-label>
+          <input required matInput [matDatepicker]="dobpicker" [formControl]="dateFormControl" (dateChange)="setEndDate('change', $event)" disabled>
+          <mat-datepicker-toggle matSuffix [for]="dobpicker"></mat-datepicker-toggle>
+          <mat-datepicker #dobpicker disabled="false"></mat-datepicker>
+        </mat-form-field>
+        <button mat-button class="btn btn-ghost-primary" style="border: 1px solid;" (click)="createTask()">
+          <i class="fa fa-plus-square-o"></i> Create TASK
+        </button>
+      </form>
+    </div>
+    <br/>
+    <div class="row">
+      <table class="table table-responsive-sm table-hover table-outline mb-0">
+        <ngx-loading [show]="loading"></ngx-loading>
+        <thead class="thead-light">
+          <tr>
+            <th>STATUS</th>
+            <th>TASK CONTENT</th>
+            <th>DUE DATE</th>
+            <th>ASSIGNEE ID</th>
+            <th>ASSIGNEE NAME</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody style="background: white;">
+          <tr *ngFor="let item of createdTasks">
+            <td>
+              <span *ngIf="item.status === 'Completed' ? true : false" class="badge badge-success">{{item.status}}</span>
+              <span *ngIf="item.status === 'Overdue' ? true : false" class="badge badge-danger">{{item.status}}</span>
+              <span *ngIf="item.status === 'Pending' ? true : false" class="badge badge-warning">{{item.status}}</span>
+            </td>
+            <td>
+              {{item.content}}
+            </td>
+            <td>
+              {{item.enddate | date : 'dd-MM-yyyy'}}
+            </td>
+            <td>
+              {{item.assigneeId}}
+            </td>
+            <td>
+              {{item.assigneeName}}
+            </td>
+            <td>
+              <i class="fa fa-remove" style="color: red; cursor: pointer;" (click)="removeTask(item)"></i>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <mat-paginator [length]="total"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="action($event)">
+      </mat-paginator>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+

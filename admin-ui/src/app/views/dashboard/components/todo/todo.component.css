@@ -1,3 +1,7 @@
 .mousestyle{
   cursor: pointer;
 }
+
+.strikethrough {
+  text-decoration: line-through;
+}

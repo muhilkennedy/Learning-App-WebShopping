@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TodoService } from '../../../../shared/todo/todo.service';
 import { AlertService } from '../../../../shared/_alert';
+import { CookieService } from 'ngx-cookie-service';
 
 
 @Component({
@@ -16,13 +17,16 @@ export class TodoComponent implements OnInit {
   date:Date = new Date();
 
   constructor(private todoService: TodoService,
-              private alertService: AlertService) {
+              private alertService: AlertService,
+              private cookieService: CookieService) {
 
   }
 
   ngOnInit(): void {
-    this.loading = true;
-    this.todoService.getAllTodo()
+    let allowCall =this.cookieService.get('JWT');
+    if(allowCall != null && allowCall != undefined && allowCall != ''){
+      this.loading = true;
+      this.todoService.getAllTodo()
                     .subscribe((resp:any) => {
                       if(resp.statusCode === 200){
                         this.toDoListArray = resp.dataList;
@@ -35,6 +39,7 @@ export class TodoComponent implements OnInit {
                     (error) => {
                       this.alertService.error('Something went wrong....try again later!');
                     });
+    }
   }
 
   onAdd() {
@@ -43,6 +48,7 @@ export class TodoComponent implements OnInit {
                     .subscribe((resp:any) => {
                       if(resp.statusCode === 200){
                         this.toDoListArray = resp.dataList;
+                        this.content = '';
                       }
                       else{
                         this.alertService.error('Failed : ' + resp.errorMessages);

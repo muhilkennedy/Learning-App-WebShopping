@@ -36,4 +36,6 @@ public interface EmployeeService {
 
 	int findAllEmployeesForTenantCount();
 
+	List<EmployeeInfo> findAllEmployeeNameAndEmailForTenant();
+
 }

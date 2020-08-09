@@ -33,8 +33,6 @@ export class TodoService {
   }
 
   removeTodo(id){
-    // const uploadData = new FormData();
-    // uploadData.append('todoid', id);
     const httpOptions = {
       params: {id: id}
     };

@@ -12,6 +12,7 @@ import { EmployeeModule } from '../employee/employee.module';
 import { TodoComponent } from './components/todo/todo.component';
 import { NgxLoadingModule, ngxLoadingAnimationTypes } from 'ngx-loading';
 import { AlertModule } from '../../shared/_alert';
+import { TaskModule } from '../task/task.module';
 
 @NgModule({
   imports: [
@@ -32,7 +33,8 @@ import { AlertModule } from '../../shared/_alert';
       secondaryColour: 'chocolate',
       tertiaryColour: 'darkred'
     }),
-    AlertModule
+    AlertModule,
+    TaskModule
   ],
   declarations: [
     DashboardComponent,
