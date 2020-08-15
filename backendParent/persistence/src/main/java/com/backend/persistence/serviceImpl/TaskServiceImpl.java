@@ -99,6 +99,8 @@ public class TaskServiceImpl implements TaskService {
 		else if(status.equalsIgnoreCase(Key_Status_Pending)) {
 			task.setStatus(Key_Status_Pending);
 		}
+		notificationService
+				.createNotification("Task Update - STATUS : " + task.getStatus() + " :: " + task.getAssignee().getFirstName(), task.getEmployeeId());
 	}
 	
 	@Override

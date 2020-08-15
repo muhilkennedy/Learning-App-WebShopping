@@ -115,7 +115,7 @@ export class TaskComponent implements OnInit {
       this.createLoading = true;
       this.sub = this.route.params.subscribe(params => {
         this.createCard = params['isTaskpage'];
-        });
+      });
       this.taskService.getCreatedTask()
                     .subscribe((resp:any) => {
                       if(resp.statusCode  === 200){
@@ -136,6 +136,15 @@ export class TaskComponent implements OnInit {
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
     return this.options.filter(option => option.firstName.toLowerCase().indexOf(filterValue) === 0);
+  }
+
+  showTaskActions(): boolean{
+    if(this.createCard){
+      return true;
+    }
+    else{
+      return false;
+    }
   }
 
   showCreateCard(): boolean{

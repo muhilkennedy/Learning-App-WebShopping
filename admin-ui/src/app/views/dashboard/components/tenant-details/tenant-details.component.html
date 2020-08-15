@@ -1,0 +1,146 @@
+<div class="form-group row">
+  <div class="col-md-12">
+    <div class="input-group">
+      <span class="input-group-prepend fixed-prependWidth">
+        <button disabled class="btn"><span><i class="fa fa-envelope-o"></i> Tenant Email</span></button>
+      </span>
+      <ngx-loading [show]="loadTenantEmail"></ngx-loading>
+      <input [disabled]="!editTenantEmail" type="text" id="tenantemail" name="tenantemail" class="form-control" placeholder="Tenant Email" [(ngModel)] = "tenantEmail">
+      <span class="input-group-append">
+        <button *ngIf="!editTenantEmail" type="button" class="btn btn-outline-primary" (click)="editTenantEmail = true"><i class="fa fa-edit"></i></button>
+        <button *ngIf="editTenantEmail" type="button" class="btn btn-outline-danger" (click)="editTenantEmail = false"><i class="fa fa-remove"></i></button>
+        <button *ngIf="editTenantEmail" type="button" class="btn btn-outline-success" (click)="editTenantEmail = true ; updateTenantEmail()"><i class="fa fa-check"></i></button>
+      </span>
+    </div>
+    <br/>
+    <div class="input-group">
+      <span class="input-group-prepend fixed-prependWidth">
+        <button disabled class="btn"><i class="fa fa-envelope-square"></i> Tenant Business Email</button>
+      </span>
+      <ngx-loading [show]="loadTenantBusinessEmail"></ngx-loading>
+      <input [disabled]="!editTenantBusinessEmail" type="text" id="businessemail" name="businessemail" class="form-control" placeholder="Tenant Business Email" [(ngModel)] = "tenantBusinessEmail">
+      <span class="input-group-append">
+        <button *ngIf="!editTenantBusinessEmail" type="button" class="btn btn-outline-primary" (click)="editTenantBusinessEmail = true"><i class="fa fa-edit"></i></button>
+        <button *ngIf="editTenantBusinessEmail" type="button" class="btn btn-outline-danger" (click)="editTenantBusinessEmail = false"><i class="fa fa-remove"></i></button>
+        <button *ngIf="editTenantBusinessEmail" type="button" class="btn btn-outline-success" (click)="editTenantBusinessEmail = true; updateTenantBusinessEmail()"><i class="fa fa-check"></i></button>
+      </span>
+    </div>
+    <br/>
+    <div class="input-group">
+      <span class="input-group-prepend fixed-prependWidth">
+        <button disabled class="btn"><i class="fa fa-lock"></i> Business Email Password</button>
+      </span>
+      <ngx-loading [show]="loadTenantBusinessEmailPassword"></ngx-loading>
+      <input [disabled]="!editTenantBusinessEmailPassword" type="password" id="businessemailpass" name="businessemailpass" class="form-control" placeholder="Tenant Business Email Password" [(ngModel)] = "tenantBusinessEmailPassword">
+      <span class="input-group-append">
+        <button *ngIf="!editTenantBusinessEmailPassword" type="button" class="btn btn-outline-primary" (click)="editTenantBusinessEmailPassword = true"><i class="fa fa-edit"></i></button>
+        <button *ngIf="editTenantBusinessEmailPassword" type="button" class="btn btn-outline-danger" (click)="editTenantBusinessEmailPassword = false"><i class="fa fa-remove"></i></button>
+        <button *ngIf="editTenantBusinessEmailPassword" type="button" class="btn btn-outline-success" (click)="editTenantBusinessEmailPassword = true; updateTenantBusinessEmailPassword()"><i class="fa fa-check"></i></button>
+      </span>
+    </div>
+    <br/>
+    <div class="input-group">
+      <span class="input-group-prepend fixed-prependWidth">
+        <button disabled class="btn"><span><i class="fa fa-phone"></i> Tenant Contact</span></button>
+      </span>
+      <ngx-loading [show]="loadTenantContact"></ngx-loading>
+      <input [disabled]="!editTenantContact" type="text" id="tenantcontact" name="tenantcontact" class="form-control" placeholder="Tenant Contact" [(ngModel)] = "tenantContact">
+      <span class="input-group-append">
+        <button *ngIf="!editTenantContact" type="button" class="btn btn-outline-primary" (click)="editTenantContact = true"><i class="fa fa-edit"></i></button>
+        <button *ngIf="editTenantContact" type="button" class="btn btn-outline-danger" (click)="editTenantContact = false"><i class="fa fa-remove"></i></button>
+        <button *ngIf="editTenantContact" type="button" class="btn btn-outline-success" (click)="editTenantContact = true; updateTenantContact()"><i class="fa fa-check"></i></button>
+      </span>
+    </div>
+    <br/>
+    <div class="input-group">
+      <span class="input-group-prepend fixed-prependWidth">
+        <button disabled class="btn"><i class="fa fa-address-book"></i> Tenant Address</button>
+      </span>
+      <ngx-loading [show]="loadTenantStreet"></ngx-loading>
+      <input [disabled]="!editTenantStreet" type="text" id="tenantstreet" name="tenantstreet" class="form-control" placeholder="Tenant Street Address" [(ngModel)] = "tenantStreet">
+      <span class="input-group-append">
+        <button *ngIf="!editTenantStreet" type="button" class="btn btn-outline-primary" (click)="editTenantStreet = true"><i class="fa fa-edit"></i></button>
+        <button *ngIf="editTenantStreet" type="button" class="btn btn-outline-danger" (click)="editTenantStreet = false"><i class="fa fa-remove"></i></button>
+        <button *ngIf="editTenantStreet" type="button" class="btn btn-outline-success" (click)="editTenantStreet = true; updateTenantStreet()"><i class="fa fa-check"></i></button>
+      </span>
+    </div>
+    <br/>
+    <div class="input-group">
+      <span class="input-group-prepend fixed-prependWidth">
+        <button disabled class="btn"><i class="fa fa-map-marker"></i> Tenant City</button>
+      </span>
+      <ngx-loading [show]="loadTenantCity"></ngx-loading>
+      <input [disabled]="!editTenantCity" type="text" id="tenantcity" name="tenantcity" class="form-control" placeholder="Tenant City" [(ngModel)] = "tenantCity">
+      <span class="input-group-append">
+        <button *ngIf="!editTenantCity" type="button" class="btn btn-outline-primary" (click)="editTenantCity = true"><i class="fa fa-edit"></i></button>
+        <button *ngIf="editTenantCity" type="button" class="btn btn-outline-danger" (click)="editTenantCity = false"><i class="fa fa-remove"></i></button>
+        <button *ngIf="editTenantCity" type="button" class="btn btn-outline-success" (click)="editTenantCity = true; updateTenantCity()"><i class="fa fa-check"></i></button>
+      </span>
+    </div>
+    <br/>
+    <div class="input-group">
+      <span class="input-group-prepend fixed-prependWidth">
+        <button disabled class="btn"><i class="fa fa-map-pin"></i> Tenant PinCode</button>
+      </span>
+      <ngx-loading [show]="loadTenantPin"></ngx-loading>
+      <input [disabled]="!editTenantPin" type="text" id="pincode" name="pincode" class="form-control" placeholder="Tenant PinCode" [(ngModel)] = "tenantPin">
+      <span class="input-group-append">
+        <button *ngIf="!editTenantPin" type="button" class="btn btn-outline-primary" (click)="editTenantPin = true"><i class="fa fa-edit"></i></button>
+        <button *ngIf="editTenantPin" type="button" class="btn btn-outline-danger" (click)="editTenantPin = false"><i class="fa fa-remove"></i></button>
+        <button *ngIf="editTenantPin" type="button" class="btn btn-outline-success" (click)="editTenantPin = true; updateTenantPin()"><i class="fa fa-check"></i></button>
+      </span>
+    </div>
+    <br/>
+    <div class="input-group">
+      <span class="input-group-prepend fixed-prependWidth">
+        <button disabled class="btn"><i class="fa fa-facebook"></i> Tenant FaceBoook</button>
+      </span>
+      <ngx-loading [show]="loadTenantFacebook"></ngx-loading>
+      <input [disabled]="!editTenantFacebook" type="text" id="facebook" name="facebook" class="form-control" placeholder="Tenant Facebook Url" [(ngModel)] = "tenantFacebook">
+      <span class="input-group-append">
+        <button *ngIf="!editTenantFacebook" type="button" class="btn btn-outline-primary" (click)="editTenantFacebook = true"><i class="fa fa-edit"></i></button>
+        <button *ngIf="editTenantFacebook" type="button" class="btn btn-outline-danger" (click)="editTenantFacebook = false"><i class="fa fa-remove"></i></button>
+        <button *ngIf="editTenantFacebook" type="button" class="btn btn-outline-success" (click)="editTenantFacebook = true; updateTenantFacebook()"><i class="fa fa-check"></i></button>
+      </span>
+    </div>
+    <br/>
+    <div class="input-group">
+      <span class="input-group-prepend fixed-prependWidth">
+        <button disabled class="btn"><i class="fa fa-twitter"></i> Tenant Twitter</button>
+      </span>
+      <ngx-loading [show]="loadTenantTwitter"></ngx-loading>
+      <input [disabled]="!editTenantTwitter" type="text" id="twitter" name="twitter" class="form-control" placeholder="Tenant Twitter Url" [(ngModel)] = "tenantTwitter">
+      <span class="input-group-append">
+        <button *ngIf="!editTenantTwitter" type="button" class="btn btn-outline-primary" (click)="editTenantTwitter = true"><i class="fa fa-edit"></i></button>
+        <button *ngIf="editTenantTwitter" type="button" class="btn btn-outline-danger" (click)="editTenantTwitter = false"><i class="fa fa-remove"></i></button>
+        <button *ngIf="editTenantTwitter" type="button" class="btn btn-outline-success" (click)="editTenantTwitter = true; updateTenantTwitter()"><i class="fa fa-check"></i></button>
+      </span>
+    </div>
+    <br/>
+    <div class="input-group">
+      <span class="input-group-prepend fixed-prependWidth">
+        <button disabled class="btn"><i class="fa fa-instagram"></i> Tenant Instagram</button>
+      </span>
+      <ngx-loading [show]="loadTenantInsta"></ngx-loading>
+      <input [disabled]="!editTenantInsta" type="text" id="insta" name="insta" class="form-control" placeholder="Tenant Instagram Url" [(ngModel)] = "tenantInsta">
+      <span class="input-group-append">
+        <button *ngIf="!editTenantInsta" type="button" class="btn btn-outline-primary" (click)="editTenantInsta = true"><i class="fa fa-edit"></i></button>
+        <button *ngIf="editTenantInsta" type="button" class="btn btn-outline-danger" (click)="editTenantInsta = false"><i class="fa fa-remove"></i></button>
+        <button *ngIf="editTenantInsta" type="button" class="btn btn-outline-success" (click)="editTenantInsta = true; updateTenantInsta()"><i class="fa fa-check"></i></button>
+      </span>
+    </div>
+    <br/>
+    <div class="input-group">
+      <span class="input-group-prepend fixed-prependWidth">
+        <button disabled class="btn"><i class="fa fa-registered"></i> Tenant LOGO</button>
+      </span>
+      <ngx-loading [show]="loadTenantInsta"></ngx-loading>
+      <input [disabled]="!editTenantInsta" type="file" id="updateFile" (change)="handleFileUpdate($event.target.files)">
+      <span class="input-group-append">
+        <button *ngIf="!editTenantInsta" type="button" class="btn btn-outline-primary" (click)="editTenantInsta = true"><i class="fa fa-edit"></i></button>
+        <button *ngIf="editTenantInsta" type="button" class="btn btn-outline-danger" (click)="editTenantInsta = false"><i class="fa fa-remove"></i></button>
+        <button *ngIf="editTenantInsta" type="button" class="btn btn-outline-success" (click)="editTenantInsta = true; updateTenantLogo()"><i class="fa fa-check"></i></button>
+      </span>
+    </div>
+  </div>
+</div>

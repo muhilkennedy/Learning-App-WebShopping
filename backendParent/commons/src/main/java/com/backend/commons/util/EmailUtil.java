@@ -58,7 +58,7 @@ public class EmailUtil {
 	private BaseService baseService;
 	
 	
-	public void sendEmail(String recipientEmail, String subject, String body, Map<String, File> inlineImages, File attachments) {
+	public void sendEmail(String recipientEmail, String subject, String body, Map<String, File> inlineImages, File attachments) throws Exception {
 		sendEmail(Arrays.asList(recipientEmail) , subject, body, inlineImages, Arrays.asList(attachments));
 	}
 	
@@ -68,11 +68,12 @@ public class EmailUtil {
 	 * @param body text html part for formatting
 	 * @param attachments file
 	 */
-	public void sendEmail(List<String> recipientEmail, String subject, String body, Map<String, File> inlineImages, List<File> attachments) {
+	public void sendEmail(List<String> recipientEmail, String subject, String body, Map<String, File> inlineImages, List<File> attachments) throws Exception {
 		if (configUtil.isProdMode() && props.getGmail().isEnableMailing()) {
 
 			String emailId = baseService.getTenantInfo().getTenantDetail().getBusinessEmail();
-			String password = baseService.getTenantInfo().getTenantDetail().getBusinessEmailPassword();
+			String password = RSAUtil.decrypt(baseService.getTenantInfo().getTenantDetail().getBusinessEmailPassword(),
+						configUtil.getRsaPrivate());
 			
 			// Set system properties
 			Properties props = new Properties();
