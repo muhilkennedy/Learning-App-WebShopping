@@ -14,7 +14,7 @@
             <th>TASK CONTENT</th>
             <th>DUE DATE</th>
             <th>OWNER</th>
-            <th>ACTIONS</th>
+            <th *ngIf="showTaskActions()">ACTIONS</th>
           </tr>
         </thead>
         <tbody style="background: white;">
@@ -33,7 +33,7 @@
             <td>
               {{item.creatorName}}
             </td>
-            <td>
+            <td *ngIf="showTaskActions()">
               <span title="Mark Complete" class="hover-cursor mousestyle" [class.text-success]="item.status==='Completed' ? true : false" >
                 <i class="fa fa-lg" [ngClass]="item.status==='Completed'?'fa-check-circle-o':'fa-circle-thin'" (click)="item.status = 'Completed'; completeTask(item)"></i>
               </span>

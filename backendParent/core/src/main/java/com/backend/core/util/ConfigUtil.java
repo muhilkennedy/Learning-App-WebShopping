@@ -22,6 +22,12 @@ public class ConfigUtil {
 	@Value("${spring.security.jwt.secret}")
 	private String jwtSecret;
 	
+	@Value("${spring.rsa.privatekey}")
+	private String rsaPrivate;
+	
+	@Value("${spring.rsa.publickey}")
+	private String rsaPublic;
+	
 	private enum deploymentModes {
 		prod, dev
 	}
@@ -44,6 +50,14 @@ public class ConfigUtil {
 
 	public String getJwtSecret() {
 		return jwtSecret;
+	}
+
+	public String getRsaPrivate() {
+		return rsaPrivate;
+	}
+
+	public String getRsaPublic() {
+		return rsaPublic;
 	}
 
 }

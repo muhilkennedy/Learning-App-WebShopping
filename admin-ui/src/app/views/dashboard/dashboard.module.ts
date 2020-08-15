@@ -13,6 +13,7 @@ import { TodoComponent } from './components/todo/todo.component';
 import { NgxLoadingModule, ngxLoadingAnimationTypes } from 'ngx-loading';
 import { AlertModule } from '../../shared/_alert';
 import { TaskModule } from '../task/task.module';
+import { TenantDetailsComponent } from './components/tenant-details/tenant-details.component';
 
 @NgModule({
   imports: [
@@ -38,7 +39,8 @@ import { TaskModule } from '../task/task.module';
   ],
   declarations: [
     DashboardComponent,
-    TodoComponent
+    TodoComponent,
+    TenantDetailsComponent
   ]
 })
 export class DashboardModule { }
