@@ -198,7 +198,7 @@ export class LoginComponent {
                             duration: 3000,
                             panelClass: ['success-snackbar']
                           });
-                          this.router.navigate(['']);
+                          this.router.navigate(['/login']);
                          }
                          else{
                           this._snackBar.open('Failed to Update Password', '', {

@@ -1,11 +1,11 @@
-<ngx-loading [show]="loading"></ngx-loading>
 <alert class="p-4 text-center"></alert>
 <div class="animated fadeIn">
   <div class="row">
     <div class="col-md-12">
       <div class="card">
+        <ngx-loading [show]="loading"></ngx-loading>
         <div class="card-header">
-          Onboard New Employee
+          <i class="fa fa-user-plus"></i>Onboard New Employee
           <div class="float-right">
             <button mat-button class="btn btn-ghost-success" style="border: 1px solid;" (click)="onboard()">
               <i class="fa fa-user-o"></i> Create Employee

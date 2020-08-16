@@ -8,9 +8,11 @@ import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-dashboard',
-  templateUrl: './default-layout.component.html'
+  templateUrl: './default-layout.component.html',
+  styleUrls: ['default-layout.component.scss']
 })
 export class DefaultLayoutComponent implements OnInit{
+  rightSide = false;
   public sidebarMinimized = false;
   public navItems = navItems;
   public finalNavItems: any[] = new Array();
@@ -26,6 +28,10 @@ export class DefaultLayoutComponent implements OnInit{
     this.userPermissions = this.userStore.employeePermissions;
     this.setViewsBasedOnPermisssions();
 
+  }
+
+  showNotifications(){
+    this.rightSide = true;
   }
 
   checkImage(image){
@@ -111,37 +117,40 @@ export class DefaultLayoutComponent implements OnInit{
   ngOnInit(): void {
     if(!environment.production && (this.userStore.JwtToken === undefined ||  this.userStore.JwtToken === null)){
       // This is only for dev purposes(relogin as admin incase of refresh)
-      let test =this.cookieService.get('JWT');
-      this.loginService.tokenAuth(this.cookieService.get('JWT'))
-                       .subscribe((resp:any) => {
-                        if(resp.statusCode === 200){
-                          this.userStore.active = resp.data.active;
-                          this.userStore.designation = resp.data.designation;
-                          this.userStore.emailId = resp.data.emailId;
-                          this.userStore.mobile = resp.data.mobile;
-                          this.userStore.firstName = resp.data.firstName;
-                          this.userStore.lastName = resp.data.lastName;
-                          this.userStore.lastLogin = resp.data.lastLogin;
-                          this.userStore.profilePic = resp.data.profilePic;
-                          this.userStore.userId = resp.data.employeeId;
-                          this.userStore.employeeAddress = resp.data.employeeAddress;
-                          this.userStore.employeePermissions = resp.data.employeePermissions;
-                          this.userPermissions = this.userStore.employeePermissions;
-                          this.finalNavItems = new Array();
-                          this.setViewsBasedOnPermisssions();
-                        }
-                        else{
-                          alert(resp.status + " : " + resp.errorMessages);
-                          this.router.navigate(['/login']);
-                        }
-                       },
-                       (error) => {
-                         this.router.navigate(['/login']);
-                       })
-    }
-    else if(this.userStore==undefined || this.userStore.userId == undefined){
-      this.router.navigate(['/login']);
-    }
+      let allowCall =this.cookieService.get('JWT');
+      if(allowCall != null && allowCall != undefined && allowCall != ''){
+        this.loginService.tokenAuth(this.cookieService.get('JWT'))
+            .subscribe((resp:any) => {
+            if(resp.statusCode === 200){
+              this.userStore.active = resp.data.active;
+              this.userStore.designation = resp.data.designation;
+              this.userStore.emailId = resp.data.emailId;
+              this.userStore.mobile = resp.data.mobile;
+              this.userStore.firstName = resp.data.firstName;
+              this.userStore.lastName = resp.data.lastName;
+              this.userStore.lastLogin = resp.data.lastLogin;
+              this.userStore.profilePic = resp.data.profilePic;
+              this.userStore.userId = resp.data.employeeId;
+              this.userStore.employeeAddress = resp.data.employeeAddress;
+              this.userStore.employeePermissions = resp.data.employeePermissions;
+              this.userPermissions = this.userStore.employeePermissions;
+              this.finalNavItems = new Array();
+              this.setViewsBasedOnPermisssions();
+            }
+            else{
+              alert(resp.status + " : " + resp.errorMessages);
+              this.router.navigate(['/login']);
+            }
+            },
+            (error) => {
+              this.router.navigate(['/login']);
+            })
+        }
+        else if(this.userStore==undefined || this.userStore.userId == undefined){
+          this.router.navigate(['/login']);
+        }
+      }
+
   }
 
   toggleMinimize(e) {
@@ -165,10 +174,26 @@ export class DefaultLayoutComponent implements OnInit{
   }
 
   lockProfile(){
-    this.router.navigate(['/lockAccount']);
+    this.loading = true;
+    this.loginService.lockEmployee()
+                    .subscribe((resp:any) => {
+                      this.userStore = null;
+                      this.loading = false;
+                      //in case of remember me functionality this has to modified
+                      this.cookieService.deleteAll();
+                      alert("Account Locked! Please contact admin to activate your account");
+                      this.router.navigate(['/login']);
+                    },
+                    (error) => {
+                      alert("Account Deactivation Failed!");
+                    });
   }
 
   profile(){
     this.router.navigate(['/profile']);
+  }
+
+  tasks(){
+    this.router.navigate(['/task',true]);
   }
 }

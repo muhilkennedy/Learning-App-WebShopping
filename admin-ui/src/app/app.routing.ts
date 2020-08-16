@@ -47,7 +47,11 @@ export const routes: Routes = [
       {
         path: 'profile',
         loadChildren: () => import('./views/profile/profile.module').then(m => m.ProfileModule)
-      }
+      },
+      {
+        path: 'task',
+        loadChildren: () => import('./views/task/task.module').then(m => m.TaskModule)
+      },
     ]
   },
   {

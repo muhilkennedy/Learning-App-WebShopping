@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { EmployeeService } from '../../shared/employee/employee.service';
+import {PageEvent} from '@angular/material/paginator';
+import { AlertService } from '../../shared/_alert';
 
 @Component({
   selector: 'app-employee',
@@ -11,26 +13,69 @@ export class EmployeeComponent implements OnInit {
   employeesList: any[];
   defaultProfilePic = "assets/img/avatars/Blank-Profile.png";
 
-  constructor(private employeeService: EmployeeService){}
+  // MatPaginator Inputs
+  offset = 0;
+  total = 10;
+  pageSize = 5;
+  pageSizeOptions: number[] = [5, 10, 50];
+  // MatPaginator Output
+  pageEvent: PageEvent;
 
-  ngOnInit(): void {
 
+  constructor(private employeeService: EmployeeService,
+              private alertService: AlertService)
+  {
+
+  }
+
+  setPageSizeOptions(setPageSizeOptionsInput: string) {
+    if (setPageSizeOptionsInput) {
+      this.pageSizeOptions = setPageSizeOptionsInput.split(',').map(str => +str);
+    }
+  }
+
+  action(event){
     this.loading = true;
-    this.employeeService.getAllEmployees()
+    this.pageSize = event.pageSize;
+    let pageIndex:number = event.pageIndex;
+    this.offset = pageIndex * this.pageSize;
+    this.employeeService.getAllEmployees(this.offset, this.pageSize)
                         .subscribe((resp:any) => {
                           if(resp.statusCode === 200){
                             this.employeesList = resp.dataList;
-                            console.log(this.employeesList)
                           }
                           else{
-                            alert("failed");
+                            this.alertService.error('Failed : ' + resp.errorMessages);
                           }
                           this.loading = false;
                         },
                         (error:any) => {
-                          alert("failed");
+                          this.alertService.error('Something went Wrong....try again later!');
                         });
+  }
 
+  ngOnInit(): void {
+    this.loading = true;
+    this.employeeService.getAllEmployeesCount()
+                        .subscribe((resp:any) => {
+                          this.total = resp.data;
+                          this.employeeService.getAllEmployees(this.offset, this.pageSize)
+                              .subscribe((resp:any) => {
+                                if(resp.statusCode === 200){
+                                  this.employeesList = resp.dataList;
+                                }
+                                else{
+                                  this.alertService.error('Failed : ' + resp.errorMessages);
+                                }
+                                this.loading = false;
+                              },
+                              (error:any) => {
+                                this.alertService.error('Something went Wrong....try again later!');
+                              });
+                        },
+                        (error) => {
+                          this.alertService.error('Something went Wrong....try again later!');
+                        });
   }
 
   getProfilePic(picData:any){

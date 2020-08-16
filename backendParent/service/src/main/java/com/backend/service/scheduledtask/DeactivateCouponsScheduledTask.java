@@ -46,7 +46,7 @@ public class DeactivateCouponsScheduledTask extends ScheduledTask {
 			} catch (Exception e) {
 				audit.setFailureInfo(e.getMessage());
 				markFailed();
-				logger.error("Scheduled Task - " + PurgeTenantScheduledTask.class.getCanonicalName() + " Exception ",
+				logger.error("Scheduled Task - " + DeactivateCouponsScheduledTask.class.getCanonicalName() + " Exception ",
 						e.getMessage());
 			}
 			baseService.clear();

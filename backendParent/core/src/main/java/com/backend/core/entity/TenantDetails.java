@@ -65,6 +65,13 @@ public class TenantDetails implements Serializable{
 	@Column(name = "TENANTINSTA")
 	private String tenantInsta;
 	
+	@Column(name = "TENANTBUSINESSEMAIL")
+	private String businessEmail;
+	
+	@JsonIgnore
+	@Column(name = "BUSINESSEMAILPASSWORD")
+	private String businessEmailPassword;
+	
 	public Integer getTenantDetailId() {
 		return tenantDetailId;
 	}
@@ -167,6 +174,22 @@ public class TenantDetails implements Serializable{
 
 	public void setTenantInsta(String tenantInsta) {
 		this.tenantInsta = tenantInsta;
+	}
+
+	public String getBusinessEmail() {
+		return businessEmail;
+	}
+
+	public void setBusinessEmail(String businessEmail) {
+		this.businessEmail = businessEmail;
+	}
+
+	public String getBusinessEmailPassword() {
+		return businessEmailPassword;
+	}
+
+	public void setBusinessEmailPassword(String businessEmailPassword) {
+		this.businessEmailPassword = businessEmailPassword;
 	}
 
 }

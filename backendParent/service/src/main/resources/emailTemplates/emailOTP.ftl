@@ -228,7 +228,13 @@
 					                	<div class="contentEditable" align='left' >
 					                  		<span style="font-size:13px;color:#181818;font-family:Helvetica, Arial, sans-serif;line-height:200%;">${tenantName}</span>
 											<br/>
-											<span style="font-size:11px;color:#555;font-family:Helvetica, Arial, sans-serif;line-height:200%;">[CLIENTS.ADDRESS] | [CLIENTS.PHONE]</span>
+											<span style="font-size:11px;color:#555;font-family:Helvetica, Arial, sans-serif;line-height:200%;">
+												  <preferences style="text-decoration: underline;" lang="en">${tenantStreet}</preferences>
+								                  <br/>
+								                  <preferences style="text-decoration: underline;" lang="en">${tenantCity}</preferences> - <preferences style="text-decoration: underline;" lang="en">${tenantPin}</preferences>
+								                  <br/>
+								                  <preferences style="text-decoration: underline;" lang="en">${tenantContact}</preferences>
+											</span>
 											<br/>
 					                	</div>
 					              	</div>

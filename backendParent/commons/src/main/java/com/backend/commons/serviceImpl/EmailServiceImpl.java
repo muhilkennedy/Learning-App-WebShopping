@@ -41,7 +41,7 @@ public class EmailServiceImpl implements EmailService {
 
 	@Override
 	public void sendEmail(String recipientEmail, String subject, String body, Map<String, File> inlineImages,
-			File attachments) {
+			File attachments) throws Exception {
 		emailUtil.sendEmail(recipientEmail, subject, body, inlineImages, attachments);
 	}
 
@@ -58,6 +58,10 @@ public class EmailServiceImpl implements EmailService {
 			model.put(EmailConstants.Key_origin, origin);
 			model.put(EmailConstants.Key_tenantName, baseService.getTenantInfo().getUniqueName());
 			model.put(EmailConstants.Key_tenantLogo, "\"cid:" + logo.getName() + "\"");
+			model.put(EmailConstants.Key_tenantStreet, baseService.getTenantInfo().getTenantDetail().getTenantStreet());
+			model.put(EmailConstants.Key_tenantCity, baseService.getTenantInfo().getTenantDetail().getTenantCity());
+			model.put(EmailConstants.Key_tenantPin, baseService.getTenantInfo().getTenantDetail().getTenantPin());
+			model.put(EmailConstants.Key_tenantContact, baseService.getTenantInfo().getTenantDetail().getTenantContact());
 			return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
 		} catch (Exception e) {
 			logger.error("constructOnboardEmailBody : Failed to generate Email Body - Exception - " + e.getMessage());
@@ -95,6 +99,10 @@ public class EmailServiceImpl implements EmailService {
 			model.put(EmailConstants.Key_otp, otp);
 			model.put(EmailConstants.Key_tenantName, baseService.getTenantInfo().getUniqueName());
 			model.put(EmailConstants.Key_tenantLogo, "\"cid:" + logo.getName() + "\"");
+			model.put(EmailConstants.Key_tenantStreet, baseService.getTenantInfo().getTenantDetail().getTenantStreet());
+			model.put(EmailConstants.Key_tenantCity, baseService.getTenantInfo().getTenantDetail().getTenantCity());
+			model.put(EmailConstants.Key_tenantPin, baseService.getTenantInfo().getTenantDetail().getTenantPin());
+			model.put(EmailConstants.Key_tenantContact, baseService.getTenantInfo().getTenantDetail().getTenantContact());
 			return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
 		} catch (Exception e) {
 			logger.error("constructOtpEmailBody : Failed to generate Email Body - Exception - " + e.getMessage());

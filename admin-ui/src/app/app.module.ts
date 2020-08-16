@@ -82,6 +82,7 @@ import { InterceptorService } from './service/interceptor/interceptor.service';
 import { TenantStoreService } from './service/tenantStore/tenant-store.service';
 import { environment } from '../environments/environment';
 import { NotFoundComponent } from './component/not-found/not-found.component';
+import { PushNotificationComponent } from './containers/push-notification/push-notification.component';
 
 
 @Injectable()
@@ -99,6 +100,18 @@ export class TenantInitializer {
                   this.tenantStore.tenantName = resp.data.tenantUniqueName;
                   this.tenantStore.tenantActive = resp.data.tenantActive;
                   this.tenantStore.publicKey = resp.data.publicKey;
+                  //set tenant details
+                  let tenantDetails = resp.dataList[0];
+                  this.tenantStore.tenantDetailId = tenantDetails.tenantDetailId;
+                  this.tenantStore.tenantEmail = tenantDetails.tenantEmail;
+                  this.tenantStore.tenantFacebook = tenantDetails.tenantFacebook;
+                  this.tenantStore.tenantInsta = tenantDetails.tenantInsta;
+                  this.tenantStore.tenantTwitter = tenantDetails.tenantTwitter;
+                  this.tenantStore.tenantStreet = tenantDetails.tenantStreet;
+                  this.tenantStore.tenantCity = tenantDetails.tenantCity;
+                  this.tenantStore.tenantPin = tenantDetails.tenantPin;
+                  this.tenantStore.tenantContact = tenantDetails.tenantContact;
+                  this.tenantStore.businessEmail = tenantDetails.businessEmail;
                 },
                 (error:any) => {
                     console.log("error in loading tenant");
@@ -187,7 +200,8 @@ export function init_tenant(initializer: TenantInitializer) {
     AppComponent,
     ...APP_CONTAINERS,
     LoginComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    PushNotificationComponent,
   ],
   providers: [{
     provide: LocationStrategy,

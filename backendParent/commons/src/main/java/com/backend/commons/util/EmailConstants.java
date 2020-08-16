@@ -18,6 +18,9 @@ public class EmailConstants {
 	public static final String Key_employeeId = "employeeId";
 	public static final String Key_password = "password";
 	public static final String Key_otp = "otp";
-	
+	public static final String Key_tenantStreet = "tenantStreet";
+	public static final String Key_tenantCity = "tenantCity";
+	public static final String Key_tenantPin = "tenantPin";
+	public static final String Key_tenantContact = "tenantContact";
 
 }

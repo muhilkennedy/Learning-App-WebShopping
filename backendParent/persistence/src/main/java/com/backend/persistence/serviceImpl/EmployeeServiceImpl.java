@@ -1,10 +1,18 @@
 package com.backend.persistence.serviceImpl;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.sql.rowset.serial.SerialBlob;
 import javax.transaction.Transactional;
 
@@ -13,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.backend.commons.util.CommonUtil;
 import com.backend.core.service.BaseService;
 import com.backend.persistence.entity.EmployeeInfo;
 import com.backend.persistence.entity.EmployeePermissions;
@@ -79,8 +88,18 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 	
 	@Override
-	public List<EmployeeInfo> findAllEmployeeForTenant (){
+	public int findAllEmployeesForTenantCount(){
+		return employeeRepo.findAllEmployeesCount(baseService.getTenantInfo());
+	}
+	
+	@Override
+	public List<EmployeeInfo> findAllEmployeeForTenant() {
 		return employeeRepo.findAllEmployees(baseService.getTenantInfo());
+	}
+	
+	@Override
+	public List<EmployeeInfo> findAllEmployeeForTenant(int offset, int limit) {
+		return employeeRepo.findLimitedEmployees(baseService.getTenantInfo().getTenantID(), limit, offset);
 	}
 	
 	@Override
@@ -121,22 +140,37 @@ public class EmployeeServiceImpl implements EmployeeService {
 	
 	@Override
 	public void updateEmployee(EmployeeInfo actualEmployee, EmployeeInfo updatedEmployee, byte[] profilePic) throws Exception {
-		if(profilePic != null) {
-			actualEmployee.setProfilePic(new SerialBlob(profilePic));
+		if (profilePic != null) {
+			actualEmployee.setProfilePic(new SerialBlob(CommonUtil.getThumbnailImage(profilePic)));
 		}
-		if(!StringUtils.isEmpty(updatedEmployee.getEmailId())) {
+		if (!StringUtils.isEmpty(updatedEmployee.getEmailId())) {
 			actualEmployee.setEmailId(updatedEmployee.getEmailId());
 		}
-		if(!StringUtils.isEmpty(updatedEmployee.getMobile())) {
+		if (!StringUtils.isEmpty(updatedEmployee.getMobile())) {
 			actualEmployee.setMobile(updatedEmployee.getMobile());
 		}
-		if(!StringUtils.isEmpty(updatedEmployee.getFirstName())) {
+		if (!StringUtils.isEmpty(updatedEmployee.getFirstName())) {
 			actualEmployee.setFirstName(updatedEmployee.getFirstName());
 		}
-		if(!StringUtils.isEmpty(updatedEmployee.getLastName())) {
+		if (!StringUtils.isEmpty(updatedEmployee.getLastName())) {
 			actualEmployee.setLastName(updatedEmployee.getLastName());
 		}
 		employeeRepo.save(actualEmployee);
+	}
+	
+	@Override
+	public List<EmployeeInfo> findAllEmployeeNameAndEmailForTenant() {
+		 List<Object[]> empObjs = employeeRepo.findAllEmployeeNameAndEmailForTenant(baseService.getTenantInfo().getTenantID());
+		 List<EmployeeInfo> empList = new ArrayList<>();
+		 empObjs.parallelStream().forEach(obj -> {
+			 EmployeeInfo emp = new EmployeeInfo();
+			 emp.setEmployeeId((int) obj[0]);
+			 emp.setEmailId(String.valueOf(obj[1]));
+			 emp.setFirstName(String.valueOf(obj[2]));
+			 emp.setLastName(String.valueOf(obj[3]));
+			 empList.add(emp);
+		 });
+		 return empList;
 	}
 	
 }

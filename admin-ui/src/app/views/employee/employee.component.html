@@ -1,4 +1,6 @@
+<alert class="p-4 text-center"></alert>
 <table class="table table-responsive-sm table-hover table-outline mb-0">
+  <ngx-loading [show]="loading"></ngx-loading>
   <thead class="thead-light">
     <tr>
       <th class="text-center"><i class="icon-people"></i></th>
@@ -7,10 +9,11 @@
       <th>Contact</th>
       <th>Email-ID</th>
       <th>Designation</th>
+      <th>Status</th>
       <th>Activity</th>
     </tr>
   </thead>
-  <tbody>
+  <tbody style="background: white;">
     <tr *ngFor="let employee of employeesList">
       <td class="text-center">
         <div class="avatar">
@@ -44,9 +47,20 @@
         </div>
       </td>
       <td>
+        <div>
+          <span *ngIf='employee.active' class="badge badge-success">Active</span>
+          <span *ngIf='!employee.active' class="badge badge-danger">Locked</span>
+        </div>
+      </td>
+      <td>
         <div class="small text-muted">Last Active</div>
         <strong>{{employee.lastLogin | date: 'dd/MM/yyyy hh:mm a'}}</strong>
       </td>
     </tr>
   </tbody>
 </table>
+<mat-paginator [length]="total"
+[pageSize]="pageSize"
+[pageSizeOptions]="pageSizeOptions"
+(page)="action($event)">
+</mat-paginator>

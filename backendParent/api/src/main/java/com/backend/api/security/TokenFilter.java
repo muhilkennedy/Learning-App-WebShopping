@@ -56,6 +56,10 @@ public class TokenFilter implements Filter {
 							empInfo.setEmployeePermissions(empService.getEmployeePermissionsForTenant(empInfo));
 							if (empInfo != null) {
 								baseService.setUserInfo(empInfo);
+								logger.info("Tenant - " + baseService.getTenantInfo().getTenantID());
+								logger.info("User - " + (baseService.getUserInfo() instanceof EmployeeInfo
+										? "Employee Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()
+										: "Client Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()));
 							} else {
 								((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
 										"Invalid User Request.... token might have been tampered");
@@ -84,7 +88,12 @@ public class TokenFilter implements Filter {
 		} else {
 			//running in dev mode
 			// validate token in case of logout and token auth
-			if(req.getRequestURI().contains("employeeLogout") || req.getRequestURI().contains("employeeTokenAuthentication")) {
+			if(req.getRequestURI().contains("employeeLogout") 
+					|| req.getRequestURI().contains("employeeTokenAuthentication")
+					|| req.getRequestURI().contains("deactivateEmployee")
+					|| req.getRequestURI().contains("todo")
+					|| req.getRequestURI().contains("task")
+					|| req.getRequestURI().contains("pushNotification")) {
 				String token = req.getHeader(HttpHeaders.AUTHORIZATION);
 				if (token != null && !StringUtils.isEmpty(JWTUtil.extractToken(token))) {
 					try {
@@ -96,6 +105,10 @@ public class TokenFilter implements Filter {
 								empInfo.setEmployeePermissions(empService.getEmployeePermissionsForTenant(empInfo));
 								if (empInfo != null) {
 									baseService.setUserInfo(empInfo);
+									logger.info("Tenant - " + baseService.getTenantInfo().getTenantID());
+									logger.info("User - " + (baseService.getUserInfo() instanceof EmployeeInfo
+											? "Employee Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()
+											: "Client Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()));
 								} else {
 									((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
 											"Invalid User Request.... token might have been tampered");

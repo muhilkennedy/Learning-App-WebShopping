@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import { AlertModule } from './_alert';
 
@@ -10,7 +11,9 @@ import { AlertModule } from './_alert';
   ],
   imports: [
     CommonModule,
-    AlertModule
+    AlertModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   exports:[
 

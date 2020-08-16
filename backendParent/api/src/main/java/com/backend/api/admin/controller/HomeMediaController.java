@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.Response;
+import com.backend.commons.util.CommonUtil;
 import com.backend.core.service.HomeMediaService;
 
 /**
@@ -40,7 +41,12 @@ public class HomeMediaController {
 			@RequestParam(value = "message", required = false) String message) {
 		GenericResponse<String> response = new GenericResponse<String>();
 		try {
-			mediaService.updateMedia(id, file.getBytes(), title, description, isShopNow, isContact, isSlider, message);
+			if(isSlider) {
+				mediaService.updateMedia(id, CommonUtil.getBannerImage(file.getBytes()), title, description, isShopNow, isContact, isSlider, message);
+			}
+			else {
+				mediaService.updateMedia(id, CommonUtil.getHomeImage(file.getBytes()), title, description, isShopNow, isContact, isSlider, message);
+			}
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("updateMedia : " + ex);
@@ -59,7 +65,12 @@ public class HomeMediaController {
 			@RequestParam(value = "message", required = false) String message) {
 		GenericResponse<String> response = new GenericResponse<String>();
 		try {
-			mediaService.addMedia(file.getBytes(), title, description, isShopNow, isContact, isSlider, message);
+			if(isSlider) {
+				mediaService.addMedia(CommonUtil.getBannerImage(file.getBytes()), title, description, isShopNow, isContact, isSlider, message);
+			}
+			else {
+				mediaService.addMedia(CommonUtil.getHomeImage(file.getBytes()), title, description, isShopNow, isContact, isSlider, message);
+			}
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("addMedia : " + ex);

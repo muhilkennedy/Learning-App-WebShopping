@@ -1,7 +1,14 @@
 package com.backend.commons.util;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
 
+import javax.imageio.ImageIO;
+
+import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +34,14 @@ public class CommonUtil {
 	
 	public static final String Key_employeeOTP = "EmpOTP";
 	public static final String Key_clientOTP = "clientOTP";
+	
+	public static final int Thumbnail_AspectWidth = 200;
+	public static final int Thumbnail_AspectHeight = 200;
+	public static final int Banner_AspectWidth = 1900;
+	public static final int Banner_AspectHeight = 700;
+	public static final int HomeImage_AspectWidth = 1200;
+	public static final int HomeImage_AspectHeight = 900;
+	public static final String Thumbnail_Exension = "jpg";
 	
 	/**
 	 * @return randome password wiht pre-defined length and Alpha numeric characters.
@@ -72,6 +87,41 @@ public class CommonUtil {
 			return dir.delete();
 		}
 		return false;
+	}
+	
+
+	/**
+	 * @param originalImage
+	 * @param targetWidth
+	 * @param targetHeight
+	 * @return resized Image byte[]
+	 * @throws Exception
+	 */
+	public static byte[] getThumbnailImage(byte[] image) throws Exception {
+		InputStream in = new ByteArrayInputStream(image);
+		BufferedImage bImage = Scalr.resize(ImageIO.read(in), Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, Thumbnail_AspectWidth,
+				Thumbnail_AspectHeight, Scalr.OP_ANTIALIAS);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ImageIO.write(bImage, Thumbnail_Exension, baos);
+		return baos.toByteArray();
+	}
+	
+	public static byte[] getBannerImage(byte[] image) throws Exception {
+		InputStream in = new ByteArrayInputStream(image);
+		BufferedImage bImage = Scalr.resize(ImageIO.read(in), Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, Banner_AspectWidth,
+				Banner_AspectHeight, Scalr.OP_ANTIALIAS);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ImageIO.write(bImage, Thumbnail_Exension, baos);
+		return baos.toByteArray();
+	}
+	
+	public static byte[] getHomeImage(byte[] image) throws Exception {
+		InputStream in = new ByteArrayInputStream(image);
+		BufferedImage bImage = Scalr.resize(ImageIO.read(in), Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, HomeImage_AspectWidth,
+				HomeImage_AspectHeight, Scalr.OP_ANTIALIAS);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ImageIO.write(bImage, Thumbnail_Exension, baos);
+		return baos.toByteArray();
 	}
 
 }
