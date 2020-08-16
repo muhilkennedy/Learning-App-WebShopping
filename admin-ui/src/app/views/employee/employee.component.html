@@ -1,1 +1,66 @@
-<p>List all Employees</p>
+<alert class="p-4 text-center"></alert>
+<table class="table table-responsive-sm table-hover table-outline mb-0">
+  <ngx-loading [show]="loading"></ngx-loading>
+  <thead class="thead-light">
+    <tr>
+      <th class="text-center"><i class="icon-people"></i></th>
+      <th>ID</th>
+      <th>Employee Name</th>
+      <th>Contact</th>
+      <th>Email-ID</th>
+      <th>Designation</th>
+      <th>Status</th>
+      <th>Activity</th>
+    </tr>
+  </thead>
+  <tbody style="background: white;">
+    <tr *ngFor="let employee of employeesList">
+      <td class="text-center">
+        <div class="avatar">
+          <img src={{getProfilePic(employee.profilePic)}} class="img-avatar" alt="DP">
+          <span *ngIf="isloggedIn(employee.loggedIn)" class="avatar-status badge-success"></span>
+          <span *ngIf="!isloggedIn(employee.loggedIn)" class="avatar-status badge-dark"></span>
+        </div>
+      </td>
+      <td>
+        <div>{{employee.employeeId}}</div>
+      </td>
+      <td>
+        <div>{{employee.firstName + " " + employee.lastName}}</div>
+        <div class="small text-muted">
+          <span>DOB : {{employee.dob | date : 'dd-MM-yyy'}}</span>
+        </div>
+      </td>
+      <td>
+        <div>
+          {{employee.mobile}}
+        </div>
+      </td>
+      <td>
+        <div>
+          {{employee.emailId}}
+        </div>
+      </td>
+      <td>
+        <div>
+          {{employee.designation}}
+        </div>
+      </td>
+      <td>
+        <div>
+          <span *ngIf='employee.active' class="badge badge-success">Active</span>
+          <span *ngIf='!employee.active' class="badge badge-danger">Locked</span>
+        </div>
+      </td>
+      <td>
+        <div class="small text-muted">Last Active</div>
+        <strong>{{employee.lastLogin | date: 'dd/MM/yyyy hh:mm a'}}</strong>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<mat-paginator [length]="total"
+[pageSize]="pageSize"
+[pageSizeOptions]="pageSizeOptions"
+(page)="action($event)">
+</mat-paginator>

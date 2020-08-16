@@ -1,26 +1,23 @@
-<ngx-loading [show]="loading"></ngx-loading>
 <alert class="p-4 text-center"></alert>
 <div class="animated fadeIn">
   <div class="row">
     <div class="col-md-12">
       <div class="card">
+        <ngx-loading [show]="loading"></ngx-loading>
         <div class="card-header">
-          Onboard New Employee
+          <i class="fa fa-user-plus"></i>Onboard New Employee
           <div class="float-right">
             <button mat-button class="btn btn-ghost-success" style="border: 1px solid;" (click)="onboard()">
               <i class="fa fa-user-o"></i> Create Employee
             </button>
           </div>
           <div class="float-right">
-            <mat-slide-toggle
+            <mat-slide-toggle matTooltip="Activate Account"
               color="warn"
               [checked]="activeUser"
               (change)="slidetoggle()">
             </mat-slide-toggle>
-            <button mat-button [disabled]="true" style="text-align: inherit; color: gray;">
-              <mat-icon class="with-icon">verified_user</mat-icon>
-              <span class="icon-text"> Activate Employee</span><br/>
-            </button>
+            <i class="fa fa-shield" style="visibility: hidden;"></i>
           </div>
         </div>
         <div class="card-body">

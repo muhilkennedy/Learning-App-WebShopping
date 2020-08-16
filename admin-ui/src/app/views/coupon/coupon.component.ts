@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CouponService } from '../../shared/coupon/coupon.service';
+import { AlertService } from '../../shared/_alert';
 
 @Component({
   templateUrl: 'coupon.component.html'
@@ -7,8 +8,9 @@ import { CouponService } from '../../shared/coupon/coupon.service';
 export class CouponComponent implements OnInit {
 
   allCoupons:any[];
+  loading = false;
 
-  constructor(private coupService: CouponService) {
+  constructor(private coupService: CouponService, private alertService: AlertService) {
 
   }
 
@@ -23,12 +25,14 @@ export class CouponComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loading = true;
     this.coupService.getAllCoupons()
                     .subscribe((resp:any) => {
                       this.allCoupons = resp.dataList;
+                      this.loading = false;
                     },
                     (error) => {
-                      alert("failed to fetch coupons");
+                      this.alertService.error('Something went wrong... try again later!');
                     });
   }
 }

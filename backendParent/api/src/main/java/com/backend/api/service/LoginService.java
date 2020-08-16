@@ -11,4 +11,12 @@ public interface LoginService {
 
 	String createUser(User user);
 
+	boolean checkIfUserExists(String email);
+
+	boolean updateEmployeePassword(String email, String newPassword);
+
+	void logoutUser();
+
+	void toggleUserStatus(boolean status);
+
 }

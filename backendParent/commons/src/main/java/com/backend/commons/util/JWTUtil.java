@@ -25,6 +25,8 @@ public class JWTUtil {
 
 	// 2hours validity
 	public static final long JWT_TOKEN_VALIDITY = 2 * 60 * 60;
+	// 1month validity incase of remember me action
+	public static final long JWT_TOKEN_VALIDITY_REMEMBER_ME = 744 * 60 * 60;
 
 	private static ConfigUtil configUtil;
 	
@@ -75,11 +77,11 @@ public class JWTUtil {
 	 * @return JWT token for users
 	 */
 	// implement later when user entity is created.
-	public static String generateToken(String emailId, String userType) {
+	public static String generateToken(String emailId, String userType, boolean rememberMe) {
 		Map<String, Object> claims = new HashMap<>();
 		claims.put(CommonUtil.Key_userType, userType);
 		//we can add more details about user in future in Claims map if needed.
-		return doGenerateToken(claims, emailId);
+		return doGenerateToken(claims, emailId, rememberMe);
 	}
 
 	/**
@@ -87,7 +89,12 @@ public class JWTUtil {
 	 * @param subject user email
 	 * @return JWT
 	 */
-	private static String doGenerateToken(Map<String, Object> claims, String subject) {
+	private static String doGenerateToken(Map<String, Object> claims, String subject, boolean rememberMe) {
+		if(rememberMe) {
+			return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
+					.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY_REMEMBER_ME * 1000))
+					.signWith(SignatureAlgorithm.HS512, configUtil.getJwtSecret()).compact();
+		}
 		return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
 				.signWith(SignatureAlgorithm.HS512, configUtil.getJwtSecret()).compact();

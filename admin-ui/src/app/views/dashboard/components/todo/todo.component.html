@@ -1,0 +1,41 @@
+<alert class="p-4 text-center"></alert>
+<div class="card">
+  <ngx-loading [show]="loading"></ngx-loading>
+  <div class="card-header">
+    <i class="fa fa-sticky-note-o"></i>TODO
+    <div class="card-header-actions">
+      {{date | date : 'fullDate'}}
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="input-group">
+        <input type="text" id="input1-group2" [(ngModel)]="content" name="content" class="form-control" placeholder="what you want to do?">
+        <span class="input-group-prepend">
+          <button type="button" class="btn btn-primary" (click)="onAdd()"><i class="fa fa-plus-square-o"></i></button>
+        </span>
+      </div>
+      <div style="margin:5px 0px; width: 100%;">
+        <ul class="list-group">
+          <li class="list-group-item" *ngFor="let item of toDoListArray">
+            <span class="hover-cursor mousestyle" [class.text-success]="item.done" >
+              <i class="fa fa-lg" [ngClass]="item.done?'fa-check-circle-o':'fa-circle-thin'" (click)="item.done = !item.done; changeStatus(item)"></i>
+            </span>
+            <span [ngClass]="item.done ? 'strikethrough' : 'null'">{{item.content}}</span>
+            <span class="hover-cursor text-danger pull-right mousestyle" >
+              <i class="fa fa-trash-o fa-lg" (click)="removeTodo(item)"></i>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+

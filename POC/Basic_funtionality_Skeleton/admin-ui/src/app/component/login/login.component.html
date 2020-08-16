@@ -1,0 +1,130 @@
+<!-- <alert class="jumbotron p-4 container text-center"></alert> -->
+<div class="app-body">
+  <main class="main d-flex align-items-center">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 mx-auto">
+          <div class="card-group">
+            <div class="card p-4">
+              <div class="card-body">
+                <form>
+                  <alert class="p-4 text-center"></alert>
+                  <h1>Login</h1>
+                  <p class="text-muted">Sign In to your account</p>
+                  <div class="input-group mb-3">
+                    <mat-form-field style="width: inherit;">
+                      <input matInput [formControl]="emailFormControl" placeholder="Email" name="email" [(ngModel)] = 'email' required>
+                      <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+                        Please enter a valid email address
+                      </mat-error>
+                      <mat-error *ngIf="emailFormControl.hasError('required')">
+                        Email is <strong>required</strong>
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                  <div class="input-group mb-4">
+                    <mat-form-field style="width: inherit;">
+                    <input type="password" matInput [formControl]="passwordFormControl" placeholder="Password" name="pass" [(ngModel)] = 'password' required>
+                      <mat-error *ngIf="passwordFormControl.hasError('required')">
+                        Password is <strong>required</strong>
+                      </mat-error></mat-form-field>
+                  </div>
+                  <div class="row">
+                    <div class="col-6">
+                      <button type="button" class="btn btn-primary px-4" (click)="login()">
+                        <i class="fa fa-sign-in"></i> Login
+                      </button>
+                    </div>
+                    <div class="col-6 text-right">
+                      <button type="button" class="btn btn-link px-0" (click)="primaryModal.show()">Forgot password?</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div class="card text-white bg-primary py-5 d-md-down-none" style="width:44%">
+              <div class="card-body text-center">
+                <div>
+                  <h2>Nutty Shop</h2>
+                  <img src="../../../assets/img/brand/Brand-Icon.png" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<ngx-loading [show]="loading"></ngx-loading>
+
+<div bsModal #primaryModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-primary" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Forgot Password</h4>
+        <button type="button" class="close" (click)="primaryModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="showEmail">
+          <mat-form-field appearance="outline" class="matitem" style="width: 100%;">
+            <mat-label>Email-ID</mat-label>
+            <input matInput [formControl]="emailFormControl" placeholder="Email" name="email" [(ngModel)]="email" required>
+            <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+              Please enter a valid email address
+            </mat-error>
+            <mat-error *ngIf="emailFormControl.hasError('required')">
+              Email is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div *ngIf="showOtp">
+          <mat-form-field appearance="outline" class="matitem" style="width: 100%;">
+            <mat-label>EMAIL-OTP</mat-label>
+            <input matInput [formControl]="otpFormControl" placeholder="Email OTP" name="otp" [(ngModel)]="otp" required>
+            <mat-error *ngIf="otpFormControl.hasError('required')">
+              Email OTP is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div *ngIf="showPassword">
+          <mat-form-field appearance="outline" class="matitem" style="width: 100%;" >
+            <mat-label>New Password</mat-label>
+            <input type="password" matInput [formControl]="password1FormControl" placeholder="New Password" name="pass1" [(ngModel)] = 'password1' required>
+              <mat-error *ngIf="passwordFormControl.hasError('required')">
+                Password is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="matitem" style="width: 100%;">
+              <mat-label>Retype Password</mat-label>
+              <input type="password" matInput [formControl]="password2FormControl" placeholder="Retype Password" name="pass2" [(ngModel)] = 'password2' required>
+              <mat-error *ngIf="passwordFormControl.hasError('required')">
+                Password is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="primaryModal.hide()">Close</button>
+        <div *ngIf="showEmail">
+          <button type="button" class="btn btn-primary" (click)="sendEmailOtp()">
+            <i class="fa fa-send-o"></i> Send Email OTP
+          </button>
+        </div>
+        <div *ngIf="showOtp">
+          <button type="button" class="btn btn-primary" (click)="verifyOtp()">
+            <i class="fa fa-check"></i> Verify OTP
+          </button>
+        </div>
+        <div *ngIf="showPassword">
+          <button type="button" class="btn btn-warning" (click)="updatePassword()">
+            <i class="fa fa-lock"></i> Update Password
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

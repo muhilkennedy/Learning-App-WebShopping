@@ -1,0 +1,61 @@
+<div class="container">
+  <h1>Edit Profile</h1>
+  <hr>
+<div class="row">
+    <!-- left column -->
+    <div class="col-md-3">
+      <div class="text-center">
+        <img [src]='checkImage(profilePic)' class="avatar img-circle profileImg" alt="avatar">
+        <h6>Upload a different photo...</h6>
+        <input type="file" (change)="handleFileUpdate($event.target.files)">
+        <br/>
+        <hr/>
+        <br/>
+        <label>Employee ID : </label><label> <strong>{{empId}}</strong></label><br/>
+        <label>Designation : </label><label> <strong>{{designation}}</strong></label>
+      </div>
+    </div>
+
+    <!-- edit form column -->
+    <div class="col-md-9 personal-info">
+      <ngx-loading [show]="loading"></ngx-loading>
+      <alert class="p-4 text-center"></alert>
+      <h3>Personal info</h3>
+      <form class="form-horizontal" role="form">
+        <div class="form-group">
+          <label class="col-lg-3 control-label">First name:</label>
+          <div class="col-lg-8">
+            <input class="form-control" type="text" placeholder="First Name" name="fname" [(ngModel)] = 'firstName'>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-lg-3 control-label">Last name:</label>
+          <div class="col-lg-8">
+            <input class="form-control" type="text" placeholder="Last Name" name="lname" [(ngModel)] = 'lastName'>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-lg-3 control-label">Email:</label>
+          <div class="col-lg-8">
+            <input class="form-control" type="text" placeholder="Email-ID" name="email" [(ngModel)] = 'email'>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-lg-3 control-label">Mobile:</label>
+          <div class="col-lg-8">
+            <input class="form-control" type="number" placeholder="Mobile" name="mobile" [(ngModel)] = 'mobile'>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-md-3 control-label"></label>
+          <div class="col-md-8">
+            <button class="btn btn-primary float-right" (click) = "save()">
+              <i class="fa fa-save"></i><span> Save Changes</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+</div>
+</div>
+<hr>

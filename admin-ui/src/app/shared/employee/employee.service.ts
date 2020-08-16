@@ -11,6 +11,8 @@ export class EmployeeService {
   createEmployeeEndpoint = "/secure/admin/employee/createEmployee";
   allPermissionsEndpoint = "/secure/admin/employee/getAllPermissions";
   employeeEndpoint = "/secure/admin/employee/getEmployee";
+  allEmployeeEndpoint = "/secure/admin/employee/getAllEmployee";
+  allEmployeeCountEndpoint = "/secure/admin/employee/getAllEmployeesCount";
   updatePermissionEndpoint = "/secure/admin/employee/overridePermissions";
   statusUpdateEndpoint = "/secure/admin/employee/activateEmployee";
 
@@ -69,8 +71,26 @@ export class EmployeeService {
     const httpOptions = {
       employeeId: employeeId,
       active: status
-  };
-  return this.http.put(environment.backendBaseUrl+this.statusUpdateEndpoint, httpOptions);
+    };
+    return this.http.put(environment.backendBaseUrl+this.statusUpdateEndpoint, httpOptions);
+  }
+
+  getAllEmployees(offset, limit): Observable<any>{
+
+    //Set Headers
+    let requestHeaders = new HttpHeaders().set('Content-Type', 'application/json')
+    .append('Offset', offset)
+    .append('Limit', limit);
+
+    const httpOptions = {
+      headers: requestHeaders
+    };
+
+    return this.http.get(environment.backendBaseUrl+this.allEmployeeEndpoint, httpOptions);
+  }
+
+  getAllEmployeesCount(): Observable<any>{
+    return this.http.get(environment.backendBaseUrl+this.allEmployeeCountEndpoint);
   }
 
 }

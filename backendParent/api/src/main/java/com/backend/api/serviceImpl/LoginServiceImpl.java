@@ -42,10 +42,23 @@ public class LoginServiceImpl implements LoginService {
 			EmployeeInfo actualUser = empService.findEmployeeByEmail(empInfo.getEmailId());
 			if (actualUser != null && BCrypt.checkpw(empInfo.fetchPassword(), actualUser.fetchPassword())) {
 				actualUser.setLastLogin(new Date());
+				actualUser.setLoggedIn(true);
 				return actualUser;
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public void logoutUser() {
+		User user = baseService.getUserInfo();
+		if (user instanceof EmployeeInfo) {
+			EmployeeInfo empInfo = (EmployeeInfo) user;
+			empInfo = empService.findEmployeeByEmail(empInfo.getEmailId());
+			empInfo.setLoggedIn(false);
+			empInfo.setLastLogin(new Date());
+			empService.save(empInfo);
+		}
 	}
 
 	@Override
@@ -99,6 +112,36 @@ public class LoginServiceImpl implements LoginService {
 			ex.printStackTrace();
 		}
 		return generatedPassword;
+	}
+	
+	@Override
+	public boolean checkIfUserExists(String email) {
+		if(empService.findEmployeeByEmailOrId(email) != null) {
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean updateEmployeePassword(String email, String newPassword) {
+		EmployeeInfo empInfo = empService.findEmployeeByEmailOrId(email);
+		if(empInfo != null) {
+			String encrptedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt(CommonUtil.saltRounds));
+			empInfo.setPassword(encrptedPassword);
+			empService.save(empInfo);
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public void toggleUserStatus(boolean status) {
+		User user = baseService.getUserInfo();
+		if(user != null && user instanceof EmployeeInfo) {
+			EmployeeInfo info = (EmployeeInfo) baseService.getUserInfo();
+			info.setActive(status);
+			empService.save(info);
+		}
 	}
 
 }

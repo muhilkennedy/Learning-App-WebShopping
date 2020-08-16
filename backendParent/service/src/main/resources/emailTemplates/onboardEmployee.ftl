@@ -447,7 +447,7 @@ body{background-color:#ebebec}.logo a:hover,.logo a:focus{color:#1e2e3b !importa
             </div>
           <!--[if (mso)|(IE)]></td><td style="width: 280px" valign="top"><![endif]-->
             <div class="webversion" style="display: table-cell;Float: left;font-size: 12px;line-height: 19px;max-width: 280px;min-width: 139px; width: 139px;width: calc(14100% - 78680px);padding: 10px 0 5px 0;text-align: right;color: #2b343f;font-family: Courier New,Courier,monospace;">
-              <p style="Margin-top: 0;Margin-bottom: 0;">No images? <webversion style="text-decoration: underline;">Click here</webversion></p>
+              <p style="Margin-top: 0;Margin-bottom: 0;"><img src=${tenantLogo} alt='Logo' style="height : 50px; width: 50px;" /></p>
             </div>
           <!--[if (mso)|(IE)]></td></tr></table><![endif]-->
           </div>
@@ -553,7 +553,13 @@ body{background-color:#ebebec}.logo a:hover,.logo a:focus{color:#1e2e3b !importa
             <div class="column" style="text-align: left;font-size: 12px;line-height: 19px;color: #2b343f;font-family: Courier New,Courier,monospace;">
               <div style="Margin-left: 20px;Margin-right: 20px;Margin-top: 10px;Margin-bottom: 10px;">
                 <div style="font-size: 12px;line-height: 19px;">
-                  <span><preferences style="text-decoration: underline;" lang="en">Company Address</preferences>&nbsp;&nbsp;|&nbsp;&nbsp;</span><unsubscribe style="text-decoration: underline;">Contact</unsubscribe>
+                  <span>
+                  <preferences style="text-decoration: underline;" lang="en">${tenantStreet}</preferences>
+                  <br/>
+                  <preferences style="text-decoration: underline;" lang="en">${tenantCity}</preferences> - <preferences style="text-decoration: underline;" lang="en">${tenantPin}</preferences>
+                  <br/>
+                  <preferences style="text-decoration: underline;" lang="en">${tenantContact}</preferences>
+                  </span>
                 </div>
               </div>
             </div>

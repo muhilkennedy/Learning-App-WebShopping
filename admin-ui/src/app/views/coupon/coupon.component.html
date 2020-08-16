@@ -1,9 +1,11 @@
+<alert class="p-4 text-center"></alert>
+<ngx-loading [show]="loading"></ngx-loading>
 <div class="animated fadeIn">
   <div class="row">
     <div class="col-md-12">
       <div class="card">
         <div class="card-header">
-          Manage Coupons
+          <i class="fa fa-ticket"></i>Manage Coupons
         </div>
         <div class="card-body">
           <div class="row">
@@ -33,7 +35,7 @@
                   </td>
                   <td>
                     <div>
-                      {{coupon.startDate | date:'shortDate'}} - {{coupon.endDate | date:'shortDate'}}
+                      {{coupon.startDate | date: 'dd-MM-yyy' }} --- {{coupon.endDate | date: 'dd-MM-yyy'}}
                     </div>
                   </td>
                   <td>

@@ -30,4 +30,12 @@ public interface EmployeeService {
 
 	void employeeStatus(EmployeeInfo emp, boolean status);
 
+	void updateEmployee(EmployeeInfo actualEmployee, EmployeeInfo updatedEmployee, byte[] profilePic) throws Exception;
+
+	List<EmployeeInfo> findAllEmployeeForTenant(int offset, int limit);
+
+	int findAllEmployeesForTenantCount();
+
+	List<EmployeeInfo> findAllEmployeeNameAndEmailForTenant();
+
 }

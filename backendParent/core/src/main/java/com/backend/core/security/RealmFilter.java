@@ -58,7 +58,7 @@ public class RealmFilter implements Filter {
 				}
 				// Check for active tenant and allowed origins
 				if (TenantUtil.isTenantActive(tenantId) && TenantUtil.isAllowedOriginForTenant(tenantId, origin)) {
-					setSession(tenantId, req);
+					//setSession(tenantId, req);
 					baseService.setTenantInfo(TenantUtil.getTenantInfo(tenantId));
 					chain.doFilter(request, response);
 				} else {
@@ -70,7 +70,7 @@ public class RealmFilter implements Filter {
 				if (StringUtils.isNotEmpty(req.getHeader(Constants.Header_TenantId))) {
 					tenantId = req.getHeader(Constants.Header_TenantId);
 					if (TenantUtil.isTenantActive(tenantId)) {
-						setSession(tenantId, req);
+						//setSession(tenantId, req);
 						baseService.setTenantInfo(TenantUtil.getTenantInfo(tenantId));
 						chain.doFilter(request, response);
 					} else {

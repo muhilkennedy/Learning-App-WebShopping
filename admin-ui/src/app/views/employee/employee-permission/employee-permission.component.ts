@@ -40,7 +40,8 @@ export class EmployeePermissionComponent implements OnInit {
           this.loading = false;
         },
         (error)=>{
-          alert('error in fetching permissions')
+          console.log('Error in fetching permissions... Try again later!');
+          this.loading = false;
         })
   }
 
@@ -104,16 +105,19 @@ export class EmployeePermissionComponent implements OnInit {
                           this.setPermissions();
                         }
                         else if(resp.statusCode === 503){
-                          alert(resp.errorMessages);
+                          this.alertService.error('Error : ' + resp.errorMessages);
                         }
                         this.loading = false;
                       },
                       (error) => {
-                        alert("something went wrong!");
+                        this.alertService.error('Something went wrong... Try again later!');
                         this.loading = false;
                       });
     }
-
+    else{
+      this.alertService.warn("Empty/Incorrect Entry");
+      this.loading = false;
+    }
   }
 
   reset(){

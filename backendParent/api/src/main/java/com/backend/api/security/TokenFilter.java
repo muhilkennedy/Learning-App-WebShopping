@@ -56,6 +56,10 @@ public class TokenFilter implements Filter {
 							empInfo.setEmployeePermissions(empService.getEmployeePermissionsForTenant(empInfo));
 							if (empInfo != null) {
 								baseService.setUserInfo(empInfo);
+								logger.info("Tenant - " + baseService.getTenantInfo().getTenantID());
+								logger.info("User - " + (baseService.getUserInfo() instanceof EmployeeInfo
+										? "Employee Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()
+										: "Client Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()));
 							} else {
 								((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
 										"Invalid User Request.... token might have been tampered");
@@ -82,6 +86,54 @@ public class TokenFilter implements Filter {
 				return;
 			}
 		} else {
+			//running in dev mode
+			// validate token in case of logout and token auth
+			if(req.getRequestURI().contains("employeeLogout") 
+					|| req.getRequestURI().contains("employeeTokenAuthentication")
+					|| req.getRequestURI().contains("deactivateEmployee")
+					|| req.getRequestURI().contains("todo")
+					|| req.getRequestURI().contains("task")
+					|| req.getRequestURI().contains("pushNotification")) {
+				String token = req.getHeader(HttpHeaders.AUTHORIZATION);
+				if (token != null && !StringUtils.isEmpty(JWTUtil.extractToken(token))) {
+					try {
+						String jwtToken = JWTUtil.extractToken(token);
+						if (JWTUtil.validateToken(jwtToken)) {
+							String email = JWTUtil.getUserEmailFromToken(jwtToken);
+							if (JWTUtil.isEmployeeUser(jwtToken)) {
+								EmployeeInfo empInfo = empService.findEmployeeByEmail(email);
+								empInfo.setEmployeePermissions(empService.getEmployeePermissionsForTenant(empInfo));
+								if (empInfo != null) {
+									baseService.setUserInfo(empInfo);
+									logger.info("Tenant - " + baseService.getTenantInfo().getTenantID());
+									logger.info("User - " + (baseService.getUserInfo() instanceof EmployeeInfo
+											? "Employee Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()
+											: "Client Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()));
+								} else {
+									((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
+											"Invalid User Request.... token might have been tampered");
+									return;
+								}
+							} else {
+								// load client user data
+							}
+						} else {
+							((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
+									"Token Validation failed");
+							return;
+						}
+					} catch (Exception e) {
+						logger.error("doFilter :: Exception - " + e.getMessage());
+						((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST,
+								"Error in handling the request - " + e.getMessage());
+						return;
+					}
+				} else {
+					((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST,
+							"Authorization Header is Missing");
+					return;
+				}
+			}
 			chain.doFilter(request, response);
 		}
 	}

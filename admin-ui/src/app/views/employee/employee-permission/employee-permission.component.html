@@ -1,13 +1,13 @@
 <ngx-loading [show]="loading"></ngx-loading>
+<alert class="p-4 text-center"></alert>
 <div class="animated fadeIn">
   <div class="row">
     <div class="col-md-12">
       <div class="card">
         <div class="card-header">
-          Modify Employee Access Permissions
+          <i class="fa fa-universal-access"></i>Modify Employee Access Permissions
         </div>
         <div class="card-body">
-          <alert class="p-4 text-center"></alert>
           <div class="row">
             <table class="table table-responsive-sm">
               <tr>
@@ -40,7 +40,7 @@
                     </div>
                     <div class="card-body">
                       <button mat-button [disabled]="true" style="text-align: inherit; color: gray;">
-                        <mat-icon class="with-icon">verified_user</mat-icon>
+                        <i class="fa fa-shield"></i>
                         <span class="icon-text"> Activate Employee</span><br/>
                       </button>
                       <mat-slide-toggle
