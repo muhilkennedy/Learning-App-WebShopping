@@ -78,6 +78,10 @@ public class EmployeeController {
 			@RequestBody EmployeeInfo empObj) {
 		GenericResponse<EmployeeInfo> response = new GenericResponse<EmployeeInfo>();
 		try {
+			if(loginService.checkIfUserExists(empObj.getEmailId())) {
+				response.setErrorMessages(Arrays.asList("Email Id Exists"));
+				response.setStatus(Response.Status.ERROR);
+			}
 			String generatedaPassword = loginService.createUser(empObj);
 			if (generatedaPassword != null) {
 				//send a onboard email to the employee.
