@@ -6,7 +6,7 @@
 export const environment = {
   production: false,
   tenantId: "devTenant",
-  backendBaseUrl:"http://localhost:8080",
+  backendBaseUrl:"https://e3d91d47b264.ngrok.io",
   contextPath:"",
 
   orgName: "Nutty Shop"
