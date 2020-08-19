@@ -11,6 +11,10 @@ import com.backend.core.entity.Tenant;
 import com.backend.persistence.entity.EmployeeInfo;
 import com.backend.persistence.entity.EmployeePermissionsMap;
 
+/**
+ * @author Muhil
+ *
+ */
 @Repository
 public interface EmployeePermissionsMapRepository extends JpaRepository<EmployeePermissionsMap, Integer> {
 	
