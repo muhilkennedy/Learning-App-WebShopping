@@ -7,6 +7,10 @@ import org.springframework.stereotype.Repository;
 
 import com.backend.persistence.entity.EmployeePermissions;
 
+/**
+ * @author Muhil
+ *
+ */
 @Repository
 public interface EmployeePermissionsRepository extends JpaRepository<EmployeePermissions, Integer> {
 	
