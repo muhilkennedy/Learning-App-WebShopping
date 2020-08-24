@@ -1,18 +1,10 @@
 package com.backend.persistence.serviceImpl;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
 import javax.sql.rowset.serial.SerialBlob;
 import javax.transaction.Transactional;
 
@@ -113,6 +105,18 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 	
 	@Override
+	public List<EmployeeInfo> findAllEmployeeById(List<Integer> ids) {
+		List<EmployeeInfo> empList = new ArrayList<EmployeeInfo>();
+		CollectionUtils.emptyIfNull(ids).stream().forEach(id -> {
+			EmployeeInfo emp = employeeRepo.findEmployeeByEmailOrId(id.toString(), baseService.getTenantInfo());
+			if (emp != null) {
+				empList.add(emp);
+			}
+		});
+		return empList;
+	}
+	
+	@Override
 	public void overrirdePermissions(EmployeeInfo empInfo, List<Integer> permissionIds) {
 		Map<Integer, EmployeePermissions> allPermissionsMap = loadPermissionsMap();
 		empInfo.getEmployeePermissions().parallelStream().forEach(permission -> {
@@ -171,6 +175,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 			 empList.add(emp);
 		 });
 		 return empList;
+	}
+	
+	@Override
+	public void updateEmployeeLoggedInStatus(EmployeeInfo emp) {
+		emp.setLoggedIn(true);
+		employeeRepo.save(emp);
 	}
 	
 }

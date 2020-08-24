@@ -18,7 +18,7 @@ public class SecurityConfiguration {
 	public FilterRegistrationBean<TokenFilter> TokenFilterRegistration() {
 	    FilterRegistrationBean<TokenFilter> registration = new  FilterRegistrationBean<TokenFilter>();
 	    registration.setFilter(tokenFilter);
-	    registration.addUrlPatterns("/secure/*", "/login/secure/*", "/tenant/*");
+	    registration.addUrlPatterns("/secure/*", "/login/secure/*", "/tenant/*", "/product/secure/*");
 	    return registration;
 	}
 	
@@ -26,7 +26,7 @@ public class SecurityConfiguration {
 	public FilterRegistrationBean<AdminFilter> AdminFilterRegistration() {
 	    FilterRegistrationBean<AdminFilter> registration = new  FilterRegistrationBean<AdminFilter>();
 	    registration.setFilter(adminFilter);
-	    registration.addUrlPatterns("/secure/admin/*","/admin/*", "/tenant/*");
+	    registration.addUrlPatterns("/secure/admin/*", "/admin/*", "/tenant/*", "/product/secure/admin/*");
 	    return registration;
 	}
 

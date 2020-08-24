@@ -44,8 +44,13 @@ public class RealmFilter implements Filter {
 			String tenantId = null;
 			String origin = null;
 			logger.info("doFilter :: Realm Filter");
+			// skip realm check in case of load testing
+			if(req.getRequestURI().contains("/loadTesting")) {
+				baseService.setTenantInfo(TenantUtil.getTenantInfo("devTenant"));
+				chain.doFilter(request, response);
+			}
 			// Incase of prod mode both tenantId and Origin url mandatory.
-			if (configUtil.isProdMode()) {
+			else if (configUtil.isProdMode()) {
 				if (StringUtils.isNotEmpty(req.getHeader(Constants.Header_TenantId))
 						&& StringUtils.isNotEmpty(req.getHeader(Constants.Header_Origin))) {
 					tenantId = req.getHeader(Constants.Header_TenantId);

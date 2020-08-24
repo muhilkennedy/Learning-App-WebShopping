@@ -28,9 +28,9 @@
             <maxFileSize>10MB</maxFileSize>
             total size of all archive files, if total size > 10MB, 
 				it will delete old archived file
-            <totalSizeCap>10MB</totalSizeCap>
-            30 days to keep
-            <maxHistory>30</maxHistory>
+            <totalSizeCap>500MB</totalSizeCap>
+            180 days to keep
+            <maxHistory>180</maxHistory>
         </rollingPolicy>
         <encoder>
             <pattern>%d %p %c{1.} [%t] %m%n</pattern>

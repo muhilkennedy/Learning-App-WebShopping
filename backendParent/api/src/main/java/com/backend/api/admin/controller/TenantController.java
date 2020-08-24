@@ -1,4 +1,4 @@
-package com.backend.api.controller;
+package com.backend.api.admin.controller;
 
 import java.util.Arrays;
 import java.util.Base64;

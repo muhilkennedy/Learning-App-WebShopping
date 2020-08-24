@@ -98,6 +98,7 @@ export class LoginComponent {
                 this.userService.employeePermissions = resp.dataList[0].employeePermissions;
                 this.cookieService.set("EmailId", this.userService.emailId);
                 this.cookieService.set("JWT", this.userService.JwtToken);
+                // this.cookieService.set("JWT", this.userService.JwtToken, 365, null, null, true, "None");
                 this.router.navigate(['/dashboard']);
               }
               else{

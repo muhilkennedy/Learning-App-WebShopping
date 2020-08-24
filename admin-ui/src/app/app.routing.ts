@@ -52,6 +52,10 @@ export const routes: Routes = [
         path: 'task',
         loadChildren: () => import('./views/task/task.module').then(m => m.TaskModule)
       },
+      {
+        path: 'product',
+        loadChildren: () => import('./views/product/product.module').then(m => m.ProductModule)
+      }
     ]
   },
   {
