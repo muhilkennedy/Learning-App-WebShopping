@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgxLoadingModule, ngxLoadingAnimationTypes } from 'ngx-loading';
-import { SharedModule } from '../../shared/shared.module';
-import { CarouselModule } from 'ngx-bootstrap/carousel';
+import { ChartsModule } from 'ng2-charts';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { AlertModule } from '../../shared/_alert/alert.module';
 // Material modules
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
@@ -40,30 +40,23 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatTreeModule} from '@angular/material/tree';
-import { ProfileComponent } from './profile.component';
-import { ProfileRoutingModule } from './profile-routing.module';
-import { NgxTypeaheadModule } from 'ngx-typeahead';
+import { NgxLoadingModule, ngxLoadingAnimationTypes } from 'ngx-loading';
+import { SharedModule } from '../../shared/shared.module';
+import { CategoryComponent } from './category/category.component';
+import { ProductRoutingModule } from './product-routing.module';
 
 @NgModule({
   declarations: [
-    ProfileComponent
+    CategoryComponent
   ],
   imports: [
     CommonModule,
-    ProfileRoutingModule,
     FormsModule,
+    ChartsModule,
+    BsDropdownModule,
+    ButtonsModule.forRoot(),
+    ProductRoutingModule,
     ReactiveFormsModule,
-    NgxTypeaheadModule,
-    NgxLoadingModule.forRoot({
-      animationType: ngxLoadingAnimationTypes.rectangleBounce,
-      backdropBackgroundColour: 'rgba(0,0,0,0.3)',
-      backdropBorderRadius: '4px',
-      primaryColour: 'cornflowerblue',
-      secondaryColour: 'chocolate',
-      tertiaryColour: 'darkred'
-    }),
-    SharedModule,
-    CarouselModule,
     MatAutocompleteModule,
     MatBadgeModule,
     MatBottomSheetModule,
@@ -99,7 +92,16 @@ import { NgxTypeaheadModule } from 'ngx-typeahead';
     MatToolbarModule,
     MatTooltipModule,
     MatTreeModule,
+    NgxLoadingModule.forRoot({
+      animationType: ngxLoadingAnimationTypes.rectangleBounce,
+      backdropBackgroundColour: 'rgba(0,0,0,0.3)',
+      backdropBorderRadius: '4px',
+      primaryColour: 'cornflowerblue',
+      secondaryColour: 'chocolate',
+      tertiaryColour: 'darkred'
+    }),
+    SharedModule,
     AlertModule
   ]
 })
-export class ProfileModule { }
+export class ProductModule { }

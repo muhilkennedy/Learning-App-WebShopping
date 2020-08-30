@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { EmployeeService } from '../../../shared/employee/employee.service';
 import { AlertService } from '../../../shared/_alert';
+import { Observable } from 'rxjs';
+import { startWith, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-employee-permission',
@@ -30,7 +32,53 @@ export class EmployeePermissionComponent implements OnInit {
     keepAfterRouteChange: false
   };
 
-  constructor(private emplService: EmployeeService, private alertService: AlertService) { }
+  // public selectedValue = '';
+  // public staticEmailList = [];
+
+  // public handleStaticResultSelected (result) {
+  //   this.selectedValue = result;
+  //   // this.searchAction();
+  // }
+
+  searchUserId: number;
+    //autoComplete
+    myControl = new FormControl('', [
+      Validators.required
+    ]);
+    options: any[];
+    filteredOptions: Observable<any[]>;
+
+  constructor(private emplService: EmployeeService, private alertService: AlertService) {
+        this.emplService.getAllEmployeeNamesAndEmail()
+                        .subscribe((resp:any) => {
+                          if(resp.statusCode  === 200){
+                            this.options = resp.dataList;
+                            this.filteredOptions = this.myControl.valueChanges.pipe(
+                              startWith(''),
+                              map(value => this._filter(value))
+                            );
+                          }
+                          else{
+                            this.alertService.error('Failed : ' + resp.errorMessages);
+                          }
+                          this.loading = false;
+                        },
+                        (error:any) => {
+                          this.alertService.error("something went wrong!");
+                          this.loading = false;
+                        });
+  }
+
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.options.filter(option => option.firstName.toLowerCase().indexOf(filterValue) === 0);
+  }
+
+  setUser(user:any)
+  {
+    this.email = user.emailId;
+    this.searchAction();
+  }
 
   ngOnInit(): void {
     this.loading = true;

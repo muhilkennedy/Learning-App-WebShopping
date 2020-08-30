@@ -1,6 +1,7 @@
 package com.backend.api.controller;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,6 +18,8 @@ import com.backend.core.entity.HomePageMedia;
 import com.backend.core.service.BaseService;
 import com.backend.core.service.HomeMediaService;
 import com.backend.core.util.Constants;
+import com.backend.persistence.entity.EmployeeInfo;
+import com.backend.persistence.service.EmployeeService;
 
 
 /**
@@ -34,6 +37,11 @@ public class BaseController {
 	
 	@Autowired
 	private HomeMediaService mediaService;
+	
+	@Autowired
+	private EmployeeService empService;
+	
+	private static int count = 0;
 	
 	@RequestMapping("/ping")
 	public GenericResponse<PingInfo> pingService(HttpServletRequest request) {
@@ -57,6 +65,16 @@ public class BaseController {
 		GenericResponse<HomePageMedia> response = new GenericResponse<HomePageMedia>();
 		response.setDataList(mediaService.getHomeMediaContents());
 		response.setStatus(Response.Status.OK);
+		return response;
+	}
+	
+	@RequestMapping("/loadTesting")
+	public GenericResponse<EmployeeInfo> loadTesting(HttpServletRequest request) {
+		count++;
+		System.out.println("###############->"+count);
+		System.out.println("###############->"+ new Date().toString());
+		GenericResponse<EmployeeInfo> response = new GenericResponse<EmployeeInfo>();
+		response.setDataList(empService.findAllEmployeeForTenant());
 		return response;
 	}
 	

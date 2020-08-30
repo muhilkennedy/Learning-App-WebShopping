@@ -55,6 +55,7 @@
     "ngx-cookie-service": "^3.0.4",
     "ngx-loading": "^8.0.0",
     "ngx-perfect-scrollbar": "^9.0.0",
+    "ngx-typeahead": "^9.1.0",
     "rxjs": "^6.5.5",
     "simple-line-icons": "2.4.1",
     "ts-helpers": "^1.1.2",

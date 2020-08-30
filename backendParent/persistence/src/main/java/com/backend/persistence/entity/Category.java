@@ -47,8 +47,8 @@ public class Category implements Serializable {
 	@Column(name = "ACTIVE")
 	private boolean active;
 	
-	@OneToMany(mappedBy = "categoryId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<Product> products;
+//	@OneToMany(mappedBy = "categoryId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//	private List<Product> products;
 
 	public Category() {
 		super();
@@ -91,6 +91,20 @@ public class Category implements Serializable {
 
 	public void setCategoryId(int categoryId) {
 		this.categoryId = categoryId;
+	}
+	
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	@Override
+	public String toString() {
+		return categoryId + "," + categoryName;
+
 	}
 
 }

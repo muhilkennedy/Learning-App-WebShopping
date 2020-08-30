@@ -54,6 +54,27 @@ export class EmployeeComponent implements OnInit {
                         });
   }
 
+  refreshEmployeeList(){
+    this.loading = true;
+    let empIds = new Array();
+    this.employeesList.forEach(emp => {
+      empIds.push(emp.employeeId);
+    });
+    this.employeeService.getEmployeesById(empIds)
+                        .subscribe((resp:any) => {
+                          if(resp.statusCode === 200){
+                            this.employeesList = resp.dataList;
+                          }
+                          else{
+                            this.alertService.error('Failed : ' + resp.errorMessages);
+                          }
+                          this.loading = false;
+                        },
+                        (error:any) => {
+                          this.alertService.error('Something went Wrong....try again later!');
+                        });
+  }
+
   ngOnInit(): void {
     this.loading = true;
     this.employeeService.getAllEmployeesCount()

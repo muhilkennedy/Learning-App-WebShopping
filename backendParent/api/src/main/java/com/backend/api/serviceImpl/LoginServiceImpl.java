@@ -15,6 +15,7 @@ import com.backend.commons.exceptions.InvalidUserException;
 import com.backend.commons.util.CommonUtil;
 import com.backend.core.interfaces.User;
 import com.backend.core.service.BaseService;
+import com.backend.core.serviceImpl.CacheService;
 import com.backend.core.util.ConfigUtil;
 import com.backend.persistence.entity.EmployeeAddress;
 import com.backend.persistence.entity.EmployeeInfo;
@@ -42,6 +43,7 @@ public class LoginServiceImpl implements LoginService {
 			EmployeeInfo actualUser = empService.findEmployeeByEmail(empInfo.getEmailId());
 			if (actualUser != null && BCrypt.checkpw(empInfo.fetchPassword(), actualUser.fetchPassword())) {
 				actualUser.setLastLogin(new Date());
+				CacheService.setLoggedInSatus(actualUser.getEmployeeId(), new Date());
 				actualUser.setLoggedIn(true);
 				return actualUser;
 			}
@@ -126,6 +128,19 @@ public class LoginServiceImpl implements LoginService {
 	public boolean updateEmployeePassword(String email, String newPassword) {
 		EmployeeInfo empInfo = empService.findEmployeeByEmailOrId(email);
 		if(empInfo != null) {
+			String encrptedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt(CommonUtil.saltRounds));
+			empInfo.setPassword(encrptedPassword);
+			empService.save(empInfo);
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean updateEmployeePasswordWithCheck(String newPassword, String oldPassword) {
+		EmployeeInfo empInfo = empService
+				.findEmployeeByEmailOrId(((EmployeeInfo) baseService.getUserInfo()).getEmailId());
+		if (empInfo != null && BCrypt.checkpw(oldPassword, empInfo.fetchPassword())) {
 			String encrptedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt(CommonUtil.saltRounds));
 			empInfo.setPassword(encrptedPassword);
 			empService.save(empInfo);

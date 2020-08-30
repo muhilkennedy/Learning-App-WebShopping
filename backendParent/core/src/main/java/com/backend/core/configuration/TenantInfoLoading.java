@@ -1,14 +1,20 @@
 package com.backend.core.configuration;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.imageio.ImageIO;
 import javax.sql.rowset.serial.SerialBlob;
 
 import org.apache.commons.io.FileUtils;
+import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,31 +61,30 @@ public class TenantInfoLoading {
 			byte[] test = FileUtils.readFileToByteArray(file);
 			devTenantDetail.setTenantLogo(new SerialBlob(test));
 			
-			
 			//load Home Media
 			file = ResourceUtils.getFile(
 				      "classpath:devAssets/slider1.jpg");
 			// home slider images
 			HomePageMedia media = mediaService.getMediaById(devTenant, 1);
-			media.setImage(new SerialBlob(FileUtils.readFileToByteArray(file)));
+			media.setImage(new SerialBlob(getBannerImage(FileUtils.readFileToByteArray(file))));
 			mediaService.save(media);
 			
 			file = ResourceUtils.getFile(
 				      "classpath:devAssets/slider2.jpg");
 			media = mediaService.getMediaById(devTenant, 2);
-			media.setImage(new SerialBlob(FileUtils.readFileToByteArray(file)));
+			media.setImage(new SerialBlob(getBannerImage(FileUtils.readFileToByteArray(file))));
 			mediaService.save(media);
 			
 			file = ResourceUtils.getFile(
 				      "classpath:devAssets/Media1.jpg");
 			media = mediaService.getMediaById(devTenant, 3);
-			media.setImage(new SerialBlob(FileUtils.readFileToByteArray(file)));
+			media.setImage(new SerialBlob(getHomeImage(FileUtils.readFileToByteArray(file))));
 			mediaService.save(media);
 			
 			file = ResourceUtils.getFile(
 				      "classpath:devAssets/Mediator2.jpg");
 			media = mediaService.getMediaById(devTenant, 4);
-			media.setImage(new SerialBlob(FileUtils.readFileToByteArray(file)));
+			media.setImage(new SerialBlob(getHomeImage(FileUtils.readFileToByteArray(file))));
 			mediaService.save(media);
 			
 			tenantService.save(devTenant);
@@ -87,6 +92,24 @@ public class TenantInfoLoading {
 		} catch (Exception e) { 
 			logger.error("Exception in loading dev images - " + e.getMessage());
 		}		
+	}
+	//convertion to reduce image size and load faster
+	private byte[] getBannerImage(byte[] image) throws Exception {
+		InputStream in = new ByteArrayInputStream(image);
+		BufferedImage bImage = Scalr.resize(ImageIO.read(in), Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, 1900,
+				1700, Scalr.OP_ANTIALIAS);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ImageIO.write(bImage, "jpg", baos);
+		return baos.toByteArray();
+	}
+	
+	private byte[] getHomeImage(byte[] image) throws Exception {
+		InputStream in = new ByteArrayInputStream(image);
+		BufferedImage bImage = Scalr.resize(ImageIO.read(in), Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, 1200,
+				900, Scalr.OP_ANTIALIAS);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ImageIO.write(bImage, "jpg", baos);
+		return baos.toByteArray();
 	}
 	
 	/**

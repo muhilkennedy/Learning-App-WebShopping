@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NotificationService } from '../../shared/notification/notification.service';
 import { AlertService } from '../../shared/_alert';
 import { CookieService } from 'ngx-cookie-service';
+import { LoginService } from '../../service/login/login.service';
 
 @Component({
   selector: 'app-push-notification',
@@ -15,15 +16,24 @@ export class PushNotificationComponent implements OnInit {
 
   constructor(private notificationService: NotificationService,
               private alertService: AlertService,
-              private cookieService: CookieService) { }
+              private cookieService: CookieService,
+              private loginService: LoginService) { }
 
   ngOnInit(): void {
     let allowCall =this.cookieService.get('JWT');
-      if(allowCall != null && allowCall != undefined && allowCall != ''){
+    let notificationInterval;
+    let loggedStatusInterval;
+    if(allowCall != null && allowCall != undefined && allowCall != ''){
         this.getNotifications();
-        setInterval(() => { this.getNotifications() }, 60000);
-    }
+        notificationInterval = setInterval(() => { this.getNotifications() }, 60000);
+       //need to moved to related method later.
+       loggedStatusInterval = setInterval(() => { this.updateLoggedInStatus() }, 50000);
 
+    }
+    else{
+      clearInterval(notificationInterval);
+      clearInterval(loggedStatusInterval);
+    }
   }
 
   getNotifications(){
@@ -42,6 +52,15 @@ export class PushNotificationComponent implements OnInit {
                                 this.notifications = resp.dataList;
                               }
                             });
+  }
+
+  updateLoggedInStatus(){
+    this.loginService.updateLoginStatus()
+                      .subscribe((resp:any) => {
+                        if(resp.statusCode === 200){
+                          this.notifications = resp.dataList;
+                        }
+                      });
   }
 
 }
