@@ -1,8 +1,8 @@
 package com.backend.api.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.Response;
-import com.backend.persistence.entity.Category;
-import com.backend.persistence.service.CategoryService;
+import com.backend.core.util.Constants;
+import com.backend.persistence.entity.Product;
 import com.backend.persistence.service.ProductService;
 
 /**
@@ -33,97 +33,61 @@ public class ProductController {
 	private static Logger logger = LoggerFactory.getLogger(ProductController.class);
 	
 	@Autowired
-	private CategoryService categoryService;
-	
-	@Autowired
 	private ProductService productService;
 	
-	@RequestMapping(value = "/baseCategories", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<Category> baseCategories(HttpServletRequest request) {
-		GenericResponse<Category> response = new GenericResponse<>();
+	/*
+	 * ############################################ 
+	 * 				common access
+	 * ############################################
+	 */
+	@RequestMapping(value = "/getProducts", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Product> getProducts(HttpServletRequest request, @RequestParam(value = "pIds", required = false) List<Integer> pIds,
+			@RequestParam(value = "cIds", required = false) List<Integer> cIds) {
+		GenericResponse<Product> response = new GenericResponse<>();
 		try {
-			response.setDataList(categoryService.getAllBaseCategories());
+			List<Product> productList = new ArrayList<Product>();
+			String limit = request.getHeader(Constants.Header_Limit);
+			String offset = request.getHeader(Constants.Header_Offset);
+			if(pIds != null && pIds.size() > 0) {
+				productList.addAll(productService.getProducts(pIds));
+			}
+			else if(limit != null && offset != null) {
+				productList.addAll(productService.getAllProductsForTenant(Integer.parseInt(limit), Integer.parseInt(offset)));
+			}
+			else {
+				productList.addAll(productService.getAllProductsForTenant());
+			}
+			response.setDataList(productList);
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
-			logger.error("baseCategories : " + ex);
+			logger.error("getProducts : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
 		}
 		return response;
 	}
-	
-	@RequestMapping(value = "/getCategory", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<Category> getCategory(HttpServletRequest request, @RequestParam int id) {
-		GenericResponse<Category> response = new GenericResponse<>();
+	/*
+	 * ############################################ 
+	 * 				secure access
+	 * ############################################
+	 */
+	@RequestMapping(value = "/createProduct", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Product> getProducts(HttpServletRequest request, @RequestBody Product productPojo, @RequestParam(value = "categoryId", required = true) int catId) {
+		GenericResponse<Product> response = new GenericResponse<>();
 		try {
-			response.setData(categoryService.getCategoryById(id));
-			response.setStatus(Response.Status.OK);
+			Product product = productService.createProduct(productPojo, catId);
+			if(product != null) {
+				response.setData(product);
+				response.setStatus(Response.Status.OK);
+			}
+			else {
+				response.setErrorMessages(Arrays.asList("Failed To Create Product"));
+				response.setStatus(Response.Status.ERROR);
+			}
+			
 		} catch (Exception ex) {
-			logger.error("getCategory : " + ex);
-			List<String> msg = Arrays.asList(ex.getMessage());
-			response.setErrorMessages(msg);
-			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
-		}
-		return response;
-	}
-	
-	@RequestMapping(value = "/getCategories", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<Map> getCategories(HttpServletRequest request) {
-		GenericResponse<Map> response = new GenericResponse<>();
-		try {
-			response.setData(categoryService.getCategoriesRecursive());
-			response.setStatus(Response.Status.OK);
-		} catch (Exception ex) {
-			logger.error("getCategories : " + ex);
-			List<String> msg = Arrays.asList(ex.getMessage());
-			response.setErrorMessages(msg);
-			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
-		}
-		return response;
-	}
-	
-	@RequestMapping(value = "/secure/admin/createCategory", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<Map> createCategory(HttpServletRequest request, @RequestBody Category cat) {
-		GenericResponse<Map> response = new GenericResponse<>();
-		try {
-			categoryService.createCategory(cat);
-			response.setData(categoryService.getCategoriesRecursive());
-			response.setStatus(Response.Status.OK);
-		} catch (Exception ex) {
-			logger.error("createCategory : " + ex);
-			List<String> msg = Arrays.asList(ex.getMessage());
-			response.setErrorMessages(msg);
-			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
-		}
-		return response;
-	}
-	
-	@RequestMapping(value = "/secure/admin/deleteCategory", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<Map> deleteCategory(HttpServletRequest request, @RequestParam(value = "ids", required = true) List<Integer> ids) {
-		GenericResponse<Map> response = new GenericResponse<>();
-		try {
-			categoryService.deleteCategory(ids);
-			response.setData(categoryService.getCategoriesRecursive());
-			response.setStatus(Response.Status.OK);
-		} catch (Exception ex) {
-			logger.error("deleteCategory : " + ex);
-			List<String> msg = Arrays.asList(ex.getMessage());
-			response.setErrorMessages(msg);
-			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
-		}
-		return response;
-	}
-	
-	@RequestMapping(value = "/secure/admin/editCategoryName", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<Map> editCategory(HttpServletRequest request, @RequestBody Category cat) {
-		GenericResponse<Map> response = new GenericResponse<>();
-		try {
-			categoryService.updateCategoryName(cat.getCategoryId(), cat.getCategoryName());
-			response.setData(categoryService.getCategoriesRecursive());
-			response.setStatus(Response.Status.OK);
-		} catch (Exception ex) {
-			logger.error("editCategory : " + ex);
+			logger.error("getProducts : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);

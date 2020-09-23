@@ -126,8 +126,14 @@ public class EmployeeController {
 	public GenericResponse<String> isLoggedIn(HttpServletRequest request) {
 		GenericResponse<String> response = new GenericResponse<String>();
 		try {
-			CacheService.setLoggedInSatus(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId(), new Date());
-			response.setStatus(Response.Status.OK);
+			if(baseService.getUserInfo() != null) {
+				CacheService.setLoggedInSatus(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId(), new Date());
+				response.setStatus(Response.Status.OK);
+			}
+			else {
+				response.setErrorMessages(Arrays.asList("User data cannot be found"));
+				response.setStatus(Response.Status.ERROR);
+			}
 		} catch (Exception ex) {
 			logger.error("isLoggedIn : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());

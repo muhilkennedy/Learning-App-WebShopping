@@ -38,6 +38,7 @@ public class ProductImages implements Serializable{
 	@Column(name = "PRODUCTIMAGESID")
 	private int pImagesId;
 	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "PRODUCTID", nullable = false)
 	private Product productId;

@@ -16,19 +16,14 @@ export const navItems: INavData[] = [
     icon: 'icon-bag',
     children: [
       {
-        name: 'Category',
-        url: '/product/category',
-        icon: 'icon-list'
-      },
-      {
         name: 'Products list',
         url: '/product/product-list',
         icon: 'icon-basket'
       },
       {
-        name: 'Manage Category',
-        url: '/product/manage-category',
-        icon: 'icon-pencil'
+        name: 'Category',
+        url: '/product/category',
+        icon: 'icon-list'
       },
       {
         name: 'Manage Product',

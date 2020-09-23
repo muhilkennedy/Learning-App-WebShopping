@@ -83,6 +83,7 @@ import { TenantStoreService } from './service/tenantStore/tenant-store.service';
 import { environment } from '../environments/environment';
 import { NotFoundComponent } from './component/not-found/not-found.component';
 import { PushNotificationComponent } from './containers/push-notification/push-notification.component';
+import { ChatMessengerComponent } from './containers/chat-messenger/chat-messenger.component';
 
 
 @Injectable()
@@ -202,6 +203,7 @@ export function init_tenant(initializer: TenantInitializer) {
     LoginComponent,
     NotFoundComponent,
     PushNotificationComponent,
+    ChatMessengerComponent,
   ],
   providers: [{
     provide: LocationStrategy,

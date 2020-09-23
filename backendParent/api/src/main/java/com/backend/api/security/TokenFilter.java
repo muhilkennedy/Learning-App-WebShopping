@@ -90,7 +90,7 @@ public class TokenFilter implements Filter {
 			// validate token in case of logout and token auth
 			if(req.getRequestURI().contains("employeeLogout") 
 					|| req.getRequestURI().contains("employeeTokenAuthentication")
-					|| req.getRequestURI().contains("isLoggedIn")
+					|| req.getRequestURI().contains("stillLoggedIn")
 					|| req.getRequestURI().contains("deactivateEmployee")
 					|| req.getRequestURI().contains("todo")
 					|| req.getRequestURI().contains("task")

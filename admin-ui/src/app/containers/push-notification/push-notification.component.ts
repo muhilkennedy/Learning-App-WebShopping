@@ -13,6 +13,7 @@ export class PushNotificationComponent implements OnInit {
 
   notifications:any[] = new Array();
   loading = true;
+  notificationCount = 0;
 
   constructor(private notificationService: NotificationService,
               private alertService: AlertService,
@@ -41,6 +42,7 @@ export class PushNotificationComponent implements OnInit {
                             .subscribe((resp:any) => {
                               if(resp.statusCode === 200){
                                 this.notifications = resp.dataList;
+                                this.notificationCount = this.notifications.length;
                               }
                             });
   }

@@ -1,0 +1,35 @@
+<ng-template tabHeading><!--<i class="icon-speech"></i> -->
+  <a class="notification">
+    <i class="fa fa-comments-o"></i>
+    <span class="badge">{{chatCount}}</span>
+    <!-- <span *ngIf="unreadMessage" class="avatar-status badge-dark"></span> -->
+  </a>
+</ng-template>
+<div class="p-3">
+  <h6>User Information</h6>
+  <div class="aside-options">
+    <div class="clearfix mt-4">
+      <small><b>Welcome {{userStore.firstName}} !</b></small>
+    </div>
+    <div>
+      <small class="text-muted">ID : <b>{{userStore.userId}}</b></small>
+    </div>
+    <div>
+      <small class="text-muted">{{userStore.designation}}</small>
+    </div>
+</div>
+
+<hr/>
+
+<h6>Chat Window</h6>
+<div class="aside-options">
+  <div id="main-content" class="container">
+    <button (click)="connect()" class="btn btn-default" type="submit">Connect</button>
+    <button (click)="disconnect()" class="btn btn-default" type="submit" disabled="disabled">Disconnect
+    </button>
+    <label for="name">What is your name?</label>
+    <input type="text" [(ngModel)]="name" class="form-control" name="name"> <br>
+    <button (click)="sendMessage()" class="btn btn-default" type="submit">Send</button>
+  </div>
+</div>
+

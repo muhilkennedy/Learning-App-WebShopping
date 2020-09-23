@@ -68,6 +68,7 @@ export class TenantInitializer {
           this.http.get(environment.backendBaseUrl + '/base/ping')
               .subscribe(
                 (resp:any) => {
+                  console.log(resp.data);
                   this.tenantStore.tenantId = resp.data.tenantId;
                   this.tenantStore.tenantName = resp.data.tenantUniqueName;
                   this.tenantStore.tenantActive = resp.data.tenantActive;
@@ -90,9 +91,10 @@ export class TenantInitializer {
                 }
               );
           // load app only if tenant is active.
-          let sec = 0;
           setTimeout(() => {
+            console.log("trying to resolve requst....");
             if(this.tenantStore.tenantActive === true){
+              console.log("Loading comeplete!");
               resolve();
             }
           }, 1000);
