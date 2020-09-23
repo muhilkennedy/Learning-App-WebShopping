@@ -5,6 +5,7 @@
 
 export const environment = {
   production: false,
+  origin: "web",
   tenantId: "devTenant",
   backendBaseUrl:"http://localhost:8080",
   contextPath:"",
