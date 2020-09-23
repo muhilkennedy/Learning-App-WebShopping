@@ -68,6 +68,7 @@ public class Product implements Serializable {
 	@OneToMany(mappedBy = "productId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<ProductImages> productImages;
 	
+	@JsonIgnore
 	@OneToMany(mappedBy = "productId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<ProductReview> productReviews;
 
@@ -141,6 +142,14 @@ public class Product implements Serializable {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public Category getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(Category categoryId) {
+		this.categoryId = categoryId;
 	}
 
 }

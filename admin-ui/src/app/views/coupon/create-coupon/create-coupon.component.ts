@@ -57,7 +57,7 @@ export class CreateCouponComponent implements OnInit {
                     .subscribe((resp:any) => {
                       if(resp.statusCode === 200){
                         this.alertService.success('Coupon created successfully');
-                        this.reset();
+                        // this.reset();
                       }
                       else{
                         this.alertService.warn('Error : ' + resp.errorMessages);

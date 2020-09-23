@@ -8,10 +8,13 @@ import { environment } from '../../../environments/environment';
 })
 export class ProductService {
 
-  getCategoriesEndpoint = "/product/getCategories";
-  createCategoryEndpoint = "/product/secure/admin/createCategory";
-  deleteCategoryEndpoint = "/product/secure/admin/deleteCategory";
-  editCategoryNameEndpoint = "/product/secure/admin/editCategoryName";
+  getCategoriesEndpoint = "/category/getCategories";
+  createCategoryEndpoint = "/category/secure/admin/createCategory";
+  deleteCategoryEndpoint = "/category/secure/admin/deleteCategory";
+  editCategoryNameEndpoint = "/category/secure/admin/editCategoryName";
+
+  getProductsEndpoint = "/product/getProducts";
+  createProductEndpoint = "/product/secure/admin/createProduct";
 
   constructor(private http: HttpClient) { }
 
@@ -45,6 +48,23 @@ export class ProductService {
       categoryName: name
     };
     return this.http.put(environment.backendBaseUrl+this.editCategoryNameEndpoint, httpOptions);
+  }
+
+  getProducts(pIds, cIds, limit, offset){
+        //Set Headers
+        let requestHeaders = new HttpHeaders().set('Content-Type', 'application/json')
+        .append('Offset', offset)
+        .append('Limit', limit);
+
+        const httpOptions = {
+          headers: requestHeaders,
+          params: {
+            pIds: pIds,
+            cIds: cIds
+          }
+        };
+
+        return this.http.get(environment.backendBaseUrl+this.getProductsEndpoint, httpOptions);
   }
 
 }

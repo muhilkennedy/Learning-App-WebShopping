@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "angularadminui1",
+    "site": "admin-51b0d",
     "public": "dist",
     "ignore": [
       "firebase.json",

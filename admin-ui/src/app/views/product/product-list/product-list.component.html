@@ -1,0 +1,25 @@
+<div class="animated fadeIn">
+<div class="row">
+  <div class="col-md-3 col-sm-4" *ngFor="let prod of products">
+    <div class="card">
+       <!-- <carousel [interval]="false">
+        <slide *ngFor="let slide of homeImages">
+          <label>Media-ID -> {{slide.mediaId}}</label>
+          <img src={{slide.image}} alt="slides" style="display: block; width: 100%;">
+          <div class="carousel-caption d-none d-md-block" style="color: black;">
+            <h3>{{slide.title}}</h3>
+            <p>{{slide.description}}</p>
+          </div>
+        </slide>
+      </carousel> -->
+      <div class="card-body text-center">
+        <div class="text-muted small text-uppercase font-weight-bold">{{prod.productName}}</div>
+        <div class="h2 py-3">{{prod.cost}}</div>
+        <div class="chart-wrapper mx-auto">
+          <p>{{prod.productDescription}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

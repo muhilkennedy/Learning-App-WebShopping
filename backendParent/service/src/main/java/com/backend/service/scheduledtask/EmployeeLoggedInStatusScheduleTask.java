@@ -36,7 +36,7 @@ public class EmployeeLoggedInStatusScheduleTask extends ScheduledTask {
 				if (checkTimeLapsed(item.getValue())) {
 					empDao.updateEmployeeLoggedInStatus(item.getKey(), false);
 					logger.info("Scheduled Task - " + EmployeeLoggedInStatusScheduleTask.class.getCanonicalName()
-							+ " :: Employee logged out ID : " + item.getKey());
+							+ " :: Employee ID : " + item.getKey() + " cleared from cache");
 					CacheService.clearLoggedInStatus(item.getKey());
 				}
 			} catch (Exception e) {

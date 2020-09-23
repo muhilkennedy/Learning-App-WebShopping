@@ -124,6 +124,7 @@ export class DefaultLayoutComponent implements OnInit{
         this.loginService.tokenAuth(this.cookieService.get('JWT'))
             .subscribe((resp:any) => {
             if(resp.statusCode === 200){
+              this.userStore.JwtToken = this.cookieService.get('JWT');
               this.userStore.active = resp.data.active;
               this.userStore.designation = resp.data.designation;
               this.userStore.emailId = resp.data.emailId;

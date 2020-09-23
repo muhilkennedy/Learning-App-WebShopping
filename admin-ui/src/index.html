@@ -22,6 +22,10 @@
         return encryptedPass;
     }
 
+    if (global === undefined) {
+      var global = window;
+    }
+
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());

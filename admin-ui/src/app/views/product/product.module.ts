@@ -5,6 +5,7 @@ import { ChartsModule } from 'ng2-charts';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { AlertModule } from '../../shared/_alert/alert.module';
+import { CarouselModule } from 'ngx-bootstrap/carousel';
 // Material modules
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatBadgeModule} from '@angular/material/badge';
@@ -44,10 +45,14 @@ import { NgxLoadingModule, ngxLoadingAnimationTypes } from 'ngx-loading';
 import { SharedModule } from '../../shared/shared.module';
 import { CategoryComponent } from './category/category.component';
 import { ProductRoutingModule } from './product-routing.module';
+import { ProductListComponent } from './product-list/product-list.component';
+import { ManageProductComponent } from './manage-products/manage-product/manage-product.component';
 
 @NgModule({
   declarations: [
-    CategoryComponent
+    CategoryComponent,
+    ProductListComponent,
+    ManageProductComponent
   ],
   imports: [
     CommonModule,
@@ -101,7 +106,8 @@ import { ProductRoutingModule } from './product-routing.module';
       tertiaryColour: 'darkred'
     }),
     SharedModule,
-    AlertModule
+    AlertModule,
+    CarouselModule
   ]
 })
 export class ProductModule { }
