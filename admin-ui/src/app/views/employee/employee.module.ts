@@ -46,6 +46,7 @@ import { EmployeeRoutingModule } from './employee-routing.module';
 import { CreateEmployeeComponent } from './create-employee/create-employee.component';
 import { EmployeePermissionComponent } from './employee-permission/employee-permission.component';
 import { EmployeeComponent } from './employee.component';
+import { NgxTypeaheadModule } from 'ngx-typeahead';
 
 @NgModule({
   declarations: [
@@ -96,6 +97,7 @@ import { EmployeeComponent } from './employee.component';
     MatToolbarModule,
     MatTooltipModule,
     MatTreeModule,
+    NgxTypeaheadModule,
     NgxLoadingModule.forRoot({
       animationType: ngxLoadingAnimationTypes.rectangleBounce,
       backdropBackgroundColour: 'rgba(0,0,0,0.3)',

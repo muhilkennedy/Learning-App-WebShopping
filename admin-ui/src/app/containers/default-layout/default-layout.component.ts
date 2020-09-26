@@ -115,13 +115,16 @@ export class DefaultLayoutComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    if(!environment.production && (this.userStore.JwtToken === undefined ||  this.userStore.JwtToken === null)){
-      // This is only for dev purposes(relogin as admin incase of refresh)
-      let allowCall =this.cookieService.get('JWT');
+    // if(this.userStore.JwtToken === undefined ||  this.userStore.JwtToken === null){
+    //   this.router.navigate(['/login']);
+    // }
+    // else{
+      let allowCall = this.cookieService.get('JWT');
       if(allowCall != null && allowCall != undefined && allowCall != ''){
         this.loginService.tokenAuth(this.cookieService.get('JWT'))
             .subscribe((resp:any) => {
             if(resp.statusCode === 200){
+              this.userStore.JwtToken = this.cookieService.get('JWT');
               this.userStore.active = resp.data.active;
               this.userStore.designation = resp.data.designation;
               this.userStore.emailId = resp.data.emailId;
@@ -149,7 +152,7 @@ export class DefaultLayoutComponent implements OnInit{
         else if(this.userStore==undefined || this.userStore.userId == undefined){
           this.router.navigate(['/login']);
         }
-      }
+      // }
 
   }
 

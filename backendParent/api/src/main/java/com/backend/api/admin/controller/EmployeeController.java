@@ -2,6 +2,7 @@
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +23,9 @@ import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.Response;
 import com.backend.api.service.LoginService;
 import com.backend.commons.service.EmailService;
+import com.backend.commons.util.RSAUtil;
 import com.backend.core.service.BaseService;
+import com.backend.core.serviceImpl.CacheService;
 import com.backend.core.util.Constants;
 import com.backend.persistence.entity.EmployeeInfo;
 import com.backend.persistence.entity.EmployeePermissions;
@@ -58,6 +61,8 @@ public class EmployeeController {
 			info = empService.findEmployeeByEmail(info.getEmailId());
 			response.setData(info);
 			if(info.isActive()) {
+				empService.updateEmployeeLoggedInStatus(info);
+				CacheService.setLoggedInSatus(info.getEmployeeId(), new Date());
 				response.setStatus(Response.Status.OK);
 			}
 			else {
@@ -117,6 +122,27 @@ public class EmployeeController {
 		return response;
 	}
 	
+	@RequestMapping(value = "/stillLoggedIn", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> isLoggedIn(HttpServletRequest request) {
+		GenericResponse<String> response = new GenericResponse<String>();
+		try {
+			if(baseService.getUserInfo() != null) {
+				CacheService.setLoggedInSatus(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId(), new Date());
+				response.setStatus(Response.Status.OK);
+			}
+			else {
+				response.setErrorMessages(Arrays.asList("User data cannot be found"));
+				response.setStatus(Response.Status.ERROR);
+			}
+		} catch (Exception ex) {
+			logger.error("isLoggedIn : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
 	@RequestMapping(value = "/getAllPermissions", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<EmployeePermissions> getPermissions(HttpServletRequest request) {
 		GenericResponse<EmployeePermissions> response = new GenericResponse<EmployeePermissions>();
@@ -165,6 +191,22 @@ public class EmployeeController {
 
 		} catch (Exception ex) {
 			logger.error("getEmployee : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/getEmployeesById", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<EmployeeInfo> getEmployeesById(HttpServletRequest request, @RequestParam(value = "ids", required = true) List<Integer> ids) {
+		GenericResponse<EmployeeInfo> response = new GenericResponse<EmployeeInfo>();
+		try {
+			response.setDataList(empService.findAllEmployeeById(ids));
+			response.setStatus(Response.Status.OK);
+
+		} catch (Exception ex) {
+			logger.error("getEmployeesById : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
@@ -287,6 +329,28 @@ public class EmployeeController {
 			}
 		} catch (Exception ex) {
 			logger.error("updateEmployee : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/employeePasswordUpdate", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> employeePasswordUpdate(HttpServletRequest request, @RequestParam(value = "oldPassword", required = true) String oldPassword,
+			@RequestParam(value = "newPassword", required = true) String newPassword) {
+		GenericResponse<String> response = new GenericResponse<>();
+		try {
+			if (loginService.updateEmployeePasswordWithCheck(
+					RSAUtil.decrypt(newPassword, baseService.getTenantInfo().fetchPrivateKey()),
+					RSAUtil.decrypt(oldPassword, baseService.getTenantInfo().fetchPrivateKey()))) {
+				response.setStatus(Response.Status.OK);
+			} else {
+				response.setErrorMessages(Arrays.asList("Password Update Failed"));
+				response.setStatus(Response.Status.ERROR);
+			}
+		} catch (Exception ex) {
+			logger.error("employeePasswordUpdate : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);

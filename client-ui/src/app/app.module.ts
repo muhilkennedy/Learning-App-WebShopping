@@ -68,6 +68,7 @@ export class TenantInitializer {
           this.http.get(environment.backendBaseUrl + '/base/ping')
               .subscribe(
                 (resp:any) => {
+                  console.log(resp.data);
                   this.tenantStore.tenantId = resp.data.tenantId;
                   this.tenantStore.tenantName = resp.data.tenantUniqueName;
                   this.tenantStore.tenantActive = resp.data.tenantActive;
@@ -84,18 +85,23 @@ export class TenantInitializer {
                   this.tenantStore.tenantTwitter = tenantDetails.tenantTwitter;
 
                   this.tenantStore.tenantHomeMediaLength = resp.dataList[1];
+                  if(this.tenantStore.tenantActive){
+                    resolve();
+                  }
                 },
                 (error:any) => {
+                  alert("failure resp" + error)
                     console.log("error in loading tenant");
                 }
               );
           // load app only if tenant is active.
-          let sec = 0;
-          setTimeout(() => {
-            if(this.tenantStore.tenantActive === true){
-              resolve();
-            }
-          }, 1000);
+          // setTimeout(() => {
+          //   console.log("trying to resolve requst....");
+          //   if(this.tenantStore.tenantActive === true){
+          //     console.log("Loading comeplete!");
+          //     resolve();
+          //   }
+          // }, 1000);
           // resolve();
     });
   }

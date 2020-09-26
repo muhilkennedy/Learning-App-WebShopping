@@ -22,6 +22,10 @@
         return encryptedPass;
     }
 
+    if (global === undefined) {
+      var global = window;
+    }
+
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
@@ -30,20 +34,21 @@
     // Angular ID
     gtag('config', 'UA-118965717-4');
   </script>
-  <!-- <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
+  <!-- Material icon -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body class="app">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/2.3.1/jsencrypt.min.js" async></script>
+
   <!-- The core Firebase JS SDK is always required and must be listed first -->
-  <!-- <script src="/__/firebase/7.16.0/firebase-app.js"></script> -->
+  <script src="/__/firebase/7.18.0/firebase-app.js"></script>
 
   <!-- TODO: Add SDKs for Firebase products that you want to use
       https://firebase.google.com/docs/web/setup#available-libraries -->
-  <!-- <script src="/__/firebase/7.16.0/firebase-analytics.js"></script> -->
+  <script src="/__/firebase/7.18.0/firebase-analytics.js"></script>
 
   <!-- Initialize Firebase -->
-  <!-- <script src="/__/firebase/init.js"></script> -->
+  <script src="/__/firebase/init.js"></script>
 </body>
 </html>
 

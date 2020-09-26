@@ -1,0 +1,85 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-lg">
+      <div class="card">
+        <ngx-loading [show]="loading"></ngx-loading>
+        <div class="card-header">
+          <i class="fa fa-list-ul"></i>Add Product
+          <div class="float-right">
+          </div>
+          <br/>
+        </div>
+        <div class="card-body">
+          <table class="table table-responsive-sm">
+            <tr>
+              <td>
+                <mat-form-field appearance="outline" class="matitem">
+                  <mat-label>Category ID</mat-label>
+                  <input matInput placeholder="Category of the Product" [(ngModel)]="categoryId" required>
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field appearance="outline" class="matitem">
+                  <mat-label>Product Name</mat-label>
+                  <input matInput placeholder="Product Name" [(ngModel)]="pName" required>
+                </mat-form-field>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <mat-form-field appearance="outline" class="matitem">
+                  <mat-label>Product Brand</mat-label>
+                  <input matInput type="text" class="example-right-align" [(ngModel)]="brand" required>
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field appearance="outline" class="matitem">
+                  <mat-label>Product Cost</mat-label>
+                  <input matInput type="number" class="example-right-align" [(ngModel)]="cost" required>
+                  <mat-hint>Product MRP</mat-hint>
+                </mat-form-field>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <mat-form-field appearance="outline" class="matitem">
+                  <mat-label>Product Offer</mat-label>
+                  <input matInput type="number" class="example-right-align" [(ngModel)]="offer" required>
+                  <mat-hint>Offer applicable to this particular product</mat-hint>
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field appearance="outline" class="matitem">
+                  <mat-label>Product Description</mat-label>
+                  <textarea rows="3" matInput type="text" class="example-right-align" [(ngModel)]="pDescription" required></textarea>
+                </mat-form-field>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <button mat-button [disabled]="true" style="text-align: inherit;">
+                  <i class="fa fa-product-hunt"></i>
+                  <span class="icon-text"> Activate product</span><br/>
+                </button>
+                <mat-slide-toggle
+                  color="accent"
+                  [checked]="productActive"
+                  (change)="toggleProductActive()">
+
+                </mat-slide-toggle>
+              </td>
+              <td>
+                <img [src]='checkImage(productPic)' class="avatar profileImg" alt="avatar">
+                <br/>
+                <mat-hint>(Multiple Images can be uploaded as a ZIP file)</mat-hint>
+                <br/>
+                <input type="file" (change)="handleFileUpdate($event.target.files)">
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -42,6 +42,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatTreeModule} from '@angular/material/tree';
 import { ProfileComponent } from './profile.component';
 import { ProfileRoutingModule } from './profile-routing.module';
+import { NgxTypeaheadModule } from 'ngx-typeahead';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { ProfileRoutingModule } from './profile-routing.module';
     ProfileRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    NgxTypeaheadModule,
     NgxLoadingModule.forRoot({
       animationType: ngxLoadingAnimationTypes.rectangleBounce,
       backdropBackgroundColour: 'rgba(0,0,0,0.3)',

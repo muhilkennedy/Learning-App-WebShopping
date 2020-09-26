@@ -18,6 +18,7 @@ export class LoginService {
   updatePasswordEndpoint = "/login/employeePasswordUpdate";
   employeeTokenAuthEndpoint = "/secure/admin/employee/employeeTokenAuthentication"
   deactivateEmployeeEndpoint = "/secure/admin/employee/deactivateEmployee";
+  updateLoginStatusEndpoint = "/secure/admin/employee/stillLoggedIn"
 
   constructor(private http: HttpClient) {
 
@@ -73,6 +74,15 @@ export class LoginService {
       }),
     };
     return this.http.put(environment.backendBaseUrl+this.logoutEndPoint, httpOptions);
+  }
+
+  updateLoginStatus() : Observable<any>{
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+    return this.http.put(environment.backendBaseUrl+this.updateLoginStatusEndpoint, httpOptions);
   }
 
   tokenAuth(token): Observable<any> {

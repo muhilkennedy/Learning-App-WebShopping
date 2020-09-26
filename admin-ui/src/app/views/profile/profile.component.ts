@@ -3,6 +3,8 @@ import { AlertService } from '../../shared/_alert';
 import { UserStoreService } from '../../service/userStore/user-store.service';
 import { ProfileService } from '../../shared/profile/profile.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { TenantStoreService } from '../../service/tenantStore/tenant-store.service';
+declare var rsaencrypt: Function;
 
 @Component({
   templateUrl: 'profile.component.html',
@@ -11,6 +13,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 export class ProfileComponent implements OnInit {
 
   loading = false;
+  passwordLoading = false;
   alertoptions = {
     autoClose: false,
     keepAfterRouteChange: false
@@ -33,7 +36,11 @@ export class ProfileComponent implements OnInit {
   fileToUpdate: File;
   profilePic: string;
 
+  oldPassword: string;
+  newPassword: string;
+
   constructor(private userStore: UserStoreService,
+              private tenantStore: TenantStoreService,
               private alertService: AlertService,
               private profileService: ProfileService,
               private sanitizer: DomSanitizer){
@@ -83,6 +90,25 @@ export class ProfileComponent implements OnInit {
                          this.alertService.error('Something went wrong', this.alertoptions);
                          this.loading=false;
                        });
+  }
+
+  updatePassword(){
+    this.passwordLoading = true;
+    this.profileService.updatePassword(rsaencrypt(this.oldPassword, this.tenantStore.publicKey), rsaencrypt(this.newPassword, this.tenantStore.publicKey))
+                        .subscribe((resp:any) => {
+                          if(resp.statusCode === 200){
+                          this.alertService.success('Updatde Successfully', this.alertoptions);
+                          this.userStore.profilePic = resp.data.profilePic;
+                          }
+                          else{
+                          this.alertService.error('Failed : ' + resp.errorMessages, this.alertoptions);
+                          }
+                          this.passwordLoading=false;
+                        },
+                        (error) => {
+                          this.alertService.error('Something went wrong', this.alertoptions);
+                          this.passwordLoading=false;
+                        });
   }
 
 }

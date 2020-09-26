@@ -26,7 +26,7 @@ public interface EmployeeInfoRepository extends JpaRepository<EmployeeInfo, Inte
 	String findAllEmployeesCountQuery = "select count(*) from EmployeeInfo emp where emp.tenant = :tenant";
 	String findLimitedEmployeesQuery = "select * from EmployeeInfo where tenantid = ?1 limit ?2 offset ?3";
 	String deleteAllEmployeesQuery = "delete from EmployeeInfo where tenant = :tenant";
-	String findEmployeeByEmailOrIdQuery = "select emp from EmployeeInfo emp where emp.emailId = :emailId OR emp.employeeId = :emailId and emp.tenant = :tenant";
+	String findEmployeeByEmailOrIdQuery = "select emp from EmployeeInfo emp where emp.tenant = :tenant and (emp.emailId = :emailId OR emp.employeeId = :emailId)";
 	String findAllEmployeeNameAndEmailForTenantQuery = "select employeeId,emailId,fName,lName from EmployeeInfo emp where emp.tenantid = :tenant";
 	String findMatchingEmployeeQuery = "select * from EmployeeInfo where tenantid = ?1 and emailid like %?2%";
 	

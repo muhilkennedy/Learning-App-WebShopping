@@ -8,7 +8,8 @@ import { environment } from '../../../environments/environment';
 })
 export class ProfileService {
 
-  updateEmployeeEndpoint = "/secure/admin/employee/updateEmployee"
+  updateEmployeeEndpoint = "/secure/admin/employee/updateEmployee";
+  updateEmployeePasswordEndpoint = "/secure/admin/employee/employeePasswordUpdate";
 
   constructor(private http: HttpClient) { }
 
@@ -24,6 +25,13 @@ export class ProfileService {
     uploadData.append('emailId', email);
     uploadData.append('mobile', mobile);
     return this.http.put(environment.backendBaseUrl+this.updateEmployeeEndpoint, uploadData);
+  }
+
+  updatePassword(oldPass, newPass){
+    const uploadData = new FormData();
+    uploadData.append('oldPassword', oldPass);
+    uploadData.append('newPassword', newPass);
+    return this.http.put(environment.backendBaseUrl+this.updateEmployeePasswordEndpoint, uploadData);
   }
 
 }

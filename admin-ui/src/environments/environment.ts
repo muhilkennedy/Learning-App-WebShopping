@@ -5,9 +5,10 @@
 
 export const environment = {
   production: false,
+  BuildOrigin: "web",
   tenantId: "devTenant",
-  backendBaseUrl:"http://localhost:8080",
+  backendBaseUrl:"https://backendspringbootmicroservice.loca.lt",
   contextPath:"",
-
+  origin:"http://localhost:4200",
   orgName: "Nutty Shop"
 };

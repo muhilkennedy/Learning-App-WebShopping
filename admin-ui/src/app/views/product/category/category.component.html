@@ -1,0 +1,104 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-lg">
+      <div class="card">
+        <ngx-loading [show]="loading"></ngx-loading>
+        <div class="card-header">
+          <i class="fa fa-list-ul"></i>Manage Category
+          <div class="float-right">
+            <button mat-button class="btn btn-ghost-danger" style="border: 1px solid;" (click)="deleteCategory()">
+              <i class="fa fa-remove"></i> Delete Selected
+            </button>
+          </div>
+          <br/>
+          <i class="fa fa-warning float-left warningmsg"> Products under deleted category will be deactivated post mid night</i>
+        </div>
+        <div class="card-body">
+          <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+            <!-- in case of leaf nodes with no children -->
+            <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
+              <button mat-icon-button disabled></button>
+              <mat-checkbox color="warn" class="checklist-leaf-node" matTooltip="{{node.catId}}" matTooltipPosition="right"
+                            [checked]="checklistSelection.isSelected(node)"
+                            (change)="LeafItemSelectionToggle(node)">{{node.catName}}
+                          </mat-checkbox>
+              <button mat-icon-button class="addButton" (click)="addNewItem(node)"><mat-icon class="icon-paddding">add</mat-icon></button>
+            </mat-tree-node>
+            <!-- to save element to parent -->
+            <mat-tree-node *matTreeNodeDef="let node; when: hasNoContent" matTreeNodePadding>
+              <button mat-icon-button disabled></button>
+              <mat-form-field>
+                <mat-label>New Category...</mat-label>
+                <input matInput #itemValue placeholder="Category Name">
+              </mat-form-field>
+              <button mat-button (click)="saveNode(node, itemValue.value)">Save</button>
+            </mat-tree-node>
+            <!-- in case of nodes with children act as parent -->
+            <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
+              <button class="dropButton" matTreeNodeToggle
+                      [attr.aria-label]="'toggle ' + node.filename">
+                <mat-icon class="mat-icon-rtl-mirror icon-paddding" [style.visibility]="showExpand(node)">
+                  {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                </mat-icon>
+              </button>
+              <mat-checkbox color="warn" [checked]="descendantsAllSelected(node)" matTooltip="{{node.catId}}" matTooltipPosition="right"
+                            [indeterminate]="descendantsPartiallySelected(node)"
+                            (change)="ItemSelectionToggle(node)">{{node.catName}}</mat-checkbox>
+              <button mat-icon-button class="addButton" (click)="addNewItem(node)"><mat-icon class="icon-paddding">add</mat-icon></button>
+            </mat-tree-node>
+          </mat-tree>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+        <ngx-loading [show]="loading"></ngx-loading>
+        <div class="card-header">
+          <i class="fa fa-plus-square-o"></i>Add New Category
+          <div class="float-right">
+            <button mat-button class="btn btn-ghost-success" style="border: 1px solid;" (click)="createCategory()">
+              <i class="fa fa-plus-square-o"></i> Create Category
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <mat-form-field appearance="fill" class="matitem" style="width: 100%;">
+            <mat-label>Category Name</mat-label>
+            <input matInput placeholder="Category Name" [(ngModel)]="catName" required>
+          </mat-form-field>
+          <mat-form-field appearance="fill" class="matitem" style="width: 100%;">
+            <mat-label>Parent Category ID</mat-label>
+            <input matInput type="number" placeholder="ParentId / Empty if Base Category" [(ngModel)]="parentId" >
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6">
+      <div class="card">
+        <ngx-loading [show]="loading"></ngx-loading>
+        <div class="card-header">
+          <i class="fa fa-plus-square-o"></i>Edit Existing Category
+          <div class="float-right">
+            <button mat-button class="btn btn-ghost-primary" style="border: 1px solid;" (click)="editCategory()">
+              <i class="fa fa-edit"></i> Confirm Edit
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <mat-form-field appearance="fill" class="matitem" style="width: 100%;">
+            <mat-label>Category ID</mat-label>
+            <input matInput type="number" placeholder="Category ID" [(ngModel)]="editCatId" required>
+          </mat-form-field>
+          <mat-form-field appearance="fill" class="matitem" style="width: 100%;">
+            <mat-label>Edited Category Name</mat-label>
+            <input matInput placeholder="Category Name" [(ngModel)]="editCatName" required>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

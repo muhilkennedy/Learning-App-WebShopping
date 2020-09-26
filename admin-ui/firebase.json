@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "devtenantadminui",
+    "site": "admin-51b0d",
     "public": "dist",
     "ignore": [
       "firebase.json",

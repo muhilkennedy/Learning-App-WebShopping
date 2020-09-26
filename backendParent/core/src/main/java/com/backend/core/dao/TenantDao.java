@@ -13,6 +13,10 @@ import org.springframework.stereotype.Component;
 
 import com.backend.core.util.DBUtil;
 
+/**
+ * @author Muhil
+ *
+ */
 @Component
 public class TenantDao {
 	
