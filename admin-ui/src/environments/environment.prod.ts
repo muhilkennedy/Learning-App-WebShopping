@@ -1,9 +1,9 @@
 export const environment = {
   production: true,
-  origin: "android",
+  BuildOrigin: "android",
   tenantId: "devTenant",
-  backendBaseUrl:"https://b30ed134defb.ngrok.io",
+  backendBaseUrl:"https://backendspringbootmicroservice.loca.lt",
   contextPath:"",
-
+  origin:"http://localhost:4200",
   orgName: "Nutty Shop"
 };

@@ -1,0 +1,8 @@
+install ngrok for dynamic url -> ok for testing locally
+
+LOCALTUNNEL: (for prod deployment)
+
+npm install -g localtunnel
+
+lt --port 8080 --subdomain muhilbackend
+generated static url -> https://muhilbackend.loca.lt

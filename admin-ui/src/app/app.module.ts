@@ -113,6 +113,10 @@ export class TenantInitializer {
                   this.tenantStore.tenantPin = tenantDetails.tenantPin;
                   this.tenantStore.tenantContact = tenantDetails.tenantContact;
                   this.tenantStore.businessEmail = tenantDetails.businessEmail;
+
+                  if(this.tenantStore.tenantActive){
+                     resolve();
+                  }
                 },
                 (error:any) => {
                     console.log("error in loading tenant");
@@ -124,7 +128,7 @@ export class TenantInitializer {
           //     resolve();
           //   }
           // }, 3000);
-          resolve();
+          // resolve();
     });
   }
 }
