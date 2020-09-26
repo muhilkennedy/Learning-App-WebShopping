@@ -1,9 +1,9 @@
-<ngx-loading [show]="loading"></ngx-loading>
 <alert class="p-4 text-center"></alert>
 <div class="animated fadeIn">
   <div class="row">
     <div class="col-md-12">
       <div class="card">
+        <ngx-loading [show]="loading"></ngx-loading>
         <div class="card-header">
           <i class="fa fa-universal-access"></i>Modify Employee Access Permissions
         </div>
@@ -13,12 +13,19 @@
               <tr>
                 <td>
                   <div class="col-md-12">
-                    <div class="input-group">
-                      <input type="text" [(ngModel)]="email" id="input1-group2" name="input1-group2" class="form-control" placeholder="Email (or) Employee-ID">
-                      <span class="input-group-prepend">
-                        <button type="button" class="btn btn-primary" (click)="searchAction()"><i class="fa fa-search"></i> Search Employee </button>
-                      </span>
-                    </div>
+                    <mat-form-field style="width: inherit;" class="matitem">
+                      <input type="text"
+                             placeholder="Search Based on Id / Email / Name"
+                             matInput
+                             [formControl]="myControl"
+                             [matAutocomplete]="auto">
+                      <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" >
+                        <mat-option (onSelectionChange)="setUser(option)" *ngFor="let option of filteredOptions | async" [value]="option.firstName+' '+option.lastName">
+                          {{option.firstName}} {{option.lastName}} - {{option.emailId}}
+                        </mat-option>
+                      </mat-autocomplete>
+                      <button matSuffix type="button" class="btn btn-primary" (click)="searchAction()"><i class="fa fa-search"></i> Search Employee </button>
+                    </mat-form-field>
                   </div>
                 </td>
                 <td></td>

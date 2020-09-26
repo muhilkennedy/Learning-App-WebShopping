@@ -41,12 +41,62 @@ public class RealmFilter implements Filter {
 			throws IOException, ServletException {
 		try {
 			HttpServletRequest req = (HttpServletRequest) request;
+			HttpServletResponse res = (HttpServletResponse) response;
 			String tenantId = null;
 			String origin = null;
 			logger.info("doFilter :: Realm Filter");
+
+			// skip realm check in case of load testing
+			if(req.getRequestURI().contains("/loadTesting")) {
+				baseService.setTenantInfo(TenantUtil.getTenantInfo("devTenant"));
+				chain.doFilter(request, response);
+			}
+			// incase of socket request seperate interceptor will handle header parsing and realm initialization.
+			else if(req.getRequestURI().contains("/wsocket")) {
+				// to avoid cors issue incase of ws request Access-Control-Allow-Origin
+				res.setHeader("Access-Control-Allow-Origin", req.getHeader(Constants.Header_Origin));
+				res.setHeader("Access-Control-Allow-Credentials","true");
+				chain.doFilter(req, res);
+			}
 			// Incase of prod mode both tenantId and Origin url mandatory.
-			if (configUtil.isProdMode()) {
+			else if (configUtil.isProdMode()) {
 				if (StringUtils.isNotEmpty(req.getHeader(Constants.Header_TenantId))
+						&& StringUtils.isNotEmpty(req.getHeader(Constants.Header_RequestOrigin))) {
+					tenantId = req.getHeader(Constants.Header_TenantId);
+					switch(req.getHeader(Constants.Header_RequestOrigin)) {
+						case "web" : 	// Check for active tenant and allowed origins
+										origin = req.getHeader(Constants.Header_Origin);
+										if (!StringUtils.isEmpty(origin) && TenantUtil.isTenantActive(tenantId)
+												&& TenantUtil.isAllowedOriginForTenant(tenantId, origin)) {
+											// setSession(tenantId, req);
+											baseService.setTenantInfo(TenantUtil.getTenantInfo(tenantId));
+											chain.doFilter(request, response);
+										} else {
+											((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
+													"Access to Realm Restricted");
+											return;
+										}
+										break;
+						case "android" : 
+										if (TenantUtil.isTenantActive(tenantId)) {
+											baseService.setTenantInfo(TenantUtil.getTenantInfo(tenantId));
+											chain.doFilter(request, response);
+										} else {
+											((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
+													"Access to Realm Restricted");
+											return;
+										}
+										break;
+						case "ios" : break;
+					}
+
+				}
+				else {
+					((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST,
+							"Required Headers Missing");
+					return;
+				}
+				/*if (StringUtils.isNotEmpty(req.getHeader(Constants.Header_TenantId))
 						&& StringUtils.isNotEmpty(req.getHeader(Constants.Header_Origin))) {
 					tenantId = req.getHeader(Constants.Header_TenantId);
 					origin = req.getHeader(Constants.Header_Origin);
@@ -55,17 +105,8 @@ public class RealmFilter implements Filter {
 					((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST,
 							"Required Headers Missing");
 					return;
-				}
-				// Check for active tenant and allowed origins
-				if (TenantUtil.isTenantActive(tenantId) && TenantUtil.isAllowedOriginForTenant(tenantId, origin)) {
-					//setSession(tenantId, req);
-					baseService.setTenantInfo(TenantUtil.getTenantInfo(tenantId));
-					chain.doFilter(request, response);
-				} else {
-					((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
-							"Access to Realm Restricted");
-					return;
-				}
+				}*/
+				
 			} else {
 				if (StringUtils.isNotEmpty(req.getHeader(Constants.Header_TenantId))) {
 					tenantId = req.getHeader(Constants.Header_TenantId);

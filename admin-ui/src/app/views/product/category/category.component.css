@@ -1,0 +1,37 @@
+.mat-form-field {
+  margin-right: 4px;
+}
+
+.icon-paddding {
+  padding-bottom: 35px;
+  cursor: pointer;
+}
+
+.icon-paddding:hover{
+  color: cornflowerblue;
+}
+
+.dropButton {
+  background: transparent;
+  border-color: transparent;
+}
+
+.dropButton:focus {
+  outline: 0px dotted;
+  border-color: transparent;
+}
+
+.addButton {
+  background: transparent;
+  border-color: transparent;
+}
+
+.addButton:focus {
+  outline: 0px dotted;
+  border-color: transparent;
+}
+
+.warningmsg{
+  font-size: xx-small;
+  color: orange;
+}

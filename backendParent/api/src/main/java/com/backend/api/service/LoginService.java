@@ -19,4 +19,6 @@ public interface LoginService {
 
 	void toggleUserStatus(boolean status);
 
+	boolean updateEmployeePasswordWithCheck(String newPassword, String oldPassword);
+
 }

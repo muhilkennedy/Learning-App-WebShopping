@@ -38,4 +38,8 @@ public interface EmployeeService {
 
 	List<EmployeeInfo> findAllEmployeeNameAndEmailForTenant();
 
+	void updateEmployeeLoggedInStatus(EmployeeInfo emp);
+
+	List<EmployeeInfo> findAllEmployeeById(List<Integer> ids);
+
 }

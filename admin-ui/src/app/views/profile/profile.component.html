@@ -13,6 +13,22 @@
         <br/>
         <label>Employee ID : </label><label> <strong>{{empId}}</strong></label><br/>
         <label>Designation : </label><label> <strong>{{designation}}</strong></label>
+        <br/>
+        <hr/>
+        <br/>
+        <label>Update Password</label>
+        <div class="form-group">
+          <div style="width: 100%;">
+            <input class="form-control" type="password" placeholder="Old Password" name="lname" [(ngModel)] = "oldPassword">
+          </div>
+        </div>
+        <div class="input-group">
+          <ngx-loading [show]="passwordLoading"></ngx-loading>
+          <input type="password" [(ngModel)]="newPassword" id="input1-group2" name="input1-group2" class="form-control" placeholder="New Password">
+          <span class="input-group-prepend">
+            <button type="button" class="btn btn-primary" (click)="updatePassword()"><i class="fa fa-lock"></i></button>
+          </span>
+        </div>
       </div>
     </div>
 

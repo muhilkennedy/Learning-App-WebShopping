@@ -15,6 +15,7 @@ export class InterceptorService implements HttpInterceptor {
       // Append tenant-Id to all outgoing requests.
       if (environment.tenantId) {
          newHeaders = newHeaders.append('Tenant-Id', environment.tenantId);
+         newHeaders = newHeaders.append('Request-Origin', environment.BuildOrigin);
       }
       const authReq = req.clone({headers: newHeaders});
       return next.handle(authReq);

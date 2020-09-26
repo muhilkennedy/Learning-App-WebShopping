@@ -16,6 +16,7 @@ export class InterceptorService implements HttpInterceptor {
       // Append tenant-Id to all outgoing requests.
       if (environment.tenantId) {
          newHeaders = newHeaders.append('Tenant-Id', environment.tenantId);
+         newHeaders = newHeaders.append('Request-Origin', environment.BuildOrigin);
       }
       // Add Authorization token if present.
       if(this.userStore!=undefined && this.userStore.JwtToken){

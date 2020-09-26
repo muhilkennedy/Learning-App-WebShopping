@@ -83,6 +83,7 @@ import { TenantStoreService } from './service/tenantStore/tenant-store.service';
 import { environment } from '../environments/environment';
 import { NotFoundComponent } from './component/not-found/not-found.component';
 import { PushNotificationComponent } from './containers/push-notification/push-notification.component';
+import { ChatMessengerComponent } from './containers/chat-messenger/chat-messenger.component';
 
 
 @Injectable()
@@ -112,6 +113,10 @@ export class TenantInitializer {
                   this.tenantStore.tenantPin = tenantDetails.tenantPin;
                   this.tenantStore.tenantContact = tenantDetails.tenantContact;
                   this.tenantStore.businessEmail = tenantDetails.businessEmail;
+
+                  if(this.tenantStore.tenantActive){
+                     resolve();
+                  }
                 },
                 (error:any) => {
                     console.log("error in loading tenant");
@@ -123,7 +128,7 @@ export class TenantInitializer {
           //     resolve();
           //   }
           // }, 3000);
-          resolve();
+          // resolve();
     });
   }
 }
@@ -202,6 +207,7 @@ export function init_tenant(initializer: TenantInitializer) {
     LoginComponent,
     NotFoundComponent,
     PushNotificationComponent,
+    ChatMessengerComponent,
   ],
   providers: [{
     provide: LocationStrategy,

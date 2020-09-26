@@ -84,7 +84,7 @@ public class EmailUtil {
 			props.put("mail.smtp.port", "465");
 
 			// Make sure the used dev email must have Allow less secure apps option enabled.
-			Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
+			Session session = Session.getInstance(props, new javax.mail.Authenticator() {
 				protected PasswordAuthentication getPasswordAuthentication() {
 					return new PasswordAuthentication(emailId, password);
 				}
