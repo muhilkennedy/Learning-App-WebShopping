@@ -91,6 +91,11 @@ public class RealmFilter implements Filter {
 					}
 
 				}
+				else {
+					((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST,
+							"Required Headers Missing");
+					return;
+				}
 				/*if (StringUtils.isNotEmpty(req.getHeader(Constants.Header_TenantId))
 						&& StringUtils.isNotEmpty(req.getHeader(Constants.Header_Origin))) {
 					tenantId = req.getHeader(Constants.Header_TenantId);

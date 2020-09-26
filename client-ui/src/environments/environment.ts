@@ -4,9 +4,11 @@
 
 export const environment = {
   production: false,
+  BuildOrigin: "android",
   tenantId: "devTenant",
-  backendBaseUrl: "https://864bb4b5865f.ngrok.io",
+  backendBaseUrl:"https://backendspringbootmicroservice.loca.lt",
   contextPath:"",
+  origin:"http://localhost:4200",
   homeMediaCount : 3,
   orgName: 'Nutty Shopping',
   tagLine: 'One Stop To Go Nuts'
