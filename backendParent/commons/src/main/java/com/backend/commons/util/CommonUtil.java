@@ -12,6 +12,8 @@ import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.micrometer.core.instrument.util.StringUtils;
+
 public class CommonUtil {
 	
 	private static Logger logger = LoggerFactory.getLogger(CommonUtil.class);
@@ -34,6 +36,8 @@ public class CommonUtil {
 	
 	public static final String Key_employeeOTP = "EmpOTP";
 	public static final String Key_clientOTP = "clientOTP";
+
+	public static final int Key_MaxPaginationLimit = 1000;
 	
 	public static final int Thumbnail_AspectWidth = 200;
 	public static final int Thumbnail_AspectHeight = 200;
@@ -44,7 +48,7 @@ public class CommonUtil {
 	public static final String Thumbnail_Exension = "jpg";
 	
 	/**
-	 * @return randome password wiht pre-defined length and Alpha numeric characters.
+	 * @return random password with pre-defined length and Alpha numeric characters.
 	 */
 	public static String generateRandomPassword() {
 		StringBuilder builder = new StringBuilder();
@@ -67,7 +71,7 @@ public class CommonUtil {
 	}
 	
 	/**
-	 * @see This methos needs to be called everytime after a temp file/Dir is
+	 * @see This method needs to be called everytime after a temp file/Dir is
 	 *      created in order keep the memory optimized.
 	 * @param file to be deleted
 	 * @return true if successfully removed.
@@ -122,6 +126,27 @@ public class CommonUtil {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ImageIO.write(bImage, Thumbnail_Exension, baos);
 		return baos.toByteArray();
+	}
+	
+	// need to update aspect ratio later after ui dev for best fit.
+	public static byte[] getProductImage(byte[] image) throws Exception {
+		InputStream in = new ByteArrayInputStream(image);
+		BufferedImage bImage = Scalr.resize(ImageIO.read(in), Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, HomeImage_AspectWidth,
+				HomeImage_AspectHeight, Scalr.OP_ANTIALIAS);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ImageIO.write(bImage, Thumbnail_Exension, baos);
+		return baos.toByteArray();
+	}
+	
+	/**
+	 * @param parameter
+	 * @return is valid input parameter
+	 */
+	public static boolean isValidStringParam(String param) {
+		if (!StringUtils.isEmpty(param) && !param.equalsIgnoreCase("null") && !param.equalsIgnoreCase("undefined")) {
+			return true;
+		}
+		return false;
 	}
 
 }

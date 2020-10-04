@@ -48,8 +48,13 @@ public class CategoryServiceImpl  implements CategoryService{
 	}
 	
 	@Override
-	public List<Category> getCategories(){
+	public List<Category> getAllCategoriesForTenant(){
 		return categoryRepository.getAllCategory(baseService.getTenantInfo());
+	}
+	
+	@Override
+	public List<Category> getAllCategoriesForDelete(){
+		return categoryRepository.getCategoriesForDelete(baseService.getTenantInfo());
 	}
 	
 	@Override
@@ -84,6 +89,7 @@ public class CategoryServiceImpl  implements CategoryService{
 	public void deleteCategory(int id) {
 		Category category = categoryRepository.getCategoryById(baseService.getTenantInfo(), id);
 		category.setActive(false);
+		category.setMarkedForDelete(true);
 		categoryRepository.save(category);
 	}
 	
