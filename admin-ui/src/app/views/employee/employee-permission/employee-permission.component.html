@@ -18,7 +18,8 @@
                              placeholder="Search Based on Id / Email / Name"
                              matInput
                              [formControl]="myControl"
-                             [matAutocomplete]="auto">
+                             [matAutocomplete]="auto"
+                             [(ngModel)]="email">
                       <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" >
                         <mat-option (onSelectionChange)="setUser(option)" *ngFor="let option of filteredOptions | async" [value]="option.firstName+' '+option.lastName">
                           {{option.firstName}} {{option.lastName}} - {{option.emailId}}

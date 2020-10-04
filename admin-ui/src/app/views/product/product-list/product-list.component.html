@@ -1,7 +1,82 @@
 <div class="animated fadeIn">
+  <div class="row">
+    <div class="col-lg">
+      <div class="card">
+        <ngx-loading [show]="filterloading"></ngx-loading>
+        <!-- <div class="card-header">
+          <i class="fa fa-filter"></i>Filters
+        </div> -->
+        <div class="card-body">
+          <table class="table table-responsive-sm filterbar">
+            <tr>
+              <td>
+                <form [formGroup]="myForm" *ngIf="!searchByProduts">
+                  <ng-multiselect-dropdown
+                      name="category"
+                      [placeholder]="'Select Category'"
+                      [data]="categories"
+                      formControlName="category"
+                      [disabled]="disabled"
+                      [settings]="dropdownSettings"
+                      (onSelect)="onItemSelect($event)"
+                      (onDeSelect)="onDeSelect($event)"
+                      (onSelectAll)="onSelectAll($event)"
+                      (onDeSelectAll)="onDeSelectAll($event)">
+                  </ng-multiselect-dropdown>
+                </form>
+                <mat-checkbox [(ngModel)]="loadActiveItemsOnly" (change)="loadActiveItems()">
+                  Active Products only
+                </mat-checkbox>
+                <i class="fa fa-exchange" (click)="searchByProduts = !searchByProduts" style="cursor: pointer;"></i>
+              </td>
+              <td>
+                <div class="btn-group" dropdown style="width: 100%;">
+                  <button dropdownToggle type="button" class="btn btn-ghost-primary dropdown-toggle">
+                    Sort by <span class="caret"></span>
+                  </button>
+                  <ul *dropdownMenu class="dropdown-menu" role="menu">
+                    <li role="menuitem"><a class="dropdown-item sortOption" (click)="sortBy('cost', 'asc')">MRP : Low to High</a></li>
+                    <li role="menuitem"><a class="dropdown-item sortOption" (click)="sortBy('cost', 'desc')">MRP : High to Low</a></li>
+                    <li role="menuitem"><a class="dropdown-item sortOption" (click)="sortBy('offer', 'asc')">Offer : Low to High</a></li>
+                    <li role="menuitem"><a class="dropdown-item sortOption" (click)="sortBy('offer', 'desc')">Offer : High to Low</a></li>
+                    <li role="menuitem"><a class="dropdown-item sortOption" (click)="sortBy('lastmodified', 'desc')">Last modified Date (desc)</a></li>
+                    <li role="menuitem"><a class="dropdown-item sortOption" (click)="clearSort()">Clear Sort</a></li>
+                    <!-- <li class="divider dropdown-divider"></li> -->
+                  </ul>
+                </div>
+              </td>
+              <td>
+                <mat-paginator style="margin-block-start: -0.5rem; margin-left: -13rem !important;" [length]="totalRecords"
+                [pageSize]="pageSize"
+                [pageSizeOptions]="pageSizeOptions"
+                (page)="action($event)">
+                </mat-paginator>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <!-- collapse content -->
+    <!-- <p>
+      <button class="btn btn-primary" type="button" (click)="isCollapsed = !isCollapsed">
+        Button with data-target
+      </button>
+    </p>
+    <div [collapse]="isCollapsed">
+      <div class="card card-body">
+
+      </div>
+    </div> -->
+
+
+  </div>
 <div class="row">
   <div class="col-md-3 col-sm-4" *ngFor="let prod of products">
     <div class="card">
+      <ngx-loading [show]="loading"></ngx-loading>
        <!-- <carousel [interval]="false">
         <slide *ngFor="let slide of homeImages">
           <label>Media-ID -> {{slide.mediaId}}</label>
@@ -13,10 +88,10 @@
         </slide>
       </carousel> -->
       <div class="card-body text-center">
-        <div class="text-muted small text-uppercase font-weight-bold">{{prod.productName}}</div>
-        <div class="h2 py-3">{{prod.cost}}</div>
+        <div class="text-muted small text-uppercase font-weight-bold">MRP - {{prod.cost}}<small> ₹ </small> | Discount - {{prod.offer}}%</div>
+        <div class="h2 py-3">{{prod.productName}}</div>
         <div class="chart-wrapper mx-auto">
-          <p>{{prod.productDescription}}</p>
+          <p>{{prod.brandName}}</p>
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 {
   "name": "admin-ui",
   "version": "2.9.2",
-  "description": "CoreUI Free Angular 2+ Admin Template",
+  "description": "CoreUI Free Angular Admin Template is used as base library",
   "author": {
     "name": "muhil"
   },
@@ -43,6 +43,7 @@
     "moment": "^2.24.0",
     "mutationobserver-shim": "^0.3.5",
     "net": "^1.0.2",
+    "ng-multiselect-dropdown": "^0.2.10",
     "ng2-charts": "^2.3.0",
     "ngx-bootstrap": "^5.6.1",
     "ngx-cookie-service": "^3.0.4",

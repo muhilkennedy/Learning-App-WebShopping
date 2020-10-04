@@ -1,6 +1,9 @@
 package com.backend.persistence.entity;
 
+import java.io.InputStream;
 import java.io.Serializable;
+import java.sql.Blob;
+import java.util.Base64;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.backend.core.entity.Tenant;
+import com.google.common.io.ByteStreams;
 
 /**
  * @author Muhil
@@ -46,6 +50,9 @@ public class EmployeeAddress implements Serializable{
 	
 	@Column(name = "PINCODE")
 	private String pincode;
+	
+	@Column(name = "ADDRESSPROOF")
+	private Blob addressProof;
 	
 	@ManyToOne
 	@JoinColumn(name = "EMPLOYEEID", nullable = false)
@@ -117,6 +124,26 @@ public class EmployeeAddress implements Serializable{
 
 	public int getAddressId() {
 		return addressId;
+	}
+	
+	public String getAddressProof() {
+		if (addressProof != null) {
+			InputStream in;
+			StringBuilder base64 = new StringBuilder();
+			try {
+				in = addressProof.getBinaryStream();
+				base64 = new StringBuilder("data:image/jpeg;base64,");
+				base64.append(Base64.getEncoder().encodeToString(ByteStreams.toByteArray(in)));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return base64.toString();
+		}
+		return null;
+	}
+
+	public void setAddressProof(Blob addressProof) {
+		this.addressProof = addressProof;
 	}
 
 }

@@ -53,6 +53,9 @@ public class Product implements Serializable {
 	@Column(name = "COST")
 	private BigDecimal cost;
 	
+	@Column(name = "OFFER")
+	private int offer;
+	
 	@Column(name = "DESCRIPTION")
 	private String productDescription;
 	
@@ -150,6 +153,22 @@ public class Product implements Serializable {
 
 	public void setCategoryId(Category categoryId) {
 		this.categoryId = categoryId;
+	}
+
+	public int getOffer() {
+		return offer;
+	}
+
+	public void setOffer(int offer) {
+		this.offer = offer;
+	}
+
+	public void setProductImages(List<ProductImages> productImages) {
+		this.productImages = productImages;
+	}
+
+	public void setProductReviews(List<ProductReview> productReviews) {
+		this.productReviews = productReviews;
 	}
 
 }

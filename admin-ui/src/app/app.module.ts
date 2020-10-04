@@ -9,6 +9,7 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true
@@ -199,7 +200,8 @@ export function init_tenant(initializer: TenantInitializer) {
     ChartsModule,
     SharedModule,
     AlertModule,
-    ModalModule
+    ModalModule,
+    NgMultiSelectDropDownModule.forRoot()
   ],
   declarations: [
     AppComponent,

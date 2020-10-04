@@ -70,8 +70,12 @@ export class EmployeePermissionComponent implements OnInit {
   }
 
   private _filter(value: string): string[] {
+    if(value === "")
+    {
+      return;
+    }
     const filterValue = value.toLowerCase();
-    return this.options.filter(option => option.firstName.toLowerCase().indexOf(filterValue) === 0);
+    return this.options.filter(option => (option.firstName.toLowerCase().indexOf(filterValue) === 0 || option.emailId.toLowerCase().indexOf(filterValue) === 0));
   }
 
   setUser(user:any)
