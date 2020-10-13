@@ -27,7 +27,7 @@ public class EmployeeDao {
 	public void updateEmployeeLoggedInStatus(int id, boolean status) throws Exception {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con
-					.prepareStatement("update employeeinfo set isloggedin = ?, lastlogin=? where employeeid = ?");
+					.prepareStatement("update EMPLOYEEINFO set isloggedin = ?, lastlogin=? where employeeid = ?");
 			stmt.setBoolean(1, status);
 			stmt.setTimestamp(2, new Timestamp(new Date().getTime()));
 			stmt.setInt(3, id);

@@ -106,5 +106,10 @@ export const navItems: INavData[] = [
     name: 'Media',
     url: '/media',
     icon: 'icon-film',
+  },
+  {
+    name: 'Point Of Sale (POS)',
+    url: '/pos',
+    icon: 'icon-credit-card',
   }
 ];
