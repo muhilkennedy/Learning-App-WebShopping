@@ -22,7 +22,8 @@ import com.backend.persistence.entity.Product;
  */
 @Component
 public class ProductDao {
-private Logger logger = LoggerFactory.getLogger(ProductDao.class);
+
+	private Logger logger = LoggerFactory.getLogger(ProductDao.class);
 	
 	@Autowired
 	private DBUtil dbUtil;

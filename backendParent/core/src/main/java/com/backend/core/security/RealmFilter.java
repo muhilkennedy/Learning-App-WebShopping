@@ -47,7 +47,7 @@ public class RealmFilter implements Filter {
 			logger.info("doFilter :: Realm Filter");
 
 			// skip realm check in case of load testing
-			if(req.getRequestURI().contains("/loadTesting")) {
+			if(req.getRequestURI().contains("/loadTesting") && !configUtil.isProdMode()) {
 				baseService.setTenantInfo(TenantUtil.getTenantInfo("devTenant"));
 				chain.doFilter(request, response);
 			}

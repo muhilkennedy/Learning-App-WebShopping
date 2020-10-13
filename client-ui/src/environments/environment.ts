@@ -6,7 +6,7 @@ export const environment = {
   production: false,
   BuildOrigin: "android",
   tenantId: "devTenant",
-  backendBaseUrl:"https://backendspringbootmicroservice.loca.lt",
+  backendBaseUrl:"http://localhost:8080",
   contextPath:"",
   origin:"http://localhost:4200",
   homeMediaCount : 3,

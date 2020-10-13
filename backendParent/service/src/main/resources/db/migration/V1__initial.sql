@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS PUSHNOTIFICATION (TENANTID varchar(50) NOT NULL, EMPL
 
 /* Product related tables*/
 CREATE TABLE IF NOT EXISTS CATEGORY (TENANTID varchar(50) NOT NULL, CATEGORYID int NOT NULL AUTO_INCREMENT PRIMARY KEY, CATEGORYNAME varchar(50) NOT NULL, PARENTCATEGORYID int DEFAULT NULL, ACTIVE BOOL DEFAULT TRUE, MARKEDFORDELETE BOOL DEFAULT FALSE, CONSTRAINT FOREIGN KEY(TENANTID) REFERENCES TENANT(TENANTID), CONSTRAINT FOREIGN KEY(PARENTCATEGORYID) REFERENCES CATEGORY(CATEGORYID));
-CREATE TABLE IF NOT EXISTS PRODUCT (TENANTID varchar(50) NOT NULL, CATEGORYID int, PRODUCTID int NOT NULL AUTO_INCREMENT PRIMARY KEY, PRODUCTNAME varchar(50) NOT NULL, BRAND varchar(50) NOT NULL, COST DECIMAL(10,2) NOT NULL, OFFER int DEFAULT 0, DESCRIPTION varchar(300) NOT NULL, LASTMODIFIED DATETIME DEFAULT CURRENT_TIMESTAMP, LASTMODIFIEDEMPLOYEEID int, ACTIVE BOOL DEFAULT TRUE, CONSTRAINT FOREIGN KEY(TENANTID) REFERENCES TENANT(TENANTID), CONSTRAINT FOREIGN KEY(CATEGORYID) REFERENCES CATEGORY(CATEGORYID), CONSTRAINT FOREIGN KEY(LASTMODIFIEDEMPLOYEEID) REFERENCES EMPLOYEEINFO(EMPLOYEEID));
+CREATE TABLE IF NOT EXISTS PRODUCT (TENANTID varchar(50) NOT NULL, CATEGORYID int, PRODUCTID int NOT NULL AUTO_INCREMENT PRIMARY KEY, PRODUCTNAME varchar(50) NOT NULL, BRAND varchar(50) NOT NULL, COST DECIMAL(10,2) NOT NULL, OFFER int DEFAULT 0, DESCRIPTION varchar(300) NOT NULL, PRODUCTCODE varchar(50) UNIQUE, UNITSINSTOCK int DEFAULT 0, LASTMODIFIED DATETIME DEFAULT CURRENT_TIMESTAMP, LASTMODIFIEDEMPLOYEEID int, ACTIVE BOOL DEFAULT TRUE, CONSTRAINT FOREIGN KEY(TENANTID) REFERENCES TENANT(TENANTID), CONSTRAINT FOREIGN KEY(CATEGORYID) REFERENCES CATEGORY(CATEGORYID), CONSTRAINT FOREIGN KEY(LASTMODIFIEDEMPLOYEEID) REFERENCES EMPLOYEEINFO(EMPLOYEEID));
 CREATE TABLE IF NOT EXISTS PRODUCTIMAGES (TENANTID varchar(50) NOT NULL, PRODUCTIMAGESID int NOT NULL AUTO_INCREMENT PRIMARY KEY, PRODUCTID int NOT NULL, IMAGE MEDIUMBLOB, CONSTRAINT FOREIGN KEY(PRODUCTID) REFERENCES PRODUCT(PRODUCTID), CONSTRAINT FOREIGN KEY(TENANTID) REFERENCES TENANT(TENANTID));
 CREATE TABLE IF NOT EXISTS PRODUCTREVIEW (TENANTID varchar(50) NOT NULL, PRODUCTREVIEWID int NOT NULL AUTO_INCREMENT PRIMARY KEY, CUSTOMERID int NOT NULL, PRODUCTID int NOT NULL, RATING int NOT NULL, REVIEW varchar(500) NOT NULL, REVIEWHEADER varchar(100) NOT NULL, USEFULLCOUNT int, CONSTRAINT FOREIGN KEY(PRODUCTID) REFERENCES PRODUCT(PRODUCTID), CONSTRAINT FOREIGN KEY(TENANTID) REFERENCES TENANT(TENANTID), CONSTRAINT FOREIGN KEY(CUSTOMERID) REFERENCES CUSTOMER(CUSTOMERID));
 
@@ -45,27 +45,35 @@ CREATE TABLE IF NOT EXISTS ORDERINVOICE (TENANTID varchar(50) NOT NULL, USERINVO
 CREATE TABLE IF NOT EXISTS HOMEPAGEMEDIA (TENANTID varchar(50) NOT NULL, MEDIAID int NOT NULL AUTO_INCREMENT PRIMARY KEY, IMAGE MEDIUMBLOB, TITLE varchar(50), DESCRIPTION varchar(100), MESSAGE varchar(30), SHOPNOW BOOL DEFAULT FALSE, CONTACT BOOL DEFAULT FALSE, SLIDESHOW BOOL DEFAULT TRUE, CONSTRAINT FOREIGN KEY(TENANTID) REFERENCES TENANT(TENANTID));
 CREATE TABLE IF NOT EXISTS HOMEPAGEFEATURED (TENANTID varchar(50) NOT NULL, PRODUCTID int NOT NULL, CONSTRAINT FOREIGN KEY(TENANTID) REFERENCES TENANT(TENANTID), CONSTRAINT FOREIGN KEY(PRODUCTID) REFERENCES PRODUCT(PRODUCTID));
 
-/* Standard Permissions load*/
+/* Standard Permissions load */
 INSERT INTO EMPLOYEEPERMISSIONS (PERMISSIONID, PERMISSIONNAME) VALUES (1, 'ADMIN');
 INSERT INTO EMPLOYEEPERMISSIONS (PERMISSIONID, PERMISSIONNAME) VALUES (2, 'MANAGER');
 INSERT INTO EMPLOYEEPERMISSIONS (PERMISSIONID, PERMISSIONNAME) VALUES (3, 'MARKETING');
 INSERT INTO EMPLOYEEPERMISSIONS (PERMISSIONID, PERMISSIONNAME) VALUES (4, 'SUPPORT');
 
+/* Standard payment modes */
+INSERT INTO PAYMENTMODE (PAYMENTMODEID, PAYMENTTYPE) VALUES (1, 'CASH');
+INSERT INTO PAYMENTMODE (PAYMENTMODEID, PAYMENTTYPE) VALUES (2, 'CARD');
+INSERT INTO PAYMENTMODE (PAYMENTMODEID, PAYMENTTYPE) VALUES (3, 'GOOGLEPAY');
+INSERT INTO PAYMENTMODE (PAYMENTMODEID, PAYMENTTYPE) VALUES (4, 'PAYTM');
+INSERT INTO PAYMENTMODE (PAYMENTMODEID, PAYMENTTYPE) VALUES (5, 'PHONEPE');
+INSERT INTO PAYMENTMODE (PAYMENTMODEID, PAYMENTTYPE) VALUES (6, 'NETBANKING');
+INSERT INTO PAYMENTMODE (PAYMENTMODEID, PAYMENTTYPE) VALUES (7, 'OTHERS');
 
 /* DEV */
 /* initial data load */
-insert into tenant (tenantid, tenantuniquename) values ('devTenant', 'devRealm');
-insert into tenantdetails (tenantid, tenantdetailid, tenantcontact, tenantemail, tenantbusinessemail, businessemailpassword, tenantstreet, tenantcity, tenantpin, tenantfacebook, tenanttwitter, tenantinsta) values ('devTenant', 1, '1234567890', 'nuttyShop@gmail.com', 'do.not.reply.application.ordering@gmail.com', 'devPassword@123', '13, B block, Nelson Road', 'Chennai', '600028', 'https://www.facebook.com/', 'https://twitter.com/', 'https://www.instagram.com/');
-insert into homepagemedia (tenantid, mediaid, title, description, message, shopnow, contact, slideshow) values ('devTenant', 1, 'EAT the BEST, LEAVE the REST', 'Train your body to healthy Food', 'Exciting Offers', true, false, false);
-insert into homepagemedia (tenantid, mediaid, title, description, message, shopnow, contact, slideshow) values ('devTenant', 2, 'Get a Free Quote', 'Get Bulk bookings and avail exclusive offers and free delivery', 'Free Quotes', false, true, false);
-insert into homepagemedia (tenantid, mediaid, title, description, message, shopnow, contact, slideshow) values ('devTenant', 3, '', '', '', false, false, true);
-insert into homepagemedia (tenantid, mediaid, title, description, message, shopnow, contact, slideshow) values ('devTenant', 4, '', '', '', false, false, true);
-insert into employeeinfo (tenantid, employeeid ,fname, lname, emailid, mobile, password, designation) values ('devTenant', 1, 'SUPERUSER', 'DEV', 'q@1', '1234567890', '$2a$05$FueeaV.hfKbv/m6kG6GM../gKdRPOoihCQF1WBjpAPZNDlGPOxSha', 'SUPPORTADMIN'); /* password is test*/
-insert into employeeaddress (tenantid, employeeid, doornumber, street, city, state, pincode) values ('devTenant', 1, 'No:13', 'street', 'city', 'state', 'pin007');
-insert into employeepermissionsmap (tenantid, employeeid, permissionid) values ('devTenant', 1, 1);
-insert into employeepermissionsmap (tenantid, employeeid, permissionid) values ('devTenant', 1, 2);
-insert into employeepermissionsmap (tenantid, employeeid, permissionid) values ('devTenant', 1, 3);
-insert into employeepermissionsmap (tenantid, employeeid, permissionid) values ('devTenant', 1, 4);
+insert into TENANT (TENANTID, TENANTUNIQUENAME) values ('devTenant', 'devRealm');
+insert into TENANTDETAILS (TENANTID, TENANTDETAILID, TENANTCONTACT, TENANTEMAIL, TENANTBUSINESSEMAIL, BUSINESSEMAILPASSWORD, TENANTSTREET, TENANTCITY, TENANTPIN, TENANTFACEBOOK, TENANTTWITTER, TENANTINSTA) values ('devTenant', 1, '1234567890', 'nuttyShop@gmail.com', 'do.not.reply.application.ordering@gmail.com', 'devPassword@123', '13, B block, Nelson Road', 'Chennai', '600028', 'https://www.facebook.com/', 'https://twitter.com/', 'https://www.instagram.com/');
+insert into HOMEPAGEMEDIA (TENANTID, MEDIAID, TITLE, DESCRIPTION, MESSAGE, SHOPNOW, CONTACT, SLIDESHOW) values ('devTenant', 1, 'EAT the BEST, LEAVE the REST', 'Train your body to healthy Food', 'Exciting Offers', true, false, false);
+insert into HOMEPAGEMEDIA (TENANTID, MEDIAID, TITLE, DESCRIPTION, MESSAGE, SHOPNOW, CONTACT, SLIDESHOW) values ('devTenant', 2, 'Get a Free Quote', 'Get Bulk bookings and avail exclusive offers and free delivery', 'Free Quotes', false, true, false);
+insert into HOMEPAGEMEDIA (TENANTID, MEDIAID, TITLE, DESCRIPTION, MESSAGE, SHOPNOW, CONTACT, SLIDESHOW) values ('devTenant', 3, '', '', '', false, false, true);
+insert into HOMEPAGEMEDIA (TENANTID, MEDIAID, TITLE, DESCRIPTION, MESSAGE, SHOPNOW, CONTACT, SLIDESHOW) values ('devTenant', 4, '', '', '', false, false, true);
+insert into EMPLOYEEINFO (TENANTID, EMPLOYEEID , FNAME, LNAME, EMAILID, MOBILE, PASSWORD, DESIGNATION) values ('devTenant', 1, 'SUPERUSER', 'DEV', 'q@1', '1234567890', '$2a$05$FueeaV.hfKbv/m6kG6GM../gKdRPOoihCQF1WBjpAPZNDlGPOxSha', 'SUPPORTADMIN'); /* password is test*/
+insert into EMPLOYEEADDRESS (TENANTID, EMPLOYEEID, DOORNUMBER, STREET, CITY, STATE, PINCODE) values ('devTenant', 1, 'No:13', 'street', 'city', 'state', 'pin007');
+insert into EMPLOYEEPERMISSIONSMAP (TENANTID, EMPLOYEEID, PERMISSIONID) values ('devTenant', 1, 1);
+insert into EMPLOYEEPERMISSIONSMAP (TENANTID, EMPLOYEEID, PERMISSIONID) values ('devTenant', 1, 2);
+insert into EMPLOYEEPERMISSIONSMAP (TENANTID, EMPLOYEEID, PERMISSIONID) values ('devTenant', 1, 3);
+insert into EMPLOYEEPERMISSIONSMAP (TENANTID, EMPLOYEEID, PERMISSIONID) values ('devTenant', 1, 4);
 
-insert into tenant (tenantid, tenantuniquename) values ('devTenant01', 'devRealm1');
-insert into employeeinfo (tenantid ,fname, lname, emailid, mobile, password, designation) values ('devTenant01', 'SUPERUSER', 'DEV', 'q@1', '1234567890', '$2a$05$FueeaV.hfKbv/m6kG6GM../gKdRPOoihCQF1WBjpAPZNDlGPOxSha', 'SUPPORTADMIN');
+insert into TENANT (TENANTID, TENANTUNIQUENAME) values ('devTenant01', 'devRealm1');
+insert into EMPLOYEEINFO (TENANTID , FNAME, LNAME, EMAILID, MOBILE, PASSWORD, DESIGNATION) values ('devTenant01', 'SUPERUSER', 'DEV', 'q@1', '1234567890', '$2a$05$FueeaV.hfKbv/m6kG6GM../gKdRPOoihCQF1WBjpAPZNDlGPOxSha', 'SUPPORTADMIN');
