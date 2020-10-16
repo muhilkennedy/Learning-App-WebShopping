@@ -1,0 +1,39 @@
+
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <ngx-loading [show]="loading"></ngx-loading>
+        <div class="card-header">
+          <i class="fa fa-money"></i>Point Of Sale (POS) - Billing
+        </div>
+        <div class="card-body">
+          <table class="table table-responsive-sm table-hover table-outline mb-0">
+            <thead class="thead-light">
+              <tr>
+                <th>SL.NO</th>
+                <th>Item Name</th>
+                <th>Item Code</th>
+                <th>MRP</th>
+                <th>QUANTITY</th>
+                <th>DISCONT</th>
+                <th>TOTAL</th>
+              </tr>
+            </thead>
+            <tbody style="background: white;">
+              <tr *ngFor="let item of itemList; let i = index">
+                <td>{{i+1}}</td>
+                <td><input matInput placeholder="Product Name" [(ngModel)]="item.itemName"></td>
+                <td><input matInput placeholder="Product Code" [(ngModel)]="item.itemCode"></td>
+                <td><input style="width: 50%;" matInput placeholder="MRP" [(ngModel)]="item.mrp"></td>
+                <td><input style="width: 50%;" matInput placeholder="Total Quantity" [(ngModel)]="item.quantity"></td>
+                <td><input style="width: 50%;" matInput placeholder="Product Discount" [(ngModel)]="item.total"></td>
+                <td>₹-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
