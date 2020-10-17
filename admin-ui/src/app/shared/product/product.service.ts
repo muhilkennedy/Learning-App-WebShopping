@@ -86,7 +86,8 @@ export class ProductService {
     return this.http.get(environment.backendBaseUrl+this.getProductCountEndpoint, httpOptions);
   }
 
-  createOrUpdateProduct(file, catId, productId, productName, productBrand, cost, offer,description, active){
+  createOrUpdateProduct(file, catId, productId, productName, productBrand, cost, offer,
+                        description, active, pcode, unitsInStock){
     const uploadData = new FormData();
     if(file=== undefined){
       file=null;
@@ -100,6 +101,8 @@ export class ProductService {
     uploadData.append('offer', offer);
     uploadData.append('description', description);
     uploadData.append('active', active);
+    uploadData.append('code', pcode);
+    uploadData.append('units', unitsInStock);
     return this.http.post(environment.backendBaseUrl+this.updateOrCreateProductEndpoint, uploadData);
   }
 

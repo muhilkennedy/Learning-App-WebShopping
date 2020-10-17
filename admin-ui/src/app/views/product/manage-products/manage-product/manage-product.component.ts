@@ -25,6 +25,8 @@ export class ManageProductComponent implements OnInit {
   fileToUpdate: File;
   productPic: string;
   searchCategory: string;
+  pCode: string;
+  unitsInStock : number;
 
   defaultAvatar = "assets/img/avatars/Blank-Profile.png";
 
@@ -113,7 +115,8 @@ export class ManageProductComponent implements OnInit {
   createProduct(){
     this.loading = true;
     this.productService.createOrUpdateProduct(this.fileToUpdate, this.searchCategory, null, this.pName,
-                        this.brand, this.cost, this.offer, this.pDescription, this.productActive)
+                        this.brand, this.cost, this.offer, this.pDescription, this.productActive, this.pCode,
+                        this.unitsInStock)
                         .subscribe((resp:any) => {
                           if(resp.statusCode  === 200){
                             this.alertService.success('Product created succesfully');

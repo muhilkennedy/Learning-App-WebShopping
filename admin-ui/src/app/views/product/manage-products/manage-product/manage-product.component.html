@@ -66,6 +66,21 @@
               </td>
               <td>
                 <mat-form-field appearance="outline" class="matitem">
+                  <mat-label>Product CODE</mat-label>
+                  <input matInput placeholder="Product BAR/QR CODE" [(ngModel)]="pCode" required>
+                </mat-form-field>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <mat-form-field appearance="outline" class="matitem">
+                  <mat-label>Units In Stock</mat-label>
+                  <input matInput type="number" class="example-right-align" [(ngModel)]="unitsInStock" required>
+                  <mat-hint>Current Product Quantity In Stock</mat-hint>
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field appearance="outline" class="matitem">
                   <mat-label>Product Description</mat-label>
                   <textarea rows="3" matInput type="text" class="example-right-align" [(ngModel)]="pDescription" required></textarea>
                 </mat-form-field>
@@ -81,7 +96,6 @@
                   color="accent"
                   [checked]="productActive"
                   (change)="toggleProductActive()">
-
                 </mat-slide-toggle>
               </td>
               <td>

@@ -40,7 +40,7 @@ public class PosDao {
 	public void createPOS (JSONObject json) throws Exception {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con
-					.prepareStatement("INSERT INTO POINTOFSALE VALUES(?)");
+					.prepareStatement("INSERT INTO pointofsale VALUES(?)");
 			stmt.setString(1, json.toString());
 			stmt.executeUpdate();
 		} catch (Exception ex) {
@@ -52,7 +52,7 @@ public class PosDao {
 	public List<POSData> getPOS (String mobile, String tenantId) throws Exception{
 		List<POSData> json = new ArrayList<POSData>();
 		try (Connection con = dbUtil.getConnectionInstance()) {
-			PreparedStatement stmt = con.prepareStatement("SELECT * FROM POINTOFSALE WHERE pos->\"$.tenantId\" = ? and pos->\"$.mobile\" = ?");
+			PreparedStatement stmt = con.prepareStatement("SELECT * FROM pointofsale WHERE pos->\"$.tenantId\" = ? and pos->\"$.mobile\" = ?");
 			stmt.setString(1, tenantId);
 			stmt.setString(2, mobile);
 			ResultSet rs = stmt.executeQuery();
@@ -73,7 +73,7 @@ public class PosDao {
 	public void createPOSSYNC (String mobile) throws Exception {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con
-					.prepareStatement("INSERT INTO POSSYNC VALUES(?,?)");
+					.prepareStatement("INSERT INTO possync VALUES(?,?)");
 			stmt.setString(1, mobile);
 			stmt.setString(2, baseService.getTenantInfo().getTenantID());
 			stmt.executeQuery();

@@ -98,7 +98,9 @@ public class ProductController {
 												@RequestParam(value = "cost", required = false) String cost,
 												@RequestParam(value = "offer", required = false) String offer,
 												@RequestParam(value = "description", required = false) String description,
-												@RequestParam(value = "active", required = false) String active) {
+												@RequestParam(value = "active", required = false) String active,
+												@RequestParam(value = "code", required = false) String pcode,
+												@RequestParam(value = "units", required = false) String unitsInStock) {
 	    GenericResponse<Product> response = new GenericResponse<>();
 		try {
 			//Initial checks
@@ -114,8 +116,10 @@ public class ProductController {
 			productPojo.setBrandName(productBrand);
 			productPojo.setCost(CommonUtil.isValidStringParam(cost)? new BigDecimal(cost) : new BigDecimal(0));
 			productPojo.setOffer(CommonUtil.isValidStringParam(offer)? Integer.parseInt(offer) : 0);
-			productPojo.setProductId(CommonUtil.isValidStringParam(pId)? Integer.parseInt(pId) : 0);
+			productPojo.setProductId(CommonUtil.isValidStringParam(pId)? Integer.parseInt(pId) : -1);
 			productPojo.setActive(CommonUtil.isValidStringParam(active)? Boolean.parseBoolean(active) : false);
+			productPojo.setProductCode(pcode);
+			productPojo.setQuantityInStock(CommonUtil.isValidStringParam(offer)? Integer.parseInt(unitsInStock) : -1);
 			Product product = productService.createOrUpdateProduct(productPojo, Integer.parseInt(catId), file != null? file.getBytes() : null );
 			if(product != null) {
 				response.setData(product);

@@ -23,12 +23,12 @@
             <tbody style="background: white;">
               <tr *ngFor="let item of itemList; let i = index">
                 <td>{{i+1}}</td>
-                <td><input matInput placeholder="Product Name" [(ngModel)]="item.itemName"></td>
-                <td><input matInput placeholder="Product Code" [(ngModel)]="item.itemCode"></td>
-                <td><input style="width: 50%;" matInput placeholder="MRP" [(ngModel)]="item.mrp"></td>
-                <td><input style="width: 50%;" matInput placeholder="Total Quantity" [(ngModel)]="item.quantity"></td>
-                <td><input style="width: 50%;" matInput placeholder="Product Discount" [(ngModel)]="item.total"></td>
-                <td>₹-</td>
+                <td><input type="text" class="form-control" matInput placeholder="Product Name" id="pname-{{i}}" name="pname-{{i}}" [(ngModel)]="item.itemName"></td>
+                <td><input type="text" class="form-control" matInput placeholder="Product Code" id="pcode-{{i}}" name="pcode-{{i}}" [(ngModel)]="item.itemCode"></td>
+                <td><input type="number" class="form-control" style="width: 50%;" matInput placeholder="MRP" id="mrp-{{i}}" name="mrp-{{i}}" [(ngModel)]="item.mrp"></td>
+                <td><input type="number" class="form-control" style="width: 50%;" matInput placeholder="Total Quantity" id="q-{{i}}" name="q-{{i}}" [(ngModel)]="item.quantity"></td>
+                <td><input type="number" class="form-control" style="width: 50%;" matInput placeholder="Discount" id="dis-{{i}}" name="dis-{{i}}" [(ngModel)]="item.discount"></td>
+                <td>₹-{{item.total}} * {{item.quantity}}</td>
               </tr>
             </tbody>
           </table>

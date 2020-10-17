@@ -14,7 +14,8 @@ export class PosComponent implements OnInit {
   //Insert new entry incase of shift and enter key press
   @HostListener('keydown', ['$event']) onKeyDown(e) {
     if (e.keyCode == 13 && e.shiftKey ) {
-      this.itemList.push(this.prod);
+      let newProd:PosProduct = new PosProduct();
+      this.itemList.push(newProd);
     }
   }
 
