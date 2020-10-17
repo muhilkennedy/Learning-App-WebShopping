@@ -54,6 +54,11 @@ public class ProductDao {
 				product.setCost(rs.getBigDecimal(6));
 				product.setOffer(rs.getInt(7));
 				product.setProductDescription(rs.getString(8));
+				product.setProductCode(rs.getString(9));
+				product.setQuantityInStock(rs.getInt(10));
+				product.setLastModified(rs.getDate(11));
+				product.setLastModifiedById(rs.getInt(12));
+				product.setActive(rs.getBoolean(13));
 				productList.add(product);
 			}
 			return productList;

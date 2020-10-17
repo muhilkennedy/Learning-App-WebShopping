@@ -128,9 +128,12 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public Product createOrUpdateProduct(Product product, int categoryId, byte[] productPic)
 			throws Exception {
-		if (product.getProductId() != 0) {
+		if (product.getProductId() > -1) {
 			// update existing product
 			Product actualProduct = productRepo.findProductById(baseService.getTenantInfo(), product.getProductId());
+			if(actualProduct == null) {
+				throw new Exception("Product Not Found!");
+			}
 			if (!StringUtils.isEmpty(product.getProductName())) {
 				actualProduct.setProductName(product.getProductName());
 			}
@@ -140,10 +143,16 @@ public class ProductServiceImpl implements ProductService {
 			if (!StringUtils.isEmpty(product.getProductDescription())) {
 				actualProduct.setProductDescription(product.getProductDescription());
 			}
+			if(!StringUtils.isEmpty(product.getProductCode())) {
+				actualProduct.setProductCode(product.getProductCode());
+			}
 			if (product.getCost() != null) {
 				actualProduct.setCost(product.getCost());
 			}
 			if (product.getOffer() >= 0) {
+				actualProduct.setOffer(product.getOffer());
+			}
+			if (product.getQuantityInStock() >= 0) {
 				actualProduct.setOffer(product.getOffer());
 			}
 			actualProduct.setLastModified(new Date());
@@ -159,6 +168,8 @@ public class ProductServiceImpl implements ProductService {
 			newProduct.setCost(product.getCost());
 			newProduct.setOffer(product.getOffer());
 			newProduct.setProductDescription(product.getProductDescription());
+			newProduct.setProductCode(product.getProductCode());
+			newProduct.setQuantityInStock(product.getQuantityInStock());
 			newProduct.setLastModified(new Date());
 			newProduct.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
 			newProduct.setTenant(baseService.getTenantInfo());
