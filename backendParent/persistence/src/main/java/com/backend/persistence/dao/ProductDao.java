@@ -36,11 +36,11 @@ public class ProductDao {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			//.setAndCondition("active", "true", true)
 			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
-															.setQuery("select * from PRODUCT")
+															.setQuery("select * from product")
 															.setWhereClause()
-															.setAndCondition("TENANTID", baseService.getTenantInfo().getTenantID())
-															.andSetAndCondition("ACTIVE", includeInactive)
-															.andSetOrConditions("CATEGORYID", cIds)
+															.setAndCondition("tenantid", baseService.getTenantInfo().getTenantID())
+															.andSetAndCondition("active", includeInactive)
+															.andSetOrConditions("categoryid", cIds)
 														  	.setLimit(limit)
 														  	.setOffset(offset)
 															.build();
@@ -69,11 +69,11 @@ public class ProductDao {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			// .setAndCondition("active", "true", true)
 			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
-															.setQuery("select * from PRODUCT")
+															.setQuery("select * from product")
 															.setWhereClause()
-															.setAndCondition("TENANTID", baseService.getTenantInfo().getTenantID(), false)
-															.andSetOrConditions("CATEGORYID", cIds)
-															.andSetAndCondition("ACTIVE", includeInactive)
+															.setAndCondition("tenantid", baseService.getTenantInfo().getTenantID(), false)
+															.andSetOrConditions("categoryid", cIds)
+															.andSetAndCondition("active", includeInactive)
 															.setOrderBy(sortByField)
 															.setSortOrder(sortBytype)
 															.setLimit(limit)
@@ -103,10 +103,10 @@ public class ProductDao {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			//.setAndCondition("active", "true", true)
 			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
-															.setQuery("select productId from PRODUCT")
+															.setQuery("select productId from product")
 															.setWhereClause()
-															.setAndCondition("TENANTID", baseService.getTenantInfo().getTenantID(), false)
-															.andSetOrConditions("CATEGORYID", cIds)
+															.setAndCondition("tenantid", baseService.getTenantInfo().getTenantID(), false)
+															.andSetOrConditions("categoryid", cIds)
 														  	.setLimit(limit)
 														  	.setOffset(offset)
 															.build();
@@ -134,10 +134,10 @@ public class ProductDao {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			//.setAndCondition("active", "true", true)
 			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
-															.setQuery("select count(*) from PRODUCT")
+															.setQuery("select count(*) from product")
 															.setWhereClause()
-															.setAndCondition("TENANTID", baseService.getTenantInfo().getTenantID(), false)
-															.andSetOrConditions("CATEGORYID", cIds)
+															.setAndCondition("tenantid", baseService.getTenantInfo().getTenantID(), false)
+															.andSetOrConditions("categoryid", cIds)
 															.build();
 			PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
 			ResultSet rs = stmt.executeQuery();
@@ -150,4 +150,22 @@ public class ProductDao {
 			throw new Exception(ex.getMessage());
 		}
 	}
+	
+	// query to get categories recursively
+	/*with recursive cat_tree as (
+			   select categoryid,
+			          categoryname,
+			          parentcategoryid
+			   from category
+			   where categoryid = 8  -- this defines the start of the recursion
+			   union all
+			   select child.categoryid,
+			          child.categoryname,
+			          child.parentcategoryid
+			   from category as child
+			     join cat_tree as parent on parent.categoryid = child.parentcategoryid -- the self join to the CTE builds up the recursion
+			)
+			select *
+			from cat_tree;*/
+
 }

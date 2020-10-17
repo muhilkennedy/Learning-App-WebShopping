@@ -29,7 +29,7 @@ public class TenantDao {
 		List<String> corsList = new ArrayList<String>();
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con
-					.prepareStatement("select origin from TENANTCORSMAPPING where tenantid = ?");
+					.prepareStatement("select origin from tenantcorsmapping where tenantid = ?");
 			stmt.setString(1, tenantId);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
@@ -45,7 +45,7 @@ public class TenantDao {
 	public void removeOrigins(String tenantId) throws Exception {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con
-					.prepareStatement("delete maps from TENANTCORSMAPPING as maps where maps.tenantid = ?");
+					.prepareStatement("delete maps from tenantcorsmapping as maps where maps.tenantid = ?");
 			stmt.setString(1, tenantId);
 			stmt.executeUpdate();
 		} catch (Exception ex) {
@@ -57,7 +57,7 @@ public class TenantDao {
 	public void addAllowedOrigin(String tenantId, String origin) throws Exception {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con
-					.prepareStatement("insert into TENANTCORSMAPPING values(?,?)");
+					.prepareStatement("insert into tenantcorsmapping values(?,?)");
 			stmt.setString(1, tenantId);
 			stmt.setString(2, origin);
 			stmt.executeUpdate();
