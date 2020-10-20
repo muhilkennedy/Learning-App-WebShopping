@@ -17,6 +17,7 @@ export class ProductService {
   getProductCountEndpoint = "/product/getProductCount";
   getCategoriesTypeAheadEndPoint = "/category/getCategoriesForTypeahead";
   updateOrCreateProductEndpoint = "/product/secure/admin/createOrUpdateProduct"
+  getProductByCodeEndpoint = "/product/secure/admin/getProductByCode";
 
   constructor(private http: HttpClient) { }
 
@@ -104,6 +105,17 @@ export class ProductService {
     uploadData.append('code', pcode);
     uploadData.append('units', unitsInStock);
     return this.http.post(environment.backendBaseUrl+this.updateOrCreateProductEndpoint, uploadData);
+  }
+
+  getPoductByCode(code): Observable<any> {
+    let requestHeaders = new HttpHeaders().set('Content-Type', 'application/json')
+    const httpOptions = {
+      headers: requestHeaders,
+      params: {
+        pCode: code
+      }
+    };
+    return this.http.get(environment.backendBaseUrl+this.getProductByCodeEndpoint, httpOptions);
   }
 
 }
