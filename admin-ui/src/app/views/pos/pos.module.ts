@@ -43,6 +43,8 @@ import {MatTreeModule} from '@angular/material/tree';
 import { NgxTypeaheadModule } from 'ngx-typeahead';
 import { PosComponent } from './pos.component';
 import { PosRoutingModule } from './pos-routing.module';
+import { ThermalPrintModule } from 'ng-thermal-print';
+import { BarecodeScannerLivestreamModule } from 'ngx-barcode-scanner';
 
 @NgModule({
   declarations: [
@@ -99,7 +101,9 @@ import { PosRoutingModule } from './pos-routing.module';
     MatToolbarModule,
     MatTooltipModule,
     MatTreeModule,
-    AlertModule
+    AlertModule,
+    ThermalPrintModule,
+    BarecodeScannerLivestreamModule
   ]
 })
 export class PosModule { }

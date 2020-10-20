@@ -41,4 +41,6 @@ public interface ProductService {
 
 	void deleteProductsForCategory(Category category);
 
+	Product getProductByCode(String code);
+
 }

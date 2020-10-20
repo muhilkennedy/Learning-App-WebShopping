@@ -79,6 +79,11 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	@Override
+	public Product getProductByCode(String code) {
+		return productRepo.findProductByCode(baseService.getTenantInfo(), code);
+	}
+	
+	@Override
 	public Product createProduct(Product product, int categoryId) {
 		Category cat = catService.getCategoryById(categoryId);
 		if(cat != null) {

@@ -52,6 +52,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatTreeModule} from '@angular/material/tree';
 import { NgxLoadingModule, ngxLoadingAnimationTypes } from 'ngx-loading';
 import { CookieService } from 'ngx-cookie-service';
+import { ThermalPrintModule } from 'ng-thermal-print';
 
 import { SharedModule } from './shared/shared.module';
 import { AlertModule } from './shared/_alert/alert.module';
@@ -59,6 +60,7 @@ import { AppComponent } from './app.component';
 // Import containers
 import { DefaultLayoutComponent } from './containers';
 import { LoginComponent } from './component/login/login.component';
+import { BarecodeScannerLivestreamModule } from "ngx-barcode-scanner";
 
 const APP_CONTAINERS = [
   DefaultLayoutComponent
@@ -201,7 +203,9 @@ export function init_tenant(initializer: TenantInitializer) {
     SharedModule,
     AlertModule,
     ModalModule,
-    NgMultiSelectDropDownModule.forRoot()
+    NgMultiSelectDropDownModule.forRoot(),
+    ThermalPrintModule,
+    BarecodeScannerLivestreamModule
   ],
   declarations: [
     AppComponent,

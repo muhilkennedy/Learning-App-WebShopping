@@ -138,5 +138,21 @@ public class ProductController {
 		}
 		return response;
 	}
+	
+	@RequestMapping(value = "/secure/admin/getProductByCode", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Product> getProductByCode(HttpServletRequest request,
+												@RequestParam(value = "pCode", required = true) String pCode) {
+		GenericResponse<Product> response = new GenericResponse<>();
+		try {
+			response.setData(productService.getProductByCode(pCode));
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("getProductByCode : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
 
 }

@@ -1,12 +1,56 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-money"></i>Point Of Sale (POS) - Billing
+          <!--remove later-->
+          <!-- <strong>Status: {{status}}</strong> -->
+          <div class="float-right">
+              <button (click)="requestUsb()">Connect to USB</button>
+          </div>
+          <!-- <div class="float-right">
+              <button (click)="print()" [disabled]="status === false"> Print!</button>
+          </div> -->
+        </div>
+        <div class="card-body">
+          <input type="text" class="form-control" matInput placeholder="Customer Mobile" id="customernumber" name="customernumber" [(ngModel)]="customerMobile">
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="card">
+        <div class="card-body">
+            <label>Customer Name : </label>
+            <br/>
+            <label>Customer Email : </label>
+            <br/>
+            <label>Loyalty Points : </label>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-2">
+      <div class="card">
+        <div class="card-body">
+          <barcode-scanner-livestream
+            type="code_128"
+            (valueChanges)="onValueChanges($event)"
+            (started)="(onStarted($event))"
+          ></barcode-scanner-livestream>
+          <div [hidden]="!barcodeValue">
+            {{ barcodeValue }}
+          </div>
+        </div>
+      </div>
+    </div>
 
+  </div>
+</div>
 <div class="animated fadeIn">
   <div class="row">
     <div class="col-md-12">
       <div class="card">
         <ngx-loading [show]="loading"></ngx-loading>
-        <div class="card-header">
-          <i class="fa fa-money"></i>Point Of Sale (POS) - Billing
-        </div>
         <div class="card-body">
           <table class="table table-responsive-sm table-hover table-outline mb-0">
             <thead class="thead-light">
