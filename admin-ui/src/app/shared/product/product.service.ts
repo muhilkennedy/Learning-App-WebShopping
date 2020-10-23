@@ -14,12 +14,19 @@ export class ProductService {
   editCategoryNameEndpoint = "/category/secure/admin/editCategoryName";
 
   getProductsEndpoint = "/product/getProducts";
-  createProductEndpoint = "/product/secure/admin/createProduct";
+  getProductCountEndpoint = "/product/getProductCount";
+  getCategoriesTypeAheadEndPoint = "/category/getCategoriesForTypeahead";
+  updateOrCreateProductEndpoint = "/product/secure/admin/createOrUpdateProduct"
+  getProductByCodeEndpoint = "/product/secure/admin/getProductByCode";
 
   constructor(private http: HttpClient) { }
 
   getCategories(): Observable<any> {
     return this.http.get(environment.backendBaseUrl+this.getCategoriesEndpoint);
+  }
+
+  getCategoriesForTypeahead(): Observable<any> {
+    return this.http.get(environment.backendBaseUrl+this.getCategoriesTypeAheadEndPoint);
   }
 
  createCategory(catName, parentId): Observable<any>{
@@ -50,21 +57,65 @@ export class ProductService {
     return this.http.put(environment.backendBaseUrl+this.editCategoryNameEndpoint, httpOptions);
   }
 
-  getProducts(pIds, cIds, limit, offset){
-        //Set Headers
-        let requestHeaders = new HttpHeaders().set('Content-Type', 'application/json')
-        .append('Offset', offset)
-        .append('Limit', limit);
+  getProducts(pIds, cIds, offset, limit, sortField, sortType, loadInactive){
+      //Set Headers
+      let requestHeaders = new HttpHeaders().set('Content-Type', 'application/json')
+      .append('Offset', offset)
+      .append('Limit', limit);
 
-        const httpOptions = {
-          headers: requestHeaders,
-          params: {
-            pIds: pIds,
-            cIds: cIds
-          }
-        };
+      const httpOptions = {
+        headers: requestHeaders,
+        params: {
+          pIds: pIds,
+          cIds: cIds,
+          sortField: sortField,
+          sortType: sortType,
+          includeInactive: loadInactive
+        }
+      };
+      return this.http.get(environment.backendBaseUrl+this.getProductsEndpoint, httpOptions);
+  }
 
-        return this.http.get(environment.backendBaseUrl+this.getProductsEndpoint, httpOptions);
+  getproductCount(cIds){
+    let requestHeaders = new HttpHeaders().set('Content-Type', 'application/json')
+    const httpOptions = {
+      headers: requestHeaders,
+      params: {
+        cIds: cIds
+      }
+    };
+    return this.http.get(environment.backendBaseUrl+this.getProductCountEndpoint, httpOptions);
+  }
+
+  createOrUpdateProduct(file, catId, productId, productName, productBrand, cost, offer,
+                        description, active, pcode, unitsInStock){
+    const uploadData = new FormData();
+    if(file=== undefined){
+      file=null;
+    }
+    uploadData.append('productImage', file);
+    uploadData.append('categoryId', catId);
+    uploadData.append('productId', productId);
+    uploadData.append('productName', productName);
+    uploadData.append('productBrand', productBrand);
+    uploadData.append('cost', cost);
+    uploadData.append('offer', offer);
+    uploadData.append('description', description);
+    uploadData.append('active', active);
+    uploadData.append('code', pcode);
+    uploadData.append('units', unitsInStock);
+    return this.http.post(environment.backendBaseUrl+this.updateOrCreateProductEndpoint, uploadData);
+  }
+
+  getPoductByCode(code): Observable<any> {
+    let requestHeaders = new HttpHeaders().set('Content-Type', 'application/json')
+    const httpOptions = {
+      headers: requestHeaders,
+      params: {
+        pCode: code
+      }
+    };
+    return this.http.get(environment.backendBaseUrl+this.getProductByCodeEndpoint, httpOptions);
   }
 
 }

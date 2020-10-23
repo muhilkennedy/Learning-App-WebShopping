@@ -4,13 +4,21 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 import javax.imageio.ImageIO;
 
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.micrometer.core.instrument.util.StringUtils;
 
 public class CommonUtil {
 	
@@ -34,6 +42,8 @@ public class CommonUtil {
 	
 	public static final String Key_employeeOTP = "EmpOTP";
 	public static final String Key_clientOTP = "clientOTP";
+
+	public static final int Key_MaxPaginationLimit = 1000;
 	
 	public static final int Thumbnail_AspectWidth = 200;
 	public static final int Thumbnail_AspectHeight = 200;
@@ -43,8 +53,25 @@ public class CommonUtil {
 	public static final int HomeImage_AspectHeight = 900;
 	public static final String Thumbnail_Exension = "jpg";
 	
+	public static final List<String> template_Supported_Extentions = new ArrayList<String>() {
+		private static final long serialVersionUID = 1L;
+		{
+			add(".doc");
+			add(".docx");
+		}
+	};
+	
+	public static final List<String> images_Supported_Extentions = new ArrayList<String>() {
+		private static final long serialVersionUID = 1L;
+		{
+			add(".jpg");
+			add(".jpeg");
+			add(".png");
+		}
+	};
+	
 	/**
-	 * @return randome password wiht pre-defined length and Alpha numeric characters.
+	 * @return random password with pre-defined length and Alpha numeric characters.
 	 */
 	public static String generateRandomPassword() {
 		StringBuilder builder = new StringBuilder();
@@ -67,7 +94,7 @@ public class CommonUtil {
 	}
 	
 	/**
-	 * @see This methos needs to be called everytime after a temp file/Dir is
+	 * @see This method needs to be called everytime after a temp file/Dir is
 	 *      created in order keep the memory optimized.
 	 * @param file to be deleted
 	 * @return true if successfully removed.
@@ -122,6 +149,64 @@ public class CommonUtil {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ImageIO.write(bImage, Thumbnail_Exension, baos);
 		return baos.toByteArray();
+	}
+	
+	// need to update aspect ratio later after ui dev for best fit.
+	public static byte[] getProductImage(byte[] image) throws Exception {
+		InputStream in = new ByteArrayInputStream(image);
+		BufferedImage bImage = Scalr.resize(ImageIO.read(in), Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, HomeImage_AspectWidth,
+				HomeImage_AspectHeight, Scalr.OP_ANTIALIAS);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ImageIO.write(bImage, Thumbnail_Exension, baos);
+		return baos.toByteArray();
+	}
+	
+	// compress the image bytes before storing it in the database
+	public static byte[] compressBytes(byte[] data) {
+		Deflater deflater = new Deflater();
+		deflater.setInput(data);
+		deflater.finish();
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
+		byte[] buffer = new byte[1024];
+		while (!deflater.finished()) {
+			int count = deflater.deflate(buffer);
+			outputStream.write(buffer, 0, count);
+		}
+		try {
+			outputStream.close();
+		} catch (IOException e) {
+		}
+		System.out.println("Compressed Image Byte Size - " + outputStream.toByteArray().length);
+		return outputStream.toByteArray();
+	}
+
+	// uncompress the image bytes before returning it to the angular application
+	public static byte[] decompressBytes(byte[] data) {
+		Inflater inflater = new Inflater();
+		inflater.setInput(data);
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
+		byte[] buffer = new byte[1024];
+		try {
+			while (!inflater.finished()) {
+				int count = inflater.inflate(buffer);
+				outputStream.write(buffer, 0, count);
+			}
+			outputStream.close();
+		} catch (IOException ioe) {
+		} catch (DataFormatException e) {
+		}
+		return outputStream.toByteArray();
+	}
+	
+	/**
+	 * @param parameter
+	 * @return is valid input parameter
+	 */
+	public static boolean isValidStringParam(String param) {
+		if (!StringUtils.isEmpty(param) && !param.equalsIgnoreCase("null") && !param.equalsIgnoreCase("undefined")) {
+			return true;
+		}
+		return false;
 	}
 
 }

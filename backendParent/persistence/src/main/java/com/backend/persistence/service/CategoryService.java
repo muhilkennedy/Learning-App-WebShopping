@@ -11,7 +11,7 @@ public interface CategoryService {
 
 	void createCategory(Category category);
 
-	List<Category> getCategories();
+	List<Category> getAllCategoriesForTenant();
 
 	Category getCategoryById(int id);
 
@@ -26,5 +26,7 @@ public interface CategoryService {
 	void deleteCategory(List<Integer> ids);
 
 	void updateCategoryName(int id, String name);
+
+	List<Category> getAllCategoriesForDelete();
 
 }

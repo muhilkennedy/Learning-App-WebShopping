@@ -1,23 +1,26 @@
 package com.backend.api.controller;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections4.map.HashedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.Response;
+import com.backend.commons.util.CommonUtil;
 import com.backend.core.util.Constants;
 import com.backend.persistence.entity.Product;
 import com.backend.persistence.service.ProductService;
@@ -41,26 +44,40 @@ public class ProductController {
 	 * ############################################
 	 */
 	@RequestMapping(value = "/getProducts", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<Product> getProducts(HttpServletRequest request, @RequestParam(value = "pIds", required = false) List<Integer> pIds,
-			@RequestParam(value = "cIds", required = false) List<Integer> cIds) {
+	public GenericResponse<Product> getProducts(HttpServletRequest request,
+												@RequestParam(value = "pIds", required = false) List<Integer> pIds,
+												@RequestParam(value = "cIds", required = false) List<Integer> cIds,
+												@RequestParam(value = "sortField", required = false) String sortByField,
+												@RequestParam(value = "sortType", required = false) String sortByType,
+												@RequestParam(value = "includeInactive", required = false) boolean includeInactive) {
 		GenericResponse<Product> response = new GenericResponse<>();
 		try {
-			List<Product> productList = new ArrayList<Product>();
 			String limit = request.getHeader(Constants.Header_Limit);
 			String offset = request.getHeader(Constants.Header_Offset);
-			if(pIds != null && pIds.size() > 0) {
-				productList.addAll(productService.getProducts(pIds));
-			}
-			else if(limit != null && offset != null) {
-				productList.addAll(productService.getAllProductsForTenant(Integer.parseInt(limit), Integer.parseInt(offset)));
-			}
-			else {
-				productList.addAll(productService.getAllProductsForTenant());
-			}
-			response.setDataList(productList);
+			response.setDataList(productService.getProducts(cIds, pIds, limit, offset, sortByField, sortByType, includeInactive));
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("getProducts : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/getProductCount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Map<String, Integer>> getProductCount(HttpServletRequest request,
+																 @RequestParam(value = "cIds", required = false) List<Integer> cIds,
+																 @RequestParam(value = "includeInactive", required = false) boolean includeInactive) {
+		GenericResponse<Map<String, Integer>> response = new GenericResponse<>();
+		try {
+			Map<String, Integer> productCount = new HashedMap<String, Integer>();
+			int count = productService.getProductsCount(cIds, includeInactive);
+			productCount.put("productCount", count);
+			response.setData(productCount);
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("getProductCount : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
@@ -72,22 +89,65 @@ public class ProductController {
 	 * 				secure access
 	 * ############################################
 	 */
-	@RequestMapping(value = "/createProduct", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<Product> getProducts(HttpServletRequest request, @RequestBody Product productPojo, @RequestParam(value = "categoryId", required = true) int catId) {
-		GenericResponse<Product> response = new GenericResponse<>();
+	@RequestMapping(value = "/secure/admin/createOrUpdateProduct", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Product> createOrUpdateProduct(HttpServletRequest request, @RequestParam(value = "productImage", required = false) MultipartFile file,
+												@RequestParam(value = "categoryId", required = false) String catId,
+												@RequestParam(value = "productId", required = false) String pId,
+												@RequestParam(value = "productName", required = false) String productName,
+												@RequestParam(value = "productBrand", required = false) String productBrand,
+												@RequestParam(value = "cost", required = false) String cost,
+												@RequestParam(value = "offer", required = false) String offer,
+												@RequestParam(value = "description", required = false) String description,
+												@RequestParam(value = "active", required = false) String active,
+												@RequestParam(value = "code", required = false) String pcode,
+												@RequestParam(value = "units", required = false) String unitsInStock) {
+	    GenericResponse<Product> response = new GenericResponse<>();
 		try {
-			Product product = productService.createProduct(productPojo, catId);
+			//Initial checks
+			if(CommonUtil.isValidStringParam(pId) && CommonUtil.isValidStringParam(catId)) {
+				response.setErrorMessages(Arrays.asList("Both Category Id and Product Id cannot be empty!"));
+				response.setStatus(Response.Status.BAD_REQUEST);
+				return response;
+			}
+			//create pojo object
+			Product productPojo = new Product();
+			productPojo.setProductName(productName);
+			productPojo.setProductDescription(description);
+			productPojo.setBrandName(productBrand);
+			productPojo.setCost(CommonUtil.isValidStringParam(cost)? new BigDecimal(cost) : new BigDecimal(0));
+			productPojo.setOffer(CommonUtil.isValidStringParam(offer)? Integer.parseInt(offer) : 0);
+			productPojo.setProductId(CommonUtil.isValidStringParam(pId)? Integer.parseInt(pId) : -1);
+			productPojo.setActive(CommonUtil.isValidStringParam(active)? Boolean.parseBoolean(active) : false);
+			productPojo.setProductCode(pcode);
+			productPojo.setQuantityInStock(CommonUtil.isValidStringParam(offer)? Integer.parseInt(unitsInStock) : -1);
+			Product product = productService.createOrUpdateProduct(productPojo, Integer.parseInt(catId), file != null? file.getBytes() : null );
 			if(product != null) {
 				response.setData(product);
 				response.setStatus(Response.Status.OK);
 			}
 			else {
-				response.setErrorMessages(Arrays.asList("Failed To Create Product"));
+				response.setErrorMessages(Arrays.asList("Failed To Create Product!"));
 				response.setStatus(Response.Status.ERROR);
 			}
 			
 		} catch (Exception ex) {
-			logger.error("getProducts : " + ex);
+			logger.error("createOrUpdateProduct : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/secure/admin/getProductByCode", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Product> getProductByCode(HttpServletRequest request,
+												@RequestParam(value = "pCode", required = true) String pCode) {
+		GenericResponse<Product> response = new GenericResponse<>();
+		try {
+			response.setData(productService.getProductByCode(pCode));
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("getProductByCode : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);

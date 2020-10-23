@@ -4,7 +4,7 @@ export const navItems: INavData[] = [
   {
     name: 'Dashboard',
     url: '/dashboard',
-    icon: 'icon-globe',
+    icon: 'icon-speedometer',
   },
   {
     title: true,
@@ -89,13 +89,14 @@ export const navItems: INavData[] = [
     ]
   },
   {
-    name: 'Report',
+    name: 'Reporting',
     url: '/report',
     icon: 'icon-chart',
     badge: {
         variant: 'info',
         text: 'V2'
-    }
+    },
+    attributes: { disabled: true },
   },
   {
     name: 'Invoice Template',
@@ -106,5 +107,10 @@ export const navItems: INavData[] = [
     name: 'Media',
     url: '/media',
     icon: 'icon-film',
+  },
+  {
+    name: 'Point Of Sale (POS)',
+    url: '/pos',
+    icon: 'icon-credit-card',
   }
 ];

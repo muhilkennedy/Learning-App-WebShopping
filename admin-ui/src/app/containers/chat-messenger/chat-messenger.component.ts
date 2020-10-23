@@ -4,6 +4,9 @@ import { TenantStoreService } from '../../service/tenantStore/tenant-store.servi
 import * as Stomp from 'stompjs';
 import * as SockJS from 'sockjs-client';
 import { environment } from '../../../environments/environment';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Message } from '../../service/websocket/message';
+import { SocketService } from '../../service/websocket/socket.service';
 
 @Component({
   selector: 'app-chat-messenger',
@@ -13,90 +16,118 @@ import { environment } from '../../../environments/environment';
 export class ChatMessengerComponent implements OnInit {
 
   unreadMessage = true;
+  name: string;
 
-  constructor(public userStore: UserStoreService, private tenantStore: TenantStoreService) { }
+  constructor(public userStore: UserStoreService, private tenantStore: TenantStoreService,
+    private socketService: SocketService) { }
 
   ngOnInit(): void {
     this.name = this.tenantStore.tenantEmail;
+
+    this.form = new FormGroup({
+      message: new FormControl(null, [Validators.required])
+    })
+    this.userForm = new FormGroup({
+      fromId: new FormControl(null, [Validators.required]),
+      toId: new FormControl(null)
+    })
+    this.initializeWebSocketConnection();
   }
 
-  greeting: any;
-  name: string;
+  private serverUrl = environment.backendBaseUrl + '/socket'
+  isLoaded: boolean = false;
+  isCustomSocketOpened = false;
+  stompClient: any;
+  public form: FormGroup;
+  public userForm: FormGroup;
+  messages: Message[] = [];
 
-  connect(){
-    this._connect();
-  }
-
-  disconnect(){
-    this._disconnect();
-  }
-
-  sendMessage(){
-    this._send(this.name);
-  }
-
-  handleMessage(message){
-    this.greeting = message;
-  }
-
-  webSocketEndPoint: string = 'http://localhost:8080/wsocket';
-    topic: string = "/broadcastchat/sendMessage";
-    stompClient: any;
-
-    _connect() {
-      console.log("Initialize WebSocket Connection");
-      let ws = new SockJS(this.webSocketEndPoint);
-      this.stompClient = Stomp.over(ws);
-      //disabe stomp console logs
-      this.stompClient.debug = null;
-      const _this = this;
-      _this.stompClient.connect(
-        {"Tenant-Id": environment.tenantId,
-        "Origin":environment.origin}, function (frame) {
-          _this.stompClient.subscribe(_this.topic, function (sdkEvent) {
-              _this.onMessageReceived(sdkEvent);
-          });
-          //_this.stompClient.reconnect_delay = 2000;
-      }, this.errorCallBack);
-  };
-
-  _disconnect() {
-      if (this.stompClient !== null) {
-          this.stompClient.disconnect();
-      }
-      console.log("Disconnected");
-  }
-
-  // on error, schedule a reconnection attempt
-  errorCallBack(error) {
-      console.log("errorCallBack -> " + error)
-      setTimeout(() => {
-          this._connect();
-      }, 5000);
-  }
-
-/**
- * Send message to sever via web socket
- * @param {*} message
- */
-  _send(message) {
-      this.stompClient.send("/app/msg", {"Tenant-Id": environment.tenantId},
-      JSON.stringify({message: message,
-                      from: this.userStore.emailId,
-                      to:'muhilkennedy@gmail.com',
-                      tenantId: environment.tenantId,
-                      userToken: this.userStore.JwtToken}));
-      this.unreadMessage = false;
-  }
-
-  onMessageReceived(message:any) {
-    let messageObject = JSON.parse(message.body);
-    if(messageObject.reciever === this.userStore.emailId){
-      console.log("Message Recieved from Server :: " + message);
-      this.unreadMessage = true;
+  sendMessageUsingSocket() {
+    if (this.form.valid) {
+      let message: Message = { message: this.form.value.message, fromId: this.tenantStore.tenantId + "-" + this.userStore.userId,
+                               toId: this.tenantStore.tenantId + "-" + this.userForm.value.toId };
+      this.stompClient.send("/socket-subscriber/send/message", {}, JSON.stringify(message));
     }
+  }
 
-      // this.appComponent.handleMessage(JSON.stringify(message.body));
+  sendMessageUsingRest() {
+    if (this.form.valid) {
+      let message: Message = { message: this.form.value.message, fromId: this.tenantStore.tenantId + "-" + this.userStore.userId,
+                               toId: this.tenantStore.tenantId + "-" + this.userForm.value.toId };
+      this.socketService.post(message).subscribe((data: Message) => {
+        console.log(data);
+      },
+      (error:any) => {
+          return new Error(error);
+      });
+    }
+  }
+
+  initializeWebSocketConnection() {
+    let ws = new SockJS(this.serverUrl);
+    this.stompClient = Stomp.over(ws);
+    //disabe stomp console logs
+    if(environment.production === true){
+      this.stompClient.debug = null;
+    }
+    let that = this;
+    this.stompClient.connect({}, function (frame) {
+      that.isLoaded = true;
+      that.openGlobalSocket();
+      that.openSocket();
+    });
+  }
+
+  openGlobalSocket() {
+    this.stompClient.subscribe("/socket-publisher", (message) => {
+      this.handleResult(message);
+    });
+  }
+
+  openSocket() {
+    if (this.isLoaded) {
+      this.isCustomSocketOpened = true;
+      this.stompClient.subscribe("/socket-publisher/" + this.tenantStore.tenantId +"-" +
+                        this.userStore.userId, (message) => {
+        this.handleResult(message);
+      });
+    }
+  }
+
+  handleResult(message){
+    if (message.body) {
+      let messageResult: Message = JSON.parse(message.body);
+      console.log(messageResult);
+      this.messages.push(messageResult);
+      alert("new msg");
+    }
+  }
+
+  scan(){
+
+  //   cordova.plugins.barcodeScanner.scan(
+  //     function (result) {
+  //         alert("We got a barcode\n" +
+  //               "Result: " + result.text + "\n" +
+  //               "Format: " + result.format + "\n" +
+  //               "Cancelled: " + result.cancelled);
+  //     },
+  //     function (error) {
+  //         alert("Scanning failed: " + error);
+  //     }
+  //  );
+
+  //   this.$cordovabarcodescanner.scan(
+  //     function (result) {
+  //         alert("We got a barcode\n" +
+  //               "Result: " + result.text + "\n" +
+  //               "Format: " + result.format + "\n" +
+  //               "Cancelled: " + result.cancelled);
+  //     },
+  //     function (error) {
+  //         alert("Scanning failed: " + error);
+  //     }
+  //  );
   }
 
 }

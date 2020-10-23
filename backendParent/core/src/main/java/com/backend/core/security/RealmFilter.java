@@ -47,12 +47,12 @@ public class RealmFilter implements Filter {
 			logger.info("doFilter :: Realm Filter");
 
 			// skip realm check in case of load testing
-			if(req.getRequestURI().contains("/loadTesting")) {
+			if(req.getRequestURI().contains("/loadTesting") && !configUtil.isProdMode()) {
 				baseService.setTenantInfo(TenantUtil.getTenantInfo("devTenant"));
 				chain.doFilter(request, response);
 			}
 			// incase of socket request seperate interceptor will handle header parsing and realm initialization.
-			else if(req.getRequestURI().contains("/wsocket")) {
+			else if(req.getRequestURI().contains("/wsocket") || req.getRequestURI().contains("socket")) {
 				// to avoid cors issue incase of ws request Access-Control-Allow-Origin
 				res.setHeader("Access-Control-Allow-Origin", req.getHeader(Constants.Header_Origin));
 				res.setHeader("Access-Control-Allow-Credentials","true");

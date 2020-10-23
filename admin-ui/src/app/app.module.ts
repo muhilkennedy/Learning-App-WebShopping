@@ -9,6 +9,7 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true
@@ -51,6 +52,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatTreeModule} from '@angular/material/tree';
 import { NgxLoadingModule, ngxLoadingAnimationTypes } from 'ngx-loading';
 import { CookieService } from 'ngx-cookie-service';
+import { ThermalPrintModule } from 'ng-thermal-print';
 
 import { SharedModule } from './shared/shared.module';
 import { AlertModule } from './shared/_alert/alert.module';
@@ -58,6 +60,8 @@ import { AppComponent } from './app.component';
 // Import containers
 import { DefaultLayoutComponent } from './containers';
 import { LoginComponent } from './component/login/login.component';
+import { BarecodeScannerLivestreamModule } from "ngx-barcode-scanner";
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 const APP_CONTAINERS = [
   DefaultLayoutComponent
@@ -199,7 +203,11 @@ export function init_tenant(initializer: TenantInitializer) {
     ChartsModule,
     SharedModule,
     AlertModule,
-    ModalModule
+    ModalModule,
+    NgMultiSelectDropDownModule.forRoot(),
+    ThermalPrintModule,
+    BarecodeScannerLivestreamModule,
+    PdfViewerModule
   ],
   declarations: [
     AppComponent,

@@ -85,6 +85,21 @@ public class CategoryController {
 		return response;
 	}
 	
+	@RequestMapping(value = "/getCategoriesForTypeahead", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Map> getCategoriesForTypeahead(HttpServletRequest request) {
+		GenericResponse<Map> response = new GenericResponse<>();
+		try {
+			response.setDataList(categoryService.getAllCategoriesForTenant());
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("getCategories : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
 	/*
 	 * ############################################ 
 	 * 				secured access

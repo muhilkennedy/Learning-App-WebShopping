@@ -89,6 +89,7 @@ export class DefaultLayoutComponent implements OnInit{
         if(permissionIds.includes(1)){
           //allow all access
           this.addNavItem("/employee");
+          this.addNavItem("/pos");
         }
         //manager permission
         if(permissionIds.includes(2)){

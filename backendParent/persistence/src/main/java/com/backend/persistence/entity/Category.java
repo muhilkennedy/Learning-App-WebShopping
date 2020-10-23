@@ -43,6 +43,9 @@ public class Category implements Serializable {
 	@Column(name = "ACTIVE")
 	private boolean active;
 	
+	@Column(name = "MARKEDFORDELETE")
+	private boolean markedForDelete;
+	
 //	@OneToMany(mappedBy = "categoryId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //	private List<Product> products;
 
@@ -95,6 +98,14 @@ public class Category implements Serializable {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public boolean isMarkedForDelete() {
+		return markedForDelete;
+	}
+
+	public void setMarkedForDelete(boolean markedForDelete) {
+		this.markedForDelete = markedForDelete;
 	}
 
 	@Override
