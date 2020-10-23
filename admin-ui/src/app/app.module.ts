@@ -61,6 +61,7 @@ import { AppComponent } from './app.component';
 import { DefaultLayoutComponent } from './containers';
 import { LoginComponent } from './component/login/login.component';
 import { BarecodeScannerLivestreamModule } from "ngx-barcode-scanner";
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 const APP_CONTAINERS = [
   DefaultLayoutComponent
@@ -205,7 +206,8 @@ export function init_tenant(initializer: TenantInitializer) {
     ModalModule,
     NgMultiSelectDropDownModule.forRoot(),
     ThermalPrintModule,
-    BarecodeScannerLivestreamModule
+    BarecodeScannerLivestreamModule,
+    PdfViewerModule
   ],
   declarations: [
     AppComponent,

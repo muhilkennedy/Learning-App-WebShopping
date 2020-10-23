@@ -4,7 +4,13 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 import javax.imageio.ImageIO;
 
@@ -46,6 +52,23 @@ public class CommonUtil {
 	public static final int HomeImage_AspectWidth = 1200;
 	public static final int HomeImage_AspectHeight = 900;
 	public static final String Thumbnail_Exension = "jpg";
+	
+	public static final List<String> template_Supported_Extentions = new ArrayList<String>() {
+		private static final long serialVersionUID = 1L;
+		{
+			add(".doc");
+			add(".docx");
+		}
+	};
+	
+	public static final List<String> images_Supported_Extentions = new ArrayList<String>() {
+		private static final long serialVersionUID = 1L;
+		{
+			add(".jpg");
+			add(".jpeg");
+			add(".png");
+		}
+	};
 	
 	/**
 	 * @return random password with pre-defined length and Alpha numeric characters.
@@ -136,6 +159,43 @@ public class CommonUtil {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ImageIO.write(bImage, Thumbnail_Exension, baos);
 		return baos.toByteArray();
+	}
+	
+	// compress the image bytes before storing it in the database
+	public static byte[] compressBytes(byte[] data) {
+		Deflater deflater = new Deflater();
+		deflater.setInput(data);
+		deflater.finish();
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
+		byte[] buffer = new byte[1024];
+		while (!deflater.finished()) {
+			int count = deflater.deflate(buffer);
+			outputStream.write(buffer, 0, count);
+		}
+		try {
+			outputStream.close();
+		} catch (IOException e) {
+		}
+		System.out.println("Compressed Image Byte Size - " + outputStream.toByteArray().length);
+		return outputStream.toByteArray();
+	}
+
+	// uncompress the image bytes before returning it to the angular application
+	public static byte[] decompressBytes(byte[] data) {
+		Inflater inflater = new Inflater();
+		inflater.setInput(data);
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
+		byte[] buffer = new byte[1024];
+		try {
+			while (!inflater.finished()) {
+				int count = inflater.inflate(buffer);
+				outputStream.write(buffer, 0, count);
+			}
+			outputStream.close();
+		} catch (IOException ioe) {
+		} catch (DataFormatException e) {
+		}
+		return outputStream.toByteArray();
 	}
 	
 	/**

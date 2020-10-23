@@ -66,6 +66,10 @@ export class ChatMessengerComponent implements OnInit {
   initializeWebSocketConnection() {
     let ws = new SockJS(this.serverUrl);
     this.stompClient = Stomp.over(ws);
+    //disabe stomp console logs
+    if(environment.production === true){
+      this.stompClient.debug = null;
+    }
     let that = this;
     this.stompClient.connect({}, function (frame) {
       that.isLoaded = true;

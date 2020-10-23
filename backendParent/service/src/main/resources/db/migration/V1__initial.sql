@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS paymentmode (paymentmodeid int NOT NULL AUTO_INCREMEN
 CREATE TABLE IF NOT EXISTS transactiondetails (tenantid varchar(50) NOT NULL, transactionid int NOT NULL AUTO_INCREMENT PRIMARY KEY, orderid int NOT NULL, transactionstatus varchar(50) NOT NULL, paymentmodeid int NOT NULL, CONSTRAINT FOREIGN KEY(tenantid) REFERENCES tenant(tenantid), CONSTRAINT FOREIGN KEY(orderid) REFERENCES orders(orderid), CONSTRAINT FOREIGN KEY(paymentmodeid) REFERENCES paymentmode(paymentmodeid));
 
 /* Invoice tables*/
-CREATE TABLE IF NOT EXISTS invoicetemplate (tenantid varchar(50) NOT NULL, invoiceid int NOT NULL AUTO_INCREMENT PRIMARY KEY, document MEDIUMBLOB, CONSTRAINT FOREIGN KEY(tenantid) REFERENCES tenant(tenantid));
+CREATE TABLE IF NOT EXISTS invoicetemplate (tenantid varchar(50) NOT NULL, invoiceid int NOT NULL AUTO_INCREMENT PRIMARY KEY, document MEDIUMBLOB, active BOOL DEFAULT TRUE, CONSTRAINT FOREIGN KEY(tenantid) REFERENCES tenant(tenantid));
 CREATE TABLE IF NOT EXISTS orderinvoice (tenantid varchar(50) NOT NULL, userinvoiceid int NOT NULL AUTO_INCREMENT PRIMARY KEY, document MEDIUMBLOB, orderid int NOT NULL, CONSTRAINT FOREIGN KEY(tenantid) REFERENCES tenant(tenantid), CONSTRAINT FOREIGN KEY(orderid) REFERENCES orders(orderid));
 
 /* Tenant media */

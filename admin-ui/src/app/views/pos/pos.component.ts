@@ -123,7 +123,10 @@ export class PosComponent implements OnInit {
     return false;
   }
 
-
+  calculateTotal(item: PosProduct): number{
+    item.total = item.mrp * item.quantity;
+    return item.total;
+  }
 
 
 
