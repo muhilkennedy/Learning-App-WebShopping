@@ -6,6 +6,7 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { AlertModule } from '../../shared/_alert/alert.module';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
+import { CollapseModule } from '../../shared/collapse';
 // Material modules
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatBadgeModule} from '@angular/material/badge';
@@ -47,6 +48,7 @@ import { CategoryComponent } from './category/category.component';
 import { ProductRoutingModule } from './product-routing.module';
 import { ProductListComponent } from './product-list/product-list.component';
 import { ManageProductComponent } from './manage-products/manage-product/manage-product.component';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 
 @NgModule({
   declarations: [
@@ -107,7 +109,9 @@ import { ManageProductComponent } from './manage-products/manage-product/manage-
     }),
     SharedModule,
     AlertModule,
-    CarouselModule
+    CarouselModule,
+    CollapseModule,
+    NgMultiSelectDropDownModule.forRoot()
   ]
 })
 export class ProductModule { }

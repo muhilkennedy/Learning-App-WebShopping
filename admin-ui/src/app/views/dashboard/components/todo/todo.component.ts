@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { TodoService } from '../../../../shared/todo/todo.service';
 import { AlertService } from '../../../../shared/_alert';
 import { CookieService } from 'ngx-cookie-service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Component({
@@ -18,7 +19,8 @@ export class TodoComponent implements OnInit {
 
   constructor(private todoService: TodoService,
               private alertService: AlertService,
-              private cookieService: CookieService) {
+              private cookieService: CookieService,
+              private _snackBar: MatSnackBar) {
 
   }
 
@@ -32,18 +34,33 @@ export class TodoComponent implements OnInit {
                         this.toDoListArray = resp.dataList;
                       }
                       else{
-                        this.alertService.error('Failed : ' + resp.errorMessages);
+                        this._snackBar.open('Failed : ' + resp.errorMessages, '', {
+                          duration: 3000,
+                          panelClass: ['error-snackbar']
+                        });
+                        //this.alertService.error('Failed : ' + resp.errorMessages);
                       }
                       this.loading = false;
                     },
                     (error) => {
-                      this.alertService.error('Something went wrong....try again later!');
+                      this._snackBar.open('Something went wrong....try again later!', '', {
+                        duration: 3000,
+                        panelClass: ['error-snackbar']
+                      });
+                      //this.alertService.error('Something went wrong....try again later!');
                     });
     }
   }
 
   onAdd() {
     this.loading = true;
+    if(this.content === '' || this.content === undefined){
+      this._snackBar.open('Please add what you want to DO !', 'OK', {
+        duration: 3000,
+        panelClass: ['warn-snackbar']
+      });
+      return;
+    }
     this.todoService.createTodo(this.content)
                     .subscribe((resp:any) => {
                       if(resp.statusCode === 200){
@@ -51,12 +68,18 @@ export class TodoComponent implements OnInit {
                         this.content = '';
                       }
                       else{
-                        this.alertService.error('Failed : ' + resp.errorMessages);
+                        this._snackBar.open('Failed : ' + resp.errorMessages, '', {
+                          duration: 3000,
+                          panelClass: ['error-snackbar']
+                        });
                       }
                       this.loading = false;
                     },
                     (error) => {
-                      this.alertService.error('Something went wrong....try again later!');
+                      this._snackBar.open('Something went wrong....try again later!', '', {
+                        duration: 3000,
+                        panelClass: ['error-snackbar']
+                      });
                     });
   }
 
@@ -68,12 +91,18 @@ export class TodoComponent implements OnInit {
                         this.toDoListArray = resp.dataList;
                       }
                       else{
-                        this.alertService.error('Failed : ' + resp.errorMessages);
+                        this._snackBar.open('Failed : ' + resp.errorMessages, '', {
+                          duration: 3000,
+                          panelClass: ['error-snackbar']
+                        });
                       }
                       this.loading = false;
                     },
                     (error) => {
-                      this.alertService.error('Something went wrong....try again later!');
+                      this._snackBar.open('Something went wrong....try again later!', '', {
+                        duration: 3000,
+                        panelClass: ['error-snackbar']
+                      });
                     });
   }
 
@@ -85,12 +114,18 @@ export class TodoComponent implements OnInit {
                         this.toDoListArray = resp.dataList;
                       }
                       else{
-                        this.alertService.error('Failed : ' + resp.errorMessages);
+                        this._snackBar.open('Failed : ' + resp.errorMessages, '', {
+                          duration: 3000,
+                          panelClass: ['error-snackbar']
+                        });
                       }
                       this.loading = false;
                     },
                     (error) => {
-                      this.alertService.error('Something went wrong....try again later!');
+                      this._snackBar.open('Something went wrong....try again later!', '', {
+                        duration: 3000,
+                        panelClass: ['error-snackbar']
+                      });
                     });
   }
 

@@ -5,6 +5,24 @@
   },
   "config_munge": {
     "files": {
+      "AndroidManifest.xml": {
+        "parents": {
+          "/*": [
+            {
+              "xml": "<uses-permission android:name=\"android.permission.CAMERA\" />",
+              "count": 14
+            },
+            {
+              "xml": "<uses-feature android:name=\"android.hardware.camera\" />",
+              "count": 14
+            },
+            {
+              "xml": "<uses-feature android:name=\"android.hardware.camera.autofocus\" />",
+              "count": 14
+            }
+          ]
+        }
+      },
       "res/xml/config.xml": {
         "parents": {
           "/*": [
@@ -19,7 +37,7 @@
   },
   "installed_plugins": {
     "cordova-plugin-whitelist": {
-      "PACKAGE_NAME": "com.example.hello"
+      "PACKAGE_NAME": "com.ui.admin"
     }
   },
   "dependent_plugins": {},

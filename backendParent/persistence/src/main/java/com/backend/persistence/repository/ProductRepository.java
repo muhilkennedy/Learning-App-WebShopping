@@ -25,6 +25,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer>{
 	String findProductCountForCategory = "select count(*) from Product p where p.tenant = :tenant and p.categoryId = :category";
 	String findLimitedProductsQuery = "select * from Product where tenantid = ?1 limit ?2 offset ?3";
 	String findLimitedProductsForCategoryQuery = "select * from Product where tenantid = ?1 and categoryid = ?4 limit ?2 offset ?3";
+	String findProductByCodeQuery = "select p from Product p where p.tenant = :tenant and p.productCode = :pCode";
 	
 	@Query(findAllProductsQuery)
 	List<Product> findAllProducts(@Param("tenant") Tenant realm);
@@ -46,5 +47,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer>{
 	
 	@Query(findProductCountForCategory)
 	int findProductCountForCategory(@Param("tenant") Tenant realm, @Param("category") Category category);
+	
+	@Query(findProductByCodeQuery)
+	Product findProductByCode(@Param("tenant") Tenant realm, @Param("pCode") String productCode);
 
 }

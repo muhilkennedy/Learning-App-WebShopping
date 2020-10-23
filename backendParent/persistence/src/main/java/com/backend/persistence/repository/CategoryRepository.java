@@ -21,6 +21,7 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
 	String getAllBaseCategoryQuery = "select cat from Category cat where cat.tenant = :tenant and cat.parentCategoryId is null and cat.active = true";
 	String getCategoryByIdQuery = "select cat from Category cat where cat.tenant = :tenant and cat.categoryId = :catId";
 	String getCategoryChildrenQuery = "select cat from Category cat where cat.tenant = :tenant and cat.parentCategoryId = :parentCatId and cat.active = true";
+	String getCategoriesForDeleteQuery = "select cat from Category cat where cat.tenant= :tenant and cat.active = false and cat.markedForDelete = true";
 	
 	@Query(getAllCategoryQuery)
 	List<Category> getAllCategory(@Param("tenant") Tenant realm);
@@ -33,5 +34,8 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
 	
 	@Query(getCategoryChildrenQuery)
 	List<Category> getCategoryChildren(@Param("tenant") Tenant realm, @Param("parentCatId") int parentCategoryId);
+	
+	@Query(getCategoriesForDeleteQuery)
+	List<Category> getCategoriesForDelete(@Param("tenant") Tenant realm);
 
 }
