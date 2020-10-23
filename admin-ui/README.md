@@ -28,6 +28,8 @@ For apk:
 install cordova globally
 install androidstudio and a create a virtual device
 
+cordova platform add android -> if platform folder is corrupted
+
 cordova build android -> build apk into www folder
 cordova emulate android -> run apk on virtual device
 

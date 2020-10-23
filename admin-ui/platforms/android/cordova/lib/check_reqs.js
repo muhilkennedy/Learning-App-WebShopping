@@ -220,7 +220,7 @@ module.exports.check_java = function () {
             }
         }
     }).then(function () {
-        return execa('javac -version', [], { all: true })
+        return execa('javac', ['-version'], { all: true })
             .then(({ all: output }) => {
                 // Java <= 8 writes version info to stderr, Java >= 9 to stdout
                 const match = /javac\s+([\d.]+)/i.exec(output);

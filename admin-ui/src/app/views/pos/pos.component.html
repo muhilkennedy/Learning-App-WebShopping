@@ -72,7 +72,7 @@
                 <td><input type="number" class="form-control" style="width: 50%;" matInput placeholder="MRP" id="mrp-{{i}}" name="mrp-{{i}}" [(ngModel)]="item.mrp"></td>
                 <td><input type="number" class="form-control" style="width: 50%;" matInput placeholder="Total Quantity" id="q-{{i}}" name="q-{{i}}" [(ngModel)]="item.quantity"></td>
                 <td><input type="number" class="form-control" style="width: 50%;" matInput placeholder="Discount" id="dis-{{i}}" name="dis-{{i}}" [(ngModel)]="item.discount"></td>
-                <td>₹-{{item.total}} * {{item.quantity}}</td>
+                <td>₹-{{calculateTotal(item)}}</td>
               </tr>
             </tbody>
           </table>
