@@ -40,7 +40,7 @@ public class PosDao {
 	public void createPOS (JSONObject json) throws Exception {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con
-					.prepareStatement("INSERT INTO pointofsale VALUES(?)");
+					.prepareStatement("insert into pointofsale values(?)");
 			stmt.setString(1, json.toString());
 			stmt.executeUpdate();
 		} catch (Exception ex) {
@@ -52,7 +52,7 @@ public class PosDao {
 	public List<POSData> getPOS (String mobile, String tenantId) throws Exception{
 		List<POSData> json = new ArrayList<POSData>();
 		try (Connection con = dbUtil.getConnectionInstance()) {
-			PreparedStatement stmt = con.prepareStatement("SELECT * FROM pointofsale WHERE pos->\"$.tenantId\" = ? and pos->\"$.mobile\" = ?");
+			PreparedStatement stmt = con.prepareStatement("select * from pointofsale where pos->\"$.tenantId\" = ? and pos->\"$.mobile\" = ?");
 			stmt.setString(1, tenantId);
 			stmt.setString(2, mobile);
 			ResultSet rs = stmt.executeQuery();
@@ -73,7 +73,7 @@ public class PosDao {
 	public void createPOSSYNC (String mobile) throws Exception {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con
-					.prepareStatement("INSERT INTO possync VALUES(?,?)");
+					.prepareStatement("insert into possync VALUES(?,?)");
 			stmt.setString(1, mobile);
 			stmt.setString(2, baseService.getTenantInfo().getTenantID());
 			stmt.executeQuery();
@@ -86,7 +86,7 @@ public class PosDao {
 	public List<String> getPOSSYNC (String tenantId) throws Exception{
 		List<String> mobile = new ArrayList<String>();
 		try (Connection con = dbUtil.getConnectionInstance()) {
-			PreparedStatement stmt = con.prepareStatement("SELECT * FROM POSSYNC WHERE TENANTID = ?");
+			PreparedStatement stmt = con.prepareStatement("select * from possync where tenantid = ?");
 			stmt.setString(1, tenantId);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
@@ -102,7 +102,7 @@ public class PosDao {
 	public void deletePOSSYNC (String tenantId) throws Exception {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con
-					.prepareStatement("DELETE FROM POSSYNC WHERE TENANTID = ?");
+					.prepareStatement("delete from possync where tenantid = ?");
 			stmt.setString(1, tenantId);
 			stmt.executeUpdate();
 		} catch (Exception ex) {
@@ -120,7 +120,7 @@ public class PosDao {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			int currentValue = 0;
 			int incrementBy = 0; 
-			PreparedStatement stmt = con.prepareStatement("SELECT * FROM POSSEQUENCE");
+			PreparedStatement stmt = con.prepareStatement("select * from possequence");
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) {
 				currentValue = rs.getInt(1);
@@ -132,7 +132,7 @@ public class PosDao {
 			else {
 				throw new Exception("POS SEQUENCE GENERATION ERROR");
 			}
-			stmt = con.prepareStatement("UPDATE POSSEQUENCE SET CURRENTSEQUENCVALUE = ? WHERE CURRENTSEQUENCVALUE = ?");
+			stmt = con.prepareStatement("update possequence set currentsequencevalue = ? where currentsequencevalue = ?");
 			stmt.setInt(1, (currentValue + incrementBy));
 			stmt.setInt(2, currentValue);
 			stmt.executeUpdate();

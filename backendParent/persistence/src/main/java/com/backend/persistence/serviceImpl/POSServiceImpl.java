@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.backend.core.service.BaseService;
+import com.backend.core.util.DBUtil;
+import com.backend.core.util.TenantUtil;
 import com.backend.persistence.dao.PosDao;
 import com.backend.persistence.helper.POSData;
 import com.backend.persistence.service.POSService;
@@ -28,9 +30,9 @@ public class POSServiceImpl implements POSService {
 	@Override
 	public void createPOS(POSData data) throws Exception{
 		JSONObject json = new JSONObject(data);
-		json.put("tenantId", baseService.getTenantInfo().getTenantID());
-		json.put("primaryKey", posDao.getPOSKEY());
-		json.put("timeCreated", new Date().getTime());
+		json.put(TenantUtil.Key_TenantId, baseService.getTenantInfo().getTenantID());
+		json.put(DBUtil.Key_PrimaryKey, posDao.getPOSKEY());
+		json.put(DBUtil.Key_TimeCreated, new Date().getTime());
 		posDao.createPOS(json);
 	}
 	

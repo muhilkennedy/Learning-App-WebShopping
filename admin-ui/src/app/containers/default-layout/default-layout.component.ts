@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { LoginService } from '../../service/login/login.service';
 import { environment } from '../../../environments/environment';
 import { CookieService } from 'ngx-cookie-service';
+import { TaskService } from '../../shared/task/task.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -20,10 +21,13 @@ export class DefaultLayoutComponent implements OnInit{
   public userPermissions: any[];
   public loading = false;
 
+  activeTaskCount = 0;
+
   constructor(public userStore: UserStoreService,
               private router: Router,
               private loginService: LoginService,
-              private cookieService: CookieService){
+              private cookieService: CookieService,
+              private taskService: TaskService){
 
     this.userPermissions = this.userStore.employeePermissions;
     this.setViewsBasedOnPermisssions();
