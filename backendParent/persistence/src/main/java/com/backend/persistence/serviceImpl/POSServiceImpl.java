@@ -3,6 +3,7 @@ package com.backend.persistence.serviceImpl;
 import java.util.Date;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,10 +28,14 @@ public class POSServiceImpl implements POSService {
 	
 	@Override
 	public void createPOS(POSData data) throws Exception{
-		JSONObject json = new JSONObject(data);
+		JSONObject json = new JSONObject();
 		json.put("tenantId", baseService.getTenantInfo().getTenantID());
 		json.put("primaryKey", posDao.getPOSKEY());
 		json.put("timeCreated", new Date().getTime());
+		json.put("paymentMode", data.getPaymentMode());
+		json.put("mobile", data.getMobile());
+		JSONArray productList = new JSONArray(data.getPosProduct());
+		json.put("posProduct", productList);
 		posDao.createPOS(json);
 	}
 	
