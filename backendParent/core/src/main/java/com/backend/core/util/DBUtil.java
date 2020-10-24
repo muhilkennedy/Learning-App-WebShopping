@@ -17,6 +17,10 @@ public class DBUtil {
 
 	private static DataSourceProperties dbProperties;
 	
+	public static String Key_TimeCreated = "timeCreated";
+	public static String Key_TimeUpdated = "timeUpdated";
+	public static String Key_PrimaryKey = "primaryKey";
+	
 	@Autowired
 	public void setDbProperties(DataSourceProperties props) {
 		DBUtil.dbProperties = props;

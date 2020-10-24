@@ -38,7 +38,6 @@ public class POSController {
 		GenericResponse<String> response = new GenericResponse<String>();
 		try {
 			posService.createPOS(posData);
-			response.setDataList(posService.getPOSDATA("8778125099"));
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("employeeCreation : " + ex);

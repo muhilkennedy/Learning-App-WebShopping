@@ -144,8 +144,15 @@ public class ProductController {
 												@RequestParam(value = "pCode", required = true) String pCode) {
 		GenericResponse<Product> response = new GenericResponse<>();
 		try {
-			response.setData(productService.getProductByCode(pCode));
-			response.setStatus(Response.Status.OK);
+			Product product = productService.getProductByCode(pCode);
+			if(product != null) {
+				response.setData(product);
+				response.setStatus(Response.Status.OK);
+			}
+			else {
+				response.setErrorMessages(Arrays.asList("Product NOT FOUND"));
+				response.setStatus(Response.Status.NO_CONTENT);
+			}
 		} catch (Exception ex) {
 			logger.error("getProductByCode : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
