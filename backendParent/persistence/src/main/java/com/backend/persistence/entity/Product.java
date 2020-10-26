@@ -54,7 +54,7 @@ public class Product implements Serializable {
 	private BigDecimal cost;
 	
 	@Column(name = "OFFER")
-	private int offer;
+	private BigDecimal offer;
 	
 	@Column(name = "DESCRIPTION")
 	private String productDescription;
@@ -161,11 +161,11 @@ public class Product implements Serializable {
 		this.categoryId = categoryId;
 	}
 
-	public int getOffer() {
+	public BigDecimal getOffer() {
 		return offer;
 	}
 
-	public void setOffer(int offer) {
+	public void setOffer(BigDecimal offer) {
 		this.offer = offer;
 	}
 

@@ -52,7 +52,7 @@ public class ProductDao {
 				product.setProductName(rs.getString(4));
 				product.setBrandName(rs.getString(5));
 				product.setCost(rs.getBigDecimal(6));
-				product.setOffer(rs.getInt(7));
+				product.setOffer(rs.getBigDecimal(7));
 				product.setProductDescription(rs.getString(8));
 				product.setProductCode(rs.getString(9));
 				product.setQuantityInStock(rs.getInt(10));
@@ -92,7 +92,7 @@ public class ProductDao {
 				product.setProductName(rs.getString(4));
 				product.setBrandName(rs.getString(5));
 				product.setCost(rs.getBigDecimal(6));
-				product.setOffer(rs.getInt(7));
+				product.setOffer(rs.getBigDecimal(7));
 				product.setProductDescription(rs.getString(8));
 				productList.add(product);
 			}
@@ -123,7 +123,7 @@ public class ProductDao {
 				product.setProductName(rs.getString(4));
 				product.setBrandName(rs.getString(5));
 				product.setCost(rs.getBigDecimal(6));
-				product.setOffer(rs.getInt(7));
+				product.setOffer(rs.getBigDecimal(7));
 				product.setProductDescription(rs.getString(8));
 				productList.add(product);
 			}

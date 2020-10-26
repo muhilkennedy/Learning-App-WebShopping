@@ -41,13 +41,18 @@ export class ChatMessengerComponent implements OnInit {
   public form: FormGroup;
   public userForm: FormGroup;
   messages: Message[] = [];
+  newMessage: string = '';
 
   sendMessageUsingSocket() {
-    if (this.form.valid) {
+    /*if (this.form.valid) {
       let message: Message = { message: this.form.value.message, fromId: this.tenantStore.tenantId + "-" + this.userStore.userId,
                                toId: this.tenantStore.tenantId + "-" + this.userForm.value.toId };
       this.stompClient.send("/socket-subscriber/send/message", {}, JSON.stringify(message));
-    }
+    }*/
+    let message: Message = { message: this.newMessage, fromId: this.tenantStore.tenantId + "-" + this.userStore.userId,
+                               toId: this.tenantStore.tenantId + "-" + this.userForm.value.toId };
+    this.stompClient.send("/socket-subscriber/send/message", {}, JSON.stringify(message));
+    this.newMessage = '';
   }
 
   sendMessageUsingRest() {
@@ -99,8 +104,11 @@ export class ChatMessengerComponent implements OnInit {
       let messageResult: Message = JSON.parse(message.body);
       console.log(messageResult);
       this.messages.push(messageResult);
-      alert("new msg");
     }
+  }
+
+  getCurrentUserIdWithTenant(): string{
+    return this.tenantStore.tenantId + "-" + this.userStore.userId;
   }
 
   scan(){
@@ -129,5 +137,6 @@ export class ChatMessengerComponent implements OnInit {
   //     }
   //  );
   }
+
 
 }
