@@ -151,10 +151,10 @@ public class ProductServiceImpl implements ProductService {
 			if(!StringUtils.isEmpty(product.getProductCode())) {
 				actualProduct.setProductCode(product.getProductCode());
 			}
-			if (product.getCost() != null) {
+			if (product.getCost() != null && product.getCost().intValue() > 0) {
 				actualProduct.setCost(product.getCost());
 			}
-			if (product.getOffer() >= 0) {
+			if (product.getOffer() != null && product.getOffer().intValue() > 0) {
 				actualProduct.setOffer(product.getOffer());
 			}
 			if (product.getQuantityInStock() >= 0) {

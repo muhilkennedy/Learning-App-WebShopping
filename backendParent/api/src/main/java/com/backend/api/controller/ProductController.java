@@ -115,7 +115,7 @@ public class ProductController {
 			productPojo.setProductDescription(description);
 			productPojo.setBrandName(productBrand);
 			productPojo.setCost(CommonUtil.isValidStringParam(cost)? new BigDecimal(cost) : new BigDecimal(0));
-			productPojo.setOffer(CommonUtil.isValidStringParam(offer)? Integer.parseInt(offer) : 0);
+			productPojo.setOffer(CommonUtil.isValidStringParam(offer)? new BigDecimal(offer) : new BigDecimal(0));
 			productPojo.setProductId(CommonUtil.isValidStringParam(pId)? Integer.parseInt(pId) : -1);
 			productPojo.setActive(CommonUtil.isValidStringParam(active)? Boolean.parseBoolean(active) : false);
 			productPojo.setProductCode(pcode);

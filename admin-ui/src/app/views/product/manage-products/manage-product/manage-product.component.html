@@ -59,9 +59,9 @@
             <tr>
               <td>
                 <mat-form-field appearance="outline" class="matitem">
-                  <mat-label>Product Offer</mat-label>
+                  <mat-label>Product Offer/Discount</mat-label>
                   <input matInput type="number" class="example-right-align" [(ngModel)]="offer" required>
-                  <mat-hint>Offer applicable to this particular product</mat-hint>
+                  <mat-hint>Offer applicable to this particular product <small *ngIf="showFinalCost()">(SELLING COST - <b>{{getDiscountedPrice()}} ₹</b>)</small></mat-hint>
                 </mat-form-field>
               </td>
               <td>
