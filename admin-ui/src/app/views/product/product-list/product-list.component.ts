@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
+import { Router } from '@angular/router';
 import { ProductService } from '../../../shared/product/product.service';
 
 @Component({
@@ -44,7 +45,7 @@ export class ProductListComponent implements OnInit {
         selectedItems: any = [];
         dropdownSettings: any = {};
 
-  constructor(private productService: ProductService, private fb: FormBuilder) { }
+  constructor(private productService: ProductService, private fb: FormBuilder, private route:Router) { }
 
   ngOnInit(): void {
     this.filterloading = true;
@@ -178,6 +179,25 @@ export class ProductListComponent implements OnInit {
     let pageIndex:number = event.pageIndex;
     this.offset = pageIndex * this.pageSize;
     this.setProducts();
+  }
+
+  editProduct(productId){
+    this.route.navigate(['product/edit-product', productId]);
+  }
+
+  toggleProductActive(product){
+    this.productService.toggleProductStatus(product.productId, !product.active)
+                        .subscribe((resp:any) => {
+                          if(resp.statusCode === 200){
+                            this.setProducts();
+                          }
+                          else{
+                            alert("failed")
+                          }
+                        },
+                        (error:any) => {
+                          alert("error");
+                        });
   }
 
 }

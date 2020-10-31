@@ -68,21 +68,45 @@
             <tbody style="background: white;">
               <tr *ngFor="let item of itemList; let i = index">
                 <td>{{i+1}}</td>
-                <td><input type="text" class="form-control" matInput placeholder="Product Name" id="pname-{{i}}" name="pname-{{i}}" [(ngModel)]="item.itemName"></td>
+                <td *ngIf="(item.itemCode === null || item.itemCode === undefined)">
+                    <input type="text"
+                           class="form-control" matInput placeholder="Product Name"
+                           id="pname-{{i}}" name="pname-{{i}}"
+                           matInput
+                           [formControl]="myControl"
+                           [matAutocomplete]="auto"
+                           [(ngModel)]="item.itemName"
+                           (keyup)="getProducts($event)">
+                    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" >
+                      <mat-option (onSelectionChange)="convertToProductItem(option)" *ngFor="let option of filteredOptions | async" >
+                        {{option.productName}}
+                      </mat-option>
+                    </mat-autocomplete>
+                </td>
+                <td *ngIf="!(item.itemCode === null || item.itemCode === undefined)"><input type="text" class="form-control" matInput placeholder="Product Name" id="pname-{{i}}" name="pname-{{i}}" [(ngModel)]="item.itemName"></td>
                 <td><input type="text" class="form-control" matInput placeholder="Product Code" id="pcode-{{i}}" name="pcode-{{i}}" [(ngModel)]="item.itemCode"></td>
                 <td><input type="number" class="form-control" style="width: 75%;" matInput placeholder="MRP" id="mrp-{{i}}" name="mrp-{{i}}" [(ngModel)]="item.mrp"></td>
                 <td><input type="number" class="form-control" style="width: 75%;" matInput placeholder="Quantity" id="q-{{i}}" name="q-{{i}}" [(ngModel)]="item.quantity"></td>
-                <td><input type="number" class="form-control" style="width: 75%;" matInput placeholder="Discount" id="dis-{{i}}" name="dis-{{i}}" [(ngModel)]="item.discount"></td>
-                <td>{{calculateTotal(item)}}</td>
+                <td><input type="number" class="form-control" style="width: 50%;" matInput placeholder="Discount" id="dis-{{i}}" name="dis-{{i}}" [(ngModel)]="item.discount"></td>
+                <td>{{calculateTotal(item) | number:'1.2-2'}}</td>
               </tr>
               <tr>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td>Total Discount : </td>
+                <td><small>Total Discount : </small></td>
                 <td>{{totalDiscount}}</td>
                 <td>SUB-TOTAL : </td>
-                <td><strong>{{calcaulateSubTotal()}} ₹</strong></td>
+                <td><strong>{{calcaulateSubTotal() | number:'1.2-2'}}</strong></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><small>Items Quantity : </small></td>
+                <td><small>{{itemList.length}}</small></td>
+                <td>Rounding Off : </td>
+                <td><strong>{{calculateRoundedSubtotal()}} ₹</strong></td>
               </tr>
               <tr>
                 <td></td>

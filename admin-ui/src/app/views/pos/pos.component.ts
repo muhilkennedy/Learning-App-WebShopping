@@ -8,6 +8,9 @@ import { ProductService } from '../../shared/product/product.service';
 import { SafePropertyRead } from '@angular/compiler';
 import { AlertService } from '../../shared/_alert';
 import { PosService } from '../../shared/pos/pos.service';
+import { FormControl, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 
 @Component({
   templateUrl: 'pos.component.html',
@@ -24,6 +27,7 @@ export class PosComponent implements OnInit {
 
   totalDiscount: number;
   disablePayment: boolean = true;
+  subTotal: number = 0;
 
   paymentTypes: string[] = ['cash', 'card', 'gpay', 'phone pe', 'paytm', 'others'];
   paymentMode: string = this.paymentTypes[0];
@@ -101,6 +105,62 @@ export class PosComponent implements OnInit {
   }
 
   //PRODUCT APP LOGIC
+  //autoComplete
+  myControl = new FormControl('', [
+    Validators.required
+  ]);
+  options: any[] = new Array();
+  filteredOptions: Observable<any[]>;
+
+  getProducts(event: any){
+    let searchTerm = '';
+    searchTerm += event.target.value;
+    console.log(searchTerm);
+    if (searchTerm.length === 2 || searchTerm.length === 4) {
+      this.productService.getProductByName(searchTerm)
+                          .subscribe((resp:any) => {
+                            if(resp.statusCode  === 200){
+                              this.options = resp.dataList;
+                              this.filteredOptions = this.myControl.valueChanges.pipe(
+                                startWith(''),
+                                map(value => this._filter(value))
+                              );
+                            }
+                            else{
+                              this.alertService.error('Failed : ' + resp.errorMessages);
+                            }
+                            this.loading = false;
+                          },
+                          (error:any) => {
+                            this.alertService.error("something went wrong!");
+                            this.loading = false;
+                          });
+                        }
+  }
+  private _filter(value: string): string[] {
+    if(value === "")
+    {
+      return;
+    }
+    const filterValue = value.toLowerCase();
+    return this.options.filter(option => (option.productName.toLowerCase().indexOf(filterValue) === 0));
+  }
+  convertToProductItem(option:any){
+    let prod = new PosProduct();
+    prod.itemName = option.productName;
+    prod.itemCode = option.productCode;
+    prod.itemID = option.productId;
+    prod.discount = option.offer;
+    prod.mrp = option.cost;
+    prod.quantity = 1;
+    this.itemList.push(prod);
+    this.cleanseItemList();
+  }
+
+  cleanseItemList(){
+    this.itemList = this.itemList.filter(item => !(item.itemName === undefined || item.itemCode === undefined));
+  }
+
   getProductFromCode(code){
     this.loading = true;
     this.productService.getPoductByCode(code)
@@ -164,7 +224,12 @@ export class PosComponent implements OnInit {
         total += item.total;
       }
     })
+    this.subTotal = total;
     return total;
+  }
+
+  calculateRoundedSubtotal(): number{
+    return Math.round(this.subTotal);
   }
 
   processBill(){
