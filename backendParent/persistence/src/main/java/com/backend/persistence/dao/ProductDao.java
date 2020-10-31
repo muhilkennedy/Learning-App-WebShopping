@@ -40,7 +40,9 @@ public class ProductDao {
 															.setWhereClause()
 															.setAndCondition("tenantid", baseService.getTenantInfo().getTenantID())
 															.andSetAndCondition("active", includeInactive)
+															.andSetAndCondition("isdeleted", false)
 															.andSetOrConditions("categoryid", cIds)
+															.andSetOrConditions("productid", pIds)
 														  	.setLimit(limit)
 														  	.setOffset(offset)
 															.build();
@@ -78,7 +80,9 @@ public class ProductDao {
 															.setWhereClause()
 															.setAndCondition("tenantid", baseService.getTenantInfo().getTenantID(), false)
 															.andSetOrConditions("categoryid", cIds)
+															.andSetOrConditions("productid", pIds)
 															.andSetAndCondition("active", includeInactive)
+															.andSetAndCondition("isdeleted", false)
 															.setOrderBy(sortByField)
 															.setSortOrder(sortBytype)
 															.setLimit(limit)
@@ -143,6 +147,8 @@ public class ProductDao {
 															.setWhereClause()
 															.setAndCondition("tenantid", baseService.getTenantInfo().getTenantID(), false)
 															.andSetOrConditions("categoryid", cIds)
+															.andSetAndCondition("active", !includeInactive)
+															.andSetAndCondition("isdeleted", false)
 															.build();
 			PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
 			ResultSet rs = stmt.executeQuery();

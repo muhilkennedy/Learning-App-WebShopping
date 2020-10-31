@@ -26,7 +26,7 @@ export const navItems: INavData[] = [
         icon: 'icon-list'
       },
       {
-        name: 'Manage Product',
+        name: 'Create Product',
         url: '/product/manage-product',
         icon: 'icon-pencil'
       }

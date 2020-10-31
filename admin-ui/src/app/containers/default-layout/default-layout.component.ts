@@ -20,7 +20,7 @@ export class DefaultLayoutComponent implements OnInit{
   public defaultAvatar = "assets/img/avatars/Blank-Profile.jpg";
   public userPermissions: any[];
   public loading = false;
-
+  public realmName = environment.tenantId;
   activeTaskCount = 0;
 
   constructor(public userStore: UserStoreService,

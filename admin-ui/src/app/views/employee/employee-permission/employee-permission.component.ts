@@ -32,14 +32,6 @@ export class EmployeePermissionComponent implements OnInit {
     keepAfterRouteChange: false
   };
 
-  // public selectedValue = '';
-  // public staticEmailList = [];
-
-  // public handleStaticResultSelected (result) {
-  //   this.selectedValue = result;
-  //   // this.searchAction();
-  // }
-
   searchUserId: number;
     //autoComplete
     myControl = new FormControl('', [

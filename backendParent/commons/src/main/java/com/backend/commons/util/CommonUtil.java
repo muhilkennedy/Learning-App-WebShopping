@@ -1,5 +1,6 @@
 package com.backend.commons.util;
 
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -49,8 +50,8 @@ public class CommonUtil {
 	public static final int Thumbnail_AspectHeight = 200;
 	public static final int Banner_AspectWidth = 1900;
 	public static final int Banner_AspectHeight = 700;
-	public static final int HomeImage_AspectWidth = 1200;
-	public static final int HomeImage_AspectHeight = 900;
+	public static final int HomeImage_AspectWidth = 800;
+	public static final int HomeImage_AspectHeight = 800;
 	public static final String Thumbnail_Exension = "jpg";
 	
 	public static final List<String> template_Supported_Extentions = new ArrayList<String>() {
@@ -160,6 +161,33 @@ public class CommonUtil {
 		ImageIO.write(bImage, Thumbnail_Exension, baos);
 		return baos.toByteArray();
 	}
+	
+	/**
+     * Resizes an image to a absolute width and height (the image may not be
+     * proportional)
+     * @param inputImagePath Path of the original image
+     * @param outputImagePath Path to save the resized image
+     * @param scaledWidth absolute width in pixels
+     * @param scaledHeight absolute height in pixels
+     * @throws IOException
+     */
+    public static byte[] resize(byte[] image, int scaledWidth, int scaledHeight)
+            throws IOException {
+    	ByteArrayInputStream bais = new ByteArrayInputStream(image);
+        // reads input image
+        BufferedImage inputImage = ImageIO.read(bais);
+        // creates output image
+        BufferedImage outputImage = new BufferedImage(scaledWidth,
+                scaledHeight, inputImage.getType());
+        // scales the input image to the output image
+        Graphics2D g2d = outputImage.createGraphics();
+        g2d.drawImage(inputImage, 0, 0, scaledWidth, scaledHeight, null);
+        g2d.dispose();
+        // writes to output file
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(outputImage, "jpg", baos);
+        return baos.toByteArray();
+    }
 	
 	// compress the image bytes before storing it in the database
 	public static byte[] compressBytes(byte[] data) {

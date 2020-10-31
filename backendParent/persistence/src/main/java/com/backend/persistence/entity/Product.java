@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
 import com.backend.core.entity.Tenant;
@@ -74,6 +75,9 @@ public class Product implements Serializable {
 	@Column(name = "ACTIVE")
 	private boolean active;
 	
+	@Column(name = "ISDELETED")
+	private boolean isDeleted;
+
 	@OneToMany(mappedBy = "productId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<ProductImages> productImages;
 	
@@ -191,6 +195,22 @@ public class Product implements Serializable {
 
 	public void setProductCode(String productCode) {
 		this.productCode = productCode;
+	}
+
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+	
+	@PrePersist
+	private void prePersistCheck() {
+		// A deleted product will be deactivated always
+		if (isDeleted == true && active != false) {
+			active = false;
+		}
 	}
 
 }

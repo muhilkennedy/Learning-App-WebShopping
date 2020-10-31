@@ -9,6 +9,9 @@
     <li class="nav-item px-3">
       <i class="flag-icon flag-icon-in"></i>
     </li>
+    <li class="nav-item px-3">
+      <label>{{realmName}}</label>
+    </li>
   </ul>
   <ul class="nav navbar-nav ml-auto">
     <li class="nav-item dropdown" dropdown placement="bottom right">
@@ -17,17 +20,45 @@
       </a>
       <div class="dropdown-menu dropdown-menu-right" *dropdownMenu aria-labelledby="simple-dropdown">
         <div class="dropdown-header text-center"><strong>Account</strong></div>
-        <a class="dropdown-item" href="#"><i class="fa fa-bell-o"></i> Updates<span class="badge badge-info"></span></a>
         <a class="dropdown-item" (click)="tasks()" style="cursor: pointer;"><i class="fa fa-tasks"></i> Tasks<span class="badge badge-danger">{{activeTaskCount}}</span></a>
         <div class="dropdown-header text-center"><strong>Settings</strong></div>
         <a class="dropdown-item" (click)="profile()" style="cursor: pointer;"><i class="fa fa-user"></i> Profile</a>
-        <a class="dropdown-item"(click)="lockProfile()" style="cursor: pointer;"><i class="fa fa-lock"></i> Lock account</a>
+        <a class="dropdown-item"(click)="primaryModal.show()" style="cursor: pointer;"><i class="fa fa-lock"></i> Lock account</a>
         <a class="dropdown-item" (click)="logout()" style="cursor: pointer;"><i class="fa fa-sign-out"></i> Logout</a>
       </div>
     </li>
   </ul>
 </app-header>
+
+<div bsModal #primaryModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-danger" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Lock Account</h4>
+        <button type="button" class="close" (click)="primaryModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Your Account will be Locked permanently. Only Admin user can renew account access !</p>
+        <p>Do you want to proceed ?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="primaryModal.hide()">Close</button>
+        <div>
+          <button type="button" class="btn btn-danger" (click)="lockProfile()">
+            <i class="fa fa-lock"></i> Lock Account
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 <ngx-loading [show]="loading"></ngx-loading>
+
 <div class="app-body">
   <!-- Left Side Bar -->
   <app-sidebar #appSidebar [fixed]="false" [display]="'lg'" [minimized]="sidebarMinimized" (minimizedChange)="toggleMinimize($event)">
