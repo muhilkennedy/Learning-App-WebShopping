@@ -11,8 +11,9 @@ public class POSData {
 	private String primaryKey;
 	private String tenantId;
 	private String mobile;
-	private String timeCreated;
+	private long timeCreated;
 	private String paymentMode;
+	private String subTotal;
 	private List<PosProduct> posProduct;
 
 	public String getTenantId() {
@@ -39,11 +40,11 @@ public class POSData {
 		this.mobile = mobile;
 	}
 
-	public String getTimeCreated() {
+	public long getTimeCreated() {
 		return timeCreated;
 	}
 
-	public void setTimeCreated(String timeCreated) {
+	public void setTimeCreated(long timeCreated) {
 		this.timeCreated = timeCreated;
 	}
 
@@ -61,6 +62,14 @@ public class POSData {
 
 	public void setPaymentMode(String paymentMode) {
 		this.paymentMode = paymentMode;
+	}
+
+	public String getSubTotal() {
+		return subTotal;
+	}
+
+	public void setSubTotal(String subTotal) {
+		this.subTotal = subTotal;
 	}
 
 	public static class PosProduct {

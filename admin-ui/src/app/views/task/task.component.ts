@@ -168,7 +168,7 @@ export class TaskComponent implements OnInit {
 
   createTask(){
     this.createLoading = true;
-    this.taskService.createTask(this.content, this.assigneeId, this.endDate)
+    this.taskService.createTask(this.content, this.assigneeId, this.endDate.getTime())
                     .subscribe((resp:any) => {
                       if(resp.statusCode  === 200){
                         this.createdTasks = resp.dataList;

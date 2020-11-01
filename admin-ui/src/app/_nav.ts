@@ -46,6 +46,11 @@ export const navItems: INavData[] = [
         name: 'Approval',
         url: '/sales/approval',
         icon: 'icon-note'
+      },
+      {
+        name: 'Transactions',
+        url: '/sales/transactions',
+        icon: 'icon-credit-card'
       }
     ]
   },

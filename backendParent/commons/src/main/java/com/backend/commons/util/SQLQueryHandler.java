@@ -150,6 +150,10 @@ public class SQLQueryHandler {
 			return setAndCondition(fieldName, value, true);
 		}
 		
+		public SQLQueryBuilder andSetAndCondition(String fieldName, int value) {
+			return setAndCondition(fieldName, value, true);
+		}
+		
 		public SQLQueryBuilder andSetAndCondition(String fieldName, boolean value) {
 			return setAndCondition(fieldName, value, true);
 		}

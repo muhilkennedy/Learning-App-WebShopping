@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.Response;
+import com.backend.core.util.Constants;
 import com.backend.persistence.helper.POSData;
 import com.backend.persistence.service.POSService;
 
@@ -40,7 +41,24 @@ public class POSController {
 			posService.createPOS(posData);
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
-			logger.error("employeeCreation : " + ex);
+			logger.error("createPOS : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/getPOS", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> getPOS(HttpServletRequest request) {
+		GenericResponse<String> response = new GenericResponse<String>();
+		try {
+			String limit = request.getHeader(Constants.Header_Limit);
+			String offset = request.getHeader(Constants.Header_Offset);
+			response.setDataList(posService.getPOSDATA(limit, offset));
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("getPOS : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);

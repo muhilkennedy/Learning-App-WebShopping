@@ -6,11 +6,19 @@
         <ngx-loading [show]="loading"></ngx-loading>
         <div class="card-header">
           <i class="fa fa-edit"></i>Edit Product - ID : {{productId}}
-          <i *ngIf="!isEditCardCollapsed" class="fa fa-toggle-up toggleIcon" (click)="isEditCardCollapsed = !isEditCardCollapsed"></i>
-          <i *ngIf="isEditCardCollapsed" class="fa fa-toggle-down toggleIcon" (click)="isEditCardCollapsed = !isEditCardCollapsed"></i>
           <div class="float-right">
-            <button mat-button class="btn btn-ghost-primary" style="border: 1px solid;" (click)="updateProduct()">
-              <i class="fa fa-product-hunt"></i> Update Product
+            <i *ngIf="!isEditCardCollapsed" class="fa fa-toggle-up toggleIcon" (click)="isEditCardCollapsed = !isEditCardCollapsed"></i>
+            <i *ngIf="isEditCardCollapsed" class="fa fa-toggle-down toggleIcon" (click)="isEditCardCollapsed = !isEditCardCollapsed"></i>
+          </div>
+          <div class="float-right">
+            <mat-slide-toggle
+              matTooltip="Featured Product"
+              color="accent"
+              [checked]="featuredProduct"
+              (change)="toggleFeaturedProduct()">
+            </mat-slide-toggle>
+            <button mat-button class="btn btn-ghost-primary" style="border: 1px solid; margin-right: 5px;" (click)="updateProduct()">
+              <i class="fa fa-product-hunt" style="color: cadetblue;"></i> Update Product
             </button>
           </div>
           <br/>
@@ -84,7 +92,7 @@
                   <span class="icon-text"> Activate product</span><br/>
                 </button>
                 <mat-slide-toggle
-                  color="accent"
+                  color="warn"
                   [checked]="productActive"
                   (change)="toggleProductActive()">
                 </mat-slide-toggle>
@@ -105,8 +113,10 @@
         <ngx-loading [show]="imageLoading"></ngx-loading>
         <div class="card-header">
           <i class="fa fa-image"></i>Product Images
-          <i *ngIf="!isImageCardCollapsed" class="fa fa-toggle-up toggleIcon" (click)="isImageCardCollapsed = !isImageCardCollapsed"></i>
-          <i *ngIf="isImageCardCollapsed" class="fa fa-toggle-down toggleIcon" (click)="isImageCardCollapsed = !isImageCardCollapsed"></i>
+          <div class="float-right">
+            <i *ngIf="!isImageCardCollapsed" class="fa fa-toggle-up toggleIcon" (click)="isImageCardCollapsed = !isImageCardCollapsed"></i>
+            <i *ngIf="isImageCardCollapsed" class="fa fa-toggle-down toggleIcon" (click)="isImageCardCollapsed = !isImageCardCollapsed"></i>
+          </div>
         </div>
         <div [collapse]="isImageCardCollapsed">
         <div class="card-body">
@@ -130,10 +140,12 @@
         <ngx-loading [show]="imageLoading"></ngx-loading>
         <div class="card-header">
           <i class="fa fa-cloud-upload"></i>Upload New Image
-          <i *ngIf="!isUploadCollapsed" class="fa fa-toggle-up toggleIcon" (click)="isUploadCollapsed = !isUploadCollapsed"></i>
-          <i *ngIf="isUploadCollapsed" class="fa fa-toggle-down toggleIcon" (click)="isUploadCollapsed = !isUploadCollapsed"></i>
           <div class="float-right">
-            <button mat-button class="btn btn-ghost-primary" style="border: 1px solid;" (click)="uploadImage()">
+            <i *ngIf="!isUploadCollapsed" class="fa fa-toggle-up toggleIcon" (click)="isUploadCollapsed = !isUploadCollapsed"></i>
+            <i *ngIf="isUploadCollapsed" class="fa fa-toggle-down toggleIcon" (click)="isUploadCollapsed = !isUploadCollapsed"></i>
+          </div>
+          <div class="float-right">
+            <button mat-button class="btn btn-ghost-primary" style="border: 1px solid;margin-right: 5px;" (click)="uploadImage()">
               <i class="fa fa-upload"></i> Upload Image
             </button>
           </div>

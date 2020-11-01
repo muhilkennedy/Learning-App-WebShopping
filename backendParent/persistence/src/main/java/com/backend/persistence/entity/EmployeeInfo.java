@@ -3,9 +3,16 @@ package com.backend.persistence.entity;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.sql.Blob;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -21,6 +28,7 @@ import javax.persistence.Table;
 
 import com.backend.core.entity.Tenant;
 import com.backend.core.interfaces.User;
+import com.backend.core.util.Constants;
 import com.google.common.io.ByteStreams;
 
 /**
@@ -64,7 +72,7 @@ public class EmployeeInfo implements Serializable, User{
 	private boolean active;
 	
 	@Column(name = "LASTLOGIN")
-	private Date lastLogin;
+	private long lastLogin;
 	
 	@Column(name = "ISLOGGEDIN")
 	private boolean isLoggedIn;
@@ -171,11 +179,19 @@ public class EmployeeInfo implements Serializable, User{
 		this.active = active;
 	}
 
-	public Date getLastLogin() {
+	public long getLastLogin() {
+		Instant instant = Instant.ofEpochMilli(lastLogin);
+		ZoneId zoneId = ZoneId.of(Constants.Asia_Calcutta);
+		ZonedDateTime zdt = instant.atZone(zoneId);
+		lastLogin = zdt.toInstant().toEpochMilli();
 		return lastLogin;
 	}
 
-	public void setLastLogin(Date lastLogin) {
+	public void setLastLogin(long lastLogin) {
+		Instant instant = Instant.ofEpochMilli(lastLogin);
+		ZoneId zoneId = ZoneId.of(Constants.Timezone_UTC);
+		ZonedDateTime zdt = instant.atZone(zoneId);
+		lastLogin = zdt.toInstant().toEpochMilli();
 		this.lastLogin = lastLogin;
 	}
 
@@ -249,17 +265,6 @@ public class EmployeeInfo implements Serializable, User{
 
 	public void setGender(String gender) {
 		this.gender = gender;
-	}
-
-
-	/**
-	 * Perform default actions before final persist.
-	 */
-	@PrePersist
-	private void prePersistEmployeeInfo() {
-		if(getLastLogin() == null) {
-			setLastLogin(new Date());
-		}
 	}
 
 }

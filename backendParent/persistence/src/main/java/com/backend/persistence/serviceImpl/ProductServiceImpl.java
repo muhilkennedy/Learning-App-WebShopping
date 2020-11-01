@@ -151,7 +151,7 @@ public class ProductServiceImpl implements ProductService {
 			actualProduct.setDeleted(true);
 			// resetting product code to avoid unique constraint error(product code will be proper for one product entry at any point of time)
 			actualProduct.setProductCode(actualProduct.getProductCode() + ":" + System.currentTimeMillis());
-			actualProduct.setLastModified(new Date());
+			actualProduct.setLastModified(new Date().getTime());
 			actualProduct.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
 			saveAndFlush(actualProduct);
 			// create new Product with old details
@@ -181,7 +181,7 @@ public class ProductServiceImpl implements ProductService {
 			}
 			//copy product images
 			newProduct.setTenant(actualProduct.getTenant());
-			newProduct.setLastModified(new Date());
+			newProduct.setLastModified(new Date().getTime());
 			newProduct.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
 			save(newProduct);
 			product = newProduct;
@@ -197,7 +197,7 @@ public class ProductServiceImpl implements ProductService {
 			newProduct.setProductDescription(product.getProductDescription());
 			newProduct.setProductCode(product.getProductCode());
 			newProduct.setQuantityInStock(product.getQuantityInStock());
-			newProduct.setLastModified(new Date());
+			newProduct.setLastModified(new Date().getTime());
 			newProduct.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
 			newProduct.setTenant(baseService.getTenantInfo());
 			save(newProduct);
@@ -282,7 +282,7 @@ public class ProductServiceImpl implements ProductService {
 			throw new Exception("Product Not Found!");
 		}
 		product.setActive(status);
-		product.setLastModified(new Date());
+		product.setLastModified(new Date().getTime());
 		product.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
 		save(product);
 	}
@@ -290,6 +290,26 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public List<Product> searchProductsByMatchingName(String searchTerm) {
 		return productRepo.findProductByNameMatching(baseService.getTenantInfo(), searchTerm);
+	}
+	
+	@Override
+	public void addToFeaturedProducts(int pId) throws Exception {
+		productDao.addFeaturedProduct(pId);
+	}
+	
+	@Override
+	public List<Product> getFeaturedProducts() throws Exception {
+		return productDao.getFeaturedProducts();
+	}
+	
+	@Override
+	public void deleteFeaturedProduct(int pId) throws Exception{
+		productDao.deleteFeaturedProduct(pId);
+	}
+	
+	@Override
+	public boolean isFeaturedProduct(int pId) throws Exception {
+		return productDao.isFeaturedProduct(pId);
 	}
 
 }

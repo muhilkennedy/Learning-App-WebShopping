@@ -30,6 +30,7 @@ export class ProductEditComponent implements OnInit {
   searchCategory: string;
   pCode: string;
   unitsInStock : number;
+  featuredProduct : boolean = false;
 
   sliderImages:any = new Array();
   isUploadCollapsed: boolean = true;
@@ -63,6 +64,59 @@ export class ProductEditComponent implements OnInit {
                          this.alertService.error("Something went Wrong! " + error);
                        })
     this.setSliderImages();
+    this.isFeaturedProduct();
+  }
+
+  toggleFeaturedProduct(){
+    this.loading = true;
+    if(this.featuredProduct){
+      this.productService.deleteFeaturedProduct(this.productId)
+                        .subscribe((resp:any) => {
+                          if(resp.statusCode === 200){
+                            this.featuredProduct = false;
+                          }
+                          else{
+                            this.featuredProduct = true;
+                          }
+                          this.loading = false;
+                        },
+                        (error:any)=>{
+                          this.alertService.error("Something went Wrong! " + error);
+                          this.featuredProduct = true;
+                        })
+    }
+    else{
+      this.productService.addFeatureProduct(this.productId)
+                        .subscribe((resp:any) => {
+                          if(resp.statusCode === 200){
+                            this.featuredProduct = true;
+                          }
+                          else{
+                            this.featuredProduct = false;
+                          }
+                          this.loading = false;
+                        },
+                        (error:any)=>{
+                          this.alertService.error("Something went Wrong! " + error);
+                          this.featuredProduct = false;
+                        })
+    }
+
+  }
+
+  isFeaturedProduct(){
+    this.productService.isFeaturedProduct(this.productId)
+                        .subscribe((resp:any) => {
+                          if(resp.statusCode === 200){
+                            this.featuredProduct = true;
+                          }
+                          else{
+                            this.featuredProduct = false;
+                          }
+                        },
+                        (error:any)=>{
+                          this.alertService.error("Something went Wrong! " + error);
+                        })
   }
 
   setSliderImages(){

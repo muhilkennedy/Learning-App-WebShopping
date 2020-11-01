@@ -63,6 +63,7 @@
                 <th>QUANTITY</th>
                 <th>DISCONT</th>
                 <th>TOTAL</th>
+                <th></th>
               </tr>
             </thead>
             <tbody style="background: white;">
@@ -89,24 +90,30 @@
                 <td><input type="number" class="form-control" style="width: 75%;" matInput placeholder="Quantity" id="q-{{i}}" name="q-{{i}}" [(ngModel)]="item.quantity"></td>
                 <td><input type="number" class="form-control" style="width: 50%;" matInput placeholder="Discount" id="dis-{{i}}" name="dis-{{i}}" [(ngModel)]="item.discount"></td>
                 <td>{{calculateTotal(item) | number:'1.2-2'}}</td>
+                <td>
+                  <i *ngIf="(itemList.length === i+1)" class="addicon fa fa-plus-circle" (click)="addItem()"></i>
+                  <i class="removeicon fa fa-minus-circle" (click)="removeItem(i)"></i>
+                </td>
               </tr>
               <tr>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td><small>Total Discount : </small></td>
-                <td>{{totalDiscount}}</td>
+                <td>{{calculateTotalDiscount() | number:'1.2-2'}}</td>
                 <td>SUB-TOTAL : </td>
                 <td><strong>{{calcaulateSubTotal() | number:'1.2-2'}}</strong></td>
+                <td></td>
               </tr>
               <tr>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td><small>Items Quantity : </small></td>
-                <td><small>{{itemList.length}}</small></td>
+                <td><small>{{calculateTotalQuantity()}}</small></td>
                 <td>Rounding Off : </td>
                 <td><strong>{{calculateRoundedSubtotal()}} ₹</strong></td>
+                <td></td>
               </tr>
               <tr>
                 <td></td>
@@ -122,7 +129,8 @@
                     </mat-select>
                   </mat-form-field>
                 </td>
-                <td><button [disabled]="disablePayment" class="btn btn-success" (click)="processBill()"> <i class="fa fa-dollar"></i> PAID </button></td>
+                <td><button [disabled]="disablePaid()" class="btn btn-success" (click)="processBill()"> <i class="fa fa-dollar"></i> PAID </button></td>
+                <td></td>
               </tr>
             </tbody>
           </table>

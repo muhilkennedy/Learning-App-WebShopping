@@ -128,7 +128,7 @@ public class TenantInfoLoading {
 				realm.setActive(Boolean.parseBoolean(tenantDetails[2].trim()));
 				realm.setPurge(Boolean.parseBoolean(tenantDetails[4].trim()));
 				String originsList = tenantDetails[3].trim().replace("[", "").replace("]", "");
-				String[] allowedOrigins = originsList.split("-");
+				String[] allowedOrigins = originsList.split("\\|"); 
 				tenantService.removeOrigins(realm.getTenantID());
 				for (String origin : allowedOrigins) {
 					tenantService.addAllowedOrigin(realm.getTenantID(), origin);

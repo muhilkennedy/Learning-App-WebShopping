@@ -1,0 +1,120 @@
+<div class="col-lg">
+  <div class="float-right">
+    <button mat-mini-fab class="button1" color="warn" (click)="isFilterCollapsed = !isFilterCollapsed">
+      <i class="fa fa-filter"></i>
+    </button>
+
+  </div>
+  <div [collapse]="isFilterCollapsed">
+    <div class="card">
+      <div class="card-body">
+        <table class="table table-responsive-sm filterbar">
+          <tr>
+            <td>
+              <label><strong>Txn Date</strong></label>
+              <select id="select1" name="select1"  [(value)]="dateCondition" (change)="changeDateCondition($event)">
+                <option value="eq">equal to</option>
+                <option value="lt">less than</option>
+                <option value="gt">greater than</option>
+              </select>
+              <input type="date" id="searchDate" name="searchDate" />
+            </td>
+            <td>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<alert class="p-4 text-center"></alert>
+<table class="table table-responsive-sm table-hover table-outline mb-0">
+  <ngx-loading [show]="loading"></ngx-loading>
+  <thead class="thead-light">
+    <tr>
+      <th>ID</th>
+      <th>Txn Time</th>
+      <th>Payment Mode</th>
+      <th>Customer Mobile</th>
+      <th>Billing Cost (₹)</th>
+      <th class="text-center"><i class="fa fa-search"></i></th>
+    </tr>
+  </thead>
+  <tbody style="background: white;">
+    <tr *ngFor="let pos of posDataList">
+      <td>
+        {{pos.primaryKey}}
+      </td>
+      <td>
+        {{pos.timeCreated | date: 'dd/MM/yyyy hh:mm a'}}
+      </td>
+      <td>
+        {{pos.paymentMode}}
+      </td>
+      <td>
+        {{pos.mobile}}
+      </td>
+      <td>
+        ₹ {{pos.subTotal}}
+      </td>
+      <td>
+        <i class="producticon fa fa-shopping-basket" (click)="setProductData(pos);primaryModal.show()"></i>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<mat-paginator [length]="total"
+[pageSize]="pageSize"
+[pageSizeOptions]="pageSizeOptions"
+(page)="action($event)">
+</mat-paginator>
+
+<!-- pop up -->
+<div bsModal #primaryModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-open" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Product Details</h4>
+        <button type="button" class="close" (click)="primaryModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-responsive-sm table-hover table-outline mb-0">
+          <ngx-loading [show]="loading"></ngx-loading>
+          <thead class="thead-light">
+            <tr>
+              <th>Name</th>
+              <th>Code</th>
+              <th>Quantity</th>
+              <th>Discount</th>
+            </tr>
+          </thead>
+          <tbody style="background: white;">
+            <tr *ngFor="let product of selectedProductList">
+              <td>
+                {{product.itemName}}
+              </td>
+              <td>
+                {{product.itemCode}}
+              </td>
+              <td>
+                {{product.quantity}}
+              </td>
+              <td>
+                {{product.discount}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <div>
+          <button type="button" class="btn btn-success" (click)="primaryModal.hide()">
+            <i class="fa fa-check"></i> OK
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

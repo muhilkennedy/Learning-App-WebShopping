@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.ws.soap.AddressingFeature.Responses;
 
 import org.apache.commons.collections4.map.HashedMap;
 import org.slf4j.Logger;
@@ -127,6 +128,21 @@ public class ProductController {
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("getProductsByName : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/getFeaturedProducts", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Product> getFeaturedProducts(HttpServletRequest request) {
+		GenericResponse<Product> response = new GenericResponse<>();
+		try {
+			response.setDataList(productService.getFeaturedProducts());
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("getFeaturedProducts : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
@@ -281,6 +297,63 @@ public class ProductController {
 			}
 		} catch (Exception ex) {
 			logger.error("toggleProductStatus : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/secure/admin/addFeaturedProducts", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Product> addFeaturedProducts(HttpServletRequest request,
+			@RequestParam(value = "productId", required = true) String pId) {
+		GenericResponse<Product> response = new GenericResponse<>();
+		try {
+			if (CommonUtil.isValidStringParam(pId)) {
+				productService.addToFeaturedProducts(Integer.parseInt(pId));
+				response.setStatus(Response.Status.OK);
+			} else {
+				response.setErrorMessages(Arrays.asList("Parameters are not Valid!"));
+				response.setStatus(Response.Status.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			logger.error("addFeaturedProducts : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/secure/admin/deleteFeaturedProducts", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Product> deleteFeaturedProducts(HttpServletRequest request,
+														@RequestParam(value = "productId", required = true) int pId) {
+		GenericResponse<Product> response = new GenericResponse<>();
+		try {
+			productService.deleteFeaturedProduct(pId);
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("deleteFeaturedProducts : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/secure/admin/isFeaturedProducts", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Product> isFeaturedProducts(HttpServletRequest request,
+														@RequestParam(value = "productId", required = true) int pId) {
+		GenericResponse<Product> response = new GenericResponse<>();
+		try {
+			if(productService.isFeaturedProduct(pId)) {
+				response.setStatus(Response.Status.OK);
+			}
+			else {
+				response.setStatus(Response.Status.NO_CONTENT);
+			}
+		} catch (Exception ex) {
+			logger.error("deleteFeaturedProducts : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);

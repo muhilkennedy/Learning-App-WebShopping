@@ -14,6 +14,7 @@ import { NgxLoadingModule, ngxLoadingAnimationTypes } from 'ngx-loading';
 import { AlertModule } from '../../shared/_alert';
 import { TaskModule } from '../task/task.module';
 import { TenantDetailsComponent } from './components/tenant-details/tenant-details.component';
+import { CollapseModule } from '../../shared/collapse';
 
 @NgModule({
   imports: [
@@ -35,7 +36,8 @@ import { TenantDetailsComponent } from './components/tenant-details/tenant-detai
       tertiaryColour: 'darkred'
     }),
     AlertModule,
-    TaskModule
+    TaskModule,
+    CollapseModule
   ],
   declarations: [
     DashboardComponent,

@@ -67,6 +67,7 @@ export class InvoiceTemplateComponent implements OnInit {
   }
 
   getActiveTemplatePDF(){
+    this.documentLoading = true;
     this.invoiceService.getTemplate()
                         .subscribe((resp: any) => {
                           if(resp.statusCode != undefined && resp.statusCode === 204){
@@ -94,11 +95,9 @@ export class InvoiceTemplateComponent implements OnInit {
                           else{
                             const blob = new Blob([resp], { type: 'application/octet-stream' });
                             this.downloadURl = this.sanitizer.bypassSecurityTrustResourceUrl(window.URL.createObjectURL(blob));}
-                            this.documentLoading = false;
                         },
                         (error) => {
                           this.alertService.error("Something went wrong!", error)
-                          this.documentLoading = false;
                       });
   }
 

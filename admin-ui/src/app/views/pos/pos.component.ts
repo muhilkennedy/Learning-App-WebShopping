@@ -1,7 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { ViewChild, AfterViewInit } from "@angular/core";
 import { BarecodeScannerLivestreamComponent } from "ngx-barcode-scanner";
-import { PosProduct } from '../../shared/pos/posProduct';
+// import { PosProduct } from '../../shared/pos/posProduct';
 import { PrintDriver } from 'ng-thermal-print/lib/drivers/PrintDriver';
 import { PrintService, UsbDriver, WebPrintDriver } from 'ng-thermal-print';
 import { ProductService } from '../../shared/product/product.service';
@@ -11,6 +11,16 @@ import { PosService } from '../../shared/pos/pos.service';
 import { FormControl, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+
+class PosProduct{
+  itemID: number;
+  itemName: string;
+  itemCode: string;
+  mrp: number;
+  quantity: number;
+  discount: number;
+  total: number;
+}
 
 @Component({
   templateUrl: 'pos.component.html',
@@ -25,9 +35,10 @@ export class PosComponent implements OnInit {
   customerName: string;
   customerEmail: string;
 
-  totalDiscount: number;
+  totalDiscount: number = 0;
   disablePayment: boolean = true;
   subTotal: number = 0;
+  totalQuantity: number = 0;
 
   paymentTypes: string[] = ['cash', 'card', 'gpay', 'phone pe', 'paytm', 'others'];
   paymentMode: string = this.paymentTypes[0];
@@ -40,9 +51,13 @@ export class PosComponent implements OnInit {
   //Insert new entry incase of shift and enter key press
   @HostListener('keydown', ['$event']) onKeyDown(e) {
     if (e.keyCode == 13 && e.shiftKey ) {
-      let newProd:PosProduct = new PosProduct();
-      this.itemList.push(newProd);
+      this.addItem();
     }
+  }
+
+  addItem(){
+    let newProd:PosProduct = new PosProduct();
+    this.itemList.push(newProd);
   }
 
   constructor(private printService: PrintService, private productService: ProductService,
@@ -138,7 +153,7 @@ export class PosComponent implements OnInit {
                         }
   }
   private _filter(value: string): string[] {
-    if(value === "")
+    if(value === undefined || value === "")
     {
       return;
     }
@@ -224,7 +239,9 @@ export class PosComponent implements OnInit {
         total += item.total;
       }
     })
-    this.subTotal = total;
+    if(total >= 0){
+      this.subTotal = total;
+    }
     return total;
   }
 
@@ -232,8 +249,48 @@ export class PosComponent implements OnInit {
     return Math.round(this.subTotal);
   }
 
+  calculateTotalQuantity(): number{
+    let quantity = 0;
+    this.itemList.forEach(item => {
+      if(item != null || item != undefined){
+        quantity += item.quantity;
+      }
+    })
+    if(quantity >= 0){
+      this.totalQuantity = quantity;
+    }
+    return quantity;
+  }
+
+  calculateTotalDiscount(): number{
+    let discount = 0;
+    this.itemList.forEach(item => {
+      if(item != null || item != undefined){
+        discount += (item.mrp * item.discount) / 100;
+      }
+    })
+    if(discount >= 0){
+      this.totalDiscount = discount;
+    }
+    return discount;
+  }
+
+  disablePaid(): boolean{
+    if(this.subTotal == NaN || this.subTotal === undefined || this.subTotal <= 0){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
+  removeItem(index:number){
+    this.itemList.splice(index, 1);
+  }
+
   processBill(){
-    this.posService.createPOS(this.customerMobile, this.paymentMode, this.itemList)
+    this.loading = true;
+    this.posService.createPOS(this.customerMobile, this.paymentMode, this.calculateRoundedSubtotal(), this.itemList)
                     .subscribe((resp: any) => {
                       if(resp.statusCode === 200){
                         //proceed with bill printing
@@ -241,9 +298,11 @@ export class PosComponent implements OnInit {
                       else{
                         alert("Failed");
                       }
+                      this.loading = false;
                     },
                     (error) => {
                       alert("failed!");
+                      this.loading = false;
                     })
   }
 

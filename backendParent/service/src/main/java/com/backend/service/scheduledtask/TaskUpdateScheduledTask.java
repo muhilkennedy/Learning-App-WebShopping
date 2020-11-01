@@ -27,7 +27,7 @@ public class TaskUpdateScheduledTask extends ScheduledTask{
 	private TaskService taskService;
 
 	// cron = sec min hour day mon dayOfWeek.
-	@Scheduled(cron = " 0 5 0 * * * ")
+	@Scheduled(cron = " 0 5 0 * * * ", zone = "IST")
 	@Override
 	public void execute() {
 		logger.info("Scheduled Task - " + TaskUpdateScheduledTask.class.getCanonicalName() + " Started");
