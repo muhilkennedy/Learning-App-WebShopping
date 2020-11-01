@@ -1,0 +1,27 @@
+version: '3'
+
+services:  
+
+  myapp-mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=Mani@1112
+      - MYSQL_DATABASE=clouddatabase
+      - MYSQL_USER=mani
+      - MYSQL_PASSWORD=Mani@1112
+    ports:
+      - 3307:3306  
+      
+  myapp-main:
+    image: backend
+    restart: on-failure
+    depends_on:
+      - myapp-mysql
+    ports:
+      - 8080:8080
+    environment:
+      - DATABASE_HOST=myapp-mysql
+      - DATABASE_USER=mani
+      - DATABASE_PASSWORD=Mani@1112
+      - DATABASE_NAME=clouddatabase
+      - DATABASE_PORT=3306
