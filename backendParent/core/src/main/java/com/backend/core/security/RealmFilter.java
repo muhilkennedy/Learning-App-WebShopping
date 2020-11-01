@@ -45,17 +45,16 @@ public class RealmFilter implements Filter {
 			String tenantId = null;
 			String origin = null;
 			logger.info("doFilter :: Realm Filter");
-
-			// skip realm check in case of load testing
-			if(req.getRequestURI().contains("/loadTesting") && !configUtil.isProdMode()) {
+			//Allow access for cross site request due to multiple deployments.
+			res.setHeader("Access-Control-Allow-Origin", req.getHeader(Constants.Header_Origin));
+			res.setHeader("Access-Control-Allow-Credentials","true");
+			// skip realm check in case of load testing or health check urls
+			if(req.getRequestURI().contains("/loadTesting") && !configUtil.isProdMode() || req.getRequestURI().contains("/actuator")) {
 				baseService.setTenantInfo(TenantUtil.getTenantInfo("devTenant"));
 				chain.doFilter(request, response);
 			}
 			// incase of socket request seperate interceptor will handle header parsing and realm initialization.
-			else if(req.getRequestURI().contains("/wsocket") || req.getRequestURI().contains("socket")) {
-				// to avoid cors issue incase of ws request Access-Control-Allow-Origin
-				res.setHeader("Access-Control-Allow-Origin", req.getHeader(Constants.Header_Origin));
-				res.setHeader("Access-Control-Allow-Credentials","true");
+			else if(req.getRequestURI().contains("/wsocket") || req.getRequestURI().contains("socket") ) {
 				chain.doFilter(req, res);
 			}
 			// Incase of prod mode both tenantId and Origin url mandatory.
