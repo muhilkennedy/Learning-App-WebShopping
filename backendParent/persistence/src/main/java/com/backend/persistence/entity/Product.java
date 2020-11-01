@@ -67,7 +67,7 @@ public class Product implements Serializable {
 	private String productCode;
 	
 	@Column(name = "LASTMODIFIED")
-	private Date lastModified;
+	private long lastModified;
 	
 	@Column(name = "LASTMODIFIEDEMPLOYEEID")
 	private Integer lastModifiedById;
@@ -133,11 +133,11 @@ public class Product implements Serializable {
 		this.productDescription = productDescription;
 	}
 
-	public Date getLastModified() {
+	public long getLastModified() {
 		return lastModified;
 	}
 
-	public void setLastModified(Date lastModified) {
+	public void setLastModified(long lastModified) {
 		this.lastModified = lastModified;
 	}
 

@@ -1,12 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgxLoadingModule, ngxLoadingAnimationTypes } from 'ngx-loading';
-import { SharedModule } from '../../shared/shared.module';
-import { MediaRoutingModule } from './media-routing.module';
-import { MediaComponent } from './media.component';
-import { CarouselModule } from 'ngx-bootstrap/carousel';
+import { ChartsModule } from 'ng2-charts';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { AlertModule } from '../../shared/_alert/alert.module';
+import { CollapseModule } from '../../shared/collapse';
 // Material modules
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatBadgeModule} from '@angular/material/badge';
@@ -42,27 +41,24 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatTreeModule} from '@angular/material/tree';
-import { CollapseModule } from '../../shared/collapse';
+import { NgxLoadingModule, ngxLoadingAnimationTypes } from 'ngx-loading';
+import { SharedModule } from '../../shared/shared.module';
+import { SalesRoutingModule } from './sales.routing.module';
+import { TransactionsComponent } from './transactions/transactions.component';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 @NgModule({
   declarations: [
-    MediaComponent
+    TransactionsComponent
   ],
   imports: [
+    SalesRoutingModule,
     CommonModule,
-    MediaRoutingModule,
     FormsModule,
+    ChartsModule,
+    BsDropdownModule,
+    ButtonsModule.forRoot(),
     ReactiveFormsModule,
-    NgxLoadingModule.forRoot({
-      animationType: ngxLoadingAnimationTypes.rectangleBounce,
-      backdropBackgroundColour: 'rgba(0,0,0,0.3)',
-      backdropBorderRadius: '4px',
-      primaryColour: 'cornflowerblue',
-      secondaryColour: 'chocolate',
-      tertiaryColour: 'darkred'
-    }),
-    SharedModule,
-    CarouselModule,
     MatAutocompleteModule,
     MatBadgeModule,
     MatBottomSheetModule,
@@ -98,8 +94,18 @@ import { CollapseModule } from '../../shared/collapse';
     MatToolbarModule,
     MatTooltipModule,
     MatTreeModule,
+    NgxLoadingModule.forRoot({
+      animationType: ngxLoadingAnimationTypes.rectangleBounce,
+      backdropBackgroundColour: 'rgba(0,0,0,0.3)',
+      backdropBorderRadius: '4px',
+      primaryColour: 'cornflowerblue',
+      secondaryColour: 'chocolate',
+      tertiaryColour: 'darkred'
+    }),
+    SharedModule,
     AlertModule,
-    CollapseModule
+    CollapseModule,
+    ModalModule
   ]
 })
-export class MediaModule { }
+export class SalesModule { }

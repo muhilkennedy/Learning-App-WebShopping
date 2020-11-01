@@ -8,6 +8,7 @@ import { UserStoreService } from '../../service/userStore/user-store.service';
 })
 export class DashboardComponent implements OnInit {
 
+ isAdmincardCollapsed: boolean = true;
  showAdminCard: boolean = false;
  public userPermissions: any[];
  public date: Date = new Date();

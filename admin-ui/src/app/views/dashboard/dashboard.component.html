@@ -1,5 +1,24 @@
 <div class="animated fadeIn">
 
+  <div class="row" *ngIf="showAdminCard">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-institution"></i>TENANT INFORMATION
+          <div class="float-right">
+            <i *ngIf="!isAdmincardCollapsed" class="fa fa-toggle-up toggleIcon" (click)="isAdmincardCollapsed = !isAdmincardCollapsed"></i>
+          <i *ngIf="isAdmincardCollapsed" class="fa fa-toggle-down toggleIcon" (click)="isAdmincardCollapsed = !isAdmincardCollapsed"></i>
+          </div>
+        </div>
+        <div [collapse]="isAdmincardCollapsed">
+          <div class="card-body">
+            <app-tenant-details></app-tenant-details>
+          </div>
+        </div>
+      </div>
+    </div><!--/.col-->
+  </div><!--/.row-->
+
   <div class="row">
     <div class="col-md-6">
       <app-todo></app-todo>
@@ -9,17 +28,4 @@
     </div>
   </div>
 
-  <div class="row" *ngIf="showAdminCard">
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-header">
-          <i class="fa fa-institution"></i>TENANT INFORMATION
-        </div>
-        <div class="card-body">
-          <app-tenant-details></app-tenant-details>
-          <app-employee></app-employee>
-        </div>
-      </div>
-    </div><!--/.col-->
-  </div><!--/.row-->
 </div>

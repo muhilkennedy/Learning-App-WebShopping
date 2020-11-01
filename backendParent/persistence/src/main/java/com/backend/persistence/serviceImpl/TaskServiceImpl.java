@@ -68,7 +68,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 	
 	@Override
-	public void createTask(String content, Date endDate, int assigneeId) {
+	public void createTask(String content, long endDate, int assigneeId) {
 		Task task = new Task();
 		task.setEmployeeId((EmployeeInfo) baseService.getUserInfo());
 		task.setTenant(baseService.getTenantInfo());

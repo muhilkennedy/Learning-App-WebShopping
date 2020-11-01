@@ -7,13 +7,8 @@
   width: inherit;
 }
 
-
 .toggleIcon{
   color: cadetblue;
   cursor: pointer;
 }
 
-.mat-slide-toggle.mat-warn.mat-checked .mat-slide-toggle-thumb
-{
-  background-color: aquamarine !important;
-}

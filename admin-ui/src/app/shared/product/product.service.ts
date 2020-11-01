@@ -25,6 +25,10 @@ export class ProductService {
   replacProductImageEndpoint = "/product/secure/admin/removeProductImage";
   toggleProductStatusEndpoint = "/product/secure/admin/toggleProductStatus";
   getProductByNameMatchingEndpoint = "/product/getProductsByName";
+  getFeaturedProductsEndpoint = "/product/getFeaturedProducts";
+  addFeaturedProductEndpoint = "/product/secure/admin/addFeaturedProducts";
+  isFeaturedProductEndpoint = "/product/secure/admin/isFeaturedProducts";
+  deleteFeaturedProductEndpoint = "/product/secure/admin/deleteFeaturedProducts";
 
   constructor(private http: HttpClient) { }
 
@@ -190,6 +194,30 @@ export class ProductService {
       }
     };
     return this.http.get(environment.backendBaseUrl+this.getProductByNameMatchingEndpoint, httpOptions);
+  }
+
+  getFeaturedProducts(){
+    return this.http.get(environment.backendBaseUrl+this.getFeaturedProductsEndpoint);
+  }
+
+  addFeatureProduct(pId){
+    const uploadData = new FormData();
+    uploadData.append('productId', pId);
+    return this.http.post(environment.backendBaseUrl+this.addFeaturedProductEndpoint, uploadData);
+  }
+
+  deleteFeaturedProduct(pId){
+    const httpOptions = {
+      params: {productId: pId}
+    };
+    return this.http.delete(environment.backendBaseUrl+this.deleteFeaturedProductEndpoint, httpOptions);
+  }
+
+  isFeaturedProduct(pId){
+    const httpOptions = {
+      params: {productId: pId}
+    };
+    return this.http.get(environment.backendBaseUrl+this.isFeaturedProductEndpoint, httpOptions);
   }
 
 }

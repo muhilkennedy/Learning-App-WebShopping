@@ -51,14 +51,14 @@ public class Task implements Serializable {
 	private String status;
 	
 	@Column(name = "ENDDATE")
-	private Date endDate;
+	private long endDate;
 	
 	public Task() {
 		super();
 	}
 
 	public Task(Tenant tenant, EmployeeInfo employeeId, EmployeeInfo assignee, String content, String status,
-			Date endDate) {
+			long endDate) {
 		super();
 		this.tenant = tenant;
 		this.employeeId = employeeId;
@@ -116,11 +116,12 @@ public class Task implements Serializable {
 		this.status = status;
 	}
 
-	public Date getEndDate() {
+	public long getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(Date endDate) {
+	public void setEndDate(long endDate) {
 		this.endDate = endDate;
 	}
+
 }

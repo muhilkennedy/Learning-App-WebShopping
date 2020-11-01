@@ -7,6 +7,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.DataFormatException;
@@ -18,6 +21,8 @@ import javax.imageio.ImageIO;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.backend.core.util.Constants;
 
 import io.micrometer.core.instrument.util.StringUtils;
 
@@ -237,4 +242,17 @@ public class CommonUtil {
 		return false;
 	}
 
+	public static long convertToUTC(long time) {
+		Instant instant = Instant.ofEpochMilli(time);
+		ZoneId zoneId = ZoneId.of(Constants.Timezone_UTC);
+		ZonedDateTime zdt = instant.atZone(zoneId);
+		return zdt.toInstant().toEpochMilli();
+	}
+	
+	public static long convertToIST(long time) {
+		Instant instant = Instant.ofEpochMilli(time);
+		ZoneId zoneId = ZoneId.of(Constants.Asia_Calcutta);
+		ZonedDateTime zdt = instant.atZone(zoneId);
+		return zdt.toInstant().toEpochMilli();
+	}
 }

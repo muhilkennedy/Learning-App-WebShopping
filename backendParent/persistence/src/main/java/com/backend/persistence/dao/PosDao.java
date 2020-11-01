@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.backend.commons.util.SQLQueryHandler;
 import com.backend.core.service.BaseService;
 import com.backend.core.util.DBUtil;
 import com.backend.persistence.helper.POSData;
@@ -55,6 +56,31 @@ public class PosDao {
 			PreparedStatement stmt = con.prepareStatement("select * from pointofsale where pos->\"$.tenantId\" = ? and pos->\"$.mobile\" = ?");
 			stmt.setString(1, tenantId);
 			stmt.setString(2, mobile);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				POSData data = new ObjectMapper().readValue(rs.getString(1), POSData.class);
+				json.add(data);
+			}
+			return json;
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+	}
+	
+	public List<POSData> getPOS (String tenantId, String limit, String offset) throws Exception{
+		List<POSData> json = new ArrayList<POSData>();
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+															.setQuery("select * from pointofsale")
+															.setWhereClause()
+															.setAndCondition("pos->\"$.tenantId\"", tenantId)
+															.setOrderBy("pos->\"$.timeCreated\"")
+															.setSortOrder("desc")
+														  	.setLimit(limit)
+														  	.setOffset(offset)
+															.build();
+			PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
 				POSData data = new ObjectMapper().readValue(rs.getString(1), POSData.class);

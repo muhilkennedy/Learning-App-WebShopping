@@ -43,10 +43,10 @@ public class Coupons implements Serializable{
 	private int discount;
 	
 	@Column(name = "STARTDATE")
-	private Date startDate;
+	private long startDate;
 	
 	@Column(name = "ENDDATE")
-	private Date endDate;
+	private long endDate;
 	
 	@Column(name = "FREESHIPPING")
 	private boolean freeShipping;
@@ -61,7 +61,7 @@ public class Coupons implements Serializable{
 		super();
 	}
 
-	public Coupons(Tenant tenant, String title, int discount, Date startdate, Date endDate, boolean freeShipping,
+	public Coupons(Tenant tenant, String title, int discount, long startdate, long endDate, boolean freeShipping,
 			int perUserUsage, boolean active, String code) {
 		super();
 		this.tenant = tenant;
@@ -95,19 +95,19 @@ public class Coupons implements Serializable{
 		this.discount = discount;
 	}
 
-	public Date getStartDate() {
+	public long getStartDate() {
 		return startDate;
 	}
 
-	public void setStartDate(Date startdate) {
-		this.startDate = startdate;
+	public void setStartDate(long startDate) {
+		this.startDate = startDate;
 	}
 
-	public Date getEndDate() {
+	public long getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(Date endDate) {
+	public void setEndDate(long endDate) {
 		this.endDate = endDate;
 	}
 

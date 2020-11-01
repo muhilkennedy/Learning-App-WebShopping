@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MediaService } from '../../shared/media/media.service';
+import { ProductService } from '../../shared/product/product.service';
 import { AlertService } from '../../shared/_alert';
 
 @Component({
@@ -16,6 +17,10 @@ export class MediaComponent implements OnInit {
 
   sliderImages:any = new Array();
   homeImages:any = new Array();
+
+  isSliderImagesCollapsed: boolean = true;
+  isHomeImagesCollapased: boolean = true;
+  isFeaturedProductsCollapsed: boolean = true;
 
   fileToUpdate: File = null;
   fileToAdd: File = null;
@@ -49,7 +54,9 @@ export class MediaComponent implements OnInit {
   sliderAction = this.sliderActions[0];
   homeMediaAction = this.sliderActions[0];
 
-  constructor(private mediaService: MediaService, private alertService: AlertService){
+  constructor(private mediaService: MediaService,
+              private alertService: AlertService,
+              private productService: ProductService){
 
   }
 

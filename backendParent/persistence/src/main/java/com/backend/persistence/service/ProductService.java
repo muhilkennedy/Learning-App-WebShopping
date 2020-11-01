@@ -60,4 +60,12 @@ public interface ProductService {
 
 	List<Product> searchProductsByMatchingName(String searchTerm);
 
+	void addToFeaturedProducts(int pId) throws Exception;
+
+	List<Product> getFeaturedProducts() throws Exception;
+
+	void deleteFeaturedProduct(int pId) throws Exception;
+
+	boolean isFeaturedProduct(int pId) throws Exception;
+
 }
