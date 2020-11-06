@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.backend.core.entity.Tenant;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.io.ByteStreams;
 
 /**
@@ -27,6 +28,7 @@ public class EmployeeAddress implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "TENANTID", nullable = false)
 	private Tenant tenant;
@@ -54,6 +56,7 @@ public class EmployeeAddress implements Serializable{
 	@Column(name = "ADDRESSPROOF")
 	private Blob addressProof;
 	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "EMPLOYEEID", nullable = false)
 	private EmployeeInfo employee;

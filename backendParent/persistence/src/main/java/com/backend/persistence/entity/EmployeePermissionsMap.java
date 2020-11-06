@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.backend.core.entity.Tenant;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * @author Muhil
@@ -23,6 +24,7 @@ public class EmployeePermissionsMap implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "TENANTID", nullable = false)
 	private Tenant tenant;
@@ -32,6 +34,7 @@ public class EmployeePermissionsMap implements Serializable{
 	@Column(name = "MAPID")
 	private int mapId;
 	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "EMPLOYEEID", nullable = false)
 	private EmployeeInfo employee;
