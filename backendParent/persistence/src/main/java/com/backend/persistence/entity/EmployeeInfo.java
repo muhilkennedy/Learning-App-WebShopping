@@ -24,6 +24,7 @@ import javax.persistence.Table;
 import com.backend.core.entity.Tenant;
 import com.backend.core.interfaces.User;
 import com.backend.core.util.Constants;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.io.ByteStreams;
 
 /**
@@ -36,6 +37,7 @@ public class EmployeeInfo implements Serializable, User{
 
 	private static final long serialVersionUID = 1L;
 
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "TENANTID", nullable = false)
 	private Tenant tenant;

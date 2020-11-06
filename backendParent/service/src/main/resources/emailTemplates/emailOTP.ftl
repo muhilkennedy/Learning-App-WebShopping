@@ -169,12 +169,16 @@
 					<div class='movableContent'>
 						<table cellpadding="0" cellspacing="0" border="0" align="center" width="600" class="container">
 							<tr>
-								<td width="100%" colspan="3" align="center" style="padding-bottom:10px;padding-top:25px;">
+								<!-- <td width="100%" colspan="3" align="center" style="padding-bottom:10px;padding-top:25px;">
 									<div class="contentEditableContainer contentTextEditable">
 					                	<div class="contentEditable" align='center' >
 					                  		<h1 >VERIFICATION CODE : <b>${otp}</b></h1>
 					                	</div>
 					              	</div>
+								</td>-->
+								<td style="border:1px solid #a4d3fb" align="center" width="100%" colspan="3">
+									<span style="width:35%;display:inline-block;float:left;height:100%;padding:10px 0;background: cornflowerblue;color:white">VERIFICATION CODE</span> 
+									<span style="width:65%;display:inline-block;float:left;letter-spacing:5px;height:100%;padding:10px 0;color:#1c90f6">${otp}</span>
 								</td>
 							</tr>
 							<tr>
