@@ -134,6 +134,22 @@ public class ProductController {
 		return response;
 	}
 	
+	@RequestMapping(value = "/getProductsByNameOrCode", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Product> getProductsByNameOrCode(HttpServletRequest request,
+			@RequestParam(value = "searchTerm", required = true) String searchTerm) {
+		GenericResponse<Product> response = new GenericResponse<>();
+		try {
+			response.setDataList(productService.searchProductsByMatchingNameOrCode(searchTerm));
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("getProductsByNameOrCode : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
 	@RequestMapping(value = "/getFeaturedProducts", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<Product> getFeaturedProducts(HttpServletRequest request) {
 		GenericResponse<Product> response = new GenericResponse<>();
