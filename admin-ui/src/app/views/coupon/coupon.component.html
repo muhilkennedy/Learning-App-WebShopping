@@ -49,10 +49,8 @@
                     </div>
                   </td>
                   <td>
-                    <mat-slide-toggle color="primary" [(ngModel)] = "coupon.active"></mat-slide-toggle>
-                    <button mat-button color="warn" aria-label="remove">
-                      <mat-icon>delete_forever</mat-icon>
-                    </button>
+                    <mat-slide-toggle color="accent" [checked]="coupon.active" (change)="toggleCouponStatus(coupon)"></mat-slide-toggle>
+                    <i class="fa fa-trash" style="color: red; cursor: pointer;" (click)="deleteCoupon(coupon)"></i>
                   </td>
                 </tr>
               </tbody>

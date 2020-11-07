@@ -8,6 +8,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.backend.commons.util.CommonUtil;
 import com.backend.core.service.BaseService;
 import com.backend.persistence.entity.Coupons;
 import com.backend.persistence.repository.CouponRepository;
@@ -38,8 +39,13 @@ public class CouponsServiceImpl implements CouponsService {
 	}
 	
 	@Override
-	public List<Coupons> findExpiredCoupons(){
-		return coupRepo.findExpiredCoupons(baseService.getTenantInfo(), new Date());
+	public Coupons findCouponById(int id) {
+		return coupRepo.findCouponById(baseService.getTenantInfo(), id);
+	}
+	
+	@Override
+	public List<Coupons> findExpiredCoupons() {
+		return coupRepo.findExpiredCoupons(baseService.getTenantInfo(), CommonUtil.convertToUTC(new Date().getTime()));
 	}
 	
 	@Override
@@ -52,4 +58,22 @@ public class CouponsServiceImpl implements CouponsService {
 	public List<Coupons> findAllCouponsForTenant(){
 		return coupRepo.findAllCouponsForTenant(baseService.getTenantInfo());
 	}
+	
+	@Override
+	public void toggleCoupon(int id) {
+		Coupons coupon = findCouponById(id);
+		if(coupon != null) {
+			coupon.setActive(!coupon.isActive());
+			save(coupon);
+		}
+	}
+	
+	@Override
+	public void deleteCoupon(int id) {
+		Coupons coupon = findCouponById(id);
+		if(coupon != null) {
+			coupRepo.delete(coupon);
+		}
+	}
+	
 }

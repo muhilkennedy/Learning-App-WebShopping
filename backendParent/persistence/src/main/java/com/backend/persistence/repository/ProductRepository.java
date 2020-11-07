@@ -23,8 +23,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer>{
 	String findAllProductsQuery = "select p from Product p where p.tenant = :tenant";
 	String findAllProductsCountQuery = "select count(*) from Product p where p.tenant = :tenant";
 	String findProductCountForCategory = "select count(*) from Product p where p.tenant = :tenant and p.categoryId = :category";
-	String findLimitedProductsQuery = "select * from Product where tenantid = ?1 limit ?2 offset ?3";
-	String findLimitedProductsForCategoryQuery = "select * from Product where tenantid = ?1 and categoryid = ?4 limit ?2 offset ?3";
+	String findLimitedProductsQuery = "select * from product where tenantid = ?1 limit ?2 offset ?3";
+	String findLimitedProductsForCategoryQuery = "select * from product where tenantid = ?1 and categoryid = ?4 limit ?2 offset ?3";
 	String findProductByCodeQuery = "select p from Product p where p.tenant = :tenant and p.productCode = :pCode";
 	String findProductByIdsQuery = "select p from Product p where p.tenant = :tenant and p.productId in :pIds";
 	String findProductByNameQuery = "select p from Product p where p.tenant = :tenant and p.active = true and p.productName like :searchTerm%";

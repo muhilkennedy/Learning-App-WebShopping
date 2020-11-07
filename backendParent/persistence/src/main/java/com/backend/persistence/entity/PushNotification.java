@@ -39,7 +39,7 @@ public class PushNotification implements Serializable {
 	@JoinColumn(name = "EMPLOYEEID", nullable = false)
 	private EmployeeInfo employeeId;
 	
-	@Column(name = "NOTIFICATONCONTENT")
+	@Column(name = "NOTIFICATIONCONTENT")
 	private String content;
 	
 	public PushNotification() {

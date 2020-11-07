@@ -21,6 +21,8 @@ public class DBUtil {
 	public static String Key_TimeUpdated = "timeUpdated";
 	public static String Key_PrimaryKey = "primaryKey";
 	
+	public static String Key_BackUpTask = "DBBACKUP";
+	
 	@Autowired
 	public void setDbProperties(DataSourceProperties props) {
 		DBUtil.dbProperties = props;
@@ -29,6 +31,14 @@ public class DBUtil {
 	public static Connection getConnectionInstance() throws Exception {
 		return DriverManager.getConnection(dbProperties.getUrl(), dbProperties.getUsername(),
 				dbProperties.getPassword());
+	}
+	
+	public static String getDBUser() {
+		return dbProperties.getUsername();
+	}
+	
+	public static String getDBPassword() {
+		return dbProperties.getPassword();
 	}
 	
 }
