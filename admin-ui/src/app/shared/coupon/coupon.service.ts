@@ -10,6 +10,8 @@ export class CouponService {
 
   createCouponEndpoint = "/secure/admin/coupon/createCoupon";
   getCouponsEndpoint = "/secure/admin/coupon/getAllCoupons";
+  toggleCouponStatusEndpoint = "/secure/admin/coupon/toggleCouponStatus";
+  deleteCouponEndpoint = "/secure/admin/coupon/deleteCoupon";
 
   constructor(private http: HttpClient) { }
 
@@ -37,5 +39,17 @@ export class CouponService {
     return this.http.post(environment.backendBaseUrl+this.createCouponEndpoint, body, httpOptions);
   }
 
+  toggleCouponStatus(couponId): Observable<any>{
+    const uploadData = new FormData();
+    uploadData.append('couponId', couponId);
+    return this.http.put(environment.backendBaseUrl+this.toggleCouponStatusEndpoint, uploadData);
+  }
+
+  deleteCoupon(couponId){
+    const httpOptions = {
+      params: { couponId: couponId }
+    };
+    return this.http.delete(environment.backendBaseUrl+this.deleteCouponEndpoint, httpOptions);
+  }
 
 }

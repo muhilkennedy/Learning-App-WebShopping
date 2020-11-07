@@ -39,7 +39,7 @@ public class OtpServiceImpl implements OtpService {
 
 	@Override
 	public String generateOtp(String key) {
-		String otp = CommonUtil.generateRandomCode();
+		String otp = CommonUtil.generateRandomNumericCode();
 		otpCache.put(key, otp);
 		return otp;
 	}
