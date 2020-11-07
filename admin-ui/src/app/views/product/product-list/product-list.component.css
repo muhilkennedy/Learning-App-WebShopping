@@ -29,6 +29,16 @@
   transform: scale(1.5);
 }
 
+.expandexclamicon{
+  color: crimson;
+  cursor: help;
+  transition: transform .2s;
+}
+
+.expandexclamicon:hover  {
+  transform: scale(1.5);
+}
+
 .titleText{
   color: #099caa;
 }

@@ -93,24 +93,24 @@ export class DefaultLayoutComponent implements OnInit{
         if(permissionIds.includes(1)){
           //allow all access
           this.addNavItem("/employee");
-          this.addNavItem("/pos");
+          this.addNavItem("/report");
         }
         //manager permission
         if(permissionIds.includes(2)){
           // remove employee functionality
           this.addNavItem("/sales");
           this.addNavItem("/invoice-template");
-          this.addNavItem("/report");
         }
         //marketing permission
         if(permissionIds.includes(3)){
           // remove employee, sales and analytical functionality
+          this.addNavItem("/pos");
           this.addNavItem("/product");
-          this.addNavItem("/coupon");
         }
         //support permission
         if(permissionIds.includes(4)){
           //remove employee, sales, analytical, product functionality
+          this.addNavItem("/coupon");
           this.addNavItem("/media");
           this.addNavItem("/userHistory");
           // later user transaction history page has to be implemented

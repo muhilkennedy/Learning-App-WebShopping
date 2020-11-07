@@ -127,12 +127,17 @@ export class PosComponent implements OnInit {
   options: any[] = new Array();
   filteredOptions: Observable<any[]>;
 
+  previousSearchTerm = '';
   getProducts(event: any){
     let searchTerm = '';
     searchTerm += event.target.value;
     console.log(searchTerm);
-    if (searchTerm.length === 2 || searchTerm.length === 4) {
-      this.productService.getProductByName(searchTerm)
+    this.getProductFromMatchingText(searchTerm);
+  }
+
+  getProductFromMatchingText(searchTerm){
+    if (searchTerm.length > 3 && this.previousSearchTerm !== searchTerm) {
+      this.productService.getProductByMatchingNameOrCode(searchTerm)
                           .subscribe((resp:any) => {
                             if(resp.statusCode  === 200){
                               this.options = resp.dataList;
@@ -144,6 +149,7 @@ export class PosComponent implements OnInit {
                             else{
                               this.alertService.error('Failed : ' + resp.errorMessages);
                             }
+                            this.previousSearchTerm = searchTerm;
                             this.loading = false;
                           },
                           (error:any) => {
@@ -152,13 +158,15 @@ export class PosComponent implements OnInit {
                           });
                         }
   }
+
   private _filter(value: string): string[] {
     if(value === undefined || value === "")
     {
       return;
     }
     const filterValue = value.toLowerCase();
-    return this.options.filter(option => (option.productName.toLowerCase().indexOf(filterValue) === 0));
+    return this.options.filter(option => (option.productName.toLowerCase().indexOf(filterValue) === 0 ||
+                                          option.productCode.toLowerCase().indexOf(filterValue) === 0));
   }
   convertToProductItem(option:any){
     let prod = new PosProduct();

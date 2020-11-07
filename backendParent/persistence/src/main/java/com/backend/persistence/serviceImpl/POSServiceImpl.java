@@ -11,8 +11,10 @@ import com.backend.core.service.BaseService;
 import com.backend.core.util.DBUtil;
 import com.backend.core.util.TenantUtil;
 import com.backend.persistence.dao.PosDao;
+import com.backend.persistence.entity.Product;
 import com.backend.persistence.helper.POSData;
 import com.backend.persistence.service.POSService;
+import com.backend.persistence.service.ProductService;
 
 /**
  * @author Muhil
@@ -27,13 +29,23 @@ public class POSServiceImpl implements POSService {
 	@Autowired
 	private PosDao posDao;
 	
+	@Autowired
+	private ProductService productService;
+	
 	@Override
-	public void createPOS(POSData data) throws Exception{
+	public void createPOS(POSData data) throws Exception {
 		data.setTimeCreated(CommonUtil.convertToUTC(data.getTimeCreated()));
 		JSONObject json = new JSONObject(data);
 		json.put(TenantUtil.Key_TenantId, baseService.getTenantInfo().getTenantID());
 		json.put(DBUtil.Key_PrimaryKey, posDao.getPOSKEY());
 		posDao.createPOS(json);
+		data.getPosProduct().stream().forEach(product -> {
+			Product actualProduct = productService.getProductById(product.getItemID());
+			if (actualProduct != null) {
+				actualProduct.setQuantityInStock(actualProduct.getQuantityInStock() - product.getQuantity());
+				productService.save(actualProduct);
+			}
+		});
 	}
 	
 	@Override

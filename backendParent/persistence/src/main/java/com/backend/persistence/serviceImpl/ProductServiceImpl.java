@@ -293,6 +293,11 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	@Override
+	public List<Product> searchProductsByMatchingNameOrCode(String searchTerm) {
+		return productRepo.findProductByNameOrCode(baseService.getTenantInfo(), searchTerm);
+	}
+	
+	@Override
 	public void addToFeaturedProducts(int pId) throws Exception {
 		productDao.addFeaturedProduct(pId);
 	}

@@ -29,6 +29,7 @@ export class ProductService {
   addFeaturedProductEndpoint = "/product/secure/admin/addFeaturedProducts";
   isFeaturedProductEndpoint = "/product/secure/admin/isFeaturedProducts";
   deleteFeaturedProductEndpoint = "/product/secure/admin/deleteFeaturedProducts";
+  getProductByMatchingNameOrCodeEndpoint = "/product/getProductsByNameOrCode";
 
   constructor(private http: HttpClient) { }
 
@@ -194,6 +195,17 @@ export class ProductService {
       }
     };
     return this.http.get(environment.backendBaseUrl+this.getProductByNameMatchingEndpoint, httpOptions);
+  }
+
+  getProductByMatchingNameOrCode(searchText){
+    let requestHeaders = new HttpHeaders().set('Content-Type', 'application/json')
+    const httpOptions = {
+      headers: requestHeaders,
+      params: {
+        searchTerm: searchText
+      }
+    };
+    return this.http.get(environment.backendBaseUrl+this.getProductByMatchingNameOrCodeEndpoint, httpOptions);
   }
 
   getFeaturedProducts(){

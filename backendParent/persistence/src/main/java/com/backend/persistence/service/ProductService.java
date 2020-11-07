@@ -68,4 +68,6 @@ public interface ProductService {
 
 	boolean isFeaturedProduct(int pId) throws Exception;
 
+	List<Product> searchProductsByMatchingNameOrCode(String searchTerm);
+
 }
