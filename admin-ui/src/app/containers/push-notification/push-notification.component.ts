@@ -52,6 +52,7 @@ export class PushNotificationComponent implements OnInit {
                             .subscribe((resp:any) => {
                               if(resp.statusCode === 200){
                                 this.notifications = resp.dataList;
+                                this.notificationCount -= 1;
                               }
                             });
   }

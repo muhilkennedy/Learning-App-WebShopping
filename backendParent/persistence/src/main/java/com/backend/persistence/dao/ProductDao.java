@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,8 @@ import com.backend.commons.util.SQLQueryHandler;
 import com.backend.core.service.BaseService;
 import com.backend.core.util.DBUtil;
 import com.backend.persistence.entity.Product;
+import com.backend.persistence.entity.ProductImages;
+import com.backend.persistence.helper.ProductPOJO;
 
 /**
  * @author Muhil
@@ -168,26 +169,36 @@ public class ProductDao {
 		}
 	}
 	
-	public List<Product> getFeaturedProducts() throws Exception {
-		List<Product> productList = new ArrayList<Product>();
+	public List<ProductPOJO> getFeaturedProducts() throws Exception {
+		List<ProductPOJO> productList = new ArrayList<ProductPOJO>();
 		try (Connection con = dbUtil.getConnectionInstance()) {
-			//.setAndCondition("active", "true", true)
 			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
-															.setQuery("select * from product as pi join homepagefeatured as fp where pi.productid = fp.productid ")
-															.setAndCondition("tenantid", baseService.getTenantInfo().getTenantID(), false)
+															.setQuery("select pi.productid, pi.productname, pi.brand, pi.cost, pi.offer, pi.description, pi.unitsinstock, im.image "
+																	+ "from product as pi join homepagefeatured as fp join productimages as im "
+																	+ "on pi.productid = fp.productid and pi.productid = im.productid and pi.active = true and im.primaryimage = true")
+															.setAndCondition("pi.tenantid", baseService.getTenantInfo().getTenantID(), true)
 															.build();
 															
 			PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
+				ProductPOJO pojo = new ProductPOJO();
+				
 				Product product = new Product();
-				product.setProductId(rs.getInt(3));
-				product.setProductName(rs.getString(4));
-				product.setBrandName(rs.getString(5));
-				product.setCost(rs.getBigDecimal(6));
-				product.setOffer(rs.getBigDecimal(7));
-				product.setProductDescription(rs.getString(8));
-				productList.add(product);
+				product.setProductId(rs.getInt(1));
+				product.setProductName(rs.getString(2));
+				product.setBrandName(rs.getString(3));
+				product.setCost(rs.getBigDecimal(4));
+				product.setOffer(rs.getBigDecimal(5));
+				product.setProductDescription(rs.getString(6));
+				product.setQuantityInStock(rs.getInt(7));
+				
+				ProductImages image = new ProductImages();
+				image.setImage(rs.getBlob(8));
+				
+				pojo.setProductContent(product);
+				pojo.setProductImage(image);
+				productList.add(pojo);
 			}
 			return productList;
 		} catch (Exception ex) {

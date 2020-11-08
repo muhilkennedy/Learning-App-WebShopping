@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.json.JSONObject;
@@ -12,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.backend.commons.util.CommonUtil;
 import com.backend.commons.util.SQLQueryHandler;
 import com.backend.core.service.BaseService;
 import com.backend.core.util.DBUtil;
@@ -80,6 +83,64 @@ public class PosDao {
 														  	.setLimit(limit)
 														  	.setOffset(offset)
 															.build();
+			PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				POSData data = new ObjectMapper().readValue(rs.getString(1), POSData.class);
+				json.add(data);
+			}
+			return json;
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+	}
+	
+	public List<POSData> getPOS (String tenantId, String limit, String offset, String condition , long date) throws Exception{
+		List<POSData> json = new ArrayList<POSData>();
+		Date curdate = new Date(date);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(curdate);
+		calendar.add(Calendar.DAY_OF_YEAR, 1);
+		date = CommonUtil.convertToUTC(date);
+		long nextDate = CommonUtil.convertToUTC(calendar.getTimeInMillis());
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			SQLQueryHandler sqlHandler = null;
+			switch(condition) {
+				case "eq" : sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+															.setQuery("select * from pointofsale")
+															.setWhereClause()
+															.setAndCondition("pos->\"$.tenantId\"", tenantId)
+															.andSetGreaterThanCondition("pos->\"$.timeCreated\"", date)
+															.andSetLessThanCondition("pos->\"$.timeCreated\"", nextDate)
+															.setOrderBy("pos->\"$.timeCreated\"")
+															.setSortOrder("desc")
+														  	.setLimit(limit)
+														  	.setOffset(offset)
+															.build();	
+							break;
+				case "lt" : sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+															.setQuery("select * from pointofsale")
+															.setWhereClause()
+															.setAndCondition("pos->\"$.tenantId\"", tenantId)
+															.andSetLessThanCondition("pos->\"$.timeCreated\"", date)
+															.setOrderBy("pos->\"$.timeCreated\"")
+															.setSortOrder("desc")
+														  	.setLimit(limit)
+														  	.setOffset(offset)
+															.build();
+							break;
+				case "gt" : sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+															.setQuery("select * from pointofsale")
+															.setWhereClause()
+															.setAndCondition("pos->\"$.tenantId\"", tenantId)
+															.andSetGreaterThanCondition("pos->\"$.timeCreated\"", date)
+															.setOrderBy("pos->\"$.timeCreated\"")
+															.setSortOrder("desc")
+														  	.setLimit(limit)
+														  	.setOffset(offset)
+															.build();
+			}
 			PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {

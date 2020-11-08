@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { ProductService } from '../../../shared/product/product.service';
+import { AlertService } from '../../../shared/_alert';
 
 @Component({
   selector: 'app-product-list',
@@ -45,7 +48,16 @@ export class ProductListComponent implements OnInit {
         selectedItems: any = [];
         dropdownSettings: any = {};
 
-  constructor(private productService: ProductService, private fb: FormBuilder, private route:Router) { }
+   //autoComplete
+  myControl = new FormControl('', [
+    Validators.required
+  ]);
+  options: any[] = new Array();
+  filteredOptions: Observable<any[]>;
+  previousSearchTerm = '';
+
+  constructor(private productService: ProductService, private alertService: AlertService,
+              private fb: FormBuilder, private route:Router) { }
 
   ngOnInit(): void {
     this.filterloading = true;
@@ -55,12 +67,12 @@ export class ProductListComponent implements OnInit {
                             this.categories = resp.dataList;
                           }
                           else{
-                            alert("failed")
+                            this.alertService.error('Failed : ' + resp.errorMessages);
                           }
                           this.filterloading = false;
                         },
                         (error:any) => {
-                          alert("error");
+                          this.alertService.error('Something went wrong!');
                         });
 
     this.setProducts();
@@ -89,12 +101,12 @@ export class ProductListComponent implements OnInit {
                             this.products = resp.dataList;
                           }
                           else{
-                            alert("failed")
+                            this.alertService.error('Failed : ' + resp.errorMessages);
                           }
                           this.loading = false;
                         },
                         (error:any) => {
-                          alert("error");
+                          this.alertService.error('Something went wrong!');
                         });
   }
 
@@ -105,11 +117,11 @@ export class ProductListComponent implements OnInit {
                           this.totalRecords = resp.data.productCount;
                         }
                         else{
-                          alert("failed")
+                          this.alertService.error('Failed : ' + resp.errorMessages);
                         }
                       },
                       (error:any) => {
-                        alert("error");
+                        this.alertService.error('Something went wrong');
                       });
   }
 
@@ -192,12 +204,54 @@ export class ProductListComponent implements OnInit {
                             this.setProducts();
                           }
                           else{
-                            alert("failed")
+                            this.alertService.error('Failed : ' + resp.errorMessages);
                           }
                         },
                         (error:any) => {
-                          alert("error");
+                          this.alertService.error('Something went wrong');
                         });
+  }
+
+  getProducts(event: any){
+    let searchTerm = '';
+    searchTerm += event.target.value;
+    console.log(searchTerm);
+    this.getProductFromMatchingText(searchTerm);
+  }
+
+  getProductFromMatchingText(searchTerm){
+    if (searchTerm.length > 3 && this.previousSearchTerm !== searchTerm) {
+      this.productService.getProductByMatchingNameOrCode(searchTerm)
+                          .subscribe((resp:any) => {
+                            if(resp.statusCode  === 200){
+                              this.products = resp.dataList;
+                              this.options = resp.dataList;
+                              this.filteredOptions = this.myControl.valueChanges.pipe(
+                                startWith(''),
+                                map(value => this._filter(value))
+                              );
+                            }
+                            else{
+                              this.alertService.error('Failed : ' + resp.errorMessages);
+                            }
+                            this.previousSearchTerm = searchTerm;
+                            this.loading = false;
+                          },
+                          (error:any) => {
+                            this.alertService.error("something went wrong!");
+                            this.loading = false;
+                          });
+                        }
+  }
+
+  private _filter(value: string): string[] {
+    if(value === undefined || value === "")
+    {
+      return;
+    }
+    const filterValue = value.toLowerCase();
+    return this.options.filter(option => (option.productName.toLowerCase().indexOf(filterValue) === 0 ||
+                                          option.productCode.toLowerCase().indexOf(filterValue) === 0));
   }
 
 }

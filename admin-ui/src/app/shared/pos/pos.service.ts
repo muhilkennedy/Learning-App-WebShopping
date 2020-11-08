@@ -29,12 +29,16 @@ export class PosService {
     return this.http.post(environment.backendBaseUrl+this.createPOSEndpoint, body, httpOptions);
    }
 
-   getPOSData(limit, offset){
+   getPOSData(limit, offset, dateCondition, date){
     let requestHeaders = new HttpHeaders().set('Content-Type', 'application/json')
                                           .append('Offset', offset)
                                           .append('Limit', limit);
     const httpOptions = {
-      headers: requestHeaders
+      headers: requestHeaders,
+      params: {
+        filterCondition: dateCondition,
+        filterDate: date
+      }
     }
     return this.http.get(environment.backendBaseUrl+this.getPOSdataEndpoint, httpOptions);
    }

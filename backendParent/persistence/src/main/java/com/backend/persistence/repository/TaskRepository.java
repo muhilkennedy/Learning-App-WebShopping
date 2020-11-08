@@ -1,6 +1,5 @@
 package com.backend.persistence.repository;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -40,6 +39,6 @@ public interface TaskRepository extends JpaRepository<Task, Integer>{
 	void deleteTask(@Param("tenant") Tenant tenant, @Param("employee") EmployeeInfo employee, @Param("id") int id);
 
 	@Query(findAllOverdueTasksQuery)
-	List<Task> findAllOverdueTasks(@Param("tenant") Tenant tenant, @Param("endDate") Date endDate);
+	List<Task> findAllOverdueTasks(@Param("tenant") Tenant tenant, @Param("endDate") long endDate);
 	
 }

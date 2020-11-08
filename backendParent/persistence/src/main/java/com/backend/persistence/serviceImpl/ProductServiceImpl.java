@@ -18,6 +18,7 @@ import com.backend.persistence.entity.Category;
 import com.backend.persistence.entity.EmployeeInfo;
 import com.backend.persistence.entity.Product;
 import com.backend.persistence.entity.ProductImages;
+import com.backend.persistence.helper.ProductPOJO;
 import com.backend.persistence.repository.ProductImagesRepository;
 import com.backend.persistence.repository.ProductRepository;
 import com.backend.persistence.service.CategoryService;
@@ -151,7 +152,7 @@ public class ProductServiceImpl implements ProductService {
 			actualProduct.setDeleted(true);
 			// resetting product code to avoid unique constraint error(product code will be proper for one product entry at any point of time)
 			actualProduct.setProductCode(actualProduct.getProductCode() + ":" + System.currentTimeMillis());
-			actualProduct.setLastModified(new Date().getTime());
+			actualProduct.setLastModified(CommonUtil.convertToUTC(new Date().getTime()));
 			actualProduct.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
 			saveAndFlush(actualProduct);
 			// create new Product with old details
@@ -173,15 +174,20 @@ public class ProductServiceImpl implements ProductService {
 			if (product.getCost() != null && product.getCost().doubleValue() > 0) {
 				newProduct.setCost(product.getCost());
 			}
-			if (product.getOffer() != null && product.getOffer().floatValue() > 0) {
+			if (product.getOffer() != null && product.getOffer().floatValue() >= 0) {
 				newProduct.setOffer(product.getOffer());
 			}
 			if (product.getQuantityInStock() >= 0) {
 				newProduct.setQuantityInStock(product.getQuantityInStock());
 			}
 			//copy product images
+			actualProduct.setProductImages(null);
+			List<ProductImages> images = imageRepo.findAllImagesForProduct(baseService.getTenantInfo(), actualProduct);
+			images.parallelStream().forEach(image -> {
+				image.setProductId(newProduct);
+			});
 			newProduct.setTenant(actualProduct.getTenant());
-			newProduct.setLastModified(new Date().getTime());
+			newProduct.setLastModified(CommonUtil.convertToUTC(new Date().getTime()));
 			newProduct.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
 			save(newProduct);
 			product = newProduct;
@@ -197,7 +203,7 @@ public class ProductServiceImpl implements ProductService {
 			newProduct.setProductDescription(product.getProductDescription());
 			newProduct.setProductCode(product.getProductCode());
 			newProduct.setQuantityInStock(product.getQuantityInStock());
-			newProduct.setLastModified(new Date().getTime());
+			newProduct.setLastModified(CommonUtil.convertToUTC(new Date().getTime()));
 			newProduct.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
 			newProduct.setTenant(baseService.getTenantInfo());
 			save(newProduct);
@@ -209,6 +215,7 @@ public class ProductServiceImpl implements ProductService {
 				prodImages.setImage(new SerialBlob(CommonUtil.getProductImage(productPic)));
 				prodImages.setProductId(newProduct);
 				prodImages.setTenant(baseService.getTenantInfo());
+				prodImages.setPrimaryImage(true);
 				productImages.add(prodImages);
 				newProduct.setProductImages(productImages);
 				save(newProduct);
@@ -224,6 +231,8 @@ public class ProductServiceImpl implements ProductService {
 		products.stream().forEach(product -> {
 			product.setActive(false);
 			product.setDeleted(true);
+			product.setLastModified(CommonUtil.convertToUTC(new Date().getTime()));
+			product.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
 			save(product);
 		});
 	}
@@ -256,6 +265,9 @@ public class ProductServiceImpl implements ProductService {
 		ProductImages images = new ProductImages();
 		images.setImage(new SerialBlob(CommonUtil.getProductImage(productPic)));
 		images.setProductId(product);
+		if(imageRepo.getProductCount(baseService.getTenantInfo(), product) <= 0) {
+			images.setPrimaryImage(true);
+		}
 		images.setTenant(baseService.getTenantInfo());
 		imageRepo.save(images);
 	}
@@ -282,7 +294,7 @@ public class ProductServiceImpl implements ProductService {
 			throw new Exception("Product Not Found!");
 		}
 		product.setActive(status);
-		product.setLastModified(new Date().getTime());
+		product.setLastModified(CommonUtil.convertToUTC(new Date().getTime()));
 		product.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
 		save(product);
 	}
@@ -303,7 +315,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	@Override
-	public List<Product> getFeaturedProducts() throws Exception {
+	public List<ProductPOJO> getFeaturedProducts() throws Exception {
 		return productDao.getFeaturedProducts();
 	}
 	

@@ -8,6 +8,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.backend.commons.util.CommonUtil;
 import com.backend.core.service.BaseService;
 import com.backend.persistence.entity.EmployeeInfo;
 import com.backend.persistence.entity.Task;
@@ -105,7 +106,7 @@ public class TaskServiceImpl implements TaskService {
 	
 	@Override
 	public List<Task> findAllOverdueTasks() {
-		return taskRepo.findAllOverdueTasks(baseService.getTenantInfo(), new Date());
+		return taskRepo.findAllOverdueTasks(baseService.getTenantInfo(), CommonUtil.convertToIST(new Date().getTime()));
 	}
 
 }

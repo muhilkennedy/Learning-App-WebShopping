@@ -16,7 +16,7 @@
                 <option value="lt">less than</option>
                 <option value="gt">greater than</option>
               </select>
-              <input type="date" id="searchDate" name="searchDate" />
+              <input type="date" [(ngModel)]="filterDate" id="searchDate" name="searchDate" (change)="fireDatefilter()"/>
             </td>
             <td>
             </td>

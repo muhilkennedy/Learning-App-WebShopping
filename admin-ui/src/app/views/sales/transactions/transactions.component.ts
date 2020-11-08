@@ -15,6 +15,7 @@ export class TransactionsComponent implements OnInit {
   posDataList: any[];
   selectedProductList: any[] = new Array();
   dateCondition = 'eq';
+  filterDate: Date;
 
   // MatPaginator Inputs
   offset = 0;
@@ -33,19 +34,19 @@ export class TransactionsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getPosData();
+    this.getPosData(null, 0);
   }
 
   action(event:any){
     this.pageSize = event.pageSize;
     let pageIndex:number = event.pageIndex;
     this.offset = pageIndex * this.pageSize;
-    this.getPosData();
+    this.getPosData(this.dateCondition, new Date(this.filterDate).getTime());
   }
 
-  getPosData(){
+  getPosData(dateCondition: string, filterDate: number){
     this.loading = true;
-    this.posService.getPOSData(this.pageSize, this.offset)
+    this.posService.getPOSData(this.pageSize, this.offset, dateCondition, filterDate)
                     .subscribe((resp:any) => {
                       if(resp.statusCode === 200){
                         this.posDataList = resp.dataList;
@@ -70,6 +71,10 @@ export class TransactionsComponent implements OnInit {
 
   changeDateCondition(event){
     this.dateCondition = event.target.value;
+  }
+
+  fireDatefilter(){
+    this.getPosData(this.dateCondition, new Date(this.filterDate).getTime());
   }
 
 }

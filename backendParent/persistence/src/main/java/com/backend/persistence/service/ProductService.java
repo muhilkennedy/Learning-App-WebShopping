@@ -8,6 +8,7 @@ import javax.sql.rowset.serial.SerialException;
 import com.backend.persistence.entity.Category;
 import com.backend.persistence.entity.Product;
 import com.backend.persistence.entity.ProductImages;
+import com.backend.persistence.helper.ProductPOJO;
 
 public interface ProductService {
 
@@ -62,7 +63,7 @@ public interface ProductService {
 
 	void addToFeaturedProducts(int pId) throws Exception;
 
-	List<Product> getFeaturedProducts() throws Exception;
+	List<ProductPOJO> getFeaturedProducts() throws Exception;
 
 	void deleteFeaturedProduct(int pId) throws Exception;
 
