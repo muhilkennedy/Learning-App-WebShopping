@@ -76,6 +76,9 @@ public class Product implements Serializable {
 	
 	@Column(name = "ISDELETED")
 	private boolean isDeleted;
+	
+	@Column(name = "PRODUCTRATING")
+	private int productRating;
 
 	@OneToMany(mappedBy = "productId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<ProductImages> productImages;
@@ -204,6 +207,14 @@ public class Product implements Serializable {
 		this.isDeleted = isDeleted;
 	}
 	
+	public int getProductRating() {
+		return productRating;
+	}
+
+	public void setProductRating(int productRating) {
+		this.productRating = productRating;
+	}
+
 	@PrePersist
 	private void prePersistCheck() {
 		// A deleted product will be deactivated always

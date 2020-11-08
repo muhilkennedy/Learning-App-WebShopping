@@ -10,6 +10,6 @@ public interface POSService {
 
 	void createPOS(POSData data) throws Exception;
 
-	List<POSData> getPOSDATA(String limit, String offset) throws Exception;
+	List<POSData> getPOSDATA(String limit, String offset, String condition, long date) throws Exception;
 
 }

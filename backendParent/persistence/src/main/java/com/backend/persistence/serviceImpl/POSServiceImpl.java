@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.backend.commons.util.CommonUtil;
+import com.backend.commons.util.SQLQueryHandler;
 import com.backend.core.service.BaseService;
 import com.backend.core.util.DBUtil;
 import com.backend.core.util.TenantUtil;
@@ -54,7 +55,10 @@ public class POSServiceImpl implements POSService {
 	}
 	
 	@Override
-	public List<POSData> getPOSDATA (String limit, String offset) throws Exception{
+	public List<POSData> getPOSDATA (String limit, String offset, String condition, long date) throws Exception{
+		if(CommonUtil.isValidStringParam(condition) && date > 0L) {
+			return posDao.getPOS(baseService.getTenantInfo().getTenantID(), limit, offset, condition, date);
+		}
 		return posDao.getPOS(baseService.getTenantInfo().getTenantID(), limit, offset);
 	}
 

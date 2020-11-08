@@ -274,7 +274,7 @@ export class PosComponent implements OnInit {
     let discount = 0;
     this.itemList.forEach(item => {
       if(item != null || item != undefined){
-        discount += (item.mrp * item.discount) / 100;
+        discount += ((item.mrp * item.discount) / 100 ) * item.quantity;
       }
     })
     if(discount >= 0){

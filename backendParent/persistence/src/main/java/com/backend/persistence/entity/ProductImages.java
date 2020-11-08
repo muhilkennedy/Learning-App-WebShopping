@@ -46,6 +46,9 @@ public class ProductImages implements Serializable{
 	@Column(name = "IMAGE")
 	private Blob image;
 	
+	@Column(name = "PRIMARYIMAGE")
+	private boolean primaryImage;
+	
 	public ProductImages() {
 		super();
 	}
@@ -99,6 +102,14 @@ public class ProductImages implements Serializable{
 
 	public void setImage(Blob image) {
 		this.image = image;
+	}
+
+	public boolean isPrimaryImage() {
+		return primaryImage;
+	}
+
+	public void setPrimaryImage(boolean primaryImage) {
+		this.primaryImage = primaryImage;
 	}
 	
 }

@@ -24,6 +24,7 @@ public interface ProductImagesRepository extends JpaRepository<ProductImages, In
 	String findAllImagesForProductQuery = "select pi from ProductImages pi where pi.tenant = :tenant and pi.productId = :pId";
 	String findImageByIdQuery  = "select pi from ProductImages pi where pi.tenant = :tenant and pi.pImagesId = :imageId";
 	String deleteByIdQuery = "delete from ProductImages pi where pi.tenant = :tenant and pi.pImagesId = :imageId";
+	String getProductCountByIdQuery = "select count(*) from ProductImages pi where pi.tenant = :tenant and pi.productId = :pId";
 	
 	@Query(findAllImagesForProductQuery)
 	List<ProductImages> findAllImagesForProduct(@Param("tenant") Tenant realm, @Param("pId") Product product);
@@ -35,5 +36,8 @@ public interface ProductImagesRepository extends JpaRepository<ProductImages, In
 	@Cascade(CascadeType.DELETE)
 	@Query(deleteByIdQuery)
 	void deleteById(@Param("tenant") Tenant realm, @Param("imageId") int imageId);
+	
+	@Query(getProductCountByIdQuery)
+	int getProductCount(@Param("tenant") Tenant realm, @Param("pId") Product product);
 
 }

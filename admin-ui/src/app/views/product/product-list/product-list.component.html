@@ -10,6 +10,17 @@
           <table class="table table-responsive-sm filterbar">
             <tr>
               <td>
+                <input type="text" *ngIf="searchByProduts"
+                      class="form-control"  placeholder="Product Name/Code"
+                      id="pname" name="pname"
+                      [formControl]="myControl"
+                      [matAutocomplete]="auto"
+                      (keyup)="getProducts($event)">
+                <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" >
+                  <mat-option *ngFor="let option of filteredOptions | async" >
+                    {{option.productName}}
+                  </mat-option>
+                </mat-autocomplete>
                 <form [formGroup]="myForm" *ngIf="!searchByProduts">
                   <ng-multiselect-dropdown
                       name="category"
@@ -60,9 +71,10 @@
   </div>
   <div class="row">
 </div>
+<alert class="p-4 text-center"></alert>
 <div class="row">
   <div class="col-md-3 col-sm-4" *ngFor="let prod of products">
-    <div class="card">
+    <div class="card" [ngClass]="{'outofstock': !(prod.quantityInStock > 0)}">
       <ngx-loading [show]="loading"></ngx-loading>
       <div class="card-body" >
         <i class="expandicon float-right fa fa-expand" (click)="editProduct(prod.productId)" ></i>
