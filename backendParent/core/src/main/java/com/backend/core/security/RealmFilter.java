@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,7 @@ public class RealmFilter implements Filter {
 				chain.doFilter(request, response);
 			}
 			// incase of socket request seperate interceptor will handle header parsing and realm initialization.
-			else if(req.getRequestURI().contains("/wsocket") || req.getRequestURI().contains("socket") ) {
+			else if(req.getRequestURI().contains("wsocket") || req.getRequestURI().contains("socket")) {
 				chain.doFilter(req, res);
 			}
 			// Incase of prod mode both tenantId and Origin url mandatory.
@@ -90,6 +91,19 @@ public class RealmFilter implements Filter {
 					}
 
 				}
+				//incase of successfull google redirect tenant information is not required
+				else if(req.getRequestURI().equals("/social/googleredirect") && StringUtils.isNotEmpty(req.getParameter("code"))) {
+					if(req.getParameter("state") != null) {
+						JSONObject json = new JSONObject(req.getParameter("state"));
+						tenantId = json.getString("TenantId");
+						chain.doFilter(request, response);
+					}
+					else {
+						((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST,
+								"Redirect URL missing state param");
+						return;
+					}					
+				}
 				else {
 					((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST,
 							"Required Headers Missing");
@@ -107,22 +121,19 @@ public class RealmFilter implements Filter {
 				}*/
 				
 			} else {
-				if (StringUtils.isNotEmpty(req.getHeader(Constants.Header_TenantId))) {
-					tenantId = req.getHeader(Constants.Header_TenantId);
-					if (TenantUtil.isTenantActive(tenantId)) {
-						//setSession(tenantId, req);
-						baseService.setTenantInfo(TenantUtil.getTenantInfo(tenantId));
-						chain.doFilter(request, response);
-					} else {
-						((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
-								"Tenant is Disabled");
-						return;
+				logger.info("Requested URI : " + req.getRequestURI());
+				tenantId = req.getHeader(Constants.Header_TenantId);
+				if(StringUtils.isEmpty(tenantId)) {
+					if(req.getParameter("state") != null) {
+						JSONObject json = new JSONObject(req.getParameter("state"));
+						tenantId = json.getString("TenantId");
 					}
-				} else {
-					((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST,
-							"TenantId Header is Missing");
-					return;
+					else {
+						tenantId = "devTenant";
+					}
 				}
+				baseService.setTenantInfo(TenantUtil.getTenantInfo(tenantId));
+				chain.doFilter(request, response);
 			}
 		} catch (Exception ex) {
 			((HttpServletResponse) response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());

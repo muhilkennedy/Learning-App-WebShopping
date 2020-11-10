@@ -51,15 +51,7 @@ export class ProductEditComponent implements OnInit {
     this.productService.getProductsByIds(this.productId)
                        .subscribe((resp:any) => {
                           if(resp.statusCode === 200){
-                            this.categoryId = resp.dataList[0].categoryId.categoryId;
-                            this.pName = resp.dataList[0].productName;
-                            this.brand = resp.dataList[0].brandName;
-                            this.cost = resp.dataList[0].cost;
-                            this.offer = resp.dataList[0].offer;
-                            this.pDescription = resp.dataList[0].productDescription;
-                            this.productActive = resp.dataList[0].active;
-                            this.unitsInStock = resp.dataList[0].quantityInStock;
-                            this.pCode = resp.dataList[0].productCode;
+                            this.setProductData(resp);
                           }
                        },
                        (error:any)=>{
@@ -67,6 +59,19 @@ export class ProductEditComponent implements OnInit {
                        })
     this.setSliderImages();
     this.isFeaturedProduct();
+  }
+
+  setProductData(resp:any){
+    this.categoryId = resp.dataList[0].categoryId.categoryId;
+    this.pName = resp.dataList[0].productName;
+    this.brand = resp.dataList[0].brandName;
+    this.cost = resp.dataList[0].cost;
+    this.offer = resp.dataList[0].offer;
+    this.pDescription = resp.dataList[0].productDescription;
+    this.productActive = resp.dataList[0].active;
+    this.unitsInStock = resp.dataList[0].quantityInStock;
+    this.pCode = resp.dataList[0].productCode;
+    this.productId = resp.dataList[0].productId;
   }
 
   toggleFeaturedProduct(){
@@ -158,7 +163,10 @@ export class ProductEditComponent implements OnInit {
                         this.unitsInStock)
                         .subscribe((resp:any) => {
                           if(resp.statusCode  === 200){
-                            this.alertService.success('Product created succesfully');
+                            this.alertService.success('Product updated succesfully');
+                            this.alertService.info('Please note a new product will be created for every update and the previous version will be deactivated!');
+                            this.setProductData(resp);
+                            this.featuredProduct = false;
                           }
                           else{
                             this.alertService.error('Failed : ' + resp.errorMessages);

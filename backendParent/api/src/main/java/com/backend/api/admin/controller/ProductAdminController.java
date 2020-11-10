@@ -1,6 +1,7 @@
 package com.backend.api.admin.controller;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -71,7 +72,7 @@ public class ProductAdminController {
 					CommonUtil.isValidStringParam(offer) ? Integer.parseInt(catId) : 0,
 					file != null ? file.getBytes() : null);
 			if (product != null) {
-				response.setData(product);
+				response.setDataList(Arrays.asList(product));
 				response.setStatus(Response.Status.OK);
 			} else {
 				response.setErrorMessages(Arrays.asList("Failed To Create Product!"));
