@@ -78,5 +78,10 @@ public class BaseController {
 		return response;
 	}
 	
+	@RequestMapping("/social/google")
+	public String test(HttpServletRequest request) {
+		return "hello";
+	}
+	
 
 }

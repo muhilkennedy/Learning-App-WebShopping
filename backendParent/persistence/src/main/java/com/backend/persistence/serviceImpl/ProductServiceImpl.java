@@ -189,7 +189,10 @@ public class ProductServiceImpl implements ProductService {
 			newProduct.setTenant(actualProduct.getTenant());
 			newProduct.setLastModified(CommonUtil.convertToUTC(new Date().getTime()));
 			newProduct.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
-			save(newProduct);
+			saveAndFlush(newProduct);
+			if(productDao.isFeaturedProduct(actualProduct.getProductId())) {
+				productDao.deleteFeaturedProduct(actualProduct.getProductId());
+			}
 			product = newProduct;
 		} else {
 			// create new product
@@ -218,8 +221,8 @@ public class ProductServiceImpl implements ProductService {
 				prodImages.setPrimaryImage(true);
 				productImages.add(prodImages);
 				newProduct.setProductImages(productImages);
-				save(newProduct);
 				product = newProduct;
+				save(newProduct);
 			}
 		}
 		return product;
