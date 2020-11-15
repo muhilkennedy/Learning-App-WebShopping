@@ -117,7 +117,8 @@ export class TenantInitializer {
                   this.tenantStore.tenantPin = tenantDetails.tenantPin;
                   this.tenantStore.tenantContact = tenantDetails.tenantContact;
                   this.tenantStore.businessEmail = tenantDetails.businessEmail;
-
+                  this.tenantStore.tenantGstIn = tenantDetails.gstIn;
+                  //load app only if tenant is active.
                   if(this.tenantStore.tenantActive){
                      resolve();
                   }
@@ -126,13 +127,6 @@ export class TenantInitializer {
                     console.log("error in loading tenant");
                 }
               );
-          //load app only if tenant is active.
-          // setTimeout(() => {
-          //   if(this.tenantStore.tenantActive === true){
-          //     resolve();
-          //   }
-          // }, 3000);
-          // resolve();
     });
   }
 }

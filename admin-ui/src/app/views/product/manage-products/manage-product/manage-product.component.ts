@@ -38,6 +38,11 @@ export class ManageProductComponent implements OnInit {
     options: any[];
     filteredOptions: Observable<any[]>;
 
+   alertOptions = {
+      autoClose: true,
+      keepAfterRouteChange: false
+   };
+
   constructor(private sanitizer: DomSanitizer, private productService: ProductService,
               private alertService: AlertService) {
     this.loading = true;
@@ -119,7 +124,7 @@ export class ManageProductComponent implements OnInit {
                         this.unitsInStock)
                         .subscribe((resp:any) => {
                           if(resp.statusCode  === 200){
-                            this.alertService.success('Product created succesfully');
+                            this.alertService.success('Product created succesfully', this.alertOptions);
                           }
                           else{
                             this.alertService.error('Failed : ' + resp.errorMessages);

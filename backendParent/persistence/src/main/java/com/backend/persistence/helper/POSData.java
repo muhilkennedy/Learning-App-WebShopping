@@ -8,11 +8,13 @@ import java.util.List;
  */
 public class POSData {
 
+	public static String Key_CreatedBy = "createdBy";
+	
 	private String primaryKey;
 	private String tenantId;
 	private String mobile;
 	private long timeCreated;
-	private int createdBy;
+	private String createdBy;
 	private String paymentMode;
 	private String subTotal;
 	private List<PosProduct> posProduct;
@@ -21,11 +23,11 @@ public class POSData {
 		return tenantId;
 	}
 
-	public int getCreatedBy() {
+	public String getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(int createdBy) {
+	public void setCreatedBy(String createdBy) {
 		this.createdBy = createdBy;
 	}
 

@@ -38,6 +38,7 @@ import org.springframework.stereotype.Service;
 import com.backend.commons.configuration.SpringSocialProperties;
 import com.backend.core.service.BaseService;
 import com.backend.core.util.ConfigUtil;
+import com.backend.core.util.DashboardStatusUtil;
 
 /**
  * @author muhil
@@ -144,6 +145,7 @@ public class EmailUtil {
 						logger.debug("sendEmail :: Sending email to Recipient - " + recipient);
 						Transport.send(message);
 						logger.debug("sendEmail :: Email sent Successfully to Recipient - " + recipient);
+						DashboardStatusUtil.incrementEmailCount(baseService.getTenantInfo());
 					} catch (Exception ex) {
 						logger.debug("sendEmail :: Error sending mail to Recipient - " + recipient);
 					}

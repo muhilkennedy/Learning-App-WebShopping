@@ -48,7 +48,8 @@ public class TenantController {
 			@RequestParam(value = "tenantPin", required = false) String tenantPin, @RequestParam(value = "tenantTwitter", required = false) String tenantTwitter,
 			@RequestParam(value = "tenantFacebook", required = false) String tenantFacebook, @RequestParam(value = "tenantInsta", required = false) String tenantInsta,
 			@RequestParam(value = "businessEmail", required = false) String businessEmail, @RequestParam(value = "tenantCity", required = false) String tenantCity,
-			@RequestParam(value = "businessEmailPassword", required = false) String businessEmailPassword) {
+			@RequestParam(value = "businessEmailPassword", required = false) String businessEmailPassword,
+			@RequestParam(value = "gstIn", required = false) String gst) {
 		GenericResponse<String> response = new GenericResponse<>();
 		try {
 			TenantDetails tenantDetail = new TenantDetails();
@@ -66,6 +67,7 @@ public class TenantController {
 			tenantDetail.setTenantTwitter(tenantTwitter);
 			tenantDetail.setTenantInsta(tenantInsta);
 			tenantDetail.setTenantStreet(tenantStreet);
+			tenantDetail.setGstIn(gst);
 			tenantService.updateTenantDetails(tenantDetail, file != null ? CommonUtil.getThumbnailImage(file.getBytes()) : null);
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {

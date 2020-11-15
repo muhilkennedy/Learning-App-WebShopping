@@ -32,6 +32,7 @@
   <thead class="thead-light">
     <tr>
       <th>ID</th>
+      <th>Billed By</th>
       <th>Txn Time</th>
       <th>Payment Mode</th>
       <th>Customer Mobile</th>
@@ -43,6 +44,9 @@
     <tr *ngFor="let pos of posDataList">
       <td>
         {{pos.primaryKey}}
+      </td>
+      <td>
+        {{pos.createdBy}}
       </td>
       <td>
         {{pos.timeCreated | date: 'dd/MM/yyyy hh:mm a'}}

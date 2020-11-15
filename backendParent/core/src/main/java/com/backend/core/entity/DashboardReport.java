@@ -56,6 +56,9 @@ public class DashboardReport implements Serializable{
 	
 	@Column(name = "ONINETODAY")
 	private int onlineCountToday;
+	
+	@Column(name = "TOTALCUSTOMERS")
+	private int totalCustomers;
 
 	public DashboardReport() {
 		super();
@@ -144,6 +147,14 @@ public class DashboardReport implements Serializable{
 
 	public void setOnlineCountToday(int onlineCountToday) {
 		this.onlineCountToday = onlineCountToday;
+	}
+
+	public int getTotalCustomers() {
+		return totalCustomers;
+	}
+
+	public void setTotalCustomers(int totalCustomers) {
+		this.totalCustomers = totalCustomers;
 	}
 
 }
