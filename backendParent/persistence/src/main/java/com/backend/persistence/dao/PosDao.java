@@ -71,6 +71,22 @@ public class PosDao {
 		}
 	}
 	
+	public int getPOSCount (String tenantId) throws Exception{
+		int count = 0;
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			PreparedStatement stmt = con.prepareStatement("select count(*) from pointofsale where pos->\"$.tenantId\" = ?");
+			stmt.setString(1, tenantId);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				count = rs.getInt(1);
+			}
+			return count;
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+	}
+	
 	public List<POSData> getPOS (String tenantId, String limit, String offset) throws Exception{
 		List<POSData> json = new ArrayList<POSData>();
 		try (Connection con = dbUtil.getConnectionInstance()) {

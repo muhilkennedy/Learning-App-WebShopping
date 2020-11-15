@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.PingInfo;
 import com.backend.api.messages.Response;
+import com.backend.core.entity.EmployeeInfo;
 import com.backend.core.entity.HomePageMedia;
 import com.backend.core.service.BaseService;
 import com.backend.core.service.HomeMediaService;
 import com.backend.core.util.Constants;
-import com.backend.persistence.entity.EmployeeInfo;
 import com.backend.persistence.service.EmployeeService;
 
 

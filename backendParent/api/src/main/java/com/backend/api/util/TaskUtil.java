@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.backend.api.admin.messages.TaskPOJO;
-import com.backend.persistence.entity.EmployeeInfo;
+import com.backend.core.entity.EmployeeInfo;
 import com.backend.persistence.entity.Task;
 
 public class TaskUtil {

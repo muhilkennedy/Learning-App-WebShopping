@@ -21,4 +21,8 @@ public interface BaseService {
 
 	void clear();
 
+	String getOrigin();
+
+	void setOrigin(String origin);
+
 }

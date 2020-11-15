@@ -43,6 +43,11 @@ public class TenantServiceImpl implements TenantService {
 	}
 	
 	@Override
+	public void saveAndFlush(Tenant tenant){
+		tenantRepo.saveAndFlush(tenant);
+	}
+	
+	@Override
 	public void saveTenantDetail(TenantDetails tenantDetail) {
 		tenantDetailsRepo.save(tenantDetail);
 	}

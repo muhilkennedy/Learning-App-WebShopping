@@ -24,11 +24,11 @@ import com.backend.api.messages.Response;
 import com.backend.api.service.LoginService;
 import com.backend.commons.service.EmailService;
 import com.backend.commons.util.RSAUtil;
+import com.backend.core.entity.EmployeeInfo;
+import com.backend.core.entity.EmployeePermissions;
 import com.backend.core.service.BaseService;
 import com.backend.core.serviceImpl.CacheService;
 import com.backend.core.util.Constants;
-import com.backend.persistence.entity.EmployeeInfo;
-import com.backend.persistence.entity.EmployeePermissions;
 import com.backend.persistence.service.EmployeeService;
 
 /**

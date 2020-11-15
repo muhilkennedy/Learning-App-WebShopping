@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.backend.commons.util.CommonUtil;
-import com.backend.commons.util.SQLQueryHandler;
 import com.backend.core.service.BaseService;
 import com.backend.core.util.DBUtil;
+import com.backend.core.util.DashboardStatusUtil;
 import com.backend.core.util.TenantUtil;
 import com.backend.persistence.dao.PosDao;
 import com.backend.persistence.entity.Product;
@@ -47,6 +47,7 @@ public class POSServiceImpl implements POSService {
 				productService.save(actualProduct);
 			}
 		});
+		DashboardStatusUtil.incrementPosCount(baseService.getTenantInfo());
 	}
 	
 	@Override

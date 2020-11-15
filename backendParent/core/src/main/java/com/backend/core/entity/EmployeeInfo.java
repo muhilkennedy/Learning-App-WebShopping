@@ -1,4 +1,4 @@
-package com.backend.persistence.entity;
+package com.backend.core.entity;
 
 import java.io.InputStream;
 import java.io.Serializable;
@@ -21,7 +21,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.backend.core.entity.Tenant;
 import com.backend.core.interfaces.User;
 import com.backend.core.util.Constants;
 import com.fasterxml.jackson.annotation.JsonIgnore;

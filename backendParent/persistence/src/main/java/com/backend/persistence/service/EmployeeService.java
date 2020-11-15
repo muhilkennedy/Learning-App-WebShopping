@@ -2,9 +2,9 @@ package com.backend.persistence.service;
 
 import java.util.List;
 
-import com.backend.persistence.entity.EmployeeInfo;
-import com.backend.persistence.entity.EmployeePermissions;
-import com.backend.persistence.entity.EmployeePermissionsMap;
+import com.backend.core.entity.EmployeeInfo;
+import com.backend.core.entity.EmployeePermissions;
+import com.backend.core.entity.EmployeePermissionsMap;
 
 public interface EmployeeService {
 

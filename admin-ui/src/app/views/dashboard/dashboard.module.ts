@@ -15,6 +15,7 @@ import { AlertModule } from '../../shared/_alert';
 import { TaskModule } from '../task/task.module';
 import { TenantDetailsComponent } from './components/tenant-details/tenant-details.component';
 import { CollapseModule } from '../../shared/collapse';
+import { SalesCountComponent } from './components/sales-count/sales-count.component';
 
 @NgModule({
   imports: [
@@ -42,7 +43,8 @@ import { CollapseModule } from '../../shared/collapse';
   declarations: [
     DashboardComponent,
     TodoComponent,
-    TenantDetailsComponent
+    TenantDetailsComponent,
+    SalesCountComponent
   ]
 })
 export class DashboardModule { }

@@ -1,6 +1,6 @@
 package com.backend.api.messages;
 
-import com.backend.persistence.entity.EmployeeInfo;
+import com.backend.core.entity.EmployeeInfo;
 
 public class UserPOJOHelper {
 	
