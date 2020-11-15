@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.backend.commons.util.CommonUtil;
+import com.backend.core.entity.EmployeeInfo;
 import com.backend.core.service.BaseService;
 import com.backend.core.util.DBUtil;
 import com.backend.core.util.DashboardStatusUtil;
@@ -39,6 +40,7 @@ public class POSServiceImpl implements POSService {
 		JSONObject json = new JSONObject(data);
 		json.put(TenantUtil.Key_TenantId, baseService.getTenantInfo().getTenantID());
 		json.put(DBUtil.Key_PrimaryKey, posDao.getPOSKEY());
+		json.put(POSData.Key_CreatedBy, ((EmployeeInfo)baseService.getUserInfo()).getEmployeeId() + "-" + ((EmployeeInfo)baseService.getUserInfo()).getEmailId());
 		posDao.createPOS(json);
 		data.getPosProduct().stream().forEach(product -> {
 			Product actualProduct = productService.getProductById(product.getItemID());

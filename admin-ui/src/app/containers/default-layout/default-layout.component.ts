@@ -22,6 +22,7 @@ export class DefaultLayoutComponent implements OnInit{
   public loading = false;
   public realmName = environment.tenantId;
   activeTaskCount = 0;
+  now:number;
 
   constructor(public userStore: UserStoreService,
               private router: Router,
@@ -31,6 +32,10 @@ export class DefaultLayoutComponent implements OnInit{
 
     this.userPermissions = this.userStore.employeePermissions;
     this.setViewsBasedOnPermisssions();
+
+    setInterval(() => {
+      this.now = Date.now();
+    }, 1);
 
   }
 

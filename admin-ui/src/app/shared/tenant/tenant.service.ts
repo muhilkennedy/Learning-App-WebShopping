@@ -11,7 +11,7 @@ export class TenantService {
 
   constructor(private http:HttpClient) { }
 
-  updateTenantDetails(id, fileLogo, email, businessEmail, password, contact, street, city, pin, facebook, twitter, insta){
+  updateTenantDetails(id, fileLogo, email, businessEmail, password, contact, street, city, pin, facebook, twitter, insta, gst){
     const uploadData = new FormData();
     uploadData.append('myFile', fileLogo);
     uploadData.append('tenantDetailId', id);
@@ -25,6 +25,7 @@ export class TenantService {
     uploadData.append('tenantInsta', insta);
     uploadData.append('businessEmail', businessEmail);
     uploadData.append('businessEmailPassword', password);
+    uploadData.append('gstIn', gst);
     return this.http.put(environment.backendBaseUrl+this.updateTenantDetailsEndpoint, uploadData);
   }
 }

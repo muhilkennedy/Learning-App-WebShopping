@@ -118,6 +118,9 @@ public class TenantServiceImpl implements TenantService {
 		if(!StringUtils.isEmpty(tenantDetails.getTenantPin())) {
 			actualTenantDetail.setTenantPin(tenantDetails.getTenantPin());
 		}
+		if(!StringUtils.isEmpty(tenantDetails.getGstIn())){
+			actualTenantDetail.setGstIn(tenantDetails.getGstIn());
+		}
 		tenantDetailsRepo.save(actualTenantDetail);
 	}
 

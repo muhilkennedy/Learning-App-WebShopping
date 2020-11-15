@@ -11,6 +11,7 @@ export class SalesCountComponent implements OnInit {
 
   totalPOSCount: number = 0;
   totoalOrdersCount: number = 0;
+  totalCustomers: number = 0;
 
   totalMessageCount: number = 0;
   totalGmailCount: number = 0;
@@ -76,7 +77,7 @@ export class SalesCountComponent implements OnInit {
   public doughnutChartData: number[] = [];
   public doughnutChartType = 'doughnut';
   public pieChartColors: Array < any > = [{
-    backgroundColor: ['#20a8d8', '#4dbd74', 'rgba(148,159,177,0.2)']
+    backgroundColor: ['#20a8d8', '#ffc107', 'rgba(148,159,177,0.2)']
     // borderColor: ['rgba(135,206,250,1)', 'rgba(106,90,205,1)', 'rgba(148,159,177,1)']
   }];
   // events

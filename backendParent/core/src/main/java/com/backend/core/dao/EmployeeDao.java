@@ -68,7 +68,12 @@ public class EmployeeDao {
 	
 	public boolean isCustomerSupportAdminPresent(String tenantId) throws Exception {
 		try (Connection con = dbUtil.getConnectionInstance()) {
-			
+			PreparedStatement stmt = con.prepareStatement("select count(*) from employeeinfo where tenantid=? and designation='CUSTOMERSUPPORTADMIN' ");
+			stmt.setString(1, tenantId);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next() && rs.getInt(1) > 0) {
+				return true;
+			}
 		} catch (Exception ex) {
 			logger.error("Error in isCustomerSupportAdminPresent : " + tenantId);
 			throw new Exception(ex.getMessage());
