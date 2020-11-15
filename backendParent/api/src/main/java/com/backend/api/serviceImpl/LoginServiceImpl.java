@@ -13,12 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.backend.api.service.LoginService;
 import com.backend.commons.exceptions.InvalidUserException;
 import com.backend.commons.util.CommonUtil;
+import com.backend.core.entity.EmployeeAddress;
+import com.backend.core.entity.EmployeeInfo;
 import com.backend.core.interfaces.User;
 import com.backend.core.service.BaseService;
 import com.backend.core.serviceImpl.CacheService;
 import com.backend.core.util.ConfigUtil;
-import com.backend.persistence.entity.EmployeeAddress;
-import com.backend.persistence.entity.EmployeeInfo;
 import com.backend.persistence.service.EmployeeService;
 
 @Service

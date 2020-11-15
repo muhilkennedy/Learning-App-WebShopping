@@ -4,6 +4,8 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +43,7 @@ public class SocialLoginController {
 	 * @return redirect URL for google login
 	 */
 	@GetMapping(value = "/getConsentPageUrl")
-	public SocialResponse googleLogin() {
+	public SocialResponse googleLogin(HttpServletRequest request) {
 		String url = googleService.authenticationURL();
 		SocialResponse response = new SocialResponse();
 		if (url != null) {
@@ -61,7 +63,8 @@ public class SocialLoginController {
 	 * @return	redirects to index page with auth details.
 	 */
 	@GetMapping(value = "/googleredirect")
-	public String googleData(@RequestParam("code") String code) {
+	public String googleData(@RequestParam("code") String code,
+							 @RequestParam("state") String state) {
 		RedirectView redirectURL = new RedirectView();
 		String url = null;
 		JSONObject jsonObj = new JSONObject();
@@ -75,7 +78,9 @@ public class SocialLoginController {
 			jsonObj.put(SocialUtil.googleData.email.toString(), googleUser.getEmail());
 			jsonObj.put(SocialUtil.googleData.accessToken.toString(), accessToken);
 			//persist user details in db if logging in for first time.
-
+			
+			JSONObject json = new JSONObject(state);
+			url = json.getString("");
 		} catch (Exception ex) {
 			System.out.println("exception " + ex.getMessage());
 		} finally {

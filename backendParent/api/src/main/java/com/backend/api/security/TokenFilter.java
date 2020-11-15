@@ -19,9 +19,9 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.backend.commons.util.JWTUtil;
+import com.backend.core.entity.EmployeeInfo;
 import com.backend.core.service.BaseService;
 import com.backend.core.util.ConfigUtil;
-import com.backend.persistence.entity.EmployeeInfo;
 import com.backend.persistence.service.EmployeeService;
 
 @Component

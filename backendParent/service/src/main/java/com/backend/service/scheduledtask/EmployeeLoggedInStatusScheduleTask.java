@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.backend.core.dao.EmployeeDao;
 import com.backend.core.serviceImpl.CacheService;
 import com.backend.core.util.ConfigUtil;
-import com.backend.persistence.dao.EmployeeDao;
 
 /**
  * @author Muhil Kennedy

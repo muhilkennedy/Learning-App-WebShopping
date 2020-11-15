@@ -43,12 +43,15 @@ public class RealmFilter implements Filter {
 		try {
 			HttpServletRequest req = (HttpServletRequest) request;
 			HttpServletResponse res = (HttpServletResponse) response;
-			String tenantId = null;
-			String origin = null;
+			String tenantId = req.getHeader(Constants.Header_TenantId);
 			logger.info("doFilter :: Realm Filter");
 			//Allow access for cross site request due to multiple deployments.
 			res.setHeader("Access-Control-Allow-Origin", req.getHeader(Constants.Header_Origin));
 			res.setHeader("Access-Control-Allow-Credentials","true");
+			String origin = req.getHeader(Constants.Header_Origin);
+			if(StringUtils.isNotEmpty(origin)) {
+				baseService.setOrigin(origin);
+			}
 			// skip realm check in case of load testing or health check urls
 			if(req.getRequestURI().contains("/loadTesting") && !configUtil.isProdMode() || req.getRequestURI().contains("/actuator")) {
 				baseService.setTenantInfo(TenantUtil.getTenantInfo("devTenant"));
@@ -60,12 +63,11 @@ public class RealmFilter implements Filter {
 			}
 			// Incase of prod mode both tenantId and Origin url mandatory.
 			else if (configUtil.isProdMode()) {
-				if (StringUtils.isNotEmpty(req.getHeader(Constants.Header_TenantId))
+				if (StringUtils.isNotEmpty(tenantId)
 						&& StringUtils.isNotEmpty(req.getHeader(Constants.Header_RequestOrigin))) {
-					tenantId = req.getHeader(Constants.Header_TenantId);
 					switch(req.getHeader(Constants.Header_RequestOrigin)) {
 						case "web" : 	// Check for active tenant and allowed origins
-										origin = req.getHeader(Constants.Header_Origin);
+										
 										if (!StringUtils.isEmpty(origin) && TenantUtil.isTenantActive(tenantId)
 												&& TenantUtil.isAllowedOriginForTenant(tenantId, origin)) {
 											// setSession(tenantId, req);
@@ -122,7 +124,6 @@ public class RealmFilter implements Filter {
 				
 			} else {
 				logger.info("Requested URI : " + req.getRequestURI());
-				tenantId = req.getHeader(Constants.Header_TenantId);
 				if(StringUtils.isEmpty(tenantId)) {
 					if(req.getParameter("state") != null) {
 						JSONObject json = new JSONObject(req.getParameter("state"));

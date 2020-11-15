@@ -12,10 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.backend.commons.util.CommonUtil;
+import com.backend.core.entity.EmployeeInfo;
 import com.backend.core.service.BaseService;
 import com.backend.persistence.dao.ProductDao;
 import com.backend.persistence.entity.Category;
-import com.backend.persistence.entity.EmployeeInfo;
 import com.backend.persistence.entity.Product;
 import com.backend.persistence.entity.ProductImages;
 import com.backend.persistence.helper.ProductPOJO;

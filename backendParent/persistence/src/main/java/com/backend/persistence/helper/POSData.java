@@ -12,12 +12,21 @@ public class POSData {
 	private String tenantId;
 	private String mobile;
 	private long timeCreated;
+	private int createdBy;
 	private String paymentMode;
 	private String subTotal;
 	private List<PosProduct> posProduct;
 
 	public String getTenantId() {
 		return tenantId;
+	}
+
+	public int getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(int createdBy) {
+		this.createdBy = createdBy;
 	}
 
 	public String getPrimaryKey() {

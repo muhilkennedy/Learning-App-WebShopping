@@ -25,4 +25,6 @@ public interface TenantService {
 
 	void saveTenantDetail(TenantDetails tenantDetail);
 
+	void saveAndFlush(Tenant tenant);
+
 }

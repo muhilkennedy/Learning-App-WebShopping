@@ -7,8 +7,8 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.backend.core.entity.EmployeeInfo;
 import com.backend.core.service.BaseService;
-import com.backend.persistence.entity.EmployeeInfo;
 import com.backend.persistence.entity.Todo;
 import com.backend.persistence.repository.TodoRepository;
 import com.backend.persistence.service.TodoService;
