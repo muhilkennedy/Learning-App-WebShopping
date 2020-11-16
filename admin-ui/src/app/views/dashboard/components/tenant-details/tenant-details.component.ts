@@ -3,6 +3,8 @@ import { TenantStoreService } from '../../../../service/tenantStore/tenant-store
 import { TenantService } from '../../../../shared/tenant/tenant.service';
 import { AlertService } from '../../../../shared/_alert';
 
+declare var rsaencrypt: Function;
+
 @Component({
   selector: 'app-tenant-details',
   templateUrl: './tenant-details.component.html',
@@ -124,7 +126,7 @@ export class TenantDetailsComponent implements OnInit {
 
   updateTenantBusinessEmailPassword(){
     this.loadTenantBusinessEmailPassword = true;
-    this.tenantService.updateTenantDetails(this.tenantDetailId, '', '', '', this.tenantBusinessEmailPassword, '', '', '', '', '', '', '', '')
+    this.tenantService.updateTenantDetails(this.tenantDetailId, '', '', '', rsaencrypt(this.tenantBusinessEmailPassword, this.tenantStore.publicKey), '', '', '', '', '', '', '', '')
                       .subscribe((resp:any) => {
                         if(resp.statusCode === 200){
                           this.editTenantBusinessEmailPassword = false;

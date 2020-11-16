@@ -12,8 +12,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.backend.api.service.SocialLoginService;
+import com.backend.api.util.SocialUtil;
 import com.backend.commons.configuration.SpringSocialProperties;
+import com.backend.commons.util.CommonUtil;
 import com.backend.core.service.BaseService;
+import com.backend.persistence.entity.CustomerInfo;
+import com.backend.persistence.service.CustomerInfoService;
 
 @Service
 @Transactional
@@ -25,6 +29,9 @@ public class GoogleServiceImpl implements SocialLoginService {
 	
 	@Autowired
 	private BaseService baseService;
+	
+	@Autowired
+	private CustomerInfoService custService;
 	
 	private GoogleConnectionFactory createGoogleConnection() {
 		return new GoogleConnectionFactory(properties.getGoogle().getAppId(), properties.getGoogle().getAppSecret());
@@ -52,5 +59,19 @@ public class GoogleServiceImpl implements SocialLoginService {
 		Google google = new GoogleTemplate(accesstoken);
 		return google.userOperations().getUserInfo();
 	}
+	
+	@Override
+	public void createCustomerIfrequired(JSONObject json) {
+		CustomerInfo info = new CustomerInfo();
+		info.setEmailId(json.getString(SocialUtil.googleData.email.toString()));
+		info.setFirstName(json.getString(SocialUtil.googleData.firstName.toString()));
+		info.setLastName(json.getString(SocialUtil.googleData.lastName.toString()));
+		info.setProfilePicUrl(json.getString(SocialUtil.googleData.imageUrl.toString()));
+		info.setLoginMode(CommonUtil.Key_googleUser);
+		info.setActive(true);
+		info.setTenant(baseService.getTenantInfo());
+		custService.save(info);
+	}
+	
 	
 }

@@ -1,4 +1,4 @@
-package com.backend.commons.util;
+package com.backend.core.util;
 
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
@@ -14,7 +14,27 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+/**
+ * @author Muhil
+ *
+ */
+@Component
 public class RSAUtil {
+	
+	private static ConfigUtil configUtil;
+	
+	@Autowired
+	public void setConfigUtil(ConfigUtil config) {
+		RSAUtil.configUtil = config;
+	}
+	
+	public static String decrypt(String data) throws InvalidKeyException, IllegalBlockSizeException,
+			BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+		return decrypt(data, configUtil.getRsaPrivate());
+	}
 
 	public static String decrypt(String data, String base64PrivateKey) throws IllegalBlockSizeException,
 			InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
@@ -25,7 +45,7 @@ public class RSAUtil {
 			NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
 		Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 		cipher.init(Cipher.DECRYPT_MODE, privateKey);
-		byte[] ciphertext = cipher.doFinal(data);
+		//byte[] ciphertext = cipher.doFinal(data);
 		return new String(cipher.doFinal(data));
 	}
 
@@ -60,4 +80,9 @@ public class RSAUtil {
         cipher.init(Cipher.ENCRYPT_MODE, getPublicKey(publicKey));
         return cipher.doFinal(data.getBytes());
     }
+    
+	public static byte[] encrypt(String data) throws InvalidKeyException, BadPaddingException,
+			IllegalBlockSizeException, NoSuchPaddingException, NoSuchAlgorithmException {
+		return encrypt(data, configUtil.getRsaPublic());
+	}
 }

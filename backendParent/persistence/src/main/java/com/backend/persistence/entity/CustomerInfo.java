@@ -2,9 +2,15 @@ package com.backend.persistence.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
+import java.util.Base64;
 import java.util.List;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,8 +22,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.backend.core.entity.Tenant;
 import com.backend.core.interfaces.User;
+import com.backend.core.util.RSAUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
@@ -146,12 +155,15 @@ public class CustomerInfo implements Serializable, User {
 		this.password = password;
 	}
 
-	public String getMobile() {
-		return mobile;
+	public String getMobile() throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException,
+			NoSuchAlgorithmException, NoSuchPaddingException {
+		return StringUtils.isNotEmpty(mobile) ? RSAUtil.decrypt(this.mobile) : null;
 	}
 
-	public void setMobile(String mobile) {
-		this.mobile = mobile;
+	public void setMobile(String mobile) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException,
+			NoSuchPaddingException, NoSuchAlgorithmException {
+		this.mobile = StringUtils.isNotEmpty(mobile) ? Base64.getEncoder().encodeToString(RSAUtil.encrypt(mobile))
+				: null;
 	}
 
 	public boolean isActive() {

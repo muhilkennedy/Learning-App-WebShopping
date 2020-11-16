@@ -73,8 +73,7 @@ public class EmailUtil {
 		if (configUtil.isProdMode() && props.getGmail().isEnableMailing()) {
 
 			String emailId = baseService.getTenantInfo().getTenantDetail().getBusinessEmail();
-			String password = RSAUtil.decrypt(baseService.getTenantInfo().getTenantDetail().getBusinessEmailPassword(),
-						configUtil.getRsaPrivate());
+			String password = baseService.getTenantInfo().getTenantDetail().getBusinessEmailPassword();
 			
 			// Set system properties
 			Properties props = new Properties();
