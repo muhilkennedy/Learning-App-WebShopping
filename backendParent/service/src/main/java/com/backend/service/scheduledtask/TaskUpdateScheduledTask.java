@@ -8,7 +8,9 @@ import org.springframework.stereotype.Component;
 
 import com.backend.core.service.BaseService;
 import com.backend.core.util.TenantUtil;
+import com.backend.persistence.service.PushNotificationService;
 import com.backend.persistence.service.TaskService;
+import com.backend.persistence.serviceImpl.TaskServiceImpl;
 
 /**
  * @author Muhil Kennedy
@@ -25,6 +27,9 @@ public class TaskUpdateScheduledTask extends ScheduledTask{
 	
 	@Autowired
 	private TaskService taskService;
+	
+	@Autowired
+	private PushNotificationService notificationService;
 
 	// cron = sec min hour day mon dayOfWeek.
 	@Scheduled(cron = " 0 5 0 * * * ", zone = "IST")
@@ -38,7 +43,8 @@ public class TaskUpdateScheduledTask extends ScheduledTask{
 				baseService.setTenantInfo(tenant);
 				//Set overdue tasks
 				taskService.findAllOverdueTasks().stream().forEach(task -> {
-					task.setStatus("Overdue");
+					task.setStatus(TaskServiceImpl.Key_Status_Overdue);
+					notificationService.createNotification("Overdue Task(s)!", task.getAssignee());
 					taskService.save(task);
 				});
 				markCompleted();

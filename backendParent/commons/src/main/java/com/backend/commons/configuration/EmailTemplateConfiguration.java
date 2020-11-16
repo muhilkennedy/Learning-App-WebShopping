@@ -15,11 +15,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
 
-import com.backend.commons.util.RSAUtil;
 import com.backend.core.entity.Tenant;
 import com.backend.core.entity.TenantDetails;
 import com.backend.core.service.TenantService;
 import com.backend.core.util.ConfigUtil;
+import com.backend.core.util.RSAUtil;
 
 /**
  * @author Muhil
@@ -48,7 +48,7 @@ public class EmailTemplateConfiguration {
 	/**
 	 * Only for development purposes (encrypt default password)
 	 */
-	@PostConstruct
+	/*@PostConstruct
 	private void encryptBusinessEmailPassword() {
 		Tenant devTenant = tenantService.findTenantByID("devTenant");
 		TenantDetails devTenantDetail = devTenant.getTenantDetail();
@@ -66,6 +66,6 @@ public class EmailTemplateConfiguration {
 			e.printStackTrace();
 		}
 
-	}
+	}*/
 
 }

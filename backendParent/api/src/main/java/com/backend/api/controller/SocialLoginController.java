@@ -21,6 +21,7 @@ import com.backend.api.messages.Response;
 import com.backend.api.messages.SocialResponse;
 import com.backend.api.service.SocialLoginService;
 import com.backend.api.util.SocialUtil;
+import com.backend.core.service.BaseService;
 
 
 /**
@@ -30,6 +31,9 @@ import com.backend.api.util.SocialUtil;
 @RestController
 @RequestMapping("social")
 public class SocialLoginController {
+	
+	@Autowired
+	private BaseService baseService;
 	
 	@Autowired
 	@Qualifier("googleService")
@@ -78,9 +82,8 @@ public class SocialLoginController {
 			jsonObj.put(SocialUtil.googleData.email.toString(), googleUser.getEmail());
 			jsonObj.put(SocialUtil.googleData.accessToken.toString(), accessToken);
 			//persist user details in db if logging in for first time.
-			
-			JSONObject json = new JSONObject(state);
-			url = json.getString("");
+			googleService.createCustomerIfrequired(jsonObj);
+			url = baseService.getOrigin();
 		} catch (Exception ex) {
 			System.out.println("exception " + ex.getMessage());
 		} finally {

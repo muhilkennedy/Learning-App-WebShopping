@@ -1,5 +1,6 @@
 package com.backend.api.serviceImpl;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.social.facebook.connect.FacebookConnectionFactory;
@@ -46,6 +47,12 @@ public class FacebookServiceImpl implements SocialLoginService {
 	@Override
 	public GoogleUserInfo getGoogleUserProfile(String accesstoken) {
 		return null;
+	}
+
+	@Override
+	public void createCustomerIfrequired(JSONObject json) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

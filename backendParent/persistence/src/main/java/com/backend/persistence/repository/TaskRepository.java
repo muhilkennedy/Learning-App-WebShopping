@@ -23,7 +23,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer>{
 	String findAllAssignedTaskQuery = "select t from Task t where t.tenant = :tenant and t.assignee = :assignee";
 	String findAllTaskCreatedByEmployeeQuery = "select t from Task t where t.tenant = :tenant and t.employeeId = :employee";
 	String deleteTaskQuery = "delete from Task where tenant = :tenant and employeeId = :employee and taskId = :id";
-	String findAllOverdueTasksQuery = "select t from Task t where t.tenant = :tenant and t.endDate < :endDate";
+	String findAllOverdueTasksQuery = "select t from Task t where t.tenant = :tenant and t.endDate < :endDate and t.status = 'Pending'";
 	
 	@Query(findTaskAssignedByIdQuery)
 	Task findTaskAssignedById(@Param("tenant") Tenant tenant, @Param("employee") EmployeeInfo employee, @Param("id") int id);
