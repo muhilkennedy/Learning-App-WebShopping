@@ -1,5 +1,7 @@
 package com.backend.api.serviceImpl;
 
+import java.util.Date;
+
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.social.google.api.Google;
@@ -16,6 +18,7 @@ import com.backend.api.util.SocialUtil;
 import com.backend.commons.configuration.SpringSocialProperties;
 import com.backend.commons.util.CommonUtil;
 import com.backend.core.service.BaseService;
+import com.backend.core.util.DashboardStatusUtil;
 import com.backend.persistence.entity.CustomerInfo;
 import com.backend.persistence.service.CustomerInfoService;
 
@@ -62,15 +65,26 @@ public class GoogleServiceImpl implements SocialLoginService {
 	
 	@Override
 	public void createCustomerIfrequired(JSONObject json) {
-		CustomerInfo info = new CustomerInfo();
-		info.setEmailId(json.getString(SocialUtil.googleData.email.toString()));
-		info.setFirstName(json.getString(SocialUtil.googleData.firstName.toString()));
-		info.setLastName(json.getString(SocialUtil.googleData.lastName.toString()));
-		info.setProfilePicUrl(json.getString(SocialUtil.googleData.imageUrl.toString()));
-		info.setLoginMode(CommonUtil.Key_googleUser);
-		info.setActive(true);
-		info.setTenant(baseService.getTenantInfo());
+		CustomerInfo info = custService.getCustomerByEmail(json.getString(SocialUtil.googleData.email.toString()));
+		if(info == null) {
+			info = new CustomerInfo();
+			info.setEmailId(json.getString(SocialUtil.googleData.email.toString()));
+			info.setFirstName(json.getString(SocialUtil.googleData.firstName.toString()));
+			info.setLastName(json.getString(SocialUtil.googleData.lastName.toString()));
+			info.setProfilePicUrl(json.getString(SocialUtil.googleData.imageUrl.toString()));
+			info.setLoginMode(CommonUtil.Key_googleUser);
+			info.setActive(true);
+			info.setTenant(baseService.getTenantInfo());
+		}
+		else {
+			// we do this every time incase of any update done by user in google!
+			info.setFirstName(json.getString(SocialUtil.googleData.firstName.toString()));
+			info.setLastName(json.getString(SocialUtil.googleData.lastName.toString()));
+			info.setProfilePicUrl(json.getString(SocialUtil.googleData.imageUrl.toString()));
+		}
+		info.setLastLogin(CommonUtil.convertToUTC(new Date().getTime()));
 		custService.save(info);
+		DashboardStatusUtil.incrementCustomerCount(baseService.getTenantInfo());
 	}
 	
 	

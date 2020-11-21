@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
@@ -86,6 +87,10 @@ public class Product implements Serializable {
 	@JsonIgnore
 	@OneToMany(mappedBy = "productId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<ProductReview> productReviews;
+	
+	@JsonIgnore
+	@ManyToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<OrderDetails> orderDetails;
 
 	public Tenant getTenant() {
 		return tenant;

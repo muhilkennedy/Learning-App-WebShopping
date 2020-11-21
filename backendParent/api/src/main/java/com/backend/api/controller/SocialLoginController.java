@@ -21,6 +21,9 @@ import com.backend.api.messages.Response;
 import com.backend.api.messages.SocialResponse;
 import com.backend.api.service.SocialLoginService;
 import com.backend.api.util.SocialUtil;
+import com.backend.commons.service.TokenStorage;
+import com.backend.commons.util.CommonUtil;
+import com.backend.commons.util.JWTUtil;
 import com.backend.core.service.BaseService;
 
 
@@ -42,6 +45,9 @@ public class SocialLoginController {
 	@Autowired
 	@Qualifier("facebookService")
 	private SocialLoginService facebookService;
+	
+	@Autowired
+	private TokenStorage tokenService;
 	
 	/**
 	 * @return redirect URL for google login
@@ -67,7 +73,7 @@ public class SocialLoginController {
 	 * @return	redirects to index page with auth details.
 	 */
 	@GetMapping(value = "/googleredirect")
-	public String googleData(@RequestParam("code") String code,
+	public RedirectView googleData(@RequestParam("code") String code,
 							 @RequestParam("state") String state) {
 		RedirectView redirectURL = new RedirectView();
 		String url = null;
@@ -83,13 +89,14 @@ public class SocialLoginController {
 			jsonObj.put(SocialUtil.googleData.accessToken.toString(), accessToken);
 			//persist user details in db if logging in for first time.
 			googleService.createCustomerIfrequired(jsonObj);
-			url = baseService.getOrigin();
+			String userToken = JWTUtil.generateToken(googleUser.getEmail(), CommonUtil.Key_googleUser, true);
+			String tokenKey = tokenService.storeUserToken(userToken);
+			url = baseService.getOrigin() + "/authenticate?key=" + tokenKey;
 		} catch (Exception ex) {
 			System.out.println("exception " + ex.getMessage());
 		} finally {
 			redirectURL.setUrl(url);
-			//return redirectURL;
-			return jsonObj.toString();
+			return redirectURL;
 		}
 	}
 	
