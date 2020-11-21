@@ -82,6 +82,9 @@ public class EmployeeInfo implements Serializable, User{
 	@Column(name = "PROFILEPIC")
 	private Blob profilePic;
 	
+	@Column(name = "PICKUPORDERS")
+	private boolean pickUpOrders;
+	
 	@OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
 	private List<EmployeeAddress> employeeAddress;
 	
@@ -243,24 +246,28 @@ public class EmployeeInfo implements Serializable, User{
 		this.isLoggedIn = isLoggedIn;
 	}
 
-
 	public Date getDob() {
 		return dob;
 	}
-
 
 	public void setDob(Date dob) {
 		this.dob = dob;
 	}
 
-
 	public String getGender() {
 		return gender;
 	}
 
-
 	public void setGender(String gender) {
 		this.gender = gender;
+	}
+
+	public boolean isPickUpOrders() {
+		return pickUpOrders;
+	}
+
+	public void setPickUpOrders(boolean pickUpOrders) {
+		this.pickUpOrders = pickUpOrders;
 	}
 
 }

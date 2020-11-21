@@ -7,6 +7,7 @@ import { environment } from '../../../environments/environment';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Message } from '../../service/websocket/message';
 import { SocketService } from '../../service/websocket/socket.service';
+import { EmployeeService } from '../../shared/employee/employee.service';
 
 @Component({
   selector: 'app-chat-messenger',
@@ -17,9 +18,10 @@ export class ChatMessengerComponent implements OnInit {
 
   unreadMessage = true;
   name: string;
+  loading = false;
 
   constructor(public userStore: UserStoreService, private tenantStore: TenantStoreService,
-    private socketService: SocketService) { }
+    private socketService: SocketService, private empService: EmployeeService) { }
 
   ngOnInit(): void {
     this.name = this.tenantStore.tenantEmail;
@@ -137,6 +139,5 @@ export class ChatMessengerComponent implements OnInit {
   //     }
   //  );
   }
-
 
 }

@@ -12,4 +12,12 @@ public interface CustomerInfoService {
 
 	CustomerInfo getCustomerByEmail(String email);
 
+	void addProductToCart(int productId) throws Exception;
+
+	void removeFromCart(int productId) throws Exception;
+
+	void updateProductQuantity(int productId, int quantity) throws Exception;
+
+	int getUserCartCount() throws Exception;
+
 }

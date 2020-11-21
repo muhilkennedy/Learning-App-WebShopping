@@ -16,20 +16,14 @@ const routes: Routes = [
       {
         path: 'orders',
         data: {
-          title: 'orders'
-        }
-      },
-      {
-        path: 'approval',
-        data: {
-          title: 'Approve Orders'
+          title: 'Online Transactions'
         }
       },
       {
         path: 'transactions',
         component: TransactionsComponent,
         data: {
-          title: 'Transactions'
+          title: 'POC Transactions'
         }
       }
     ]

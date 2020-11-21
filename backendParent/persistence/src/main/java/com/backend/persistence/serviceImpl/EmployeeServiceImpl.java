@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.sql.rowset.serial.SerialBlob;
 import javax.transaction.Transactional;
 
@@ -184,4 +183,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 		employeeRepo.save(emp);
 	}
 	
+	@Override
+	public void toggleOrderPickUp() {
+		EmployeeInfo employee = (EmployeeInfo) baseService.getUserInfo();
+		if (employee != null) {
+			employee.setPickUpOrders(!employee.isPickUpOrders());
+		}
+		employeeRepo.save(employee);
+	}
 }

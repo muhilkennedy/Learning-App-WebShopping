@@ -96,6 +96,7 @@ export class LoginComponent {
                 this.userService.userId = resp.dataList[0].employeeId;
                 this.userService.employeeAddress = resp.dataList[0].employeeAddress;
                 this.userService.employeePermissions = resp.dataList[0].employeePermissions;
+                this.userService.pickUpOrders = resp.dataList[0].pickUpOrders;
                 this.cookieService.set("EmailId", this.userService.emailId);
                 // this.cookieService.set("JWT", this.userService.JwtToken);
                 this.cookieService.set("JWT", this.userService.JwtToken, 90);

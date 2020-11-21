@@ -1,7 +1,41 @@
 @import '~@angular/material/theming';
 @include mat-core();
+
+$md-custom-toggle-colors: (
+  50 : #e8f6e9,
+  100 : #c5e9c8,
+  200 : #9fdaa4,
+  300 : #79cb7f,
+  400 : #5cc063,
+  500 : #3fb548,
+  600 : #39ae41,
+  700 : #31a538,
+  800 : #299d30,
+  900 : #1b8d21,
+  A100 : #c6ffc9,
+  A200 : #93ff98,
+  A400 : #60ff67,
+  A700 : #47ff4f,
+  contrast: (
+    50 : #000000,
+    100 : #000000,
+    200 : #000000,
+    300 : #000000,
+    400 : #000000,
+    500 : #000000,
+    600 : #ffffff,
+    700 : #ffffff,
+    800 : #ffffff,
+    900 : #ffffff,
+    A100 : #000000,
+    A200 : #000000,
+    A400 : #000000,
+    A700 : #000000,
+  )
+);
+
 $my-app-primary: mat-palette($mat-blue-grey);
-$my-app-accent:  mat-palette($mat-pink, 500, 900, A100);
+$my-app-accent:  mat-palette($md-custom-toggle-colors);
 $my-app-warn:    mat-palette($mat-deep-orange);
 $my-app-theme: mat-light-theme($my-app-primary, $my-app-accent, $my-app-warn);
 @include angular-material-theme($my-app-theme);

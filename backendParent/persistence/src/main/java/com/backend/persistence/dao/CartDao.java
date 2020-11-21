@@ -60,6 +60,7 @@ public class CartDao {
 				CustomerCart cart = new CustomerCart();
 				cart.setProduct(productService.getProductById(rs.getInt(1)));
 				cart.setQuantity(rs.getInt(2));
+				cartItems.add(cart);
 			}
 		} catch (Exception ex) {
 			logger.error("Exception in fetching customer cart items - " + ex);
@@ -95,6 +96,23 @@ public class CartDao {
 			logger.error("Exception inserting into cart- " + ex);
 			throw new Exception(ex.getMessage());
 		}
+	}
+	
+	public int getUserCartCount(int customerid) throws Exception {
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			PreparedStatement stmt = con
+					.prepareStatement("select count(*) from customercart where tenantid=? and customerid=? ");
+			stmt.setString(1, baseService.getTenantInfo().getUniqueName());
+			stmt.setInt(2, customerid);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				return rs.getInt(1);
+			}
+		} catch (Exception ex) {
+			logger.error("Exception inserting into cart- " + ex);
+			throw new Exception(ex.getMessage());
+		}
+		return 0;
 	}
 
 }

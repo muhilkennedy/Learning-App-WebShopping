@@ -58,8 +58,6 @@
   </div>
 </div>
 
-
-
 <ngx-loading [show]="loading"></ngx-loading>
 
 <div class="app-body">
@@ -72,16 +70,19 @@
   <main class="main">
     <!-- Breadcrumb to be implemented later -->
     <cui-breadcrumb>
-      <!-- <li class="breadcrumb-menu d-md-down-none">
-        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-          <a class="btn" href="#"><i class="icon-speech"></i></a>
-          <a class="btn" [routerLink]="['/dashboard']"><i class="icon-graph"></i> &nbsp;Dashboard</a>
-          <a class="btn" href="#"><i class="icon-settings"></i> &nbsp;Settings</a>
-        </div>
-      </li> -->
+      <li class="breadcrumb-menu d-md-down-none">
+        <label><small>Welcome</small> <strong>{{userStore.firstName}}</strong></label>
+        <mat-slide-toggle color="accent"
+                  [checked]="userStore.pickUpOrders"
+                  (change)="toggleOrderPickup()"
+                  matTooltip="Accept Online Orders">
+        </mat-slide-toggle>
+      </li>
+
     </cui-breadcrumb>
 
     <div class="container-fluid">
+      <!-- <alert class="p-4 text-center"></alert> -->
       <router-outlet></router-outlet>
     </div>
   </main>
@@ -90,25 +91,10 @@
   <app-aside [fixed]="true" [display]="false" [ngClass]="'test'">
     <tabset>
       <tab>
-        <!-- <ng-template tabHeading><i class="icon-speech"></i></ng-template>
-        <div class="p-3">
-          <h6>User Information</h6>
-          <div class="aside-options">
-            <div class="clearfix mt-4">
-              <small><b>Welcome {{userStore.firstName}} !</b></small>
-            </div>
-            <div>
-              <small class="text-muted">ID : <b>{{userStore.userId}}</b></small>
-            </div>
-            <div>
-              <small class="text-muted">{{userStore.designation}}</small>
-            </div>
-          </div>
-        </div> -->
-        <app-chat-messenger></app-chat-messenger>
+        <app-push-notification></app-push-notification>
       </tab>
       <tab>
-        <app-push-notification></app-push-notification>
+        <app-chat-messenger></app-chat-messenger>
       </tab>
     </tabset>
   </app-aside>

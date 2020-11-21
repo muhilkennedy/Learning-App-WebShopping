@@ -33,24 +33,24 @@ export const navItems: INavData[] = [
     ]
   },
   {
+    name: 'Manage Orders',
+    url: '/manageorders',
+    icon: 'icon-note',
+  },
+  {
     name: 'Sales',
     url: '/sales',
     icon: 'icon-wallet',
     children: [
       {
-        name: 'Orders',
-        url: '/sales/orders',
-        icon: 'icon-basket'
-      },
-      {
-        name: 'Approval',
-        url: '/sales/approval',
-        icon: 'icon-note'
-      },
-      {
-        name: 'Transactions',
+        name: 'POC Transactions',
         url: '/sales/transactions',
         icon: 'icon-credit-card'
+      },
+      {
+        name: 'Online Transactions',
+        url: '/sales/orders',
+        icon: 'icon-basket'
       }
     ]
   },
