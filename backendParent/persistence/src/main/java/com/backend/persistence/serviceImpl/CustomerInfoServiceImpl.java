@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.backend.core.service.BaseService;
 import com.backend.persistence.entity.CustomerInfo;
+import com.backend.persistence.repository.CustomerInfoRepository;
 import com.backend.persistence.service.CustomerInfoService;
 
 /**
@@ -21,7 +22,7 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 	private BaseService baseService;
 	
 	@Autowired
-	private CustomerInfoServiceImpl customerRepo;
+	private CustomerInfoRepository customerRepo;
 	
 	@Override
 	public void save(CustomerInfo info) {
@@ -31,6 +32,16 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 	@Override
 	public void saveAndFlush(CustomerInfo info) {
 		customerRepo.saveAndFlush(info);
+	}
+	
+	@Override
+	public CustomerInfo getCustomerById(int id) {
+		return customerRepo.findEmployeeById(id, baseService.getTenantInfo());
+	}
+	
+	@Override
+	public CustomerInfo getCustomerByEmail(String email) {
+		return customerRepo.findEmployeeByEmail(email, baseService.getTenantInfo());
 	}
 
 }

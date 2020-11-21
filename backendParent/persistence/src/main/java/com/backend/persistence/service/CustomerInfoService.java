@@ -8,4 +8,8 @@ public interface CustomerInfoService {
 
 	void saveAndFlush(CustomerInfo info);
 
+	CustomerInfo getCustomerById(int id);
+
+	CustomerInfo getCustomerByEmail(String email);
+
 }

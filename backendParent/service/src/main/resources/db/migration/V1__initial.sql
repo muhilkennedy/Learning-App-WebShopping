@@ -28,11 +28,12 @@ CREATE TABLE IF NOT EXISTS productreview (tenantid varchar(50) NOT NULL, product
 CREATE TABLE IF NOT EXISTS productreviewsync (review JSON);
 
 /* Coupons related tables */
-CREATE TABLE IF NOT EXISTS coupons (tenantid varchar(50), couponid int NOT NULL AUTO_INCREMENT PRIMARY KEY, title varchar(100) not null, code varchar(64) NOT NULL, discount int, startdate double, enddate double, freeshipping BOOL DEFAULT FALSE, userusage int, active BOOL DEFAULT TRUE, isdeleted BOOL DEFAULT FALSE, CONSTRAINT FOREIGN KEY(tenantid) REFERENCES tenant(tenantid));
-CREATE TABLE IF NOT EXISTS couponapplicable (tenantid varchar(50), couponid int, categoryid  int, CONSTRAINT FOREIGN KEY(tenantid) REFERENCES tenant(tenantid), CONSTRAINT FOREIGN KEY(couponid) REFERENCES coupons(couponid), CONSTRAINT FOREIGN KEY(categoryid) REFERENCES category(categoryid));
+CREATE TABLE IF NOT EXISTS coupons (tenantid varchar(50) NOT NULL, couponid int NOT NULL AUTO_INCREMENT PRIMARY KEY, title varchar(100) not null, code varchar(64) NOT NULL, discount int, startdate double, enddate double, freeshipping BOOL DEFAULT FALSE, userusage int, active BOOL DEFAULT TRUE, isdeleted BOOL DEFAULT FALSE, CONSTRAINT FOREIGN KEY(tenantid) REFERENCES tenant(tenantid));
+CREATE TABLE IF NOT EXISTS couponapplicable (tenantid varchar(50) NOT NULL, couponid int, categoryid  int, CONSTRAINT FOREIGN KEY(tenantid) REFERENCES tenant(tenantid), CONSTRAINT FOREIGN KEY(couponid) REFERENCES coupons(couponid), CONSTRAINT FOREIGN KEY(categoryid) REFERENCES category(categoryid));
 
 /* Purchase and Order tables*/
-CREATE TABLE IF NOT EXISTS orders (tenantid varchar(50) NOT NULL, orderid int NOT NULL AUTO_INCREMENT PRIMARY KEY,customerid int NOT NULL ,orderdate double, status varchar(50) NOT NULL, subtotal int NOT NULL, couponapplied BOOL DEFAULT FALSE, couponid int, CONSTRAINT FOREIGN KEY(tenantid) REFERENCES tenant(tenantid), CONSTRAINT FOREIGN KEY(customerid) REFERENCES customerinfo(customerid));
+CREATE TABLE IF NOT EXISTS customercart (tenantid varchar(50) NOT NULL, customerid int, productid int, quantity int DEFAULT 1, CONSTRAINT FOREIGN KEY(tenantid) REFERENCES tenant(tenantid), CONSTRAINT FOREIGN KEY(customerid) REFERENCES customerinfo(customerid), CONSTRAINT FOREIGN KEY(productid) REFERENCES product(productid));
+CREATE TABLE IF NOT EXISTS orders (tenantid varchar(50) NOT NULL, orderid int NOT NULL AUTO_INCREMENT PRIMARY KEY, customerid int NOT NULL , orderdate double, status varchar(50) NOT NULL, subtotal DECIMAL(4,2), couponapplied BOOL DEFAULT FALSE, coupondiscount DECIMAL(4,2), couponid int, CONSTRAINT FOREIGN KEY(tenantid) REFERENCES tenant(tenantid), CONSTRAINT FOREIGN KEY(customerid) REFERENCES customerinfo(customerid));
 CREATE TABLE IF NOT EXISTS orderdetails (tenantid varchar(50) NOT NULL, orderdetailid int NOT NULL AUTO_INCREMENT PRIMARY KEY, orderid int NOT NULL, productid int NOT NULL, quantity int NOT NULL, CONSTRAINT FOREIGN KEY(tenantid) REFERENCES tenant(tenantid), CONSTRAINT FOREIGN KEY(productid) REFERENCES product(productid), CONSTRAINT FOREIGN KEY(orderid) REFERENCES orders(orderid));
 /*NEED to be updated later after investigating payment methods*/
 CREATE TABLE IF NOT EXISTS paymentmode (paymentmodeid int NOT NULL AUTO_INCREMENT PRIMARY KEY, paymenttype varchar(50) NOT NULL);
@@ -77,4 +78,6 @@ insert into employeepermissionsmap (tenantid, employeeid, permissionid) values (
 insert into employeepermissionsmap (tenantid, employeeid, permissionid) values ('devTenant', 1, 4);
 
 insert into tenant (tenantid, tenantuniquename) values ('devTenant01', 'devRealm1');
-insert into employeeinfo (tenantid , fname, lname, emailid, mobile, password, designation) values ('devTenant01', 'SUPERUSER', 'DEV', 'q@1', '1234567890', '$2a$05$FueeaV.hfKbv/m6kG6GM../gKdRPOoihCQF1WBjpAPZNDlGPOxSha', 'SUPPORTADMIN');
+insert into employeeinfo (tenantid, fname, lname, emailid, mobile, password, designation) values ('devTenant01', 'SUPERUSER', 'DEV', 'q@1', '1234567890', '$2a$05$FueeaV.hfKbv/m6kG6GM../gKdRPOoihCQF1WBjpAPZNDlGPOxSha', 'SUPPORTADMIN');
+
+insert into customerinfo (tenantid, customerid, fname, lname, emailid, password, active, loginvia) values ('devTenant', 1, 'muhil', 'kennedy', 'do.not.reply.application.ordering@gmail.com', '$2a$05$FueeaV.hfKbv/m6kG6GM../gKdRPOoihCQF1WBjpAPZNDlGPOxSha', true, 'INTERNAL');

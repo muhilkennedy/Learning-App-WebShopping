@@ -73,5 +73,13 @@ public class DashboardStatusUtil {
 		}
 		dashboardRepo.save(report);
 	}
+	
+	public static void incrementCustomerCount(Tenant tenant) {
+		DashboardReport report = getDashboardStatus(tenant);
+		if(report != null) {
+			report.setTotalCustomers(report.getTotalCustomers() + 1);
+		}
+		dashboardRepo.save(report);
+	}
 
 }
