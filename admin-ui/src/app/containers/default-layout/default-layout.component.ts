@@ -6,6 +6,7 @@ import { LoginService } from '../../service/login/login.service';
 import { environment } from '../../../environments/environment';
 import { CookieService } from 'ngx-cookie-service';
 import { TaskService } from '../../shared/task/task.service';
+import { EmployeeService } from '../../shared/employee/employee.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -28,7 +29,8 @@ export class DefaultLayoutComponent implements OnInit{
               private router: Router,
               private loginService: LoginService,
               private cookieService: CookieService,
-              private taskService: TaskService){
+              private taskService: TaskService,
+              private empService: EmployeeService){
 
     this.userPermissions = this.userStore.employeePermissions;
     this.setViewsBasedOnPermisssions();
@@ -110,6 +112,7 @@ export class DefaultLayoutComponent implements OnInit{
         if(permissionIds.includes(3)){
           // remove employee, sales and analytical functionality
           this.addNavItem("/pos");
+          this.addNavItem("/manageorders");
           this.addNavItem("/product");
         }
         //support permission
@@ -146,6 +149,7 @@ export class DefaultLayoutComponent implements OnInit{
               this.userStore.userId = resp.data.employeeId;
               this.userStore.employeeAddress = resp.data.employeeAddress;
               this.userStore.employeePermissions = resp.data.employeePermissions;
+              this.userStore.pickUpOrders = resp.data.pickUpOrders;
               this.userPermissions = this.userStore.employeePermissions;
               this.finalNavItems = new Array();
               this.setViewsBasedOnPermisssions();
@@ -208,5 +212,19 @@ export class DefaultLayoutComponent implements OnInit{
 
   tasks(){
     this.router.navigate(['/task',true]);
+  }
+
+  toggleOrderPickup(){
+    this.loading = true;
+    this.empService.toggleOrderPickup()
+                    .subscribe((resp : any) => {
+                      if(resp.statusCode === 200){
+                        this.userStore.pickUpOrders = false;
+                      }
+                      this.loading = false;
+                    },
+                    (error:any) => {
+                      alert("something went wrong!")
+                    })
   }
 }

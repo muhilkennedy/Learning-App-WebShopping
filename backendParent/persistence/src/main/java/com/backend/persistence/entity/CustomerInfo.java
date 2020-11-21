@@ -147,7 +147,7 @@ public class CustomerInfo implements Serializable, User {
 		this.emailId = emailId;
 	}
 
-	public String getPassword() {
+	public String fetchPassword() {
 		return password;
 	}
 

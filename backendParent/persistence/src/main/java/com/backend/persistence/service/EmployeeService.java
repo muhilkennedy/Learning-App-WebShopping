@@ -42,4 +42,6 @@ public interface EmployeeService {
 
 	List<EmployeeInfo> findAllEmployeeById(List<Integer> ids);
 
+	void toggleOrderPickUp();
+
 }

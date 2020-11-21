@@ -22,6 +22,8 @@ import com.backend.commons.util.JWTUtil;
 import com.backend.core.entity.EmployeeInfo;
 import com.backend.core.service.BaseService;
 import com.backend.core.util.ConfigUtil;
+import com.backend.persistence.entity.CustomerInfo;
+import com.backend.persistence.service.CustomerInfoService;
 import com.backend.persistence.service.EmployeeService;
 
 @Component
@@ -38,6 +40,9 @@ public class TokenFilter implements Filter {
 	
 	@Autowired
 	private EmployeeService empService;
+	
+	@Autowired
+	private CustomerInfoService customerService;
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -56,10 +61,6 @@ public class TokenFilter implements Filter {
 							empInfo.setEmployeePermissions(empService.getEmployeePermissionsForTenant(empInfo));
 							if (empInfo != null) {
 								baseService.setUserInfo(empInfo);
-								logger.info("Tenant - " + baseService.getTenantInfo().getTenantID());
-								logger.info("User - " + (baseService.getUserInfo() instanceof EmployeeInfo
-										? "Employee Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()
-										: "Client Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()));
 							} else {
 								((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
 										"Invalid User Request.... token might have been tampered");
@@ -67,7 +68,18 @@ public class TokenFilter implements Filter {
 							}
 						} else {
 							// load client user data
+							CustomerInfo customer = customerService.getCustomerByEmail(email);
+							if (customer != null) {
+								baseService.setUserInfo(customer);
+							} else {
+								((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
+										"Invalid User Request.... token might have been tampered");
+								return;
+							}
 						}
+						logger.info("User - " + (baseService.getUserInfo() instanceof EmployeeInfo
+								? "Employee Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()
+								: "Client Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()));
 						chain.doFilter(request, response);
 					} else {
 						((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
@@ -99,18 +111,24 @@ public class TokenFilter implements Filter {
 							empInfo.setEmployeePermissions(empService.getEmployeePermissionsForTenant(empInfo));
 							if (empInfo != null) {
 								baseService.setUserInfo(empInfo);
-								logger.info("Tenant - " + baseService.getTenantInfo().getTenantID());
-								logger.info("User - " + (baseService.getUserInfo() instanceof EmployeeInfo
-										? "Employee Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()
-										: "Client Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()));
 							} else {
 								((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
 										"Invalid User Request.... token might have been tampered");
 								return;
 							}
 						} else {
-							// load client user data
+							CustomerInfo customer = customerService.getCustomerByEmail(email);
+							if (customer != null) {
+								baseService.setUserInfo(customer);
+							} else {
+								((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
+										"Invalid User Request.... token might have been tampered");
+								return;
+							}
 						}
+						logger.info("User - " + (baseService.getUserInfo() instanceof EmployeeInfo
+								? "Employee Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()
+								: "Client Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()));
 					} else {
 						((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
 								"Token Validation failed");
@@ -128,10 +146,7 @@ public class TokenFilter implements Filter {
 				empInfo.setEmployeePermissions(empService.getEmployeePermissionsForTenant(empInfo));
 				if (empInfo != null) {
 					baseService.setUserInfo(empInfo);
-					logger.info("Tenant - " + baseService.getTenantInfo().getTenantID());
-					logger.info("User - " + (baseService.getUserInfo() instanceof EmployeeInfo
-							? "Employee Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()
-							: "Client Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()));
+					logger.info("Default Admin Id Used - " + empInfo.getEmailId());
 				} else {
 					((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
 							"Invalid User Request.... token might have been tampered");

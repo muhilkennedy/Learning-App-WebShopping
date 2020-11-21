@@ -357,6 +357,21 @@ public class EmployeeController {
 		}
 		return response;
 	}
+	
+	@RequestMapping(value = "/toggleOrderPickUp", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> toggleOrderPickUp(HttpServletRequest request) {
+		GenericResponse<String> response = new GenericResponse<>();
+		try {
+			empService.toggleOrderPickUp();
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("toggleOrderPickUp : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
 
 	
 }

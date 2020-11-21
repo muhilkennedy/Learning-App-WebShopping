@@ -51,13 +51,16 @@ public class Orders implements Serializable {
 	private BigDecimal subTotal;
 	
 	@Column(name = "COUPONDISCOUNT")
-	private BigDecimal couponDiscount;
+	private int couponDiscount;
 	
 	@Column(name = "COUPONAPPLIED")
 	private boolean couponapplied;
 	
 	@Column(name = "COUPONID")
 	private int couponId;
+	
+	@Column(name = "EMPLOYEEID")
+	private int employeeId;
 	
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
 	private List<OrderDetails> orderDetails;
@@ -110,11 +113,11 @@ public class Orders implements Serializable {
 		this.subTotal = subTotal;
 	}
 
-	public BigDecimal getCouponDiscount() {
+	public int getCouponDiscount() {
 		return couponDiscount;
 	}
 
-	public void setCouponDiscount(BigDecimal couponDiscount) {
+	public void setCouponDiscount(int couponDiscount) {
 		this.couponDiscount = couponDiscount;
 	}
 
@@ -132,6 +135,22 @@ public class Orders implements Serializable {
 
 	public void setCouponId(int couponId) {
 		this.couponId = couponId;
+	}
+
+	public int getEmployeeId() {
+		return employeeId;
+	}
+
+	public void setEmployeeId(int employeeId) {
+		this.employeeId = employeeId;
+	}
+
+	public List<OrderDetails> getOrderDetails() {
+		return orderDetails;
+	}
+
+	public void setOrderDetails(List<OrderDetails> orderDetails) {
+		this.orderDetails = orderDetails;
 	}
 
 }
