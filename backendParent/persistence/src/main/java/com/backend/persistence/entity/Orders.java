@@ -7,12 +7,14 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.backend.core.entity.Tenant;
@@ -59,8 +61,11 @@ public class Orders implements Serializable {
 	@Column(name = "COUPONID")
 	private int couponId;
 	
-	@Column(name = "EMPLOYEEID")
+	@Column(name = "EMPLOYEEID", nullable = true)
 	private int employeeId;
+	
+	@OneToOne(mappedBy = "orderId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private OrderInvoice invoice;
 	
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
 	private List<OrderDetails> orderDetails;
@@ -151,6 +156,10 @@ public class Orders implements Serializable {
 
 	public void setOrderDetails(List<OrderDetails> orderDetails) {
 		this.orderDetails = orderDetails;
+	}
+	
+	public OrderInvoice fetchOrderInvoice() {
+		return this.invoice;
 	}
 
 }

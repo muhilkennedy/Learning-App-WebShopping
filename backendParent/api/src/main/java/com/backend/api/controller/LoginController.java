@@ -176,12 +176,21 @@ public class LoginController {
 		return response;
 	}
 	
+	/**************************
+	 * CUSTOMER IMPLEMENTATIONS
+	 * ************************/
+	
 	@RequestMapping(value = "/customerAuthentication", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<JWTResponse> customerLogin(HttpServletRequest request, @RequestBody UserPOJOHelper userObj) {
 		GenericResponse<JWTResponse> response = new GenericResponse<JWTResponse>();
 		try {
 			CustomerInfo cusObj = userObj.getCustomerInfo();
-			cusObj.setPassword(RSAUtil.decrypt(cusObj.fetchPassword(), baseService.getTenantInfo().fetchPrivateKey()));
+			if(!configUtil.isProdMode() && cusObj.fetchPassword().length() < 25) {
+				cusObj.setPassword(cusObj.fetchPassword());
+			}
+			else {
+				cusObj.setPassword(RSAUtil.decrypt(cusObj.fetchPassword(), baseService.getTenantInfo().fetchPrivateKey()));
+			}
 			User cusInfo = loginService.loginUser(cusObj);
 			if (cusInfo != null) {
 				CustomerInfo cInfo = (CustomerInfo) cusInfo;
@@ -203,6 +212,28 @@ public class LoginController {
 			}
 		} catch (Exception ex) {
 			logger.error("customerLogin : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/registerCustomer", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<CustomerInfo> registerCustomer(HttpServletRequest request,
+														  @RequestBody CustomerInfo cusObj) {
+		GenericResponse<CustomerInfo> response = new GenericResponse<CustomerInfo>();
+		try {
+			if(loginService.checkIfCustomerExists(cusObj.getEmailId())) {
+				response.setErrorMessages(Arrays.asList("Email Id Exists"));
+				response.setStatus(Response.Status.ERROR);
+			}
+			else {
+				loginService.createUser(cusObj);
+				response.setStatus(Response.Status.OK);
+			}
+		} catch (Exception ex) {
+			logger.error("registerCustomer : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);

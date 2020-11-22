@@ -71,6 +71,10 @@
     <!-- Breadcrumb to be implemented later -->
     <cui-breadcrumb>
       <li class="breadcrumb-menu d-md-down-none">
+        <a class="notification" style="cursor: pointer;" (click)="navigateToOrders()">
+          <i class="fa fa-shopping-basket"></i>
+          <span class="badge">{{newOrdersCount}}</span>
+        </a>
         <label><small>Welcome</small> <strong>{{userStore.firstName}}</strong></label>
         <mat-slide-toggle color="accent"
                   [checked]="userStore.pickUpOrders"

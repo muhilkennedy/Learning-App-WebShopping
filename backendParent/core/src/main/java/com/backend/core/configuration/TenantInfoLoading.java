@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
 import com.backend.core.dao.EmployeeDao;
+import com.backend.core.dao.InvoiceDao;
 import com.backend.core.entity.HomePageMedia;
 import com.backend.core.entity.Tenant;
 import com.backend.core.entity.TenantDetails;
@@ -49,6 +50,9 @@ public class TenantInfoLoading {
 	
 	@Autowired
 	private EmployeeDao employeeDao;
+	
+	@Autowired
+	private InvoiceDao invoiceDao;
 	
 	/**
 	 * This method is for dev purposes only. 
@@ -146,6 +150,12 @@ public class TenantInfoLoading {
 			if(!employeeDao.isCustomerSupportAdminPresent(realm.getTenantID())) {
 				employeeDao.createAdminUserForTenant(realm.getTenantID());
 			}
+			if(!invoiceDao.containsInvoiceTemplate(realm.getTenantID())) {
+				File file = ResourceUtils.getFile(
+					      "classpath:invoiceTemplate/Invoice-Template.docx");
+				invoiceDao.createInvoiceTemplate(realm.getTenantID(), new SerialBlob(FileUtils.readFileToByteArray(file)));
+			}
+			
 		}
 		// remaing tenants are considered removed.
 		if (!tenantMap.isEmpty()) {

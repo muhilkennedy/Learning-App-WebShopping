@@ -4,28 +4,44 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.math.BigDecimal;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Blob;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.sql.rowset.serial.SerialBlob;
 import javax.sql.rowset.serial.SerialException;
 import javax.transaction.Transactional;
 
 import org.apache.commons.io.FileUtils;
-import org.docx4j.Docx4J;
-import org.docx4j.convert.out.FOSettings;
-import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.backend.commons.util.CommonUtil;
 import com.backend.commons.util.FileUtil;
+import com.backend.core.entity.InvoiceTemplate;
+import com.backend.core.repository.InvoiceRepository;
 import com.backend.core.service.BaseService;
-import com.backend.persistence.entity.InvoiceTemplate;
-import com.backend.persistence.repository.InvoiceRepository;
+import com.backend.persistence.entity.CustomerInfo;
+import com.backend.persistence.entity.OrderDetails;
+import com.backend.persistence.entity.OrderInvoice;
+import com.backend.persistence.entity.Orders;
+import com.backend.persistence.entity.Product;
+import com.backend.persistence.repository.OrderInvoiceRepository;
 import com.backend.persistence.service.InvoiceService;
 
 /**
@@ -36,11 +52,23 @@ import com.backend.persistence.service.InvoiceService;
 @Transactional
 public class InvoiceServiceImpl implements InvoiceService{
 	
+	private static final String Key_CustomerName = "#CustomerName";
+	private static final String Key_CustomerStreet = "#CustomerStreet";
+	private static final String Key_CustomerCity = "#CustomerCity";
+	private static final String Key_CustomerPin = "#CustomerPin";
+	private static final String Key_CustomerMobile = "#CustomerMobile";
+	private static final String Key_CustomerEmail = "#CustomerEmail";
+	private static final String Key_OrderId = "#InvoiceNum";
+	private static final String Key_OrderDate = "#InvoiceDate";
+	
 	@Autowired
 	private BaseService baseService;
 	
 	@Autowired
 	private InvoiceRepository invoiceRepository;
+	
+	@Autowired
+	private OrderInvoiceRepository orderInvoiceRepo;
 	
 	@Override
 	public void save(InvoiceTemplate template) {
@@ -103,6 +131,107 @@ public class InvoiceServiceImpl implements InvoiceService{
 		InputStream is = template.getDocument().getBinaryStream();
 		FileUtils.copyInputStreamToFile(is, tempDocxFile);
 		return tempDocxFile;
+	}
+	
+	@Override
+	public void createOrderInvoice(Orders order) throws Exception{
+		OrderInvoice invoice = new OrderInvoice();
+		invoice.setDocument(generateInvoice(order));
+		invoice.setOrderId(order);
+		invoice.setTenant(baseService.getTenantInfo());
+		orderInvoiceRepo.save(invoice);
+	}
+	
+	private Blob generateInvoice(Orders order) throws Exception {
+		InvoiceTemplate currentTemplate = invoiceRepository.findInvoiceTemplateForTenant(baseService.getTenantInfo());
+		InputStream is = currentTemplate.getDocument().getBinaryStream();
+		XWPFDocument poiDocx = new XWPFDocument(is);
+		// generate map for all prop values.
+		// Adress needs to be passed explicitly in future to handle multiple address.
+		Map<String, String> map = generateInvoiceFieldsMap();
+		// replace props in table.
+		XWPFTable productTable = null;
+		List<XWPFTable> tables = poiDocx.getTables();
+		for (XWPFTable table : tables) {
+			scanAndReplaceValueInTable(table, map);
+			if(table.getText().contains("QTY")) {
+				productTable = table;
+			}
+		}
+		if(productTable == null) {
+			throw new Exception("Cannot able to find Product table!");
+		}
+		BigDecimal subTotal = new BigDecimal(0);
+		List<OrderDetails> items = order.getOrderDetails();
+		for(OrderDetails item: items) {
+			Product product = item.getProduct();
+			XWPFTableRow newRow = productTable.createRow();
+			newRow.getCell(0).setText(product.getProductName());
+			newRow.getCell(1).setText(String.valueOf(item.getQuantity()));
+			newRow.getCell(2).setText(product.getCost().toString());
+			newRow.getCell(3).setText(product.getOffer().toString());
+			BigDecimal total = product.getCost().multiply(new BigDecimal(item.getQuantity()));
+			subTotal = subTotal.add(new BigDecimal(item.getQuantity()).multiply((item.getProduct().getCost())));
+			if (product.getOffer().compareTo(new BigDecimal(0)) > 0) {
+				total = total.multiply(product.getOffer()).divide(new BigDecimal(100));
+				subTotal = subTotal.add(total);
+			}
+			newRow.getCell(4).setText(total.toString());
+		}
+		//inserting dummy row for clarity.
+		productTable.createRow();
+		//calculate sub-total and manipulate balance due.
+		XWPFTableRow subTotalRow = productTable.createRow();
+		subTotalRow.getCell(3).setText("SUB-TOTAL");
+		subTotalRow.getCell(4).setText(subTotal.toString());
+		// final row
+		XWPFTableRow finalRow = productTable.createRow();
+		finalRow.getCell(1).setText("Coupon Applied");
+		finalRow.getCell(2).setText(order.getCouponDiscount() + "%");
+		subTotalRow.getCell(3).setText("SUB-TOTAL");
+		subTotalRow.getCell(4).setText(order.getSubTotal().toString() + " ₹");
+		//genearte file blob
+		File tempFile = File.createTempFile("Invoice-"+order.getOrderId(), ".docx"); 
+		poiDocx.write(new FileOutputStream(tempFile));
+		Blob blob = new SerialBlob(FileUtils.readFileToByteArray(tempFile));
+		//flush File
+		CommonUtil.deleteDirectoryOrFile(tempFile);
+		return blob;
+	}
+	
+	private Map<String, String> generateInvoiceFieldsMap() {
+		CustomerInfo user = (CustomerInfo) baseService.getUserInfo();
+		Map<String, String> map = new HashMap<>();
+		map.put(Key_CustomerName, user.getFirstName().toUpperCase() + " " + user.getLastName().toUpperCase());
+		map.put(Key_CustomerStreet, user.getCustomerAddress().get(0).getStreet());
+		map.put(Key_CustomerCity, user.getCustomerAddress().get(0).getCity());
+		map.put(Key_CustomerPin, user.getCustomerAddress().get(0).getPincode());
+		try {
+			map.put(Key_CustomerMobile, "Contact : " + user.getMobile());
+		} catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException
+				| NoSuchPaddingException e) {
+			e.printStackTrace();
+		}
+		map.put(Key_CustomerEmail, "Email-Id : " + user.getEmailId());
+		map.put(Key_OrderId, " ");
+		String pattern = "MM-dd-yyyy HH:mm";
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("IST"));
+		String date = simpleDateFormat.format(new Date());
+		map.put(Key_OrderDate, date);
+		return map;
+	}
+	
+	private static void scanAndReplaceValueInTable(XWPFTable table, Map<String, String> map) {
+		for (XWPFTableRow row : table.getRows()) {
+			for (XWPFTableCell cell : row.getTableCells()) {
+				String cellContent = cell.getText();
+				if (map.containsKey(cellContent)) {
+					cell.removeParagraph(0);
+					cell.setText(map.get(cellContent));
+				}
+			}
+		}
 	}
 
 }
