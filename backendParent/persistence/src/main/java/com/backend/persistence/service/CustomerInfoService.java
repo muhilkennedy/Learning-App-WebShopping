@@ -1,5 +1,8 @@
 package com.backend.persistence.service;
 
+import java.util.List;
+
+import com.backend.persistence.entity.CustomerCart;
 import com.backend.persistence.entity.CustomerInfo;
 
 public interface CustomerInfoService {
@@ -19,5 +22,9 @@ public interface CustomerInfoService {
 	void updateProductQuantity(int productId, int quantity) throws Exception;
 
 	int getUserCartCount() throws Exception;
+
+	List<CustomerCart> getCustomerCartItems() throws Exception;
+
+	void clearCustomerCart() throws Exception;
 
 }

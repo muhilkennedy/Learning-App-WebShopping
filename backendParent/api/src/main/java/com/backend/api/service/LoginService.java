@@ -21,4 +21,6 @@ public interface LoginService {
 
 	boolean updateEmployeePasswordWithCheck(String newPassword, String oldPassword);
 
+	boolean checkIfCustomerExists(String email);
+
 }

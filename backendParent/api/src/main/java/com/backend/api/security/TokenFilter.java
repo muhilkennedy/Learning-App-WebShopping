@@ -79,7 +79,7 @@ public class TokenFilter implements Filter {
 						}
 						logger.info("User - " + (baseService.getUserInfo() instanceof EmployeeInfo
 								? "Employee Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()
-								: "Client Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()));
+								: "Client Email : " + ((CustomerInfo) baseService.getUserInfo()).getEmailId()));
 						chain.doFilter(request, response);
 					} else {
 						((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
@@ -99,7 +99,7 @@ public class TokenFilter implements Filter {
 			}
 		} else {
 			// running in dev mode
-			// consider token if provided or load default admin user any way for further access.
+			// consider token if provided or load default admin/customer user any way for further access.
 			String token = req.getHeader(HttpHeaders.AUTHORIZATION);
 			if (token != null && !StringUtils.isEmpty(JWTUtil.extractToken(token))) {
 				try {
@@ -128,7 +128,7 @@ public class TokenFilter implements Filter {
 						}
 						logger.info("User - " + (baseService.getUserInfo() instanceof EmployeeInfo
 								? "Employee Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()
-								: "Client Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()));
+								: "Client Email : " + ((CustomerInfo) baseService.getUserInfo()).getEmailId()));
 					} else {
 						((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
 								"Token Validation failed");
@@ -142,15 +142,28 @@ public class TokenFilter implements Filter {
 				}
 			} else {
 				// load default user
-				EmployeeInfo empInfo = empService.findEmployeeById(1);
-				empInfo.setEmployeePermissions(empService.getEmployeePermissionsForTenant(empInfo));
-				if (empInfo != null) {
-					baseService.setUserInfo(empInfo);
-					logger.info("Default Admin Id Used - " + empInfo.getEmailId());
-				} else {
-					((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
-							"Invalid User Request.... token might have been tampered");
-					return;
+				String userType = req.getHeader("USER-TYPE");
+				if(userType.equalsIgnoreCase("Customer")) {
+					CustomerInfo cusInfo = customerService.getCustomerById(1);
+					if(cusInfo != null) {
+						baseService.setUserInfo(cusInfo);
+					}else {
+						((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
+								"Invalid User Request.... cannot set default dev user");
+						return;
+					}
+				}
+				else {
+					EmployeeInfo empInfo = empService.findEmployeeById(1);
+					empInfo.setEmployeePermissions(empService.getEmployeePermissionsForTenant(empInfo));
+					if (empInfo != null) {
+						baseService.setUserInfo(empInfo);
+						logger.info("Default Admin Id Used - " + empInfo.getEmailId());
+					} else {
+						((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
+								"Invalid User Request.... cannot set default dev user");
+						return;
+					}
 				}
 			}
 			chain.doFilter(request, response);

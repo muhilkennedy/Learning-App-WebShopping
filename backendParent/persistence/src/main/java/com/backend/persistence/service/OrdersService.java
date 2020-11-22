@@ -19,6 +19,8 @@ public interface OrdersService {
 
 	List<Orders> getOrders(int limit, int offset);
 
-	void updateOrderStatus(String status, int orderId);
+	void updateOrderStatus(String status, int orderId) throws Exception;
+
+	int getAllUnassignedOrdersCount() throws Exception;
 
 }

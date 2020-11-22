@@ -11,6 +11,7 @@ import com.backend.commons.util.CommonUtil;
 import com.backend.commons.util.OrdersUtil;
 import com.backend.core.entity.EmployeeInfo;
 import com.backend.core.service.BaseService;
+import com.backend.core.util.DashboardStatusUtil;
 import com.backend.persistence.dao.CartDao;
 import com.backend.persistence.dao.OrdersDao;
 import com.backend.persistence.entity.Coupons;
@@ -21,6 +22,8 @@ import com.backend.persistence.entity.Orders;
 import com.backend.persistence.repository.OrderDetailsRepository;
 import com.backend.persistence.repository.OrdersRepository;
 import com.backend.persistence.service.CouponsService;
+import com.backend.persistence.service.CustomerInfoService;
+import com.backend.persistence.service.InvoiceService;
 import com.backend.persistence.service.OrdersService;
 
 /**
@@ -47,6 +50,12 @@ public class OrdersServiceImpl implements OrdersService {
 
 	@Autowired
 	private CartDao cartDao;
+	
+	@Autowired
+	private InvoiceService invoiceService;
+	
+	@Autowired
+	private CustomerInfoService customerService;
 
 	@Override
 	public void save(Orders order) {
@@ -74,6 +83,11 @@ public class OrdersServiceImpl implements OrdersService {
 	@Override
 	public List<Integer> getAllUnassignedOrders() throws Exception {
 		return ordersDao.getUnassignedOrders();
+	}
+	
+	@Override
+	public int getAllUnassignedOrdersCount() throws Exception{
+		return ordersDao.getUnassignedOrdersCount();
 	}
 
 	@Override
@@ -104,9 +118,11 @@ public class OrdersServiceImpl implements OrdersService {
 			detail.setQuantity(item.getQuantity());
 			detail.setTenant(baseService.getTenantInfo());
 			orderDetailsRepo.save(detail);
-			subTotal.add(new BigDecimal(item.getQuantity())
-					.multiply((item.getProduct().getCost().multiply(item.getProduct().getOffer())))
-					.divide(new BigDecimal(100)));
+			BigDecimal total = new BigDecimal(item.getQuantity()).multiply((item.getProduct().getCost()));
+			if (item.getProduct().getOffer().compareTo(new BigDecimal(0)) > 0) {
+				total = total.multiply(item.getProduct().getOffer()).divide(new BigDecimal(100));
+			}
+			subTotal = subTotal.add(total);
 		}
 		if (coupon != null) {
 			subTotal = subTotal.multiply(new BigDecimal(coupon.getDiscount())).divide(new BigDecimal(100));
@@ -115,6 +131,8 @@ public class OrdersServiceImpl implements OrdersService {
 		ordersRepo.save(order);
 		// create unassigned order to be picked up by a employee.
 		createUnassignedOrder(order.getOrderId());
+		customerService.clearCustomerCart();
+		DashboardStatusUtil.incremenOnlineCount(baseService.getTenantInfo());
 	}
 
 	@Override
@@ -123,11 +141,16 @@ public class OrdersServiceImpl implements OrdersService {
 	}
 	
 	@Override
-	public void updateOrderStatus(String status, int orderId) {
-		Orders order = ordersRepo.findOrdersByIdQuery(baseService.getTenantInfo(), orderId);
-		if(order != null) {
-			EmployeeInfo emp = (EmployeeInfo) baseService.getUserInfo();
-			order.setEmployeeId(emp.getEmployeeId());
+	public void updateOrderStatus(String status, int orderId) throws Exception {
+		Orders order = ordersRepo.findOrdersById(baseService.getTenantInfo(), orderId);
+		if (order != null) {
+			// incase of order accepted by a employee assign the task to that employee
+			if (order.getEmployeeId() <= 0) {
+				EmployeeInfo emp = (EmployeeInfo) baseService.getUserInfo();
+				order.setEmployeeId(emp.getEmployeeId());
+				ordersRepo.saveAndFlush(order);
+				removeUnassignedOrder(order.getOrderId());
+			}
 			switch (status.toLowerCase()) {
 			case "accepted":
 				order.setStatus(OrdersUtil.orderStatus.Accepted.toString());
@@ -153,6 +176,7 @@ public class OrdersServiceImpl implements OrdersService {
 			}
 		}
 		ordersRepo.saveAndFlush(order);
+		invoiceService.createOrderInvoice(order);
 	}
 
 }

@@ -23,7 +23,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Integer> {
 	String findOrdersByCustomerQuery = "select order from Orders order where order.tenant = :tenant and order.customerId = :customerId";
 	
 	@Query(findOrdersByIdQuery)
-	Orders findOrdersByIdQuery(@Param("tenant") Tenant realm, @Param("orderId") int orderId);
+	Orders findOrdersById(@Param("tenant") Tenant realm, @Param("orderId") int orderId);
 	
 	@Query(findOrdersByCustomerQuery)
 	List<Orders> findOrdersByCustomer(@Param("tenant") Tenant realm, @Param("customerId") int customerId);

@@ -53,7 +53,7 @@ public class CartDao {
 		List<CustomerCart> cartItems = new ArrayList<CustomerCart>();
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con.prepareStatement("select productid,quantity from customercart where tenantid=? and customerid=?");
-			stmt.setString(1, baseService.getTenantInfo().getUniqueName());
+			stmt.setString(1, baseService.getTenantInfo().getTenantID());
 			stmt.setInt(2, customerid);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
@@ -83,6 +83,19 @@ public class CartDao {
 		}
 	}
 	
+	public void clearCustomerCart(int customerid) throws Exception {
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			PreparedStatement stmt = con
+					.prepareStatement("delete from customercart where tenantid=? and customerid=?");
+			stmt.setString(1, baseService.getTenantInfo().getTenantID());
+			stmt.setInt(2, customerid);
+			stmt.executeUpdate();
+		} catch (Exception ex) {
+			logger.error("Exception deleting from cart- " + ex);
+			throw new Exception(ex.getMessage());
+		}
+	}
+	
 	public void updateProductQuantity(int productid, int customerid, int quantity) throws Exception {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con
@@ -102,7 +115,7 @@ public class CartDao {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con
 					.prepareStatement("select count(*) from customercart where tenantid=? and customerid=? ");
-			stmt.setString(1, baseService.getTenantInfo().getUniqueName());
+			stmt.setString(1, baseService.getTenantInfo().getTenantID());
 			stmt.setInt(2, customerid);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {

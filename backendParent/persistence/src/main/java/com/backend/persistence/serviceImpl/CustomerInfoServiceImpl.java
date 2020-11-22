@@ -1,5 +1,7 @@
 package com.backend.persistence.serviceImpl;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.backend.core.service.BaseService;
 import com.backend.persistence.dao.CartDao;
+import com.backend.persistence.entity.CustomerCart;
 import com.backend.persistence.entity.CustomerInfo;
 import com.backend.persistence.repository.CustomerInfoRepository;
 import com.backend.persistence.service.CustomerInfoService;
@@ -61,6 +64,12 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 	}
 	
 	@Override
+	public void clearCustomerCart() throws Exception{
+		CustomerInfo customer = (CustomerInfo) baseService.getUserInfo();
+		cartDao.clearCustomerCart(customer.getCustomerId());
+	}
+	
+	@Override
 	public void updateProductQuantity(int productId, int quantity) throws Exception {
 		CustomerInfo customer = (CustomerInfo) baseService.getUserInfo();
 		cartDao.updateProductQuantity(productId, customer.getCustomerId(), quantity);
@@ -70,6 +79,12 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 	public int getUserCartCount() throws Exception {
 		CustomerInfo customer = (CustomerInfo) baseService.getUserInfo();
 		return cartDao.getUserCartCount(customer.getCustomerId());
+	}
+	
+	@Override
+	public List<CustomerCart> getCustomerCartItems() throws Exception {
+		CustomerInfo customer = (CustomerInfo) baseService.getUserInfo();
+		return cartDao.userCartItems(customer.getCustomerId());
 	}
 
 }

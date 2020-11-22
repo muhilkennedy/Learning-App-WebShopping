@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import com.backend.core.service.BaseService;
 import com.backend.core.util.DBUtil;
-import com.backend.persistence.entity.CustomerCart;
 
 /**
  * @author Muhil
@@ -50,7 +49,7 @@ private Logger logger = LoggerFactory.getLogger(OrdersDao.class);
 		List<Integer> cartItems = new ArrayList<Integer>();
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con.prepareStatement("select orderid from unassignedorders where tenantid=?");
-			stmt.setString(1, baseService.getTenantInfo().getUniqueName());
+			stmt.setString(1, baseService.getTenantInfo().getTenantID());
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
 				cartItems.add(rs.getInt(1));
@@ -60,6 +59,22 @@ private Logger logger = LoggerFactory.getLogger(OrdersDao.class);
 			throw new Exception(ex.getMessage());
 		}
 		return cartItems;
+	}
+	
+	public int getUnassignedOrdersCount() throws Exception{
+		int count = 0 ;
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			PreparedStatement stmt = con.prepareStatement("select count(*) from unassignedorders where tenantid=?");
+			stmt.setString(1, baseService.getTenantInfo().getTenantID());
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				count = rs.getInt(1);
+			}
+		} catch (Exception ex) {
+			logger.error("Exception in fetching customer cart items - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+		return count;
 	}
 	
 	public void removeUnassignedOrders(int orderId) throws Exception {

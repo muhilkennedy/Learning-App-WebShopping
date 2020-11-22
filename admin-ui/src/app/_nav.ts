@@ -34,7 +34,7 @@ export const navItems: INavData[] = [
   },
   {
     name: 'Manage Orders',
-    url: '/manageorders',
+    url: '/orders',
     icon: 'icon-note',
   },
   {
