@@ -21,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.Response;
 import com.backend.commons.util.CommonUtil;
-import com.backend.persistence.entity.InvoiceTemplate;
+import com.backend.core.entity.InvoiceTemplate;
 import com.backend.persistence.service.InvoiceService;
 
 /**

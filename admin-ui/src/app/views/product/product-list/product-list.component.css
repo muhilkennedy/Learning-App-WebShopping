@@ -18,3 +18,32 @@
 .sortOption{
   cursor: pointer;
 }
+
+.expandicon{
+  color: #ff5722;
+  cursor: pointer;
+  transition: transform .2s;
+}
+
+.expandicon:hover  {
+  transform: scale(1.5);
+}
+
+.expandexclamicon{
+  color: crimson;
+  cursor: help;
+  transition: transform .2s;
+}
+
+.expandexclamicon:hover  {
+  transform: scale(1.5);
+}
+
+.titleText{
+  color: #099caa;
+}
+
+.outofstock{
+  background: #ffebce;
+}
+

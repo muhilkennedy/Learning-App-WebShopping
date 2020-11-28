@@ -26,11 +26,16 @@ export const navItems: INavData[] = [
         icon: 'icon-list'
       },
       {
-        name: 'Manage Product',
+        name: 'Create Product',
         url: '/product/manage-product',
         icon: 'icon-pencil'
       }
     ]
+  },
+  {
+    name: 'Manage Orders',
+    url: '/orders',
+    icon: 'icon-note',
   },
   {
     name: 'Sales',
@@ -38,14 +43,14 @@ export const navItems: INavData[] = [
     icon: 'icon-wallet',
     children: [
       {
-        name: 'Orders',
-        url: '/sales/orders',
-        icon: 'icon-basket'
+        name: 'POC Transactions',
+        url: '/sales/transactions',
+        icon: 'icon-credit-card'
       },
       {
-        name: 'Approval',
-        url: '/sales/approval',
-        icon: 'icon-note'
+        name: 'Online Transactions',
+        url: '/sales/orders',
+        icon: 'icon-basket'
       }
     ]
   },

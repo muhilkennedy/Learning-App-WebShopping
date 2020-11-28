@@ -1,6 +1,5 @@
 package com.backend.persistence.repository;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,9 +17,10 @@ import com.backend.persistence.entity.Coupons;
 @Repository
 public interface CouponRepository extends JpaRepository<Coupons, Integer> {
 	
-	String findAllActiveCouponsQuery = "select coup from Coupons coup where coup.active = true and coup.tenant = :tenant";
-	String findExpiredCouponsQuery = "select coup from Coupons coup where coup.active = true and coup.tenant = :tenant and coup.endDate < :endDate";
-	String findAllCouponsQuery = "select coup from Coupons coup where coup.tenant = :tenant";
+	String findAllActiveCouponsQuery = "select coup from Coupons coup where coup.active = true and coup.tenant = :tenant and coup.deleted=false";
+	String findExpiredCouponsQuery = "select coup from Coupons coup where coup.active = true and coup.tenant = :tenant and coup.endDate < :endDate and coup.deleted=false";
+	String findAllCouponsQuery = "select coup from Coupons coup where coup.tenant = :tenant and coup.deleted=false";
+	String findCouponByIdQuery = "select coup from Coupons coup where coup.tenant = :tenant and coup.deleted=false and coup.couponId = :couponId";
 	
 	@Query(findAllActiveCouponsQuery)
 	List<Coupons> findAllActiveCoupons(@Param("tenant") Tenant realm);
@@ -29,6 +29,8 @@ public interface CouponRepository extends JpaRepository<Coupons, Integer> {
 	List<Coupons> findAllCouponsForTenant(@Param("tenant") Tenant realm);
 	
 	@Query(findExpiredCouponsQuery)
-	List<Coupons> findExpiredCoupons(@Param("tenant") Tenant realm, @Param("endDate") Date endDate);
-
+	List<Coupons> findExpiredCoupons(@Param("tenant") Tenant realm, @Param("endDate") long endDate);
+	
+	@Query(findCouponByIdQuery)
+	Coupons findCouponById(@Param("tenant") Tenant realm, @Param("couponId") int couponId);
 }

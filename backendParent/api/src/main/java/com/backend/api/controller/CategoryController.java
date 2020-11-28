@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -99,60 +98,5 @@ public class CategoryController {
 		}
 		return response;
 	}
-	
-	/*
-	 * ############################################ 
-	 * 				secured access
-	 * ############################################
-	 */
-	
-	@RequestMapping(value = "/secure/admin/createCategory", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<Map> createCategory(HttpServletRequest request, @RequestBody Category cat) {
-		GenericResponse<Map> response = new GenericResponse<>();
-		try {
-			categoryService.createCategory(cat);
-			response.setData(categoryService.getCategoriesRecursive());
-			response.setStatus(Response.Status.OK);
-		} catch (Exception ex) {
-			logger.error("createCategory : " + ex);
-			List<String> msg = Arrays.asList(ex.getMessage());
-			response.setErrorMessages(msg);
-			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
-		}
-		return response;
-	}
-	
-	@RequestMapping(value = "/secure/admin/deleteCategory", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<Map> deleteCategory(HttpServletRequest request, @RequestParam(value = "ids", required = true) List<Integer> ids) {
-		GenericResponse<Map> response = new GenericResponse<>();
-		try {
-			categoryService.deleteCategory(ids);
-			response.setData(categoryService.getCategoriesRecursive());
-			response.setStatus(Response.Status.OK);
-		} catch (Exception ex) {
-			logger.error("deleteCategory : " + ex);
-			List<String> msg = Arrays.asList(ex.getMessage());
-			response.setErrorMessages(msg);
-			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
-		}
-		return response;
-	}
-	
-	@RequestMapping(value = "/secure/admin/editCategoryName", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<Map> editCategory(HttpServletRequest request, @RequestBody Category cat) {
-		GenericResponse<Map> response = new GenericResponse<>();
-		try {
-			categoryService.updateCategoryName(cat.getCategoryId(), cat.getCategoryName());
-			response.setData(categoryService.getCategoriesRecursive());
-			response.setStatus(Response.Status.OK);
-		} catch (Exception ex) {
-			logger.error("editCategory : " + ex);
-			List<String> msg = Arrays.asList(ex.getMessage());
-			response.setErrorMessages(msg);
-			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
-		}
-		return response;
-	}
-	
 
 }

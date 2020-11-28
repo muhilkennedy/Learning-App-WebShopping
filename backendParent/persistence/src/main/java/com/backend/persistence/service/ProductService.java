@@ -7,6 +7,8 @@ import javax.sql.rowset.serial.SerialException;
 
 import com.backend.persistence.entity.Category;
 import com.backend.persistence.entity.Product;
+import com.backend.persistence.entity.ProductImages;
+import com.backend.persistence.helper.ProductPOJO;
 
 public interface ProductService {
 
@@ -42,5 +44,31 @@ public interface ProductService {
 	void deleteProductsForCategory(Category category);
 
 	Product getProductByCode(String code);
+
+	List<ProductImages> getProductImages(Product product);
+
+	Product getProductById(int id);
+
+	List<ProductImages> getProductImages(List<Integer> productIds) throws Exception;
+
+	void addProductImage(int productId, byte[] productPic) throws Exception;
+
+	void removeProductImage(int imageId) throws Exception;
+
+	void replaceImage(int imageId, byte[] productPic) throws Exception;
+
+	void changeProductStatus(int productId, boolean status) throws Exception;
+
+	List<Product> searchProductsByMatchingName(String searchTerm);
+
+	void addToFeaturedProducts(int pId) throws Exception;
+
+	List<ProductPOJO> getFeaturedProducts() throws Exception;
+
+	void deleteFeaturedProduct(int pId) throws Exception;
+
+	boolean isFeaturedProduct(int pId) throws Exception;
+
+	List<Product> searchProductsByMatchingNameOrCode(String searchTerm);
 
 }

@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -33,12 +32,6 @@ public class CoreSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private ConfigUtil config;
 	
-//	@Autowired
-//	private TokenFilter tokenFilter;
-//	
-//	@Autowired
-//	private AdminFilter adminFilter;
-	
 	@Autowired
 	private RealmFilter realmFilter;
 
@@ -47,10 +40,12 @@ public class CoreSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	 */
 	@Override
     protected void configure(HttpSecurity http) throws Exception {
-		logger.info("<<<<<<<<<<App Running in " + config.getDeploymentMode() + " mode >>>>>>>>");
+		logger.info("<<<<<<<<<< App Running in " + config.getDeploymentMode() + " mode >>>>>>>>");
         http.csrf().disable();
         http.cors().and()
-        	.authorizeRequests().antMatchers("/**").permitAll().and().headers().frameOptions().disable();
+        	.authorizeRequests()
+        	.antMatchers("/**").permitAll()
+        	.and().headers().frameOptions().disable();
     }
 	
 	@Bean

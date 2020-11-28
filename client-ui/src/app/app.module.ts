@@ -83,26 +83,17 @@ export class TenantInitializer {
                   this.tenantStore.tenantFacebook = tenantDetails.tenantFacebook;
                   this.tenantStore.tenantInsta = tenantDetails.tenantInsta;
                   this.tenantStore.tenantTwitter = tenantDetails.tenantTwitter;
-
                   this.tenantStore.tenantHomeMediaLength = resp.dataList[1];
+                  // load app only if tenant is active.
                   if(this.tenantStore.tenantActive){
                     resolve();
                   }
                 },
                 (error:any) => {
-                  alert("failure resp" + error)
-                    console.log("error in loading tenant");
+                  alert("Tenant is not Active/Reachable at the moment! Try again later!")
+                  console.log("error in loading tenant");
                 }
               );
-          // load app only if tenant is active.
-          // setTimeout(() => {
-          //   console.log("trying to resolve requst....");
-          //   if(this.tenantStore.tenantActive === true){
-          //     console.log("Loading comeplete!");
-          //     resolve();
-          //   }
-          // }, 1000);
-          // resolve();
     });
   }
 }

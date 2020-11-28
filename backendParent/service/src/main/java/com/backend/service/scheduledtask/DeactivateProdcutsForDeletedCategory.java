@@ -34,7 +34,7 @@ private Logger logger = LoggerFactory.getLogger(DeactivateProdcutsForDeletedCate
 	private ProductService productService;
 
 	// cron = sec min hour day mon dayOfWeek.
-	@Scheduled(cron = " 1 0 0 * * * ")
+	@Scheduled(cron = " 1 0 0 * * * ", zone = "IST")
 	@Override
 	public void execute() {
 		logger.info("Scheduled Task - " + DeactivateProdcutsForDeletedCategory.class.getCanonicalName() + " Started");

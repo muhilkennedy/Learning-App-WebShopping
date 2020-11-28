@@ -1,17 +1,41 @@
 <alert class="p-4 text-center"></alert>
 <div class="animated fadeIn">
+
+  <!-- <div class="row">
+    <div class="col-lg">
+      <div class="card">
+        <ngx-loading [show]="loading"></ngx-loading>
+        <div class="card-header">
+          <i class="fa fa-image"></i>Featured products
+          <i *ngIf="!isFeaturedProductsCollapsed" class="fa fa-toggle-up toggleIcon" (click)="isFeaturedProductsCollapsed = !isFeaturedProductsCollapsed"></i>
+          <i *ngIf="isFeaturedProductsCollapsed" class="fa fa-toggle-down toggleIcon" (click)="isFeaturedProductsCollapsed = !isFeaturedProductsCollapsed"></i>
+        </div>
+        <div [collapse]="isFeaturedProductsCollapsed">
+          <div class="card-body">
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+
   <div class="row">
     <div class="col-sm-6">
       <div class="card">
         <ngx-loading [show]="loading"></ngx-loading>
         <div class="card-header">
           <i class="fa fa-image"></i>Home Slider Images
-          <div class="card-header-actions">
+          <div class="float-right">
+            <i *ngIf="!isSliderImagesCollapsed" class="fa fa-toggle-up toggleIcon" (click)="isSliderImagesCollapsed = !isSliderImagesCollapsed"></i>
+            <i *ngIf="isSliderImagesCollapsed" class="fa fa-toggle-down toggleIcon" (click)="isSliderImagesCollapsed = !isSliderImagesCollapsed"></i>
+          </div>
+          <div class="float-right">
             <a href="#" target="_blank">
-              <small className="text-muted">View Home</small>
+              <small className="text-muted">View Home <b style="visibility: hidden;">hide</b></small>
             </a>
           </div>
         </div>
+        <div [collapse]="isSliderImagesCollapsed">
         <div class="card-body">
           <carousel [interval]="false" >
             <slide *ngFor="let slide of sliderImages">
@@ -59,6 +83,7 @@
             </ng-template>
           </div>
         </div>
+        </div>
       </div>
     </div>
     <!-- SECOND CARD -->
@@ -68,7 +93,12 @@
         <div class="card-header">
           <i class="fa fa-file-image-o"></i>Home Media Images
           <small> (intial load images)</small>
+          <div class="float-right">
+            <i *ngIf="!isHomeImagesCollapased" class="fa fa-toggle-up toggleIcon" (click)="isHomeImagesCollapased = !isHomeImagesCollapased"></i>
+            <i *ngIf="isHomeImagesCollapased" class="fa fa-toggle-down toggleIcon" (click)="isHomeImagesCollapased = !isHomeImagesCollapased"></i>
+          </div>
         </div>
+        <div [collapse]="isHomeImagesCollapased">
         <div class="card-body">
           <carousel [interval]="false">
             <slide *ngFor="let slide of homeImages">
@@ -163,8 +193,10 @@
               <i class="fa fa-upload"></i> Add Home Image
           </button>
           </ng-template>
+        </div>
+        </div>
       </div>
     </div>
-
+    </div>
   </div>
 </div>

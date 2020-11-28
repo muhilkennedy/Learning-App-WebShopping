@@ -28,7 +28,7 @@ public class DeactivateCouponsScheduledTask extends ScheduledTask {
 	private CouponsService coupService;
 
 	// cron = sec min hour day mon dayOfWeek.
-	@Scheduled(cron = " 0 5 0 * * * ")
+	@Scheduled(cron = " 0 5 0 * * * ", zone = "IST")
 	@Override
 	public void execute() {
 		logger.info("Scheduled Task - " + DeactivateCouponsScheduledTask.class.getCanonicalName() + " Started");

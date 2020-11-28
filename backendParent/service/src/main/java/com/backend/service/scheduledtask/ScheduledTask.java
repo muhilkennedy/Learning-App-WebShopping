@@ -18,8 +18,13 @@ public abstract class ScheduledTask {
 	
 	public abstract void execute();
 	
-	protected void newTaskAudit (Tenant tenant, String taskName) {
-		audit = new ScheduledTaskAudit(tenant,taskName);
+	protected void newTaskAudit(Tenant tenant, String taskName) {
+		audit = new ScheduledTaskAudit(tenant.getTenantID(), taskName);
+		markSubmitted();
+	}
+	
+	protected void newTaskAudit(String alternateTenantValue, String taskName) {
+		audit = new ScheduledTaskAudit(alternateTenantValue, taskName);
 		markSubmitted();
 	}
 	

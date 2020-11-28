@@ -5,21 +5,6 @@
     <!-- <span *ngIf="unreadMessage" class="avatar-status badge-dark"></span> -->
   </a>
 </ng-template>
-<div class="p-3">
-  <h6>User Information</h6>
-  <div class="aside-options">
-    <div class="clearfix mt-4">
-      <small><b>Welcome {{userStore.firstName}} !</b></small>
-    </div>
-    <div>
-      <small class="text-muted">ID : <b>{{userStore.userId}}</b></small>
-    </div>
-    <div>
-      <small class="text-muted">{{userStore.designation}}</small>
-    </div>
-</div>
-
-<hr/>
 
 <h6>Chat Window</h6>
 <!-- <div class="aside-options">
@@ -33,16 +18,10 @@
   </div>
 </div> -->
 
-<button (click)="scan()">scan</button>
 <form [formGroup]="userForm" (submit)="openSocket()" *ngIf="isLoaded">
-  <p>User Information: (if user id(toId) is null the message will be sended to all users) </p>
-  <div style="margin-bottom: 20px;">
-    <input type="text" formControlName="fromId" name="fromId" placeholder="Your id">
-    <input type="submit" [disabled]="userForm.invalid || isCustomSocketOpened" value="open socket to recieve custom messages">
-  </div>
   <input type="text" formControlName="toId" name="toId" placeholder="User id to send the message to">
 </form>
-<form [formGroup]="form" (submit)="sendMessageUsingSocket()">
+<!-- <form [formGroup]="form" (submit)="sendMessageUsingSocket()">
   <p>Message: </p>
   <input type="text" formControlName="message" name="message" placeholder="Message">
   <input type="submit" value="Send using socket subscription">
@@ -50,4 +29,56 @@
 </form>
 <ul>
   <li *ngFor="let message of messages">From: {{message.fromId}}, To: {{message.toId}}, Message: {{message.message}}</li>
-</ul>
+</ul> -->
+
+<hr/>
+
+<!-- <div class="mesgs"> -->
+  <!-- <div class="msg_history"> -->
+    <li class="message" *ngFor="let message of messages">
+      <div
+        *ngIf="
+          message.fromId !== getCurrentUserIdWithTenant();
+          then incoming_msg;
+          else outgoing_msg
+        "
+      ></div>
+      <ng-template #incoming_msg>
+        <div class="incoming_msg">
+          <div class="incoming_msg_img">
+            <img
+              src="https://i.imgur.com/k2PZLZa.png"
+              alt="User avatar"
+            />
+          </div>
+          <div class="received_msg">
+            <div class="received_withd_msg">
+              <p>{{ message.message }}</p>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template #outgoing_msg>
+        <div class="outgoing_msg">
+          <div class="sent_msg">
+            <p>{{ message.message }}</p>
+          </div>
+        </div>
+      </ng-template>
+    </li>
+  <!-- </div> -->
+  <div class="type_msg">
+    <form class="input_msg_write" (ngSubmit)="sendMessageUsingSocket()">
+      <input
+        type="text"
+        class="write_msg"
+        placeholder="Type a message"
+        name="newMessage"
+        [(ngModel)]="newMessage"
+      />
+      <button class="msg_send_btn" type="button">
+        <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
+      </button>
+    </form>
+  </div>
+<!-- </div> -->

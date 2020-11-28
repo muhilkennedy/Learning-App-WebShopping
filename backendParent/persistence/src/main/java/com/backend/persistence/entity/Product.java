@@ -2,7 +2,6 @@ package com.backend.persistence.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -13,8 +12,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
 import com.backend.core.entity.Tenant;
@@ -54,7 +55,7 @@ public class Product implements Serializable {
 	private BigDecimal cost;
 	
 	@Column(name = "OFFER")
-	private int offer;
+	private BigDecimal offer;
 	
 	@Column(name = "DESCRIPTION")
 	private String productDescription;
@@ -66,7 +67,7 @@ public class Product implements Serializable {
 	private String productCode;
 	
 	@Column(name = "LASTMODIFIED")
-	private Date lastModified;
+	private long lastModified;
 	
 	@Column(name = "LASTMODIFIEDEMPLOYEEID")
 	private Integer lastModifiedById;
@@ -74,12 +75,22 @@ public class Product implements Serializable {
 	@Column(name = "ACTIVE")
 	private boolean active;
 	
+	@Column(name = "ISDELETED")
+	private boolean isDeleted;
+	
+	@Column(name = "PRODUCTRATING")
+	private int productRating;
+
 	@OneToMany(mappedBy = "productId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<ProductImages> productImages;
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "productId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<ProductReview> productReviews;
+	
+	@JsonIgnore
+	@ManyToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<OrderDetails> orderDetails;
 
 	public Tenant getTenant() {
 		return tenant;
@@ -129,11 +140,11 @@ public class Product implements Serializable {
 		this.productDescription = productDescription;
 	}
 
-	public Date getLastModified() {
+	public long getLastModified() {
 		return lastModified;
 	}
 
-	public void setLastModified(Date lastModified) {
+	public void setLastModified(long lastModified) {
 		this.lastModified = lastModified;
 	}
 
@@ -161,11 +172,11 @@ public class Product implements Serializable {
 		this.categoryId = categoryId;
 	}
 
-	public int getOffer() {
+	public BigDecimal getOffer() {
 		return offer;
 	}
 
-	public void setOffer(int offer) {
+	public void setOffer(BigDecimal offer) {
 		this.offer = offer;
 	}
 
@@ -191,6 +202,30 @@ public class Product implements Serializable {
 
 	public void setProductCode(String productCode) {
 		this.productCode = productCode;
+	}
+
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+	
+	public int getProductRating() {
+		return productRating;
+	}
+
+	public void setProductRating(int productRating) {
+		this.productRating = productRating;
+	}
+
+	@PrePersist
+	private void prePersistCheck() {
+		// A deleted product will be deactivated always
+		if (isDeleted == true && active != false) {
+			active = false;
+		}
 	}
 
 }

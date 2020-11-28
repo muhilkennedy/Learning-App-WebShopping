@@ -34,6 +34,8 @@ public class SQLQueryHandler {
 		public static final String Key_LimitCondition = " limit ";
 		public static final String Key_OffsetCondition = " offset ";
 		public static final String Key_Equals = " = ";
+		public static final String Key_GreaterThan = " > ";
+		public static final String Key_LesserThan = " < ";
 		public static final String Key_StartBrace = " ( ";
 		public static final String Key_EndBrace = " ) ";
 		public static final String Key_OrderBy = " order by ";
@@ -150,6 +152,14 @@ public class SQLQueryHandler {
 			return setAndCondition(fieldName, value, true);
 		}
 		
+		public SQLQueryBuilder andSetAndCondition(String fieldName, Long value) {
+			return setAndCondition(fieldName, value.toString(), true);
+		}
+		
+		public SQLQueryBuilder andSetAndCondition(String fieldName, int value) {
+			return setAndCondition(fieldName, value, true);
+		}
+		
 		public SQLQueryBuilder andSetAndCondition(String fieldName, boolean value) {
 			return setAndCondition(fieldName, value, true);
 		}
@@ -240,6 +250,44 @@ public class SQLQueryHandler {
 				}
 				count++;
 			}
+			setEndBrace();
+			return this;
+		}
+		
+		public SQLQueryBuilder andSetLessThanCondition (String fieldName, String value) {
+			if(value == null) {
+				return this;
+			}
+			setAndCondition();
+			setStartBrace();
+			this.query = this.query.concat(fieldName.concat(Key_LesserThan).concat(value));
+			setEndBrace();
+			return this;
+		}
+		
+		public SQLQueryBuilder andSetLessThanCondition (String fieldName, Long value) {
+			setAndCondition();
+			setStartBrace();
+			this.query = this.query.concat(fieldName.concat(Key_LesserThan).concat(value.toString()));
+			setEndBrace();
+			return this;
+		}
+		
+		public SQLQueryBuilder andSetGreaterThanCondition (String fieldName, String value) {
+			if(value == null) {
+				return this;
+			}
+			setAndCondition();
+			setStartBrace();
+			this.query = this.query.concat(fieldName.concat(Key_GreaterThan).concat(value));
+			setEndBrace();
+			return this;
+		}
+		
+		public SQLQueryBuilder andSetGreaterThanCondition (String fieldName, Long value) {
+			setAndCondition();
+			setStartBrace();
+			this.query = this.query.concat(fieldName.concat(Key_GreaterThan).concat(value.toString()));
 			setEndBrace();
 			return this;
 		}

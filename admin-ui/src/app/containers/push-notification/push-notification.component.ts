@@ -3,6 +3,7 @@ import { NotificationService } from '../../shared/notification/notification.serv
 import { AlertService } from '../../shared/_alert';
 import { CookieService } from 'ngx-cookie-service';
 import { LoginService } from '../../service/login/login.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-push-notification',
@@ -18,7 +19,8 @@ export class PushNotificationComponent implements OnInit {
   constructor(private notificationService: NotificationService,
               private alertService: AlertService,
               private cookieService: CookieService,
-              private loginService: LoginService) { }
+              private loginService: LoginService,
+              private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
     let allowCall =this.cookieService.get('JWT');
@@ -42,6 +44,12 @@ export class PushNotificationComponent implements OnInit {
                             .subscribe((resp:any) => {
                               if(resp.statusCode === 200){
                                 this.notifications = resp.dataList;
+                                if(this.notificationCount !== this.notifications.length){
+                                  this._snackBar.open('You Have a New Notification(s)!', '', {
+                                    duration: 5000,
+                                    panelClass: ['warn-snackbar']
+                                  });
+                                }
                                 this.notificationCount = this.notifications.length;
                               }
                             });
@@ -52,6 +60,7 @@ export class PushNotificationComponent implements OnInit {
                             .subscribe((resp:any) => {
                               if(resp.statusCode === 200){
                                 this.notifications = resp.dataList;
+                                this.notificationCount -= 1;
                               }
                             });
   }

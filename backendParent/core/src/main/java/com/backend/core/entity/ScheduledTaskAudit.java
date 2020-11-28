@@ -7,8 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -19,9 +17,8 @@ import javax.persistence.Table;
 @Table(name = "SCHEDULEDTASKAUDIT")
 public class ScheduledTaskAudit {
 	
-	@ManyToOne
-	@JoinColumn(name = "TENANTID", nullable = false)
-	private Tenant tenant;
+	@Column(name = "TENANTID")
+	private String tenant;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -47,13 +44,13 @@ public class ScheduledTaskAudit {
 		super();
 	}
 	
-	public ScheduledTaskAudit(Tenant tenant, String taskName) {
+	public ScheduledTaskAudit(String tenant, String taskName) {
 		super();
 		this.tenant = tenant;
 		this.taskName = taskName;
 	}
 
-	public ScheduledTaskAudit(Tenant tenant, String taskName, Date startTime, Date endTime, String status,
+	public ScheduledTaskAudit(String tenant, String taskName, Date startTime, Date endTime, String status,
 			String failureInfo) {
 		super();
 		this.tenant = tenant;
@@ -64,11 +61,11 @@ public class ScheduledTaskAudit {
 		this.failureInfo = failureInfo;
 	}
 
-	public Tenant getTenant() {
+	public String getTenant() {
 		return tenant;
 	}
 
-	public void setTenant(Tenant tenant) {
+	public void setTenant(String tenant) {
 		this.tenant = tenant;
 	}
 

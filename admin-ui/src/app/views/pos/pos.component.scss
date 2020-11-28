@@ -1,0 +1,19 @@
+.removeicon{
+  color: crimson;
+  cursor: pointer;
+  transition: transform .2s;
+}
+
+.removeicon:hover  {
+  transform: scale(1.5);
+}
+
+.addicon{
+  color: green;
+  cursor: pointer;
+  transition: transform .2s;
+}
+
+.addicon:hover  {
+  transform: scale(1.5);
+}

@@ -12,9 +12,14 @@ export class HomeService {
   constructor(private http: HttpClient) { }
 
   homeMediaEndpoint = "/base/homeMedia";
+  featuredProductsEndpoint = "/product/getFeaturedProducts";
 
   getAllHomeMedia() : Observable<any>{
     return this.http.get(environment.backendBaseUrl+this.homeMediaEndpoint);
+  }
+
+  getAllFeaturedProducts(){
+    return this.http.get(environment.backendBaseUrl+this.featuredProductsEndpoint);
   }
 
 }

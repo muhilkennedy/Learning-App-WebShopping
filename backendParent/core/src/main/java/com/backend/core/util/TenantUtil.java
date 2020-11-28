@@ -18,6 +18,8 @@ import com.backend.core.service.TenantService;
 public class TenantUtil {
 	
 	private static Logger logger = LoggerFactory.getLogger(TenantUtil.class);
+	
+	public static String Key_TenantId = "tenantId";
 
 	private static TenantService tenantService;
 	

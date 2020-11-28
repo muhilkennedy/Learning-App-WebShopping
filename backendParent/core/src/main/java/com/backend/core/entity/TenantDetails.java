@@ -2,9 +2,14 @@ package com.backend.core.entity;
 
 import java.io.InputStream;
 import java.io.Serializable;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
 import java.util.Base64;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,6 +20,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.backend.core.util.RSAUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.io.ByteStreams;
 
@@ -67,6 +73,9 @@ public class TenantDetails implements Serializable{
 	
 	@Column(name = "TENANTBUSINESSEMAIL")
 	private String businessEmail;
+	
+	@Column(name = "GSTIN")
+	private String gstIn;
 	
 	@JsonIgnore
 	@Column(name = "BUSINESSEMAILPASSWORD")
@@ -184,12 +193,22 @@ public class TenantDetails implements Serializable{
 		this.businessEmail = businessEmail;
 	}
 
-	public String getBusinessEmailPassword() {
-		return businessEmailPassword;
+	public String getBusinessEmailPassword() throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException,
+			NoSuchAlgorithmException, NoSuchPaddingException {
+		return RSAUtil.decrypt(this.businessEmailPassword);
 	}
 
-	public void setBusinessEmailPassword(String businessEmailPassword) {
-		this.businessEmailPassword = businessEmailPassword;
+	public void setBusinessEmailPassword(String businessEmailPassword) throws InvalidKeyException, BadPaddingException,
+			IllegalBlockSizeException, NoSuchPaddingException, NoSuchAlgorithmException {
+		this.businessEmailPassword = Base64.getEncoder().encodeToString(RSAUtil.encrypt(businessEmailPassword));
+	}
+
+	public String getGstIn() {
+		return gstIn;
+	}
+
+	public void setGstIn(String gstIn) {
+		this.gstIn = gstIn;
 	}
 
 }

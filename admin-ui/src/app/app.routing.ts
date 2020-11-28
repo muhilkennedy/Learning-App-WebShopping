@@ -63,6 +63,14 @@ export const routes: Routes = [
       {
         path: 'invoice-template',
         loadChildren: () => import('./views/invoice/invoice-template.module').then(m => m.InvoiceTemplateModule)
+      },
+      {
+        path: 'sales',
+        loadChildren: () => import('./views/sales/sales.module').then(m => m.SalesModule)
+      },
+      {
+        path: 'orders',
+        loadChildren: () => import('./views/orders/orders.module').then(m => m.OrdersModule)
       }
     ]
   },

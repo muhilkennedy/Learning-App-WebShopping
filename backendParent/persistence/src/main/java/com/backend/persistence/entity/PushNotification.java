@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.backend.core.entity.EmployeeInfo;
 import com.backend.core.entity.Tenant;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -39,7 +40,7 @@ public class PushNotification implements Serializable {
 	@JoinColumn(name = "EMPLOYEEID", nullable = false)
 	private EmployeeInfo employeeId;
 	
-	@Column(name = "NOTIFICATONCONTENT")
+	@Column(name = "NOTIFICATIONCONTENT")
 	private String content;
 	
 	public PushNotification() {

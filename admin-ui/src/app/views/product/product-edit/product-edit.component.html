@@ -1,0 +1,166 @@
+<div class="animated fadeIn">
+  <alert class="p-4 text-center"></alert>
+  <div class="row">
+    <div class="col-lg">
+      <div class="card">
+        <ngx-loading [show]="loading"></ngx-loading>
+        <div class="card-header">
+          <i class="fa fa-edit"></i>Edit Product - ID : {{productId}}
+          <div class="float-right">
+            <i *ngIf="!isEditCardCollapsed" class="fa fa-toggle-up toggleIcon" (click)="isEditCardCollapsed = !isEditCardCollapsed"></i>
+            <i *ngIf="isEditCardCollapsed" class="fa fa-toggle-down toggleIcon" (click)="isEditCardCollapsed = !isEditCardCollapsed"></i>
+          </div>
+          <div class="float-right">
+            <mat-slide-toggle
+              matTooltip="Featured Product"
+              color="accent"
+              [checked]="featuredProduct"
+              (change)="toggleFeaturedProduct()">
+            </mat-slide-toggle>
+            <button mat-button class="btn btn-ghost-primary" style="border: 1px solid; margin-right: 5px;" (click)="updateProduct()">
+              <i class="fa fa-product-hunt" style="color: cadetblue;"></i> Update Product
+            </button>
+          </div>
+          <br/>
+        </div>
+        <div [collapse]="isEditCardCollapsed">
+        <div class="card-body">
+          <table class="table table-responsive-sm">
+            <tr>
+              <td>
+                <mat-form-field appearance="outline" class="matitem">
+                  <mat-label>Product Category ID</mat-label>
+                  <input disabled matInput placeholder="Category ID" [(ngModel)]="categoryId" required>
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field appearance="outline" class="matitem">
+                  <mat-label>Product Name</mat-label>
+                  <input matInput placeholder="Product Name" [(ngModel)]="pName" required>
+                </mat-form-field>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <mat-form-field appearance="outline" class="matitem">
+                  <mat-label>Product Brand</mat-label>
+                  <input matInput type="text" class="example-right-align" [(ngModel)]="brand" required>
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field appearance="outline" class="matitem">
+                  <mat-label>Product Cost</mat-label>
+                  <input matInput type="number" class="example-right-align" [(ngModel)]="cost" required>
+                  <mat-hint>Product MRP</mat-hint>
+                </mat-form-field>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <mat-form-field appearance="outline" class="matitem">
+                  <mat-label>Product Offer/Discount</mat-label>
+                  <input matInput type="number" class="example-right-align" [(ngModel)]="offer" required>
+                  <mat-hint>Offer applicable to this particular product <small *ngIf="showFinalCost()">(SELLING COST - <b>{{getDiscountedPrice()}} ₹</b>)</small></mat-hint>
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field appearance="outline" class="matitem">
+                  <mat-label>Product CODE</mat-label>
+                  <input matInput placeholder="Product BAR/QR CODE" [(ngModel)]="pCode" required>
+                </mat-form-field>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <mat-form-field appearance="outline" class="matitem">
+                  <mat-label>Units In Stock</mat-label>
+                  <input matInput type="number" class="example-right-align" [(ngModel)]="unitsInStock" required>
+                  <mat-hint>Current Product Quantity In Stock</mat-hint>
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field appearance="outline" class="matitem">
+                  <mat-label>Product Description</mat-label>
+                  <textarea rows="3" matInput type="text" class="example-right-align" [(ngModel)]="pDescription" required></textarea>
+                </mat-form-field>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <button mat-button [disabled]="true" style="text-align: inherit;">
+                  <i class="fa fa-product-hunt"></i>
+                  <span class="icon-text"> Activate product</span><br/>
+                </button>
+                <mat-slide-toggle
+                  color="warn"
+                  [checked]="productActive"
+                  (change)="toggleProductActive()">
+                </mat-slide-toggle>
+              </td>
+              <td>
+              </td>
+            </tr>
+          </table>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+        <ngx-loading [show]="imageLoading"></ngx-loading>
+        <div class="card-header">
+          <i class="fa fa-image"></i>Product Images
+          <div class="float-right">
+            <i *ngIf="!isImageCardCollapsed" class="fa fa-toggle-up toggleIcon" (click)="isImageCardCollapsed = !isImageCardCollapsed"></i>
+            <i *ngIf="isImageCardCollapsed" class="fa fa-toggle-down toggleIcon" (click)="isImageCardCollapsed = !isImageCardCollapsed"></i>
+          </div>
+        </div>
+        <div [collapse]="isImageCardCollapsed">
+        <div class="card-body">
+          <carousel [interval]="false" >
+            <slide *ngFor="let slide of sliderImages">
+              <label>Image-ID -> {{slide.pImagesId}}</label>
+              <button mat-button class="btn btn-ghost-warning" (click)="deleteImage(slide.pImagesId)">
+                <i class="fa fa-remove"></i> Delete Image
+              </button>
+              <img src={{slide.image}} alt="images" style="display: block; width: 100%;">
+            </slide>
+          </carousel>
+          <hr/>
+          <mat-hint><i class="fa fa-info-circle"></i> Suggested Resolution = 1000 x 800</mat-hint>
+        </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card">
+        <ngx-loading [show]="imageLoading"></ngx-loading>
+        <div class="card-header">
+          <i class="fa fa-cloud-upload"></i>Upload New Image
+          <div class="float-right">
+            <i *ngIf="!isUploadCollapsed" class="fa fa-toggle-up toggleIcon" (click)="isUploadCollapsed = !isUploadCollapsed"></i>
+            <i *ngIf="isUploadCollapsed" class="fa fa-toggle-down toggleIcon" (click)="isUploadCollapsed = !isUploadCollapsed"></i>
+          </div>
+          <div class="float-right">
+            <button mat-button class="btn btn-ghost-primary" style="border: 1px solid;margin-right: 5px;" (click)="uploadImage()">
+              <i class="fa fa-upload"></i> Upload Image
+            </button>
+          </div>
+        </div>
+        <div [collapse]="isUploadCollapsed">
+          <div class="card-body">
+            <img [src]='checkImage(productPic)' class="profileImg" alt="avatar">
+                  <br/>
+                  <mat-hint>(Multiple Images can be uploaded as a ZIP file)</mat-hint>
+                  <br/>
+                  <input type="file" (change)="handleFileUpdate($event.target.files)">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

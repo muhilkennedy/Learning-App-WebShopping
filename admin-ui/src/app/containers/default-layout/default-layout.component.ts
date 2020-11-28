@@ -5,6 +5,10 @@ import { Router } from '@angular/router';
 import { LoginService } from '../../service/login/login.service';
 import { environment } from '../../../environments/environment';
 import { CookieService } from 'ngx-cookie-service';
+import { TaskService } from '../../shared/task/task.service';
+import { EmployeeService } from '../../shared/employee/employee.service';
+import { OrdersService } from '../../shared/orders/orders.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,14 +23,26 @@ export class DefaultLayoutComponent implements OnInit{
   public defaultAvatar = "assets/img/avatars/Blank-Profile.jpg";
   public userPermissions: any[];
   public loading = false;
+  public realmName = environment.tenantId;
+  activeTaskCount = 0;
+  now:number;
+  orderCountInterval:any;
 
   constructor(public userStore: UserStoreService,
               private router: Router,
               private loginService: LoginService,
-              private cookieService: CookieService){
+              private cookieService: CookieService,
+              private taskService: TaskService,
+              private empService: EmployeeService,
+              private orderService: OrdersService,
+              private _snackBar: MatSnackBar){
 
     this.userPermissions = this.userStore.employeePermissions;
     this.setViewsBasedOnPermisssions();
+
+    setInterval(() => {
+      this.now = Date.now();
+    }, 1);
 
   }
 
@@ -89,24 +105,25 @@ export class DefaultLayoutComponent implements OnInit{
         if(permissionIds.includes(1)){
           //allow all access
           this.addNavItem("/employee");
-          this.addNavItem("/pos");
+          this.addNavItem("/report");
         }
         //manager permission
         if(permissionIds.includes(2)){
           // remove employee functionality
           this.addNavItem("/sales");
           this.addNavItem("/invoice-template");
-          this.addNavItem("/report");
         }
         //marketing permission
         if(permissionIds.includes(3)){
           // remove employee, sales and analytical functionality
+          this.addNavItem("/pos");
+          this.addNavItem("/orders");
           this.addNavItem("/product");
-          this.addNavItem("/coupon");
         }
         //support permission
         if(permissionIds.includes(4)){
           //remove employee, sales, analytical, product functionality
+          this.addNavItem("/coupon");
           this.addNavItem("/media");
           this.addNavItem("/userHistory");
           // later user transaction history page has to be implemented
@@ -116,10 +133,6 @@ export class DefaultLayoutComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    // if(this.userStore.JwtToken === undefined ||  this.userStore.JwtToken === null){
-    //   this.router.navigate(['/login']);
-    // }
-    // else{
       let allowCall = this.cookieService.get('JWT');
       if(allowCall != null && allowCall != undefined && allowCall != ''){
         this.loginService.tokenAuth(this.cookieService.get('JWT'))
@@ -137,9 +150,11 @@ export class DefaultLayoutComponent implements OnInit{
               this.userStore.userId = resp.data.employeeId;
               this.userStore.employeeAddress = resp.data.employeeAddress;
               this.userStore.employeePermissions = resp.data.employeePermissions;
+              this.userStore.pickUpOrders = resp.data.pickUpOrders;
               this.userPermissions = this.userStore.employeePermissions;
               this.finalNavItems = new Array();
               this.setViewsBasedOnPermisssions();
+              this.checkOrderCount();
             }
             else{
               alert(resp.status + " : " + resp.errorMessages);
@@ -200,4 +215,55 @@ export class DefaultLayoutComponent implements OnInit{
   tasks(){
     this.router.navigate(['/task',true]);
   }
+
+  toggleOrderPickup(){
+    this.loading = true;
+    this.empService.toggleOrderPickup()
+                    .subscribe((resp : any) => {
+                      if(resp.statusCode === 200){
+                        this.userStore.pickUpOrders = !this.userStore.pickUpOrders;
+                        this.checkOrderCount();
+                      }
+                      this.loading = false;
+                    },
+                    (error:any) => {
+                      alert("something went wrong!")
+                    })
+  }
+
+  checkOrderCount(){
+    if(this.userStore.pickUpOrders){
+      this.orderCountInterval = setInterval(() => { this.getNewOrdersCount() }, 10000);
+    }
+    else{
+      clearInterval(this.orderCountInterval);
+    }
+  }
+
+  newOrdersCount:number = 0;
+  getNewOrdersCount(){
+    this.orderService.getUnassignedOrdersCount()
+                     .subscribe((resp:any)=>{
+                        if(resp.statusCode === 200){
+                          if(this.newOrdersCount !== resp.data && this.newOrdersCount < resp.data){
+                            let snackBarRef = this._snackBar.open('New Order(s) recieved...!', 'OPEN', {
+                              duration: 600000,
+                              panelClass: ['warn-snackbar'],
+                              horizontalPosition: 'right',
+                              verticalPosition: 'bottom'
+                            });
+                            snackBarRef.onAction().subscribe(()=> this.navigateToOrders());
+                          }
+                          this.newOrdersCount = resp.data;
+                        }
+                     },
+                     (error:any)=>{
+                       console.log("Failed to get new orders count!")
+                     })
+  }
+
+  navigateToOrders(){
+    this.router.navigate(['/orders']);
+  }
+
 }

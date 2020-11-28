@@ -15,7 +15,7 @@ public interface TaskService {
 
 	void createTask(Task task, int assigneeId);
 
-	void createTask(String content, Date endDate, int assigneeId);
+	void createTask(String content, long endDate, int assigneeId);
 
 	void deleteTask(int id);
 

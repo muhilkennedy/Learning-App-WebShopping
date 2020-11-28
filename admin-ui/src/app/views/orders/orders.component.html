@@ -1,0 +1,188 @@
+<alert class="p-4 text-center"></alert>
+<ngx-loading [show]="loading"></ngx-loading>
+<div class="row">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <i class="fa fa-cart-plus"></i>PENDING ORDERS
+      </div>
+      <div class="card-body">
+        <ngx-loading [show]="pendingLoading"></ngx-loading>
+        <div class="row">
+          <div style="margin:5px 0px; width: 100%;">
+            <ul class="list-group">
+              <li class="list-group-item" *ngFor="let order of unassignedOrders; let status=false; let failStatus = false;">
+                <label>ORDER-{{order}}</label>
+                <i class="float-right fa fa-remove removeStyle" (click)="rejectOrder(order)"></i>
+                <i class="float-right fa fa-check-circle acceptStyle" (click)="acceptOrder(order)"></i>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <i class="fa fa-check"></i>ACCEPTED ORDERS
+      </div>
+      <div class="card-body">
+        <ngx-loading [show]="acceptedLoading"></ngx-loading>
+        <div class="row">
+          <table class="table table-responsive-sm table-hover table-outline mb-0">
+            <thead class="thead-light">
+              <tr>
+                <th>OrderId</th>
+                <th>OrderDate</th>
+                <th>Customer</th>
+                <th>Items</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody style="background: white;">
+              <tr *ngFor="let order of acceptedOrders">
+                <td>
+                  {{order.orderId}}
+                </td>
+                <td>{{order.orderDate | date : 'dd-MM-yyyy hh:mm a'}}</td>
+                <td><a (click)="getCustomerDetails(order.customerId);secondaryModal.show()">{{order.customerId}}</a></td>
+                <td><i class="producticon fa fa-shopping-basket" (click)="setProductData(order);primaryModal.show()"></i></td>
+                <td>
+                  <i class="float-right fa fa-remove removeStyle" (click)="rejectOrder(order.orderId)"></i>
+                  <i class="float-right fa fa-motorcycle acceptStyle" (click)="outForDelivery(order)"></i>
+                </td>
+                <!-- <td>
+                  <select id="select1" name="select1" class="form-control" [(value)]="selectedValue" (change)="changeSlected($event)">
+                    <option disabled value="">Order Status</option>
+                    <option value="OutForDelivery">Out For Delivery</option>
+                    <option value="Cancelled">Cancelled</option>
+                    <option value="Delayed">Delayed</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Shipped">Shipped</option>
+                  </select>
+                </td> -->
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <i class="fa fa-truck"></i>SHIPPED ORDERS
+      </div>
+      <div class="card-body">
+        <ngx-loading [show]="pendingLoading"></ngx-loading>
+        <div class="row">
+          <div style="margin:5px 0px; width: 100%;">
+            <ul class="list-group">
+              <li class="list-group-item" *ngFor="let order of shippedOrders;">
+                <label>ORDER-{{order.orderId}}</label>
+                <label>-->{{order.status}}</label>
+                <i class="float-right fa fa-check-circle acceptStyle" (click)="deliveredOrder(order)"></i>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- pop up -->
+<div bsModal #primaryModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-open" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Product Details</h4>
+        <button type="button" class="close" (click)="primaryModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-responsive-sm table-hover table-outline mb-0">
+          <thead class="thead-light">
+            <tr>
+              <th>Name</th>
+              <th>Code</th>
+              <th>MRP</th>
+              <th>Quantity</th>
+            </tr>
+          </thead>
+          <tbody style="background: white;">
+            <tr *ngFor="let product of productList">
+              <td>
+                {{product.product.productName}}
+              </td>
+              <td>
+                {{product.product.productCode}}
+              </td>
+              <td>
+                {{product.product.cost}}
+              </td>
+              <td>
+                {{product.quantity}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <div>
+          <button type="button" class="btn btn-success" (click)="primaryModal.hide()">
+            <i class="fa fa-check"></i> OK
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #secondaryModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-open" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Customer Details</h4>
+        <button type="button" class="close" (click)="secondaryModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-responsive-sm table-hover table-outline mb-0">
+          <thead class="thead-light">
+            <tr>
+              <th>Customer Name</th>
+              <th>Mobile</th>
+              <th>Address</th>
+            </tr>
+          </thead>
+          <tbody style="background: white;">
+            <tr>
+              <td>
+                {{getCustomerFirstName()}} {{getCustomerLastName()}}
+              </td>
+              <td>
+                {{getCustomerMobile()}}
+              </td>
+              <td>
+                {{getCustomerDoorNumber()}}, {{getCustomerStreet()}}, {{getCustomerCity()}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <div>
+          <button type="button" class="btn btn-success" (click)="secondaryModal.hide()">
+            <i class="fa fa-check"></i> OK
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

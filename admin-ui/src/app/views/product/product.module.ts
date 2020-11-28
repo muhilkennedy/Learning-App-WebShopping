@@ -49,12 +49,14 @@ import { ProductRoutingModule } from './product-routing.module';
 import { ProductListComponent } from './product-list/product-list.component';
 import { ManageProductComponent } from './manage-products/manage-product/manage-product.component';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { ProductEditComponent } from './product-edit/product-edit.component';
 
 @NgModule({
   declarations: [
     CategoryComponent,
     ProductListComponent,
-    ManageProductComponent
+    ManageProductComponent,
+    ProductEditComponent
   ],
   imports: [
     CommonModule,

@@ -12,12 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.backend.commons.util.CommonUtil;
+import com.backend.core.entity.EmployeeInfo;
 import com.backend.core.service.BaseService;
 import com.backend.persistence.dao.ProductDao;
 import com.backend.persistence.entity.Category;
-import com.backend.persistence.entity.EmployeeInfo;
 import com.backend.persistence.entity.Product;
 import com.backend.persistence.entity.ProductImages;
+import com.backend.persistence.helper.ProductPOJO;
+import com.backend.persistence.repository.ProductImagesRepository;
 import com.backend.persistence.repository.ProductRepository;
 import com.backend.persistence.service.CategoryService;
 import com.backend.persistence.service.ProductService;
@@ -43,9 +45,18 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	private CategoryService catService;
 	
+	@Autowired
+	private ProductImagesRepository imageRepo;
+	
 	@Override
 	public void save(Product product) {
 		productRepo.save(product);
+	}
+	
+	// save might stay just in memory, until flush or commit commands are issued,
+	// hence save and flush will fire DB query immedietly.
+	private void saveAndFlush(Product product) {
+		productRepo.saveAndFlush(product);
 	}
 	
 	@Override
@@ -81,6 +92,11 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public Product getProductByCode(String code) {
 		return productRepo.findProductByCode(baseService.getTenantInfo(), code);
+	}
+	
+	@Override
+	public Product getProductById(int id) {
+		return productRepo.findProductById(baseService.getTenantInfo(), id);
 	}
 	
 	@Override
@@ -120,14 +136,7 @@ public class ProductServiceImpl implements ProductService {
 	
 	@Override
 	public List<Product> getProducts(List<Integer> ids){
-		List<Product> products = new ArrayList<Product>();
-		ids.forEach(id -> {
-			Product p = productRepo.findProductById(baseService.getTenantInfo(), id);
-			if(p != null) {
-				products.add(p);
-			}
-		});
-		return products;
+		return productRepo.findProductByIds(baseService.getTenantInfo(), ids);
 	}
 
 	@Override
@@ -139,30 +148,52 @@ public class ProductServiceImpl implements ProductService {
 			if(actualProduct == null) {
 				throw new Exception("Product Not Found!");
 			}
+			actualProduct.setActive(false);
+			actualProduct.setDeleted(true);
+			// resetting product code to avoid unique constraint error(product code will be proper for one product entry at any point of time)
+			actualProduct.setProductCode(actualProduct.getProductCode() + ":" + System.currentTimeMillis());
+			actualProduct.setLastModified(CommonUtil.convertToUTC(new Date().getTime()));
+			actualProduct.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
+			saveAndFlush(actualProduct);
+			// create new Product with old details
+			Product newProduct = new Product();
+			newProduct.setCategoryId(actualProduct.getCategoryId());
+			newProduct.setActive(product.isActive());
 			if (!StringUtils.isEmpty(product.getProductName())) {
-				actualProduct.setProductName(product.getProductName());
+				newProduct.setProductName(product.getProductName());
 			}
 			if (!StringUtils.isEmpty(product.getBrandName())) {
-				actualProduct.setBrandName(product.getBrandName());
+				newProduct.setBrandName(product.getBrandName());
 			}
 			if (!StringUtils.isEmpty(product.getProductDescription())) {
-				actualProduct.setProductDescription(product.getProductDescription());
+				newProduct.setProductDescription(product.getProductDescription());
 			}
 			if(!StringUtils.isEmpty(product.getProductCode())) {
-				actualProduct.setProductCode(product.getProductCode());
+				newProduct.setProductCode(product.getProductCode());
 			}
-			if (product.getCost() != null) {
-				actualProduct.setCost(product.getCost());
+			if (product.getCost() != null && product.getCost().doubleValue() > 0) {
+				newProduct.setCost(product.getCost());
 			}
-			if (product.getOffer() >= 0) {
-				actualProduct.setOffer(product.getOffer());
+			if (product.getOffer() != null && product.getOffer().floatValue() >= 0) {
+				newProduct.setOffer(product.getOffer());
 			}
 			if (product.getQuantityInStock() >= 0) {
-				actualProduct.setOffer(product.getOffer());
+				newProduct.setQuantityInStock(product.getQuantityInStock());
 			}
-			actualProduct.setLastModified(new Date());
-			actualProduct.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
-			productRepo.save(actualProduct);
+			//copy product images
+			actualProduct.setProductImages(null);
+			List<ProductImages> images = imageRepo.findAllImagesForProduct(baseService.getTenantInfo(), actualProduct);
+			images.parallelStream().forEach(image -> {
+				image.setProductId(newProduct);
+			});
+			newProduct.setTenant(actualProduct.getTenant());
+			newProduct.setLastModified(CommonUtil.convertToUTC(new Date().getTime()));
+			newProduct.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
+			saveAndFlush(newProduct);
+			if(productDao.isFeaturedProduct(actualProduct.getProductId())) {
+				productDao.deleteFeaturedProduct(actualProduct.getProductId());
+			}
+			product = newProduct;
 		} else {
 			// create new product
 			Product newProduct = new Product();
@@ -175,10 +206,10 @@ public class ProductServiceImpl implements ProductService {
 			newProduct.setProductDescription(product.getProductDescription());
 			newProduct.setProductCode(product.getProductCode());
 			newProduct.setQuantityInStock(product.getQuantityInStock());
-			newProduct.setLastModified(new Date());
+			newProduct.setLastModified(CommonUtil.convertToUTC(new Date().getTime()));
 			newProduct.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
 			newProduct.setTenant(baseService.getTenantInfo());
-			productRepo.save(newProduct);
+			save(newProduct);
 			// create product image objects
 			if (productPic != null) {
 				List<ProductImages> productImages = new ArrayList<>();
@@ -187,10 +218,11 @@ public class ProductServiceImpl implements ProductService {
 				prodImages.setImage(new SerialBlob(CommonUtil.getProductImage(productPic)));
 				prodImages.setProductId(newProduct);
 				prodImages.setTenant(baseService.getTenantInfo());
+				prodImages.setPrimaryImage(true);
 				productImages.add(prodImages);
 				newProduct.setProductImages(productImages);
-				productRepo.save(newProduct);
 				product = newProduct;
+				save(newProduct);
 			}
 		}
 		return product;
@@ -201,8 +233,103 @@ public class ProductServiceImpl implements ProductService {
 		List<Product> products = getAllProductsForCategory(category);
 		products.stream().forEach(product -> {
 			product.setActive(false);
+			product.setDeleted(true);
+			product.setLastModified(CommonUtil.convertToUTC(new Date().getTime()));
+			product.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
 			save(product);
 		});
+	}
+
+	@Override
+	public List<ProductImages> getProductImages(Product product) {
+		return imageRepo.findAllImagesForProduct(baseService.getTenantInfo(), product);
+	}
+
+	@Override
+	public List<ProductImages> getProductImages(List<Integer> productIds) throws Exception {
+		List<ProductImages> images = new ArrayList<>();
+		for (int productId : productIds) {
+			Product product = getProductById(productId);
+			if (product != null) {
+				images.addAll(getProductImages(product));
+			} else {
+				throw new Exception("Product ID : " + productId + " Not Found!" );
+			}
+		}
+		return images;
+	}
+	
+	@Override
+	public void addProductImage(int productId, byte[] productPic) throws Exception {
+		Product product = productRepo.findProductById(baseService.getTenantInfo(), productId);
+		if(product == null) {
+			throw new Exception("Product Not Found!");
+		}
+		ProductImages images = new ProductImages();
+		images.setImage(new SerialBlob(CommonUtil.getProductImage(productPic)));
+		images.setProductId(product);
+		if(imageRepo.getProductCount(baseService.getTenantInfo(), product) <= 0) {
+			images.setPrimaryImage(true);
+		}
+		images.setTenant(baseService.getTenantInfo());
+		imageRepo.save(images);
+	}
+	
+	@Override
+	public void removeProductImage(int imageId) throws Exception{
+		imageRepo.deleteById(baseService.getTenantInfo(), imageId);
+	}
+	
+	@Override
+	public void replaceImage(int imageId, byte[] productPic) throws Exception {
+		ProductImages image = imageRepo.findImageById(baseService.getTenantInfo(), imageId);
+		if(image == null) {
+			throw new Exception("Product Image Not Found!");
+		}
+		image.setImage(new SerialBlob(CommonUtil.getProductImage(productPic)));
+		imageRepo.save(image);
+	}
+	
+	@Override
+	public void changeProductStatus(int productId, boolean status) throws Exception {
+		Product product = productRepo.findProductById(baseService.getTenantInfo(), productId);
+		if(product == null) {
+			throw new Exception("Product Not Found!");
+		}
+		product.setActive(status);
+		product.setLastModified(CommonUtil.convertToUTC(new Date().getTime()));
+		product.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
+		save(product);
+	}
+	
+	@Override
+	public List<Product> searchProductsByMatchingName(String searchTerm) {
+		return productRepo.findProductByNameMatching(baseService.getTenantInfo(), searchTerm);
+	}
+	
+	@Override
+	public List<Product> searchProductsByMatchingNameOrCode(String searchTerm) {
+		return productRepo.findProductByNameOrCode(baseService.getTenantInfo(), searchTerm);
+	}
+	
+	@Override
+	public void addToFeaturedProducts(int pId) throws Exception {
+		productDao.addFeaturedProduct(pId);
+	}
+	
+	@Override
+	public List<ProductPOJO> getFeaturedProducts() throws Exception {
+		return productDao.getFeaturedProducts();
+	}
+	
+	@Override
+	public void deleteFeaturedProduct(int pId) throws Exception{
+		productDao.deleteFeaturedProduct(pId);
+	}
+	
+	@Override
+	public boolean isFeaturedProduct(int pId) throws Exception {
+		return productDao.isFeaturedProduct(pId);
 	}
 
 }

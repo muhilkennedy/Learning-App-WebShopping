@@ -25,11 +25,12 @@ import com.backend.commons.service.EmailService;
 import com.backend.commons.service.OtpService;
 import com.backend.commons.util.CommonUtil;
 import com.backend.commons.util.JWTUtil;
-import com.backend.commons.util.RSAUtil;
+import com.backend.core.entity.EmployeeInfo;
 import com.backend.core.interfaces.User;
 import com.backend.core.service.BaseService;
 import com.backend.core.util.ConfigUtil;
-import com.backend.persistence.entity.EmployeeInfo;
+import com.backend.core.util.RSAUtil;
+import com.backend.persistence.entity.CustomerInfo;
 
 /**
  * @author Muhil
@@ -168,6 +169,71 @@ public class LoginController {
 			}
 		} catch (Exception ex) {
 			logger.error("employeePasswordUpdate : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	/**************************
+	 * CUSTOMER IMPLEMENTATIONS
+	 * ************************/
+	
+	@RequestMapping(value = "/customerAuthentication", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<JWTResponse> customerLogin(HttpServletRequest request, @RequestBody UserPOJOHelper userObj) {
+		GenericResponse<JWTResponse> response = new GenericResponse<JWTResponse>();
+		try {
+			CustomerInfo cusObj = userObj.getCustomerInfo();
+			if(!configUtil.isProdMode() && cusObj.fetchPassword().length() < 25) {
+				cusObj.setPassword(cusObj.fetchPassword());
+			}
+			else {
+				cusObj.setPassword(RSAUtil.decrypt(cusObj.fetchPassword(), baseService.getTenantInfo().fetchPrivateKey()));
+			}
+			User cusInfo = loginService.loginUser(cusObj);
+			if (cusInfo != null) {
+				CustomerInfo cInfo = (CustomerInfo) cusInfo;
+				if(cInfo.isActive()) {
+					JWTResponse token = new JWTResponse();
+					token.setToken(JWTUtil.generateToken(cInfo.getEmailId(), CommonUtil.Key_clientUser, userObj.isRememberMe()));
+					token.setExpiry(JWTUtil.getExpirationDateFromToken(token.getToken()).getTime());
+					response.setData(token);
+					response.setDataList(Arrays.asList(cInfo));
+					response.setStatus(Response.Status.OK);
+				}
+				else {
+					response.setErrorMessages(Arrays.asList("Account is Deactivated.. Please contact Admin!"));
+					response.setStatus(Response.Status.FORBIDDEN);
+				}
+			} else {
+				response.setErrorMessages(Arrays.asList("Invalid User Credentials"));
+				response.setStatus(Response.Status.FORBIDDEN);
+			}
+		} catch (Exception ex) {
+			logger.error("customerLogin : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/registerCustomer", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<CustomerInfo> registerCustomer(HttpServletRequest request,
+														  @RequestBody CustomerInfo cusObj) {
+		GenericResponse<CustomerInfo> response = new GenericResponse<CustomerInfo>();
+		try {
+			if(loginService.checkIfCustomerExists(cusObj.getEmailId())) {
+				response.setErrorMessages(Arrays.asList("Email Id Exists"));
+				response.setStatus(Response.Status.ERROR);
+			}
+			else {
+				loginService.createUser(cusObj);
+				response.setStatus(Response.Status.OK);
+			}
+		} catch (Exception ex) {
+			logger.error("registerCustomer : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);

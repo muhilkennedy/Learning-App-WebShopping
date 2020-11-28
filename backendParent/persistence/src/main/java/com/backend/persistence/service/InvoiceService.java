@@ -7,7 +7,8 @@ import java.util.List;
 
 import javax.sql.rowset.serial.SerialException;
 
-import com.backend.persistence.entity.InvoiceTemplate;
+import com.backend.core.entity.InvoiceTemplate;
+import com.backend.persistence.entity.Orders;
 
 public interface InvoiceService {
 
@@ -24,5 +25,7 @@ public interface InvoiceService {
 	File getActiveTemplateAsPDF() throws Exception;
 
 	File getActiveTemplateDocument() throws IOException, SQLException;
+
+	void createOrderInvoice(Orders order) throws Exception;
 
 }

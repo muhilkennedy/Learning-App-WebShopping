@@ -15,6 +15,8 @@ import com.backend.commons.util.SQLQueryHandler;
 import com.backend.core.service.BaseService;
 import com.backend.core.util.DBUtil;
 import com.backend.persistence.entity.Product;
+import com.backend.persistence.entity.ProductImages;
+import com.backend.persistence.helper.ProductPOJO;
 
 /**
  * @author Muhil
@@ -40,7 +42,9 @@ public class ProductDao {
 															.setWhereClause()
 															.setAndCondition("tenantid", baseService.getTenantInfo().getTenantID())
 															.andSetAndCondition("active", includeInactive)
+															.andSetAndCondition("isdeleted", false)
 															.andSetOrConditions("categoryid", cIds)
+															.andSetOrConditions("productid", pIds)
 														  	.setLimit(limit)
 														  	.setOffset(offset)
 															.build();
@@ -52,11 +56,11 @@ public class ProductDao {
 				product.setProductName(rs.getString(4));
 				product.setBrandName(rs.getString(5));
 				product.setCost(rs.getBigDecimal(6));
-				product.setOffer(rs.getInt(7));
+				product.setOffer(rs.getBigDecimal(7));
 				product.setProductDescription(rs.getString(8));
 				product.setProductCode(rs.getString(9));
 				product.setQuantityInStock(rs.getInt(10));
-				product.setLastModified(rs.getDate(11));
+				product.setLastModified(rs.getLong(11));
 				product.setLastModifiedById(rs.getInt(12));
 				product.setActive(rs.getBoolean(13));
 				productList.add(product);
@@ -78,7 +82,9 @@ public class ProductDao {
 															.setWhereClause()
 															.setAndCondition("tenantid", baseService.getTenantInfo().getTenantID(), false)
 															.andSetOrConditions("categoryid", cIds)
+															.andSetOrConditions("productid", pIds)
 															.andSetAndCondition("active", includeInactive)
+															.andSetAndCondition("isdeleted", false)
 															.setOrderBy(sortByField)
 															.setSortOrder(sortBytype)
 															.setLimit(limit)
@@ -92,8 +98,13 @@ public class ProductDao {
 				product.setProductName(rs.getString(4));
 				product.setBrandName(rs.getString(5));
 				product.setCost(rs.getBigDecimal(6));
-				product.setOffer(rs.getInt(7));
+				product.setOffer(rs.getBigDecimal(7));
 				product.setProductDescription(rs.getString(8));
+				product.setProductCode(rs.getString(9));
+				product.setQuantityInStock(rs.getInt(10));
+				product.setLastModified(rs.getLong(11));
+				product.setLastModifiedById(rs.getInt(12));
+				product.setActive(rs.getBoolean(13));
 				productList.add(product);
 			}
 			return productList;
@@ -123,7 +134,7 @@ public class ProductDao {
 				product.setProductName(rs.getString(4));
 				product.setBrandName(rs.getString(5));
 				product.setCost(rs.getBigDecimal(6));
-				product.setOffer(rs.getInt(7));
+				product.setOffer(rs.getBigDecimal(7));
 				product.setProductDescription(rs.getString(8));
 				productList.add(product);
 			}
@@ -143,6 +154,8 @@ public class ProductDao {
 															.setWhereClause()
 															.setAndCondition("tenantid", baseService.getTenantInfo().getTenantID(), false)
 															.andSetOrConditions("categoryid", cIds)
+															.andSetAndCondition("active", !includeInactive)
+															.andSetAndCondition("isdeleted", false)
 															.build();
 			PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
 			ResultSet rs = stmt.executeQuery();
@@ -150,6 +163,91 @@ public class ProductDao {
 				count = rs.getInt(1);
 			}
 			return count;
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+	}
+	
+	public List<ProductPOJO> getFeaturedProducts() throws Exception {
+		List<ProductPOJO> productList = new ArrayList<ProductPOJO>();
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+															.setQuery("select pi.productid, pi.productname, pi.brand, pi.cost, pi.offer, pi.description, pi.unitsinstock, im.image "
+																	+ "from product as pi join homepagefeatured as fp join productimages as im "
+																	+ "on pi.productid = fp.productid and pi.productid = im.productid and pi.active = true and im.primaryimage = true")
+															.setAndCondition("pi.tenantid", baseService.getTenantInfo().getTenantID(), true)
+															.build();
+															
+			PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				ProductPOJO pojo = new ProductPOJO();
+				
+				Product product = new Product();
+				product.setProductId(rs.getInt(1));
+				product.setProductName(rs.getString(2));
+				product.setBrandName(rs.getString(3));
+				product.setCost(rs.getBigDecimal(4));
+				product.setOffer(rs.getBigDecimal(5));
+				product.setProductDescription(rs.getString(6));
+				product.setQuantityInStock(rs.getInt(7));
+				
+				ProductImages image = new ProductImages();
+				image.setImage(rs.getBlob(8));
+				
+				pojo.setProductContent(product);
+				pojo.setProductImage(image);
+				productList.add(pojo);
+			}
+			return productList;
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+	}
+	
+	public void addFeaturedProduct (int productId) throws Exception {
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			PreparedStatement stmt = con
+					.prepareStatement("insert into homepagefeatured values(?,?)");
+			stmt.setString(1, baseService.getTenantInfo().getTenantID());
+			stmt.setInt(2, productId);
+			stmt.executeUpdate();
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+	}
+	
+	public void deleteFeaturedProduct (int productId) throws Exception {
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			PreparedStatement stmt = con
+					.prepareStatement("delete from homepagefeatured where tenantid = ? and productid = ?");
+			stmt.setString(1, baseService.getTenantInfo().getTenantID());
+			stmt.setInt(2, productId);
+			stmt.executeUpdate();
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+	}
+	
+	public boolean isFeaturedProduct (int productId) throws Exception {
+		boolean result = false;
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+															.setQuery("select count(*) from homepagefeatured")
+															.setWhereClause()
+															.setAndCondition("tenantid", baseService.getTenantInfo().getTenantID(), false)
+															.andSetAndCondition("productid", productId)
+															.build();
+			PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next() && rs.getInt(1) > 0) {
+				result = true;
+			}
+			return result;
 		} catch (Exception ex) {
 			logger.error("Exception - " + ex);
 			throw new Exception(ex.getMessage());

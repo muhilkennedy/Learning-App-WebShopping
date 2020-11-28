@@ -14,7 +14,7 @@
           </div> -->
         </div>
         <div class="card-body">
-          <input type="text" class="form-control" matInput placeholder="Customer Mobile" id="customernumber" name="customernumber" [(ngModel)]="customerMobile">
+          <input type="number" class="form-control" matInput placeholder="Customer Mobile" id="customernumber" name="customernumber" [(ngModel)]="customerMobile">
         </div>
       </div>
     </div>
@@ -52,6 +52,7 @@
       <div class="card">
         <ngx-loading [show]="loading"></ngx-loading>
         <div class="card-body">
+          <alert class="p-4 text-center"></alert>
           <table class="table table-responsive-sm table-hover table-outline mb-0">
             <thead class="thead-light">
               <tr>
@@ -62,17 +63,74 @@
                 <th>QUANTITY</th>
                 <th>DISCONT</th>
                 <th>TOTAL</th>
+                <th></th>
               </tr>
             </thead>
             <tbody style="background: white;">
               <tr *ngFor="let item of itemList; let i = index">
                 <td>{{i+1}}</td>
-                <td><input type="text" class="form-control" matInput placeholder="Product Name" id="pname-{{i}}" name="pname-{{i}}" [(ngModel)]="item.itemName"></td>
+                <td *ngIf="(item.itemCode === null || item.itemCode === undefined)">
+                    <input type="text"
+                           class="form-control" matInput placeholder="Product Name"
+                           id="pname-{{i}}" name="pname-{{i}}"
+                           matInput
+                           [formControl]="myControl"
+                           [matAutocomplete]="auto"
+                           [(ngModel)]="item.itemName"
+                           (keyup)="getProducts($event)">
+                    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" >
+                      <mat-option (onSelectionChange)="convertToProductItem(option)" *ngFor="let option of filteredOptions | async" >
+                        {{option.productName}}
+                      </mat-option>
+                    </mat-autocomplete>
+                </td>
+                <td *ngIf="!(item.itemCode === null || item.itemCode === undefined)"><input type="text" class="form-control" matInput placeholder="Product Name" id="pname-{{i}}" name="pname-{{i}}" [(ngModel)]="item.itemName"></td>
                 <td><input type="text" class="form-control" matInput placeholder="Product Code" id="pcode-{{i}}" name="pcode-{{i}}" [(ngModel)]="item.itemCode"></td>
-                <td><input type="number" class="form-control" style="width: 50%;" matInput placeholder="MRP" id="mrp-{{i}}" name="mrp-{{i}}" [(ngModel)]="item.mrp"></td>
-                <td><input type="number" class="form-control" style="width: 50%;" matInput placeholder="Total Quantity" id="q-{{i}}" name="q-{{i}}" [(ngModel)]="item.quantity"></td>
+                <td><input type="number" class="form-control" style="width: 75%;" matInput placeholder="MRP" id="mrp-{{i}}" name="mrp-{{i}}" [(ngModel)]="item.mrp"></td>
+                <td><input type="number" class="form-control" style="width: 75%;" matInput placeholder="Quantity" id="q-{{i}}" name="q-{{i}}" [(ngModel)]="item.quantity"></td>
                 <td><input type="number" class="form-control" style="width: 50%;" matInput placeholder="Discount" id="dis-{{i}}" name="dis-{{i}}" [(ngModel)]="item.discount"></td>
-                <td>₹-{{calculateTotal(item)}}</td>
+                <td>{{calculateTotal(item) | number:'1.2-2'}}</td>
+                <td>
+                  <i *ngIf="(itemList.length === i+1)" class="addicon fa fa-plus-circle" (click)="addItem()"></i>
+                  <i class="removeicon fa fa-minus-circle" (click)="removeItem(i)"></i>
+                </td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><small>Total Discount : </small></td>
+                <td>{{calculateTotalDiscount() | number:'1.2-2'}}</td>
+                <td>SUB-TOTAL : </td>
+                <td><strong>{{calcaulateSubTotal() | number:'1.2-2'}}</strong></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><small>Items Quantity : </small></td>
+                <td><small>{{calculateTotalQuantity()}}</small></td>
+                <td>Rounding Off : </td>
+                <td><strong>{{calculateRoundedSubtotal()}} ₹</strong></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                  <mat-form-field>
+                    <mat-label>Payment Mode</mat-label>
+                    <mat-select [(value)]="paymentMode">
+                      <mat-option [value]="option" *ngFor="let option of paymentTypes">{{ option }}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </td>
+                <td><button [disabled]="disablePaid()" class="btn btn-success" (click)="processBill()"> <i class="fa fa-dollar"></i> PAID </button></td>
+                <td></td>
               </tr>
             </tbody>
           </table>

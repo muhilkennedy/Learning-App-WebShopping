@@ -17,6 +17,9 @@ export class EmployeeService {
   statusUpdateEndpoint = "/secure/admin/employee/activateEmployee";
   getEmployeesByIdEndPoint = "/secure/admin/employee/getEmployeesById";
   getAllEmployeeNamesAndEmailEndpoint = "/secure/admin/employee/getAllEmployeeNames";
+  toggleOrderPickUpEndpoint = "/secure/admin/employee/toggleOrderPickUp";
+
+  getCustomerByIdEndpoint = "/secure/admin/employee/getCustomerById";
 
   constructor(private http: HttpClient) { }
 
@@ -69,6 +72,10 @@ export class EmployeeService {
     return this.http.put(environment.backendBaseUrl+this.updatePermissionEndpoint, httpOptions);
   }
 
+  toggleOrderPickup(): Observable<any>{
+    return this.http.put(environment.backendBaseUrl+this.toggleOrderPickUpEndpoint, null);
+  }
+
   changeEmployeeStatus(employeeId:number, status: boolean): Observable<any>{
     const httpOptions = {
       employeeId: employeeId,
@@ -104,6 +111,13 @@ export class EmployeeService {
 
   getAllEmployeeNamesAndEmail(): Observable<any> {
     return this.http.get(environment.backendBaseUrl+this.getAllEmployeeNamesAndEmailEndpoint);
+  }
+
+  getCustomerById(customerId){
+    const httpOptions = {
+      params: {id: customerId}
+    };
+    return this.http.get(environment.backendBaseUrl+this.getCustomerByIdEndpoint, httpOptions);
   }
 
 }

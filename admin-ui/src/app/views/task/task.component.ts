@@ -58,6 +58,7 @@ export class TaskComponent implements OnInit {
               private taskService: TaskService,
               private userStore: UserStoreService,
               private cookieService: CookieService) {
+      //This is check is done to avoid additional api call during initial page load incase of absent token.
       let allowCall =this.cookieService.get('JWT');
       if(allowCall != null && allowCall != undefined && allowCall != ''){
         this.makeCallOninit = true;
@@ -167,7 +168,7 @@ export class TaskComponent implements OnInit {
 
   createTask(){
     this.createLoading = true;
-    this.taskService.createTask(this.content, this.assigneeId, this.endDate)
+    this.taskService.createTask(this.content, this.assigneeId, this.endDate.getTime())
                     .subscribe((resp:any) => {
                       if(resp.statusCode  === 200){
                         this.createdTasks = resp.dataList;
