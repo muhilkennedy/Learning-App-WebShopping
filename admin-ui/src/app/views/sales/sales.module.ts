@@ -46,10 +46,12 @@ import { SharedModule } from '../../shared/shared.module';
 import { SalesRoutingModule } from './sales.routing.module';
 import { TransactionsComponent } from './transactions/transactions.component';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { OnlineTransactionsComponent } from './online-transactions/online-transactions.component';
 
 @NgModule({
   declarations: [
-    TransactionsComponent
+    TransactionsComponent,
+    OnlineTransactionsComponent
   ],
   imports: [
     SalesRoutingModule,

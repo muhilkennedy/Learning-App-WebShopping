@@ -1,9 +1,15 @@
 package com.backend.persistence.serviceImpl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +25,7 @@ import com.backend.persistence.entity.CustomerCart;
 import com.backend.persistence.entity.CustomerInfo;
 import com.backend.persistence.entity.OrderDetails;
 import com.backend.persistence.entity.Orders;
+import com.backend.persistence.entity.Product;
 import com.backend.persistence.repository.OrderDetailsRepository;
 import com.backend.persistence.repository.OrdersRepository;
 import com.backend.persistence.service.CouponsService;
@@ -31,7 +38,10 @@ import com.backend.persistence.service.OrdersService;
  *
  */
 @Service
+@Transactional
 public class OrdersServiceImpl implements OrdersService {
+	
+	private Logger logger = LoggerFactory.getLogger(OrdersService.class);
 
 	@Autowired
 	private BaseService baseService;
@@ -111,6 +121,7 @@ public class OrdersServiceImpl implements OrdersService {
 
 		List<CustomerCart> cartItems = cartDao.userCartItems(customer.getCustomerId());
 		BigDecimal subTotal = new BigDecimal(0);
+		List<OrderDetails> orderDetails = new ArrayList<OrderDetails>();
 		for (CustomerCart item : cartItems) {
 			OrderDetails detail = new OrderDetails();
 			detail.setOrder(order);
@@ -118,26 +129,55 @@ public class OrdersServiceImpl implements OrdersService {
 			detail.setQuantity(item.getQuantity());
 			detail.setTenant(baseService.getTenantInfo());
 			orderDetailsRepo.save(detail);
-			BigDecimal total = new BigDecimal(item.getQuantity()).multiply((item.getProduct().getCost()));
-			if (item.getProduct().getOffer().compareTo(new BigDecimal(0)) > 0) {
-				total = total.multiply(item.getProduct().getOffer()).divide(new BigDecimal(100));
+			Product product = item.getProduct();
+			BigDecimal total = new BigDecimal(0);
+			if (product.getOffer().compareTo(new BigDecimal(0)) > 0) {
+				BigDecimal discountedPrice = product.getCost().multiply(product.getOffer()).divide(new BigDecimal(100));
+				discountedPrice = product.getCost().subtract(discountedPrice);
+				total = discountedPrice.abs().multiply(new BigDecimal(item.getQuantity()));
+			}
+			else {
+				total = product.getCost().multiply(new BigDecimal(item.getQuantity()));
 			}
 			subTotal = subTotal.add(total);
+			orderDetails.add(detail);
 		}
 		if (coupon != null) {
 			subTotal = subTotal.multiply(new BigDecimal(coupon.getDiscount())).divide(new BigDecimal(100));
 		}
-		order.setSubTotal(subTotal);
-		ordersRepo.save(order);
+		order.setSubTotal(subTotal.setScale(2, RoundingMode.CEILING));
+		order.setOrderDetails(orderDetails);
+		ordersRepo.saveAndFlush(order);
 		// create unassigned order to be picked up by a employee.
 		createUnassignedOrder(order.getOrderId());
 		customerService.clearCustomerCart();
 		DashboardStatusUtil.incremenOnlineCount(baseService.getTenantInfo());
+		invoiceService.createOrderInvoice(order);
+		
 	}
 
 	@Override
 	public List<Orders> getOrders(int limit, int offset) {
 		return ordersRepo.findLimitedOrders(baseService.getTenantInfo().getTenantID(), limit, offset);
+	}
+	
+	@Override
+	public List<Orders> getOrders(String limit, String offset, String condition, long date, String status) throws Exception {
+		if(date == 0L) {
+			condition = "def";
+		}
+		List<Integer> orderIds = ordersDao.getOrders(baseService.getTenantInfo().getTenantID(), limit, offset, condition, date, status);
+		List<Orders> orders = new ArrayList<Orders>();
+		orderIds.stream().forEach(orderId -> {
+			orders.add(ordersRepo.findOrdersById(baseService.getTenantInfo(), orderId));
+		});
+		return orders;
+	}
+	
+	@Override
+	public List<Orders> getOrdersAssignedForEmployee(String status) {
+		return ordersRepo.findOrdersByStatusForEmployee(baseService.getTenantInfo(),
+				((EmployeeInfo) baseService.getUserInfo()).getEmployeeId(), status);
 	}
 	
 	@Override
@@ -176,7 +216,6 @@ public class OrdersServiceImpl implements OrdersService {
 			}
 		}
 		ordersRepo.saveAndFlush(order);
-		invoiceService.createOrderInvoice(order);
 	}
 
 }

@@ -19,6 +19,8 @@ export class EmployeeService {
   getAllEmployeeNamesAndEmailEndpoint = "/secure/admin/employee/getAllEmployeeNames";
   toggleOrderPickUpEndpoint = "/secure/admin/employee/toggleOrderPickUp";
 
+  getCustomerByIdEndpoint = "/secure/admin/employee/getCustomerById";
+
   constructor(private http: HttpClient) { }
 
   createEmployee(firstName, lastName,
@@ -109,6 +111,13 @@ export class EmployeeService {
 
   getAllEmployeeNamesAndEmail(): Observable<any> {
     return this.http.get(environment.backendBaseUrl+this.getAllEmployeeNamesAndEmailEndpoint);
+  }
+
+  getCustomerById(customerId){
+    const httpOptions = {
+      params: {id: customerId}
+    };
+    return this.http.get(environment.backendBaseUrl+this.getCustomerByIdEndpoint, httpOptions);
   }
 
 }

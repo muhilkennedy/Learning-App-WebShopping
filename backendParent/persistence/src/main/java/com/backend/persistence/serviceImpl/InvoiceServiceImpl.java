@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
@@ -42,6 +44,7 @@ import com.backend.persistence.entity.OrderInvoice;
 import com.backend.persistence.entity.Orders;
 import com.backend.persistence.entity.Product;
 import com.backend.persistence.repository.OrderInvoiceRepository;
+import com.backend.persistence.service.CustomerInfoService;
 import com.backend.persistence.service.InvoiceService;
 
 /**
@@ -69,6 +72,9 @@ public class InvoiceServiceImpl implements InvoiceService{
 	
 	@Autowired
 	private OrderInvoiceRepository orderInvoiceRepo;
+	
+	@Autowired
+	private CustomerInfoService customerService;
 	
 	@Override
 	public void save(InvoiceTemplate template) {
@@ -143,12 +149,13 @@ public class InvoiceServiceImpl implements InvoiceService{
 	}
 	
 	private Blob generateInvoice(Orders order) throws Exception {
+		String g = baseService.getTenantInfo().getTenantID();
 		InvoiceTemplate currentTemplate = invoiceRepository.findInvoiceTemplateForTenant(baseService.getTenantInfo());
 		InputStream is = currentTemplate.getDocument().getBinaryStream();
 		XWPFDocument poiDocx = new XWPFDocument(is);
 		// generate map for all prop values.
 		// Adress needs to be passed explicitly in future to handle multiple address.
-		Map<String, String> map = generateInvoiceFieldsMap();
+		Map<String, String> map = generateInvoiceFieldsMap(order);
 		// replace props in table.
 		XWPFTable productTable = null;
 		List<XWPFTable> tables = poiDocx.getTables();
@@ -161,7 +168,9 @@ public class InvoiceServiceImpl implements InvoiceService{
 		if(productTable == null) {
 			throw new Exception("Cannot able to find Product table!");
 		}
+		MathContext mc = new MathContext(2);
 		BigDecimal subTotal = new BigDecimal(0);
+		BigDecimal totalDiscount = new BigDecimal(0);
 		List<OrderDetails> items = order.getOrderDetails();
 		for(OrderDetails item: items) {
 			Product product = item.getProduct();
@@ -170,28 +179,35 @@ public class InvoiceServiceImpl implements InvoiceService{
 			newRow.getCell(1).setText(String.valueOf(item.getQuantity()));
 			newRow.getCell(2).setText(product.getCost().toString());
 			newRow.getCell(3).setText(product.getOffer().toString());
-			BigDecimal total = product.getCost().multiply(new BigDecimal(item.getQuantity()));
-			subTotal = subTotal.add(new BigDecimal(item.getQuantity()).multiply((item.getProduct().getCost())));
+			BigDecimal total = new BigDecimal(0);
 			if (product.getOffer().compareTo(new BigDecimal(0)) > 0) {
-				total = total.multiply(product.getOffer()).divide(new BigDecimal(100));
-				subTotal = subTotal.add(total);
+				BigDecimal discountedPrice = product.getCost().multiply(product.getOffer()).divide(new BigDecimal(100));
+				discountedPrice = product.getCost().subtract(discountedPrice);
+				total = discountedPrice.abs().multiply(new BigDecimal(item.getQuantity())).setScale(2, RoundingMode.CEILING);
+				totalDiscount = totalDiscount.add(product.getCost().multiply(new BigDecimal(item.getQuantity()))).subtract(total);
 			}
+			else {
+				total = product.getCost().multiply(new BigDecimal(item.getQuantity())).setScale(2, RoundingMode.CEILING);
+			}
+			subTotal = subTotal.add(total);
 			newRow.getCell(4).setText(total.toString());
 		}
 		//inserting dummy row for clarity.
 		productTable.createRow();
 		//calculate sub-total and manipulate balance due.
 		XWPFTableRow subTotalRow = productTable.createRow();
+		subTotalRow.getCell(1).setText("Money Saved");
+		subTotalRow.getCell(2).setText(totalDiscount.setScale(2, RoundingMode.CEILING).toString() + CommonUtil.Symbol_INR);
 		subTotalRow.getCell(3).setText("SUB-TOTAL");
-		subTotalRow.getCell(4).setText(subTotal.toString());
+		subTotalRow.getCell(4).setText(subTotal.setScale(2, RoundingMode.CEILING).toString());
 		// final row
 		XWPFTableRow finalRow = productTable.createRow();
 		finalRow.getCell(1).setText("Coupon Applied");
-		finalRow.getCell(2).setText(order.getCouponDiscount() + "%");
-		subTotalRow.getCell(3).setText("SUB-TOTAL");
-		subTotalRow.getCell(4).setText(order.getSubTotal().toString() + " ₹");
+		finalRow.getCell(2).setText(order.getCouponDiscount() + CommonUtil.Symbol_PERCENT);
+		finalRow.getCell(3).setText("AMOUNT-PAYABLE");
+		finalRow.getCell(4).setText(order.getSubTotal().setScale(2, RoundingMode.CEILING).toString() + CommonUtil.Symbol_INR);
 		//genearte file blob
-		File tempFile = File.createTempFile("Invoice-"+order.getOrderId(), ".docx"); 
+		File tempFile = File.createTempFile("Invoice-"+order.getOrderId(), CommonUtil.Document_Extention); 
 		poiDocx.write(new FileOutputStream(tempFile));
 		Blob blob = new SerialBlob(FileUtils.readFileToByteArray(tempFile));
 		//flush File
@@ -199,8 +215,9 @@ public class InvoiceServiceImpl implements InvoiceService{
 		return blob;
 	}
 	
-	private Map<String, String> generateInvoiceFieldsMap() {
+	private Map<String, String> generateInvoiceFieldsMap(Orders order) {
 		CustomerInfo user = (CustomerInfo) baseService.getUserInfo();
+		user = customerService.getCustomerByEmail(user.getEmailId());
 		Map<String, String> map = new HashMap<>();
 		map.put(Key_CustomerName, user.getFirstName().toUpperCase() + " " + user.getLastName().toUpperCase());
 		map.put(Key_CustomerStreet, user.getCustomerAddress().get(0).getStreet());
@@ -213,7 +230,7 @@ public class InvoiceServiceImpl implements InvoiceService{
 			e.printStackTrace();
 		}
 		map.put(Key_CustomerEmail, "Email-Id : " + user.getEmailId());
-		map.put(Key_OrderId, " ");
+		map.put(Key_OrderId, "Order-" + order.getOrderId());
 		String pattern = "MM-dd-yyyy HH:mm";
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("IST"));

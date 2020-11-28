@@ -1,5 +1,6 @@
 import { NgModule, Component } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { OnlineTransactionsComponent } from './online-transactions/online-transactions.component';
 import { TransactionsComponent } from './transactions/transactions.component';
 
 const routes: Routes = [
@@ -15,6 +16,7 @@ const routes: Routes = [
       },
       {
         path: 'orders',
+        component: OnlineTransactionsComponent,
         data: {
           title: 'Online Transactions'
         }

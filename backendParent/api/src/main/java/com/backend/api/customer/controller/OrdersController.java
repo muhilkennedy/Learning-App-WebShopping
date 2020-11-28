@@ -40,7 +40,7 @@ public class OrdersController {
 			orderService.createCustomerOrder(StringUtils.isNotEmpty(couponId) ? Integer.parseInt(couponId) : -1);
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
-			logger.error("customerTokenAuthentication : " + ex);
+			logger.error("placeOrder : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
