@@ -36,6 +36,7 @@ public class CommonUtil {
 	public static final String Key_userType = "USER_TYPE";
 	public static final String Key_clientUser = "CLIENT";
 	public static final String Key_employeeUser = "EMPLOYEE";
+	public static final String Key_customerUser = "CUSTOMER";
 	public static final String Key_googleUser = "GOOGLE";
 	public static final String Key_facebookUser = "FACEBOOK";
 	public static final String Key_internalUser = "INTERNAL";
@@ -59,6 +60,10 @@ public class CommonUtil {
 	public static final int HomeImage_AspectWidth = 800;
 	public static final int HomeImage_AspectHeight = 800;
 	public static final String Thumbnail_Exension = "jpg";
+	
+	public static final String Symbol_INR = " ₹ ";
+	public static final String Symbol_PERCENT = " % ";
+	public static final String Document_Extention = ".docx";
 	
 	public static final List<String> template_Supported_Extentions = new ArrayList<String>() {
 		private static final long serialVersionUID = 1L;

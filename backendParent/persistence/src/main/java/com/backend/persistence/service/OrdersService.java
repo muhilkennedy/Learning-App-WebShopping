@@ -23,4 +23,8 @@ public interface OrdersService {
 
 	int getAllUnassignedOrdersCount() throws Exception;
 
+	List<Orders> getOrdersAssignedForEmployee(String status);
+
+	List<Orders> getOrders(String limit, String offset, String condition, long date, String status) throws Exception;
+
 }

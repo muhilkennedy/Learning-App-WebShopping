@@ -50,7 +50,7 @@ public class EmployeeDao {
 	public void createAdminUserForTenant(String tenantId) throws Exception {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con
-					.prepareStatement("insert into employeeinfo (tenantid , fname, lname, emailid, mobile, password, designation, lastlogin) values (?, 'SUPERUSER', 'PRODUCTION', 'prodemail@email.com', '0000000000', ?, 'CUSTOMERSUPPORTADMIN', ?);");
+					.prepareStatement("insert into employeeinfo (tenantid , fname, lname, emailid, mobile, password, designation, lastlogin) values (?, 'SUPERUSER', 'PRODUCTION', 'prodemail@email.com', '987654321', ?, 'CUSTOMERSUPPORTADMIN', ?);");
 			stmt.setString(1, tenantId);
 			stmt.setString(2, BCrypt.hashpw("Qwerty@1996", BCrypt.gensalt(5)));
 			stmt.setLong(3, new Date().getTime());

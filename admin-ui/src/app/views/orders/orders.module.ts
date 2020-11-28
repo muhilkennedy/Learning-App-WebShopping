@@ -43,6 +43,7 @@ import {MatTreeModule} from '@angular/material/tree';
 import { NgxTypeaheadModule } from 'ngx-typeahead';
 import { OrdersComponent } from './orders.component';
 import { OrdersRoutingModule } from './orders-routing.module';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 @NgModule({
   declarations: [
@@ -99,7 +100,8 @@ import { OrdersRoutingModule } from './orders-routing.module';
     MatToolbarModule,
     MatTooltipModule,
     MatTreeModule,
-    AlertModule
+    AlertModule,
+    ModalModule
   ]
 })
 export class OrdersModule { }

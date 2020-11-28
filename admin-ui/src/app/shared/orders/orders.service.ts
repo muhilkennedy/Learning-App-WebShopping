@@ -11,6 +11,9 @@ export class OrdersService {
   getUnassignedOrdersCountEndpoint = "/secure/admin/orders/getUnassignedOrdersCount";
   getUnassignedOrdersEndpoint = "/secure/admin/orders/getUnassignedOrders";
   changeOrderStatusEndpoint = "/secure/admin/orders/changeOrderStatus";
+  getAssignedOrdersEndpoint = "/secure/admin/orders/getAssignedOrders";
+  getOrdersEndpoint = "/secure/admin/orders/getOrders";
+
   constructor(private http: HttpClient){}
 
   getUnassignedOrdersCount(){
@@ -26,6 +29,28 @@ export class OrdersService {
     uploadData.append('status', status);
     uploadData.append('orderId', orderId);
     return this.http.post(environment.backendBaseUrl+this.changeOrderStatusEndpoint, uploadData);
+  }
+
+  getAssignedOrders(status){
+    const httpOptions = {
+      params: {status: status}
+    };
+    return this.http.get(environment.backendBaseUrl+this.getAssignedOrdersEndpoint, httpOptions);
+  }
+
+  getOrders(limit, offset, status, dateCondition, date){
+    let requestHeaders = new HttpHeaders().set('Content-Type', 'application/json')
+                                          .append('Offset', offset)
+                                          .append('Limit', limit);
+    const httpOptions = {
+      headers: requestHeaders,
+      params: {
+        filterCondition: dateCondition,
+        filterDate: date,
+        filterStatus: status
+      }
+    }
+    return this.http.get(environment.backendBaseUrl+this.getOrdersEndpoint, httpOptions);
   }
 
 }

@@ -245,7 +245,7 @@ export class DefaultLayoutComponent implements OnInit{
     this.orderService.getUnassignedOrdersCount()
                      .subscribe((resp:any)=>{
                         if(resp.statusCode === 200){
-                          if(this.newOrdersCount !== resp.data){
+                          if(this.newOrdersCount !== resp.data && this.newOrdersCount < resp.data){
                             let snackBarRef = this._snackBar.open('New Order(s) recieved...!', 'OPEN', {
                               duration: 5000,
                               panelClass: ['warn-snackbar'],

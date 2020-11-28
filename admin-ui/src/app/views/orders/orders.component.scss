@@ -1,0 +1,34 @@
+.mousestyle{
+  cursor: pointer;
+}
+
+.removeStyle{
+  padding-left: 10px;
+  color: red;
+  cursor: pointer;
+  transition: transform .2s;
+}
+
+.acceptStyle{
+  color: green;
+  cursor: pointer;
+  transition: transform .2s;
+}
+
+.producticon{
+  color: chocolate;
+  cursor: pointer;
+  transition: transform .2s;
+}
+
+.producticon:hover  {
+  transform: scale(1.5);
+}
+
+.removeStyle:hover  {
+  transform: scale(1.5);
+}
+
+.acceptStyle:hover  {
+  transform: scale(1.5);
+}

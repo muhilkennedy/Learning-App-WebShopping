@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import com.backend.commons.util.CommonUtil;
 import com.backend.commons.util.JWTUtil;
 import com.backend.core.entity.EmployeeInfo;
 import com.backend.core.service.BaseService;
@@ -143,7 +144,7 @@ public class TokenFilter implements Filter {
 			} else {
 				// load default user
 				String userType = req.getHeader("USER-TYPE");
-				if(userType.equalsIgnoreCase("Customer")) {
+				if(userType != null && userType.equalsIgnoreCase(CommonUtil.Key_customerUser)) {
 					CustomerInfo cusInfo = customerService.getCustomerById(1);
 					if(cusInfo != null) {
 						baseService.setUserInfo(cusInfo);
