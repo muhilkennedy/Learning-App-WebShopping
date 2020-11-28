@@ -247,7 +247,7 @@ export class DefaultLayoutComponent implements OnInit{
                         if(resp.statusCode === 200){
                           if(this.newOrdersCount !== resp.data && this.newOrdersCount < resp.data){
                             let snackBarRef = this._snackBar.open('New Order(s) recieved...!', 'OPEN', {
-                              duration: 5000,
+                              duration: 600000,
                               panelClass: ['warn-snackbar'],
                               horizontalPosition: 'right',
                               verticalPosition: 'bottom'
