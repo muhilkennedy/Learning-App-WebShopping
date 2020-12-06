@@ -130,7 +130,7 @@ export class ProductService {
     return this.http.post(environment.backendBaseUrl+this.updateOrCreateProductEndpoint, uploadData);
   }
 
-  getPoductByCode(code): Observable<any> {
+  getProductByCode(code): Observable<any> {
     let requestHeaders = new HttpHeaders().set('Content-Type', 'application/json')
     const httpOptions = {
       headers: requestHeaders,

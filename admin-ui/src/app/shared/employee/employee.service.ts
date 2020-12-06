@@ -20,6 +20,7 @@ export class EmployeeService {
   toggleOrderPickUpEndpoint = "/secure/admin/employee/toggleOrderPickUp";
 
   getCustomerByIdEndpoint = "/secure/admin/employee/getCustomerById";
+  getCustomerByMobileEndpoint = "/secure/admin/employee/getCustomerByMobile";
 
   constructor(private http: HttpClient) { }
 
@@ -118,6 +119,13 @@ export class EmployeeService {
       params: {id: customerId}
     };
     return this.http.get(environment.backendBaseUrl+this.getCustomerByIdEndpoint, httpOptions);
+  }
+
+  getCustomerByMobile(mobile){
+    const httpOptions = {
+      params: {mobile: mobile}
+    };
+    return this.http.get(environment.backendBaseUrl+this.getCustomerByMobileEndpoint, httpOptions);
   }
 
 }

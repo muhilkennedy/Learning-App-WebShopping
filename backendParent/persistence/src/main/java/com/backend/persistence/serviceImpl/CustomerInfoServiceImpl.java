@@ -1,5 +1,7 @@
 package com.backend.persistence.serviceImpl;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -52,6 +54,11 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 	}
 	
 	@Override
+	public CustomerInfo getCustomerByMobile(String mobile) {
+		return customerRepo.findEmployeeByMobile(mobile, baseService.getTenantInfo());
+	}
+	
+	@Override
 	public void addProductToCart(int productId) throws Exception {
 		CustomerInfo customer = (CustomerInfo) baseService.getUserInfo();
 		cartDao.insertIntoCart(productId, customer.getCustomerId(), 1);
@@ -85,6 +92,19 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 	public List<CustomerCart> getCustomerCartItems() throws Exception {
 		CustomerInfo customer = (CustomerInfo) baseService.getUserInfo();
 		return cartDao.userCartItems(customer.getCustomerId());
+	}
+	
+	public void updateLoyalityPoint(CustomerInfo customer, String total) {
+		BigDecimal loyalityEarned = new BigDecimal(total).divide(new BigDecimal(100));
+		customer.setLoyalitypoint(loyalityEarned.setScale(2, RoundingMode.CEILING));
+	}
+	
+	@Override
+	public void updateLoyalityPointByCustomerMobile(String mobile, String subTotal) {
+		CustomerInfo customer = getCustomerByMobile(mobile);
+		if(customer != null) {
+			updateLoyalityPoint(customer, subTotal);
+		}
 	}
 
 }

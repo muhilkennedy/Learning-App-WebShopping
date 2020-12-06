@@ -122,9 +122,13 @@ export class TenantInitializer {
                   if(this.tenantStore.tenantActive){
                      resolve();
                   }
+                  else{
+                    alert("Tenant not Active! Please contact support!")
+                  }
                 },
                 (error:any) => {
                     console.log("error in loading tenant");
+                    alert("Tenant not Active/Reachable at the moment! Please try again later!");
                 }
               );
     });

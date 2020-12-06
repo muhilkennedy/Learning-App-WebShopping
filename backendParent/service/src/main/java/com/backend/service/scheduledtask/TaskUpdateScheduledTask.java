@@ -58,5 +58,7 @@ public class TaskUpdateScheduledTask extends ScheduledTask{
 		});
 		logger.info("Scheduled Task - " + TaskUpdateScheduledTask.class.getCanonicalName() + " Completed");		
 	}
+	
+	
 
 }
