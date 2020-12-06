@@ -60,6 +60,7 @@ public class POSController {
 			String limit = request.getHeader(Constants.Header_Limit);
 			String offset = request.getHeader(Constants.Header_Offset);
 			if(CommonUtil.isValidStringParam(limit) && CommonUtil.isValidStringParam(offset)) {
+				response.setData(String.valueOf(posService.getPOSDATACount(filterCondition, filterDate)));
 				response.setDataList(posService.getPOSDATA(limit, offset, filterCondition, filterDate));
 				response.setStatus(Response.Status.OK);
 			}

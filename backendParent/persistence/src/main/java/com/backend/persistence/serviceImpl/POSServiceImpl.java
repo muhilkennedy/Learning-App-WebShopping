@@ -69,5 +69,13 @@ public class POSServiceImpl implements POSService {
 		}
 		return posDao.getPOS(baseService.getTenantInfo().getTenantID(), limit, offset);
 	}
+	
+	@Override
+	public int getPOSDATACount (String condition, long date) throws Exception{
+		if(CommonUtil.isValidStringParam(condition) && date > 0L) {
+			return posDao.getPOSCount(baseService.getTenantInfo().getTenantID(), condition, date);
+		}
+		return posDao.getPOSCount(baseService.getTenantInfo().getTenantID());
+	}
 
 }
