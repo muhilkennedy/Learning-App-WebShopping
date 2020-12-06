@@ -112,6 +112,56 @@ public class PosDao {
 		}
 	}
 	
+	public int getPOSCount (String tenantId, String condition , long date) throws Exception{
+		Date curdate = new Date(date);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(curdate);
+		calendar.add(Calendar.DAY_OF_YEAR, 1);
+		date = CommonUtil.convertToUTC(date);
+		long nextDate = CommonUtil.convertToUTC(calendar.getTimeInMillis());
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			SQLQueryHandler sqlHandler = null;
+			switch(condition) {
+				case "eq" : sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+															.setQuery("select count(*) from pointofsale")
+															.setWhereClause()
+															.setAndCondition("pos->\"$.tenantId\"", tenantId)
+															.andSetGreaterThanCondition("pos->\"$.timeCreated\"", date)
+															.andSetLessThanCondition("pos->\"$.timeCreated\"", nextDate)
+															.setOrderBy("pos->\"$.timeCreated\"")
+															.setSortOrder("desc")
+															.build();	
+							break;
+				case "lt" : sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+															.setQuery("select * from pointofsale")
+															.setWhereClause()
+															.setAndCondition("pos->\"$.tenantId\"", tenantId)
+															.andSetLessThanCondition("pos->\"$.timeCreated\"", date)
+															.setOrderBy("pos->\"$.timeCreated\"")
+															.setSortOrder("desc")
+															.build();
+							break;
+				case "gt" : sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+															.setQuery("select * from pointofsale")
+															.setWhereClause()
+															.setAndCondition("pos->\"$.tenantId\"", tenantId)
+															.andSetGreaterThanCondition("pos->\"$.timeCreated\"", date)
+															.setOrderBy("pos->\"$.timeCreated\"")
+															.setSortOrder("desc")
+															.build();
+			}
+			PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
+			ResultSet rs = stmt.executeQuery();
+			if(rs.next()) {
+				return rs.getInt(1);
+			}
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+		return 0;
+	}
+	
 	public List<POSData> getPOS (String tenantId, String limit, String offset, String condition , long date) throws Exception{
 		List<POSData> json = new ArrayList<POSData>();
 		Date curdate = new Date(date);

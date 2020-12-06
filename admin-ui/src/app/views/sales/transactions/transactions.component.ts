@@ -41,7 +41,7 @@ export class TransactionsComponent implements OnInit {
     this.pageSize = event.pageSize;
     let pageIndex:number = event.pageIndex;
     this.offset = pageIndex * this.pageSize;
-    this.getPosData(this.dateCondition, new Date(this.filterDate).getTime());
+    this.getPosData(this.dateCondition, this.filterDate === undefined? 0 :new Date(this.filterDate).getTime());
   }
 
   getPosData(dateCondition: string, filterDate: number){
@@ -49,6 +49,7 @@ export class TransactionsComponent implements OnInit {
     this.posService.getPOSData(this.pageSize, this.offset, dateCondition, filterDate)
                     .subscribe((resp:any) => {
                       if(resp.statusCode === 200){
+                        this.total = resp.data;
                         this.posDataList = resp.dataList;
                       }
                       else{

@@ -225,8 +225,7 @@ public class InvoiceServiceImpl implements InvoiceService{
 		map.put(Key_CustomerPin, user.getCustomerAddress().get(0).getPincode());
 		try {
 			map.put(Key_CustomerMobile, "Contact : " + user.getMobile());
-		} catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException
-				| NoSuchPaddingException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		map.put(Key_CustomerEmail, "Email-Id : " + user.getEmailId());

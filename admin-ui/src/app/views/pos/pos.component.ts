@@ -354,6 +354,10 @@ export class PosComponent implements OnInit {
 
   clearData(){
     this.itemList.length = 0;
+    this.customerEmail = null;
+    this.customerLoyality = null;
+    this.customerMobile = undefined;
+    this.customerName = null;
     let newProd = new PosProduct();
     newProd.mrp = 0;
     newProd.discount = 0;
