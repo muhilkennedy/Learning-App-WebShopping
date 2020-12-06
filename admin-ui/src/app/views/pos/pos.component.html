@@ -14,32 +14,34 @@
           </div> -->
         </div>
         <div class="card-body">
-          <input type="number" class="form-control" matInput placeholder="Customer Mobile" id="customernumber" name="customernumber" [(ngModel)]="customerMobile">
+          <input type="number" class="form-control" matInput placeholder="Customer Mobile" id="customernumber" name="customernumber" [(ngModel)]="customerMobile" (keyup)="getCustomerDetails($event)">
         </div>
       </div>
     </div>
     <div class="col-sm-4">
       <div class="card">
         <div class="card-body">
-            <label>Customer Name : </label>
+            <label>Customer Name : </label><strong> {{customerName | uppercase}}</strong>
             <br/>
-            <label>Customer Email : </label>
+            <label>Customer Email : </label><small> {{customerEmail}}</small>
             <br/>
-            <label>Loyalty Points : </label>
+            <label>Loyalty Points : </label><strong> {{customerLoyality}}</strong>
         </div>
       </div>
     </div>
     <div class="col-sm-2">
       <div class="card">
         <div class="card-body">
-          <barcode-scanner-livestream
+          <!-- <barcode-scanner-livestream
             type="code_128"
             (valueChanges)="onValueChanges($event)"
             (started)="(onStarted($event))"
           ></barcode-scanner-livestream>
           <div [hidden]="!barcodeValue">
             {{ barcodeValue }}
-          </div>
+          </div> -->
+          <label>Total : </label><strong> {{calculateRoundedSubtotal()}} ₹</strong>
+          <button mat-button class="btn btn-warning" (click)="clearData()">Clear Data</button>
         </div>
       </div>
     </div>
@@ -57,8 +59,8 @@
             <thead class="thead-light">
               <tr>
                 <th>SL.NO</th>
-                <th>Item Name</th>
                 <th>Item Code</th>
+                <th>Item Name</th>
                 <th>MRP</th>
                 <th>QUANTITY</th>
                 <th>DISCONT</th>
@@ -69,6 +71,8 @@
             <tbody style="background: white;">
               <tr *ngFor="let item of itemList; let i = index">
                 <td>{{i+1}}</td>
+                <td *ngIf="!(item.itemCode === null || item.itemCode === undefined)"><input type="text" class="form-control" matInput placeholder="Product Code" id="pcode-{{i}}" name="pcode-{{i}}" [(ngModel)]="item.itemCode"></td>
+                <td *ngIf="(item.itemCode === null || item.itemCode === undefined)"><input autofocus type="text" class="form-control" matInput placeholder="Product BAR Code" id="pbcode-{{i}}" name="pbcode-{{i}}" [(ngModel)]="itemBarCode" (change)="codeDetected()"></td>
                 <td *ngIf="(item.itemCode === null || item.itemCode === undefined)">
                     <input type="text"
                            class="form-control" matInput placeholder="Product Name"
@@ -85,7 +89,6 @@
                     </mat-autocomplete>
                 </td>
                 <td *ngIf="!(item.itemCode === null || item.itemCode === undefined)"><input type="text" class="form-control" matInput placeholder="Product Name" id="pname-{{i}}" name="pname-{{i}}" [(ngModel)]="item.itemName"></td>
-                <td><input type="text" class="form-control" matInput placeholder="Product Code" id="pcode-{{i}}" name="pcode-{{i}}" [(ngModel)]="item.itemCode"></td>
                 <td><input type="number" class="form-control" style="width: 75%;" matInput placeholder="MRP" id="mrp-{{i}}" name="mrp-{{i}}" [(ngModel)]="item.mrp"></td>
                 <td><input type="number" class="form-control" style="width: 75%;" matInput placeholder="Quantity" id="q-{{i}}" name="q-{{i}}" [(ngModel)]="item.quantity"></td>
                 <td><input type="number" class="form-control" style="width: 50%;" matInput placeholder="Discount" id="dis-{{i}}" name="dis-{{i}}" [(ngModel)]="item.discount"></td>

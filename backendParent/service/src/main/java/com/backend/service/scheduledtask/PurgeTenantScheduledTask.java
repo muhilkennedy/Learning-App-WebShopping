@@ -39,9 +39,9 @@ public class PurgeTenantScheduledTask extends ScheduledTask {
 				baseService.setTenantInfo(tenant);
 				// perform purge operations
 				//remove employees information for tenant
-				empService.findAllEmployeeForTenant().stream().forEach(employee -> {
+				/*empService.findAllEmployeeForTenant().stream().forEach(employee -> {
 					empService.delete(employee);
-				});
+				});*/
 				
 				//remove sales information 
 				

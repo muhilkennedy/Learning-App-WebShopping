@@ -15,6 +15,7 @@ import com.backend.core.util.TenantUtil;
 import com.backend.persistence.dao.PosDao;
 import com.backend.persistence.entity.Product;
 import com.backend.persistence.helper.POSData;
+import com.backend.persistence.service.CustomerInfoService;
 import com.backend.persistence.service.POSService;
 import com.backend.persistence.service.ProductService;
 
@@ -34,6 +35,9 @@ public class POSServiceImpl implements POSService {
 	@Autowired
 	private ProductService productService;
 	
+	@Autowired
+	private CustomerInfoService customerService;
+	
 	@Override
 	public void createPOS(POSData data) throws Exception {
 		data.setTimeCreated(CommonUtil.convertToUTC(data.getTimeCreated()));
@@ -49,6 +53,7 @@ public class POSServiceImpl implements POSService {
 				productService.save(actualProduct);
 			}
 		});
+		customerService.updateLoyalityPointByCustomerMobile(data.getMobile(), data.getSubTotal());
 		DashboardStatusUtil.incrementPosCount(baseService.getTenantInfo());
 	}
 	

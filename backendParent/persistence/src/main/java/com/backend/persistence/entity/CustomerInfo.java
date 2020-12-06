@@ -155,15 +155,27 @@ public class CustomerInfo implements Serializable, User {
 		this.password = password;
 	}
 
-	public String getMobile() throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException,
-			NoSuchAlgorithmException, NoSuchPaddingException {
-		return StringUtils.isNotEmpty(mobile) ? RSAUtil.decrypt(this.mobile) : null;
+//	public String getMobile() throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException,
+//			NoSuchAlgorithmException, NoSuchPaddingException {
+//		return StringUtils.isNotEmpty(mobile) ? RSAUtil.decrypt(this.mobile) : null;
+//	}
+	
+//	public String getMobileWithOutEncryption() {
+//		return this.mobile;
+//	}
+
+//	public void setMobileEncrypted(String mobile) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException,
+//			NoSuchPaddingException, NoSuchAlgorithmException {
+//		this.mobile = StringUtils.isNotEmpty(mobile) ? Base64.getEncoder().encodeToString(RSAUtil.encrypt(mobile))
+//				: null;
+//	}
+
+	public String getMobile() {
+		return mobile;
 	}
 
-	public void setMobile(String mobile) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException,
-			NoSuchPaddingException, NoSuchAlgorithmException {
-		this.mobile = StringUtils.isNotEmpty(mobile) ? Base64.getEncoder().encodeToString(RSAUtil.encrypt(mobile))
-				: null;
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
 	}
 
 	public boolean isActive() {
