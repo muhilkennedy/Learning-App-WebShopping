@@ -1,4 +1,5 @@
 install ngrok for dynamic url -> ok for testing locally
+ngrok.exe http 8080
 
 LOCALTUNNEL: (for prod deployment)
 

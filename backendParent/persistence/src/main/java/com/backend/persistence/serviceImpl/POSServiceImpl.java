@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.backend.commons.service.EmailService;
 import com.backend.commons.util.CommonUtil;
 import com.backend.core.entity.EmployeeInfo;
 import com.backend.core.service.BaseService;
@@ -13,6 +14,7 @@ import com.backend.core.util.DBUtil;
 import com.backend.core.util.DashboardStatusUtil;
 import com.backend.core.util.TenantUtil;
 import com.backend.persistence.dao.PosDao;
+import com.backend.persistence.entity.CustomerInfo;
 import com.backend.persistence.entity.Product;
 import com.backend.persistence.helper.POSData;
 import com.backend.persistence.service.CustomerInfoService;
@@ -38,13 +40,17 @@ public class POSServiceImpl implements POSService {
 	@Autowired
 	private CustomerInfoService customerService;
 	
+	@Autowired
+	private EmailService emailService;
+	
 	@Override
 	public void createPOS(POSData data) throws Exception {
 		data.setTimeCreated(CommonUtil.convertToUTC(data.getTimeCreated()));
 		JSONObject json = new JSONObject(data);
 		json.put(TenantUtil.Key_TenantId, baseService.getTenantInfo().getTenantID());
 		json.put(DBUtil.Key_PrimaryKey, posDao.getPOSKEY());
-		json.put(POSData.Key_CreatedBy, ((EmployeeInfo)baseService.getUserInfo()).getEmployeeId() + "-" + ((EmployeeInfo)baseService.getUserInfo()).getEmailId());
+		json.put(POSData.Key_CreatedBy, ((EmployeeInfo)baseService.getUserInfo()).getFirstName());
+		json.put(POSData.Key_CreatedById, ((EmployeeInfo)baseService.getUserInfo()).getEmployeeId());
 		posDao.createPOS(json);
 		data.getPosProduct().stream().forEach(product -> {
 			Product actualProduct = productService.getProductById(product.getItemID());
@@ -53,8 +59,15 @@ public class POSServiceImpl implements POSService {
 				productService.save(actualProduct);
 			}
 		});
-		customerService.updateLoyalityPointByCustomerMobile(data.getMobile(), data.getSubTotal());
 		DashboardStatusUtil.incrementPosCount(baseService.getTenantInfo());
+		if(CommonUtil.isValidStringParam(data.getMobile())) {
+			CustomerInfo customer = customerService.getCustomerByMobile(data.getMobile());
+			if(customer != null) {
+				customerService.updateLoyalityPointByCustomerMobile(data.getMobile(), data.getSubTotal());
+				emailService.sendPOSEmail(json.getString(DBUtil.Key_PrimaryKey), data.getSubTotal(), data.getTimeCreated(), data.getPaymentMode(), 
+										customer.getEmailId(), customer.getFirstName(), customer.getLastName(), baseService.getOrigin());
+			}
+		}
 	}
 	
 	@Override

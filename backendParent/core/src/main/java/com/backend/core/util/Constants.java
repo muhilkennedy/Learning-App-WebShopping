@@ -17,6 +17,7 @@ public class Constants {
 	public static final String Task_Status_Failure = "Failed";
 	
 	public static final String DATETIMEFORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+	public static final String DATETIMEFORMAT_1 = "dd MMM yyyy HH:mm:ss z";
 	public static final String Timezone_UTC = "UTC";
 	public static final String Timezone_GMT = "GMT";
 	public static final String Timezone_IST = "IST";

@@ -64,6 +64,12 @@ public class CommonUtil {
 	public static final String Symbol_INR = " ₹ ";
 	public static final String Symbol_PERCENT = " % ";
 	public static final String Document_Extention = ".docx";
+	public static final String PDF_Extension = ".pdf";
+	public static final String Png_Extension = ".png";
+	public static final String Jpeg_Extension = ".jpeg";
+	
+	public static final String Invoice_Name = "Invoice";
+	public static final String Icon_name = "icon";
 	
 	public static final List<String> template_Supported_Extentions = new ArrayList<String>() {
 		private static final long serialVersionUID = 1L;

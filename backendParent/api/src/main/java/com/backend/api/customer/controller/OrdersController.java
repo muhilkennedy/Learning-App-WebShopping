@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.Response;
+import com.backend.commons.util.CommonUtil;
 import com.backend.persistence.entity.Orders;
 import com.backend.persistence.service.OrdersService;
 
@@ -34,10 +35,11 @@ public class OrdersController {
 	private OrdersService orderService;
 	
 	@RequestMapping(value = "/placeOrder", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<Orders> customerTokenAuthentication(HttpServletRequest request, @RequestParam(value = "couponId", required = false) String couponId) {
+	public GenericResponse<Orders> customerTokenAuthentication(HttpServletRequest request, @RequestParam(value = "couponId", required = false) String couponId,
+			@RequestParam(value = "paymentMode", required = false) String paymentMode) {
 		GenericResponse<Orders> response = new GenericResponse<Orders>();
 		try {
-			orderService.createCustomerOrder(StringUtils.isNotEmpty(couponId) ? Integer.parseInt(couponId) : -1);
+			orderService.createCustomerOrder(StringUtils.isNotEmpty(couponId) ? Integer.parseInt(couponId) : -1, CommonUtil.isValidStringParam(paymentMode) ? Integer.parseInt(paymentMode) : 1);
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("placeOrder : " + ex);

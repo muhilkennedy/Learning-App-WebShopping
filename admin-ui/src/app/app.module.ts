@@ -107,17 +107,19 @@ export class TenantInitializer {
                   this.tenantStore.publicKey = resp.data.publicKey;
                   //set tenant details
                   let tenantDetails = resp.dataList[0];
-                  this.tenantStore.tenantDetailId = tenantDetails.tenantDetailId;
-                  this.tenantStore.tenantEmail = tenantDetails.tenantEmail;
-                  this.tenantStore.tenantFacebook = tenantDetails.tenantFacebook;
-                  this.tenantStore.tenantInsta = tenantDetails.tenantInsta;
-                  this.tenantStore.tenantTwitter = tenantDetails.tenantTwitter;
-                  this.tenantStore.tenantStreet = tenantDetails.tenantStreet;
-                  this.tenantStore.tenantCity = tenantDetails.tenantCity;
-                  this.tenantStore.tenantPin = tenantDetails.tenantPin;
-                  this.tenantStore.tenantContact = tenantDetails.tenantContact;
-                  this.tenantStore.businessEmail = tenantDetails.businessEmail;
-                  this.tenantStore.tenantGstIn = tenantDetails.gstIn;
+                  if(tenantDetails != null && tenantDetails !== undefined){
+                    this.tenantStore.tenantDetailId = tenantDetails.tenantDetailId;
+                    this.tenantStore.tenantEmail = tenantDetails.tenantEmail;
+                    this.tenantStore.tenantFacebook = tenantDetails.tenantFacebook;
+                    this.tenantStore.tenantInsta = tenantDetails.tenantInsta;
+                    this.tenantStore.tenantTwitter = tenantDetails.tenantTwitter;
+                    this.tenantStore.tenantStreet = tenantDetails.tenantStreet;
+                    this.tenantStore.tenantCity = tenantDetails.tenantCity;
+                    this.tenantStore.tenantPin = tenantDetails.tenantPin;
+                    this.tenantStore.tenantContact = tenantDetails.tenantContact;
+                    this.tenantStore.businessEmail = tenantDetails.businessEmail;
+                    this.tenantStore.tenantGstIn = tenantDetails.gstIn;
+                  }
                   //load app only if tenant is active.
                   if(this.tenantStore.tenantActive){
                      resolve();
