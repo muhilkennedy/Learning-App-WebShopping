@@ -37,6 +37,20 @@ public class FileUtil {
 		deleteDirectoryOrFile(tempPath.toFile());
 	}
 	
+	public static File convertDocToPDF(File docFile) throws Exception {
+		File pdfFile = File.createTempFile(CommonUtil.Invoice_Name, CommonUtil.PDF_Extension);
+		WordprocessingMLPackage word = WordprocessingMLPackage.load(docFile);
+		OutputStream os = new FileOutputStream(pdfFile);
+		FOSettings fset = Docx4J.createFOSettings();
+		Path tempPath = Files.createTempDirectory(null);
+		fset.setImageDirPath(tempPath.toString());
+		fset.setWmlPackage(word);
+		Docx4J.toFO(fset, os, Docx4J.FLAG_EXPORT_PREFER_XSL);
+		//flush Image Directory
+		deleteDirectoryOrFile(tempPath.toFile());
+		return pdfFile;
+	}
+	
 	public static boolean deleteDirectoryOrFile(File dir) {
 		if(dir != null) {
 			if (dir.isDirectory()) {

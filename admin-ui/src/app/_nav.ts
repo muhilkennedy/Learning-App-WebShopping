@@ -43,7 +43,7 @@ export const navItems: INavData[] = [
     icon: 'icon-wallet',
     children: [
       {
-        name: 'POC Transactions',
+        name: 'POS Transactions',
         url: '/sales/transactions',
         icon: 'icon-credit-card'
       },

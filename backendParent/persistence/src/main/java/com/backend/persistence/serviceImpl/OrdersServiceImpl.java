@@ -13,8 +13,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.backend.commons.service.EmailService;
 import com.backend.commons.util.CommonUtil;
 import com.backend.commons.util.OrdersUtil;
+import com.backend.core.configuration.PaymentModes;
 import com.backend.core.entity.EmployeeInfo;
 import com.backend.core.service.BaseService;
 import com.backend.core.util.DashboardStatusUtil;
@@ -24,6 +26,7 @@ import com.backend.persistence.entity.Coupons;
 import com.backend.persistence.entity.CustomerCart;
 import com.backend.persistence.entity.CustomerInfo;
 import com.backend.persistence.entity.OrderDetails;
+import com.backend.persistence.entity.OrderInvoice;
 import com.backend.persistence.entity.Orders;
 import com.backend.persistence.entity.Product;
 import com.backend.persistence.repository.OrderDetailsRepository;
@@ -66,6 +69,9 @@ public class OrdersServiceImpl implements OrdersService {
 	
 	@Autowired
 	private CustomerInfoService customerService;
+	
+	@Autowired
+	private EmailService emailService;
 
 	@Override
 	public void save(Orders order) {
@@ -101,13 +107,14 @@ public class OrdersServiceImpl implements OrdersService {
 	}
 
 	@Override
-	public void createCustomerOrder(int couponId) throws Exception {
+	public void createCustomerOrder(int couponId, int paymentMode) throws Exception {
 		Coupons coupon = couponService.findCouponById(couponId);
 		CustomerInfo customer = (CustomerInfo) baseService.getUserInfo();
 		// create initial order object
 		Orders order = new Orders();
 		order.setOrderDate(CommonUtil.convertToUTC(new Date().getTime()));
 		order.setStatus(OrdersUtil.orderStatus.Pending.toString());
+		order.setPaymentModeId(paymentMode);
 		order.setCustomerId(customer.getCustomerId());
 		order.setTenant(baseService.getTenantInfo());
 		if (coupon != null) {
@@ -152,8 +159,10 @@ public class OrdersServiceImpl implements OrdersService {
 		createUnassignedOrder(order.getOrderId());
 		customerService.clearCustomerCart();
 		DashboardStatusUtil.incremenOnlineCount(baseService.getTenantInfo());
-		invoiceService.createOrderInvoice(order);
-		
+		OrderInvoice invoice = invoiceService.createOrderInvoice(order);
+		emailService.sendOrderStatusEmail(String.valueOf(order.getOrderId()), order.getStatus(), order.getSubTotal().toString(),
+				order.getOrderDate(), PaymentModes.paymentModes.get(order.getPaymentModeId()), customer.getEmailId(),
+				customer.getFirstName(), customer.getLastName(), baseService.getOrigin(), invoice.getDocument());
 	}
 
 	@Override
@@ -214,8 +223,12 @@ public class OrdersServiceImpl implements OrdersService {
 				order.setStatus(OrdersUtil.orderStatus.Pending.toString());
 				break;
 			}
+			ordersRepo.saveAndFlush(order);
+			CustomerInfo customer = customerService.getCustomerById(order.getCustomerId());
+			emailService.sendOrderStatusEmail(String.valueOf(order.getOrderId()), order.getStatus(), order.getSubTotal().toString(),
+					order.getOrderDate(), PaymentModes.paymentModes.get(order.getPaymentModeId()), customer.getEmailId(),
+					customer.getFirstName(), customer.getLastName(), baseService.getOrigin(), null);
 		}
-		ordersRepo.saveAndFlush(order);
 	}
 
 }

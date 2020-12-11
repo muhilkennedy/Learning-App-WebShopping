@@ -93,8 +93,7 @@ public class EmailUtil {
 			try {
 				Message message = new MimeMessage(session);
 				message.setFrom(new InternetAddress(emailId));
-				message.setSubject(configUtil.getApplicationName() + " : " + baseService.getTenantInfo().getUniqueName()
-						+ " : " + subject);
+				message.setSubject(baseService.getTenantInfo().getUniqueName() + " : " + subject);
 				Multipart multipartObject = new MimeMultipart();
 				// Creating first MimeBodyPart object which contains body text.
 				InternetHeaders headers = new InternetHeaders();
@@ -155,5 +154,5 @@ public class EmailUtil {
 			}
 		}
 	}
-
+	
 }

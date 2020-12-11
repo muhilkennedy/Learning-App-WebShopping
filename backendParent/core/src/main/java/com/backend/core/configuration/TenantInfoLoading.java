@@ -14,10 +14,12 @@ import javax.imageio.ImageIO;
 import javax.sql.rowset.serial.SerialBlob;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
@@ -150,12 +152,20 @@ public class TenantInfoLoading {
 			if(!employeeDao.isCustomerSupportAdminPresent(realm.getTenantID())) {
 				employeeDao.createAdminUserForTenant(realm.getTenantID());
 			}
-			if(!invoiceDao.containsInvoiceTemplate(realm.getTenantID())) {
-				File file = ResourceUtils.getFile(
-					      "classpath:invoiceTemplate/Invoice-Template.docx");
-				invoiceDao.createInvoiceTemplate(realm.getTenantID(), new SerialBlob(FileUtils.readFileToByteArray(file)));
+			if (!invoiceDao.containsInvoiceTemplate(realm.getTenantID())) {
+				ClassPathResource classPathResource = new ClassPathResource("invoiceTemplate/Invoice-Template.docx");
+
+				InputStream inputStream = classPathResource.getInputStream();
+				File file = File.createTempFile("invoice", ".docx");
+				try {
+					FileUtils.copyInputStreamToFile(inputStream, file);
+				} finally {
+					IOUtils.closeQuietly(inputStream);
+				}
+
+				invoiceDao.createInvoiceTemplate(realm.getTenantID(),
+						new SerialBlob(FileUtils.readFileToByteArray(file)));
 			}
-			
 		}
 		// remaing tenants are considered removed.
 		if (!tenantMap.isEmpty()) {
@@ -177,10 +187,12 @@ public class TenantInfoLoading {
 	}
 	
 	private void resetOriginList(Tenant realm, String originsList) throws Exception {
-		String[] allowedOrigins = originsList.split("\\|"); 
-		tenantService.removeOrigins(realm.getTenantID());
-		for (String origin : allowedOrigins) {
-			tenantService.addAllowedOrigin(realm.getTenantID(), origin);
+		String[] allowedOrigins = originsList.split("\\|");
+		if(tenantService.findTenantByID(realm.getTenantID()) != null) {
+			tenantService.removeOrigins(realm.getTenantID());
+			for (String origin : allowedOrigins) {
+				tenantService.addAllowedOrigin(realm.getTenantID(), origin);
+			}
 		}
 	}
 

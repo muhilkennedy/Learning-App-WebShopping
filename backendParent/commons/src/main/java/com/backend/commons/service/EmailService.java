@@ -13,4 +13,10 @@ public interface EmailService {
 
 	void sendOtpEmail(String recipientEmail, String otp);
 
+	void sendPOSEmail(String posId, String subtotal, long createdTime, String paymentMode, String recipientEmail,
+			String fname, String lname, String origin);
+
+	void sendOrderStatusEmail(String orderId, String orderStatus, String subtotal, long createdTime, String paymentMode,
+			String recipientEmail, String fname, String lname, String origin, java.sql.Blob recieptAttachment);
+
 }

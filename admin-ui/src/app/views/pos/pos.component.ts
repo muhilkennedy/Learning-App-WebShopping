@@ -132,7 +132,17 @@ export class PosComponent implements OnInit {
   //BARCODE SCANNER
   itemBarCode = '';
   codeDetected(){
-    this.getProductFromCode(this.itemBarCode);
+    let item;
+    if(this.itemList !== undefined && this.itemList.length > 0){
+      item = this.itemList.filter(item => (item.itemCode !== undefined && item.itemCode === this.itemBarCode));
+    }
+    if(item !== undefined && item.length > 0){
+      this.incrementQuantity();
+
+    }
+    else{
+      this.getProductFromCode(this.itemBarCode);
+    }
   }
 
   changeFocus(){
@@ -158,6 +168,15 @@ export class PosComponent implements OnInit {
     searchTerm += event.target.value;
     console.log(searchTerm);
     this.getProductFromMatchingText(searchTerm);
+  }
+
+  incrementQuantity(){
+    this.itemList.forEach(item => {
+      if(item.itemCode ===  this.itemBarCode){
+        ++item.quantity;
+        this.itemBarCode = '';
+      }
+    });
   }
 
   getCustomerDetails(){

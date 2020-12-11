@@ -183,13 +183,19 @@
 							<tr>
 								<td style="border:1px solid darkgreen" align="center" width="100%" colspan="3">
 									<span style="width:35%;display:inline-block;float:left;height:100%;padding:10px 0;background: darkgreen;color:white">AMOUNT PAYABLE</span> 
-									<span style="width:65%;display:inline-block;float:left;letter-spacing:5px;height:100%;padding:10px 0;color:darkgreen">${orderSubTotal}</span>
+									<span style="width:65%;display:inline-block;float:left;letter-spacing:5px;height:100%;padding:10px 0;color:darkgreen"><b>${orderSubTotal}₹</b></span>
 								</td>
 							</tr>
 							<tr>
 								<td style="border:1px solid darkgreen" align="center" width="100%" colspan="3">
 									<span style="width:35%;display:inline-block;float:left;height:100%;padding:10px 0;background: darkgreen;color:white">MODE OF PAYMENT</span> 
 									<span style="width:65%;display:inline-block;float:left;letter-spacing:5px;height:100%;padding:10px 0;color:darkgreen">${orderPaymentMode}</span>
+								</td>
+							</tr>
+							<tr>
+								<td style="border:1px solid darkgreen" align="center" width="100%" colspan="3">
+									<span style="width:35%;display:inline-block;float:left;height:100%;padding:10px 0;background: darkgreen;color:white">ORDER CREATION TIME</span> 
+									<span style="width:65%;display:inline-block;float:left;letter-spacing:5px;height:100%;padding:10px 0;color:darkgreen">${orderTime}</span>
 								</td>
 							</tr>
 							<tr>

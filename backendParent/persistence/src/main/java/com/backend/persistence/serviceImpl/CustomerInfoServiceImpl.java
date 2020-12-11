@@ -96,7 +96,9 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 	
 	public void updateLoyalityPoint(CustomerInfo customer, String total) {
 		BigDecimal loyalityEarned = new BigDecimal(total).divide(new BigDecimal(100));
-		customer.setLoyalitypoint(customer.getLoyalitypoint().add(loyalityEarned.setScale(2, RoundingMode.CEILING)));
+		customer.setLoyalitypoint(customer.getLoyalitypoint() != null
+				? customer.getLoyalitypoint().add(loyalityEarned.setScale(2, RoundingMode.CEILING))
+				: loyalityEarned.setScale(2, RoundingMode.CEILING));
 	}
 
 	@Override

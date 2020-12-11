@@ -9,12 +9,14 @@ import java.util.List;
 public class POSData {
 
 	public static String Key_CreatedBy = "createdBy";
+	public static String Key_CreatedById = "createdById";
 	
 	private String primaryKey;
 	private String tenantId;
 	private String mobile;
 	private long timeCreated;
 	private String createdBy;
+	private String createdById;
 	private String paymentMode;
 	private String subTotal;
 	private List<PosProduct> posProduct;
@@ -82,6 +84,15 @@ public class POSData {
 	public void setSubTotal(String subTotal) {
 		this.subTotal = subTotal;
 	}
+
+	public String getCreatedById() {
+		return createdById;
+	}
+
+	public void setCreatedById(String createdById) {
+		this.createdById = createdById;
+	}
+
 
 	public static class PosProduct {
 
