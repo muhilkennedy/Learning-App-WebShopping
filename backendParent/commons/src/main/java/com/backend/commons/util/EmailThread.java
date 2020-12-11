@@ -28,6 +28,7 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,12 +70,16 @@ public class EmailThread implements Runnable {
 	public void run() {
 		try {
 			List<File> newAttachments = new ArrayList<File>();
-			for(File attachment: attachments) {
+			CollectionUtils.emptyIfNull(attachments).stream().forEach(attachment -> {
 				if(attachment.getName().contains(CommonUtil.Invoice_Name)) {
-					attachment = FileUtil.convertDocToPDF(attachment);
+					try {
+						attachment = FileUtil.convertDocToPDF(attachment);
+					} catch (Exception e) {
+						logger.error("Error in PDF Conversion : " + e.getMessage());
+					}
 				}
 				newAttachments.add(attachment);
-			}
+			});
 			attachments = newAttachments;
 			sendEmail();
 		} catch (Exception e) {

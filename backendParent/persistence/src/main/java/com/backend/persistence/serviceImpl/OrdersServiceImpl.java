@@ -2,6 +2,7 @@ package com.backend.persistence.serviceImpl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -225,9 +226,16 @@ public class OrdersServiceImpl implements OrdersService {
 			}
 			ordersRepo.saveAndFlush(order);
 			CustomerInfo customer = customerService.getCustomerById(order.getCustomerId());
-			emailService.sendOrderStatusEmail(String.valueOf(order.getOrderId()), order.getStatus(), order.getSubTotal().toString(),
-					order.getOrderDate(), PaymentModes.paymentModes.get(order.getPaymentModeId()), customer.getEmailId(),
-					customer.getFirstName(), customer.getLastName(), baseService.getOrigin(), null);
+			Blob invoiceBlob= null;
+			//send invoice again incase of delivered status.
+			if (order.getStatus().equals(OrdersUtil.orderStatus.Delivered.toString())) {
+				OrderInvoice invoice = invoiceService.getInvoiceByOrder(order);
+				invoiceBlob = invoice != null ? invoice.getDocument() : null;
+			}
+			emailService.sendOrderStatusEmail(String.valueOf(order.getOrderId()), order.getStatus(),
+					order.getSubTotal().toString(), order.getOrderDate(),
+					PaymentModes.paymentModes.get(order.getPaymentModeId()), customer.getEmailId(),
+					customer.getFirstName(), customer.getLastName(), baseService.getOrigin(), invoiceBlob);
 		}
 	}
 
