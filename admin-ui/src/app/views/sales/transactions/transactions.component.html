@@ -46,7 +46,7 @@
         {{pos.primaryKey}}
       </td>
       <td>
-        <a style="cursor: pointer;" (click)="getEmployeeInfo(pos.createdById); secondaryModal.show()">{{pos.createdBy}}</a>
+        <div class="alink" style="cursor: pointer;" (click)="getEmployeeInfo(pos.createdById); secondaryModal.show()">{{pos.createdBy}}</div>
       </td>
       <td>
         {{pos.timeCreated | date: 'dd/MM/yyyy hh:mm a'}}
@@ -55,7 +55,7 @@
         {{pos.paymentMode}}
       </td>
       <td>
-        {{pos.mobile}}
+        <div class="alink" style="cursor: pointer;" (click)="getCustomerInfo(pos.mobile); customerModal.show()">{{pos.mobile}}</div>
       </td>
       <td>
         ₹ {{pos.subTotal}}
@@ -170,12 +170,12 @@
   </div>
 </div>
 
-<!-- <div bsModal #secondaryModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div bsModal #customerModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-open" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title">Customer Details</h4>
-        <button type="button" class="close" (click)="secondaryModal.hide()" aria-label="Close">
+        <button type="button" class="close" (click)="customerModal.hide()" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -205,11 +205,11 @@
       </div>
       <div class="modal-footer">
         <div>
-          <button type="button" class="btn btn-success" (click)="secondaryModal.hide()">
+          <button type="button" class="btn btn-success" (click)="customerModal.hide()">
             <i class="fa fa-check"></i> OK
           </button>
         </div>
       </div>
     </div>
   </div>
-</div> -->
+</div>

@@ -7,3 +7,10 @@ npm install -g localtunnel
 
 lt --port 8080 --subdomain muhilbackend
 generated static url -> https://muhilbackend.loca.lt
+
+MYSQL Backup cmds:
+export:
+mysqldump -uroot -proot@123 clouddatabase > E:\12dump.sql
+
+import:
+mysql -uroot -proot@123 tt6 < E:\12dump.sql

@@ -9,6 +9,8 @@ import { ReportService } from '../../../../shared/report/report.service';
 })
 export class SalesCountComponent implements OnInit {
 
+  donutLoading = false;
+  barLoading = false;
   totalPOSCount: number = 0;
   totoalOrdersCount: number = 0;
   totalCustomers: number = 0;
@@ -88,9 +90,29 @@ export class SalesCountComponent implements OnInit {
     console.log(e);
   }
 
+  // barChart
+  public barChartOptions: any = {
+    scaleShowVerticalLines: false,
+    responsive: true
+  };
+
+  public barChartLabels: string[];//['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
+  public barChartType = 'bar';
+  public barChartLegend = true;
+  public barChartColors: Array < any > = [
+  ];
+  public barChartData: any[] = new Array();
+  // [
+  //   {data: [65, 59, 80, 81, 56, 55, 40], label: 'Online Sales'},
+  //   {data: [28, 48, 40, 19, 86, 27, 90], label: 'In-Store Sales'}
+  // ];
+
+  weeklyReportGenrated = false;
+
   constructor(private reportService: ReportService) { }
 
   ngOnInit(): void {
+    this.donutLoading = true;
     this.reportService.getDashboardReport()
                       .subscribe((resp:any) => {
                         if(resp.statusCode === 200){
@@ -103,9 +125,38 @@ export class SalesCountComponent implements OnInit {
                           this.doughnutChartData.push(resp.data.posCountToday);
                           this.doughnutChartData.push(resp.data.onlineCountToday);
                         }
+                        else{
+
+                        }
+                        this.donutLoading = false;
                       },
                       (error: any) => {
                         alert("Something went wrong!");
+                        this.donutLoading = false;
+                      })
+  }
+
+  generateReport(){
+    this.barLoading = true;
+    this.reportService.getDashboardweeklyReport()
+                      .subscribe((resp:any) => {
+                        if(resp.statusCode === 200){
+                          this.barChartLabels = resp.dataList[0].reverse();
+                          this.barChartData[0] = {
+                            data: resp.dataList[1].reverse(),
+                            label: 'In-Store Sales'
+                          }
+                          this.barChartData[1] = {
+                            data: resp.dataList[2].reverse(),
+                            label: 'Online Sales'
+                          }
+                          this.weeklyReportGenrated = true;
+                        }
+                        this.barLoading = false;
+                      },
+                      (error: any) => {
+                        alert("Something went wrong!");
+                        this.barLoading = false;
                       })
   }
 

@@ -32,3 +32,9 @@
 .acceptStyle:hover  {
   transform: scale(1.5);
 }
+
+.alink {
+  color: brown;
+  cursor: pointer;
+  transition: transform .2s;
+}
