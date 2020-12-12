@@ -1,6 +1,8 @@
 package com.backend.persistence.serviceImpl;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +91,11 @@ public class POSServiceImpl implements POSService {
 			return posDao.getPOSCount(baseService.getTenantInfo().getTenantID(), condition, date);
 		}
 		return posDao.getPOSCount(baseService.getTenantInfo().getTenantID());
+	}
+	
+	@Override
+	public Map<String, BigDecimal> posWeeklyReport() throws Exception{
+		return posDao.getPosWeeklyTotal(baseService.getTenantInfo().getTenantID());
 	}
 
 }

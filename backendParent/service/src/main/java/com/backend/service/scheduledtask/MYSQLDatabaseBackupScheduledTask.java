@@ -26,7 +26,7 @@ public class MYSQLDatabaseBackupScheduledTask extends ScheduledTask {
 	private DataSourceProperties dbProps;
 
 	// cron = sec min hour day mon dayOfWeek.
-	@Scheduled(cron = " 0 0 3 * * SUN ", zone = "IST")
+	//@Scheduled(cron = " 0 0 3 * * SUN ", zone = "IST")
 	@Override
 	public void execute() {
 		logger.info("Scheduled Task - " + MYSQLDatabaseBackupScheduledTask.class.getCanonicalName() + " Started");

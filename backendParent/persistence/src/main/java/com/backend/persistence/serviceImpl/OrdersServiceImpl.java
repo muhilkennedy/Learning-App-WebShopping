@@ -6,6 +6,7 @@ import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -159,11 +160,11 @@ public class OrdersServiceImpl implements OrdersService {
 		// create unassigned order to be picked up by a employee.
 		createUnassignedOrder(order.getOrderId());
 		customerService.clearCustomerCart();
-		DashboardStatusUtil.incremenOnlineCount(baseService.getTenantInfo());
 		OrderInvoice invoice = invoiceService.createOrderInvoice(order);
 		emailService.sendOrderStatusEmail(String.valueOf(order.getOrderId()), order.getStatus(), order.getSubTotal().toString(),
 				order.getOrderDate(), PaymentModes.paymentModes.get(order.getPaymentModeId()), customer.getEmailId(),
 				customer.getFirstName(), customer.getLastName(), baseService.getOrigin(), invoice.getDocument());
+		DashboardStatusUtil.incremenOnlineCount(baseService.getTenantInfo());
 	}
 
 	@Override
@@ -207,6 +208,7 @@ public class OrdersServiceImpl implements OrdersService {
 				break;
 			case "cancelled":
 				order.setStatus(OrdersUtil.orderStatus.Cancelled.toString());
+				DashboardStatusUtil.decrementOnlineCount(baseService.getTenantInfo());
 				break;
 			case "outfordelivery":
 				order.setStatus(OrdersUtil.orderStatus.OutForDelivery.toString());
@@ -237,6 +239,11 @@ public class OrdersServiceImpl implements OrdersService {
 					PaymentModes.paymentModes.get(order.getPaymentModeId()), customer.getEmailId(),
 					customer.getFirstName(), customer.getLastName(), baseService.getOrigin(), invoiceBlob);
 		}
+	}
+	
+	@Override
+	public Map<String, BigDecimal> ordersWeeklyReport() throws Exception{
+		return ordersDao.getOrdersWeeklyTotal(baseService.getTenantInfo().getTenantID());
 	}
 
 }

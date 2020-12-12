@@ -1,12 +1,17 @@
 package com.backend.persistence.dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,10 +21,8 @@ import org.springframework.stereotype.Component;
 import com.backend.commons.util.CommonUtil;
 import com.backend.commons.util.SQLQueryHandler;
 import com.backend.core.service.BaseService;
+import com.backend.core.util.Constants;
 import com.backend.core.util.DBUtil;
-import com.backend.persistence.entity.Orders;
-import com.backend.persistence.helper.POSData;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author Muhil
@@ -170,5 +173,39 @@ public class OrdersDao {
 			throw new Exception(ex.getMessage());
 		}
 	}
+	
+	public Map<String, BigDecimal> getOrdersWeeklyTotal(String tenantId) throws Exception {
+		Map<String, BigDecimal> orders = new LinkedHashMap<String, BigDecimal>();
+		Date curdate = new Date();
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constants.Asia_Calcutta));
+		calendar.set(curdate.getYear() + 1900, curdate.getMonth(), curdate.getDate(), 0, 0, 0);
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			for (int i = 0; i < 7; i++) {
+				SimpleDateFormat df = new SimpleDateFormat(Constants.DATETIMEFORMAT_2);
+				df.setTimeZone(TimeZone.getTimeZone(Constants.Timezone_IST));
+				String tDate = df.format(calendar.getTime());
+				long todaysDate = CommonUtil.convertToUTC(calendar.getTimeInMillis());
+				calendar.add(Calendar.DAY_OF_YEAR, 1);
+				long nextDate = CommonUtil.convertToUTC(calendar.getTimeInMillis());
+				SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+						.setQuery("select sum(subtotal) from orders")
+						.setWhereClause()
+						.setAndCondition("tenantid", tenantId)
+						.andSetGreaterThanCondition("orderdate", todaysDate)
+						.andSetLessThanCondition("orderdate", nextDate)
+						.build();
+				PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
+				ResultSet rs = stmt.executeQuery();
+				if (rs.next()) {
+					orders.put(tDate, rs.getBigDecimal(1));
+				}
+				calendar.add(Calendar.DAY_OF_YEAR, -2);
+			}
 
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+		return orders;
+	}
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
+import { EmployeeService } from '../../../shared/employee/employee.service';
 import { OrdersService } from '../../../shared/orders/orders.service';
 import { PosService } from '../../../shared/pos/pos.service';
 import { AlertService } from '../../../shared/_alert';
@@ -32,7 +33,8 @@ export class OnlineTransactionsComponent implements OnInit {
     }
   }
 
-  constructor(private alertService: AlertService, private orderService: OrdersService){
+  constructor(private alertService: AlertService, private orderService: OrdersService,
+              private empService: EmployeeService){
   }
 
   ngOnInit(): void {
@@ -82,6 +84,105 @@ export class OnlineTransactionsComponent implements OnInit {
   changeStatusSelected(event:any){
     this.status = event.target.value;
     this.fireDatefilter();
+  }
+
+  customerDetails: any;
+  empDetails: any;
+
+  getEmployeeInfo(empId){
+    this.empService.getEmployeesById(empId)
+                   .subscribe((resp:any)=>{
+                    if(resp.statusCode === 200){
+                      this.empDetails = resp.dataList[0];
+                    }
+                    else{
+                      alert("failed");
+                    }
+                   },
+                   (error: any) =>{
+                     alert("failed");
+                   })
+  }
+
+  getEmployeeFirstName(){
+    if(this.empDetails !== undefined){
+      return this.empDetails.firstName;
+    }
+  }
+
+  getEmployeeLastName(){
+    if(this.empDetails !== undefined){
+      return this.empDetails.lastName;
+    }
+  }
+
+  getEmployeeMobile(){
+    if(this.empDetails !== undefined){
+      return this.empDetails.mobile;
+    }
+  }
+
+  getEmployeeId(){
+    if(this.empDetails !== undefined){
+      return this.empDetails.employeeId;
+    }
+  }
+
+  getCustomerInfo(id){
+    this.empService.getCustomerById(id)
+                  .subscribe((resp:any)=>{
+                    if(resp.statusCode === 200){
+                      this.customerDetails = resp.data;
+                    }
+                    else{
+                      alert("failed");
+                    }
+                  },
+                  (error: any) =>{
+                    alert("failed");
+                  })
+  }
+
+  getCustomerFirstName(){
+    if(this.customerDetails !== undefined){
+      return this.customerDetails.firstName;
+    }
+  }
+
+  getCustomerLastName(){
+    if(this.customerDetails !== undefined){
+      return this.customerDetails.lastName;
+    }
+  }
+
+  getCustomerMobile(){
+    if(this.customerDetails !== undefined){
+      return this.customerDetails.mobile;
+    }
+  }
+
+  getCustomerDoorNumber(){
+    if(this.customerDetails !== undefined && this.customerDetails.customerAddress !== null){
+      return this.customerDetails.customerAddress[0].doorNumber;
+    }
+  }
+
+  getCustomerStreet(){
+    if(this.customerDetails !== undefined && this.customerDetails.customerAddress !== null){
+      return this.customerDetails.customerAddress[0].street;
+    }
+  }
+
+  getCustomerCity(){
+    if(this.customerDetails !== undefined && this.customerDetails.customerAddress !== null){
+      return this.customerDetails.customerAddress[0].city;
+    }
+  }
+
+  getCustomerPin(){
+    if(this.customerDetails !== undefined && this.customerDetails.customerAddress !== null){
+      return this.customerDetails.customerAddress[0].pincode;
+    }
   }
 
 }
