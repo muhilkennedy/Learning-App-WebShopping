@@ -119,6 +119,7 @@ export class TenantInitializer {
                     this.tenantStore.tenantContact = tenantDetails.tenantContact;
                     this.tenantStore.businessEmail = tenantDetails.businessEmail;
                     this.tenantStore.tenantGstIn = tenantDetails.gstIn;
+                    this.tenantStore.tenantFssai = tenantDetails.fssai;
                   }
                   //load app only if tenant is active.
                   if(this.tenantStore.tenantActive){

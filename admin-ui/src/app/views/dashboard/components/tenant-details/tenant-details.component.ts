@@ -24,6 +24,7 @@ export class TenantDetailsComponent implements OnInit {
   editTenantBusinessEmailPassword = false;
   editTenantLogo = false;
   editTenantGst = false;
+  editTenantFssai = false;
 
   loadTenantEmail = false;
   loadTenantBusinessEmail = false;
@@ -37,6 +38,7 @@ export class TenantDetailsComponent implements OnInit {
   loadTenantBusinessEmailPassword = false;
   loadTenantLogo = false;
   loadTenantGst = false;
+  loadTenantFssai = false;
 
   tenantDetailId: number;
   tenantEmail: string;
@@ -51,6 +53,7 @@ export class TenantDetailsComponent implements OnInit {
   tenantBusinessEmailPassword: string = "Dummy Text";
   tenantLogo: File = null;
   tenantGstIn: string;
+  tenantFssai: string;
 
   constructor(private tenantStore: TenantStoreService,
               private tenantService: TenantService,
@@ -68,6 +71,7 @@ export class TenantDetailsComponent implements OnInit {
     this.tenantTwitter = this.tenantStore.tenantTwitter;
     this.tenantInsta = this.tenantStore.tenantInsta;
     this.tenantGstIn = this.tenantStore.tenantGstIn;
+    this.tenantFssai = this.tenantStore.tenantFssai;
   }
 
   updateTenantEmail(){
@@ -267,6 +271,23 @@ export class TenantDetailsComponent implements OnInit {
                         if(resp.statusCode === 200){
                           this.editTenantGst = false;
                           this.loadTenantGst = false;
+                        }
+                        else{
+                          alert("error");
+                        }
+                      },
+                      (error:any) => {
+                        alert("error");
+                      });
+  }
+
+  updateTenantFssai(){
+    this.loadTenantFssai = true;
+    this.tenantService.updateFssai(this.tenantFssai)
+                      .subscribe((resp:any) => {
+                        if(resp.statusCode === 200){
+                          this.editTenantFssai = false;
+                          this.loadTenantFssai = false;
                         }
                         else{
                           alert("error");

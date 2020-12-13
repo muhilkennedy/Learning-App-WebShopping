@@ -7,7 +7,8 @@ import { environment } from '../../../environments/environment';
 })
 export class TenantService {
 
-  updateTenantDetailsEndpoint = "/tenant/updateTenant";
+  updateTenantDetailsEndpoint = "/secure/admin/tenant/updateTenant";
+  updateTenantDetailFssaiEndpoint = "/secure/admin/tenant/updateTenantFssai";
 
   constructor(private http:HttpClient) { }
 
@@ -28,4 +29,11 @@ export class TenantService {
     uploadData.append('gstIn', gst);
     return this.http.put(environment.backendBaseUrl+this.updateTenantDetailsEndpoint, uploadData);
   }
+
+  updateFssai(fssai){
+    const uploadData = new FormData();
+    uploadData.append('fssai', fssai);
+    return this.http.put(environment.backendBaseUrl+this.updateTenantDetailFssaiEndpoint, uploadData);
+  }
+
 }

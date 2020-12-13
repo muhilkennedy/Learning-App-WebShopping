@@ -67,6 +67,19 @@
     <br/>
     <div class="input-group">
       <span class="input-group-prepend fixed-prependWidth">
+        <button disabled class="btn"><i class="fa fa-money"></i> Tenant FSSAI</button>
+      </span>
+      <ngx-loading [show]="loadTenantFssai"></ngx-loading>
+      <input [disabled]="!editTenantFssai" type="text" id="tenantgst" name="tenantgst" class="form-control" placeholder="Food Safety and Standards Authority of India" [(ngModel)] = "tenantFssai">
+      <span class="input-group-append">
+        <button *ngIf="!editTenantFssai" type="button" class="btn btn-outline-primary" (click)="editTenantFssai = true"><i class="fa fa-edit"></i></button>
+        <button *ngIf="editTenantFssai" type="button" class="btn btn-outline-danger" (click)="editTenantFssai = false"><i class="fa fa-remove"></i></button>
+        <button *ngIf="editTenantFssai" type="button" class="btn btn-outline-success" (click)="editTenantFssai = true; updateTenantFssai()"><i class="fa fa-check"></i></button>
+      </span>
+    </div>
+    <br/>
+    <div class="input-group">
+      <span class="input-group-prepend fixed-prependWidth">
         <button disabled class="btn"><i class="fa fa-address-book"></i> Tenant Address</button>
       </span>
       <ngx-loading [show]="loadTenantStreet"></ngx-loading>

@@ -77,6 +77,9 @@ public class TenantDetails implements Serializable{
 	@Column(name = "GSTIN")
 	private String gstIn;
 	
+	@Column(name = "FSSAI")
+	private String fssai;
+	
 	@JsonIgnore
 	@Column(name = "BUSINESSEMAILPASSWORD")
 	private String businessEmailPassword;
@@ -195,7 +198,7 @@ public class TenantDetails implements Serializable{
 
 	public String getBusinessEmailPassword() throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException,
 			NoSuchAlgorithmException, NoSuchPaddingException {
-		return RSAUtil.decrypt(this.businessEmailPassword);
+		return this.businessEmailPassword != null? RSAUtil.decrypt(this.businessEmailPassword) : null;
 	}
 
 	public void setBusinessEmailPassword(String businessEmailPassword) throws InvalidKeyException, BadPaddingException,
@@ -209,6 +212,14 @@ public class TenantDetails implements Serializable{
 
 	public void setGstIn(String gstIn) {
 		this.gstIn = gstIn;
+	}
+
+	public String getFssai() {
+		return fssai;
+	}
+
+	public void setFssai(String fssai) {
+		this.fssai = fssai;
 	}
 
 }

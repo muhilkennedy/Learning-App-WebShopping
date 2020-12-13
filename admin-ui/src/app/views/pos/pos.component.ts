@@ -42,6 +42,9 @@ export class PosComponent implements OnInit {
   subTotal: number = 0;
   totalQuantity: number = 0;
 
+  amountPaid: number;
+  balanceAmount: number;
+
   focusElementReference: any
 
   paymentTypes: string[] = ['cash', 'card', 'gpay', 'phone pe', 'paytm', 'others'];
@@ -330,6 +333,10 @@ export class PosComponent implements OnInit {
 
   calculateRoundedSubtotal(): number{
     return Math.round(this.subTotal);
+  }
+
+  calculateBalance(): number{
+    return this.amountPaid !== undefined ? this.amountPaid - this.calculateRoundedSubtotal() : null;
   }
 
   calculateTotalQuantity(): number{
