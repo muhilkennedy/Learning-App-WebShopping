@@ -63,7 +63,7 @@
                 <th>Item Name</th>
                 <th>MRP</th>
                 <th>QUANTITY</th>
-                <th>DISCONT</th>
+                <th>DISCOUNT</th>
                 <th>TOTAL</th>
                 <th></th>
               </tr>
@@ -122,8 +122,14 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
+                <td>
+                  <input *ngIf="paymentMode==='cash'" type="number" class="form-control" style="width: 75%;" matInput placeholder="AmountPaid" id="amountPaid" name="amountPaid" [(ngModel)]="amountPaid">
+                </td>
+                <td>
+                  <div *ngIf="paymentMode==='cash'">
+                    <label>Balance = </label><strong>{{calculateBalance()}} ₹</strong>
+                  </div>
+                </td>
                 <td>
                   <mat-form-field>
                     <mat-label>Payment Mode</mat-label>

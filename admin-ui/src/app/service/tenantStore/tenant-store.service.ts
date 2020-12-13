@@ -22,6 +22,7 @@ export class TenantStoreService {
   private _tenantInsta: string;
   private _tenantTwitter: string;
   private _tenantGstIn: string;
+  private _tenantFssai: string;
 
   constructor() {
     this.tenantId = environment.tenantId;
@@ -33,6 +34,13 @@ export class TenantStoreService {
 
   get tenantGstIn():string{
     return this._tenantGstIn;
+  }
+
+  public get tenantFssai(): string {
+    return this._tenantFssai;
+  }
+  public set tenantFssai(value: string) {
+    this._tenantFssai = value;
   }
 
   set tenantId(id:string){
