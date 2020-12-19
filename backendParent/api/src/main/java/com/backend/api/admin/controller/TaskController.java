@@ -96,6 +96,21 @@ public class TaskController {
 		return response;
 	}
 	
+	@RequestMapping(value = "/getPendingOverdueTaskCount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Integer> getPendingOverdueTaskCount(HttpServletRequest request) {
+		GenericResponse<Integer> response = new GenericResponse<Integer>();
+		try {
+			response.setData(taskService.findPendingAndOverdueTasksCount());
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("getPendingOverdueTaskCount : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
 	@RequestMapping(value = "/deleteTask", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<TaskPOJO> deleteTask(HttpServletRequest request, @RequestParam(value = "id", required = true) int id) {
 		GenericResponse<TaskPOJO> response = new GenericResponse<TaskPOJO>();

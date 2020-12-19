@@ -15,6 +15,7 @@ import javax.sql.rowset.serial.SerialBlob;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.xmlgraphics.util.uri.CommonURIResolver;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -165,6 +166,8 @@ public class TenantInfoLoading {
 
 				invoiceDao.createInvoiceTemplate(realm.getTenantID(),
 						new SerialBlob(FileUtils.readFileToByteArray(file)));
+				
+				deleteDirectoryOrFile(file);
 			}
 		}
 		// remaing tenants are considered removed.
@@ -176,6 +179,36 @@ public class TenantInfoLoading {
 			});
 		}
 	}
+	
+	private boolean deleteDirectoryOrFile(File dir) {
+		if(dir != null) {
+			if (dir.isDirectory()) {
+				File[] children = dir.listFiles();
+				for (int i = 0; i < children.length; i++) {
+					boolean success = deleteDirectoryOrFile(children[i]);
+					if (!success) {
+						return false;
+					}
+				}
+			}
+			logger.info("Removing Dir - " + dir.getPath());
+			return dir.delete();
+		}
+		return false;
+	}
+	
+//	@PostConstruct
+//	private void loadEmailTemplates() throws Exception {
+//		ClassPathResource classPathResource = new ClassPathResource("emailTemplates/emailOTP.ftl");
+//
+//		InputStream inputStream = classPathResource.getInputStream();
+//		File file = File.createTempFile("emailTemplate", ".ftl");
+//		try {
+//			FileUtils.copyInputStreamToFile(inputStream, file);
+//		} finally {
+//			IOUtils.closeQuietly(inputStream);
+//		}
+//	}
 	
 	private Map<String, Tenant> getTenantMap() {
 		List<Tenant> tenantList = tenantService.getAllTenants();

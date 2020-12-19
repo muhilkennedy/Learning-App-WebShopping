@@ -88,6 +88,7 @@ import { environment } from '../environments/environment';
 import { NotFoundComponent } from './component/not-found/not-found.component';
 import { PushNotificationComponent } from './containers/push-notification/push-notification.component';
 import { ChatMessengerComponent } from './containers/chat-messenger/chat-messenger.component';
+import { ScheduledTasksComponent } from './containers/scheduled-tasks/scheduled-tasks.component';
 
 
 @Injectable()
@@ -217,6 +218,7 @@ export function init_tenant(initializer: TenantInitializer) {
     NotFoundComponent,
     PushNotificationComponent,
     ChatMessengerComponent,
+    ScheduledTasksComponent,
   ],
   providers: [{
     provide: LocationStrategy,

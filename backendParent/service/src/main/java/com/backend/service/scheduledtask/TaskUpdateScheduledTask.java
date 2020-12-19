@@ -38,7 +38,7 @@ public class TaskUpdateScheduledTask extends ScheduledTask{
 		logger.info("Scheduled Task - " + TaskUpdateScheduledTask.class.getCanonicalName() + " Started");
 		TenantUtil.getAllTenants().stream().filter(tenant -> tenant.isActive()).forEach(tenant -> {
 			try {
-				newTaskAudit(tenant, DeactivateCouponsScheduledTask.class.getCanonicalName());
+				newTaskAudit(tenant, TaskUpdateScheduledTask.class.getCanonicalName());
 				markInProgress();
 				baseService.setTenantInfo(tenant);
 				//Set overdue tasks
