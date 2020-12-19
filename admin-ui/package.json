@@ -45,7 +45,7 @@
     "moment": "^2.24.0",
     "mutationobserver-shim": "^0.3.5",
     "net": "^1.0.2",
-    "ng-multiselect-dropdown": "^0.2.10",
+    "ng-multiselect-dropdown": "^0.3.1",
     "ng-thermal-print": "^1.0.3",
     "ng2-charts": "^2.3.0",
     "ng2-pdf-viewer": "^6.3.2",
