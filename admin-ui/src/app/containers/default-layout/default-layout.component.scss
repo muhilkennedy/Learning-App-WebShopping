@@ -19,4 +19,13 @@
   color: white;
 }
 
+.toolbaricon{
+  color: green;
+  cursor: pointer;
+  transition: transform .2s;
+}
+
+.toolbaricon:hover  {
+  transform: scale(1.5);
+}
 
