@@ -60,11 +60,11 @@
               <tr>
                 <th>SL.NO</th>
                 <th>Item Code</th>
-                <th>Item Name</th>
-                <th>MRP</th>
+                <th style="width: 200px;">Item Name</th>
+                <th>MRP(₹)</th>
                 <th>QUANTITY</th>
-                <th>DISCOUNT</th>
-                <th>TOTAL</th>
+                <th>DISCOUNT(%)</th>
+                <th>TOTAL(₹)</th>
                 <th></th>
               </tr>
             </thead>
@@ -91,7 +91,7 @@
                 <td *ngIf="!(item.itemCode === null || item.itemCode === undefined)"><input type="text" class="form-control" matInput placeholder="Product Name" id="pname-{{i}}" name="pname-{{i}}" [(ngModel)]="item.itemName"></td>
                 <td><input type="number" class="form-control" style="width: 75%;" matInput placeholder="MRP" id="mrp-{{i}}" name="mrp-{{i}}" [(ngModel)]="item.mrp"></td>
                 <td><input type="number" class="form-control" style="width: 75%;" matInput placeholder="Quantity" id="q-{{i}}" name="q-{{i}}" [(ngModel)]="item.quantity"></td>
-                <td><input type="number" class="form-control" style="width: 50%;" matInput placeholder="Discount" id="dis-{{i}}" name="dis-{{i}}" [(ngModel)]="item.discount"></td>
+                <td><input type="number" class="form-control" style="width: 50%;" matInput placeholder="Offer" id="dis-{{i}}" name="dis-{{i}}" [(ngModel)]="item.discount"></td>
                 <td>{{calculateTotal(item) | number:'1.2-2'}}</td>
                 <td>
                   <i *ngIf="(itemList.length === i+1)" class="addicon fa fa-plus-circle" (click)="addItem()"></i>
@@ -131,7 +131,7 @@
                   </div>
                 </td>
                 <td>
-                  <mat-form-field>
+                  <mat-form-field style="width: 100px;">
                     <mat-label>Payment Mode</mat-label>
                     <mat-select [(value)]="paymentMode">
                       <mat-option [value]="option" *ngFor="let option of paymentTypes">{{ option }}</mat-option>

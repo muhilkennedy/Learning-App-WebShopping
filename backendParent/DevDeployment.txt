@@ -13,4 +13,4 @@ export:
 mysqldump -uroot -proot@123 clouddatabase > E:\12dump.sql
 
 import:
-mysql -uroot -proot@123 tt6 < E:\12dump.sql
+mysql -uroot -proot@123 new_database_name < E:\12dump.sql

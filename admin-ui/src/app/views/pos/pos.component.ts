@@ -64,6 +64,9 @@ export class PosComponent implements OnInit {
 
   addItem(){
     let newProd:PosProduct = new PosProduct();
+    newProd.mrp = 0;
+    newProd.discount = 0;
+    newProd.quantity = 0;
     this.itemList.push(newProd);
   }
 
@@ -206,7 +209,8 @@ export class PosComponent implements OnInit {
   }
 
   getProductFromMatchingText(searchTerm){
-    if (searchTerm.length > 3 && this.previousSearchTerm !== searchTerm) {
+    // && this.previousSearchTerm !== searchTerm
+    if (searchTerm.length > 3 && searchTerm.length < 5) {
       this.productService.getProductByMatchingNameOrCode(searchTerm)
                           .subscribe((resp:any) => {
                             if(resp.statusCode  === 200){
@@ -226,7 +230,7 @@ export class PosComponent implements OnInit {
                             this.alertService.error("something went wrong!");
                             this.loading = false;
                           });
-                        }
+    }
   }
 
   private _filter(value: string): string[] {
@@ -389,6 +393,7 @@ export class PosComponent implements OnInit {
     newProd.discount = 0;
     newProd.quantity = 0;
     this.itemList.push(newProd);
+    this.amountPaid = undefined;
   }
 
   processBill(){
