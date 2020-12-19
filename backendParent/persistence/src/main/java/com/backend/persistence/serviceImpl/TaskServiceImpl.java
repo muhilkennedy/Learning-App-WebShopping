@@ -108,5 +108,10 @@ public class TaskServiceImpl implements TaskService {
 	public List<Task> findAllOverdueTasks() {
 		return taskRepo.findAllOverdueTasks(baseService.getTenantInfo(), CommonUtil.convertToIST(new Date().getTime()));
 	}
+	
+	@Override
+	public int findPendingAndOverdueTasksCount() {
+		return taskRepo.findPendingOverdueTasksCount(baseService.getTenantInfo());
+	}
 
 }

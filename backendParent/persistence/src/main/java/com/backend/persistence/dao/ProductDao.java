@@ -270,5 +270,30 @@ public class ProductDao {
 			)
 			select *
 			from cat_tree;*/
+	
+	public List<Integer> getProductsIdsByCategoryId(int cId) throws Exception {
+		List<Integer> categoryList = new ArrayList<Integer>();
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			//.setAndCondition("active", "true", true)
+			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+															.setQuery("with recursive cat_tree as ( select categoryid, categoryname, parentcategoryid from category where tenantid =? and categoryid = ?"
+																	+ " union all "
+																	+ " select child.categoryid, child.categoryname, child.parentcategoryid from category as child "
+																	+ " join cat_tree as parent on parent.categoryid = child.parentcategoryid )"
+																	+ " select * from cat_tree ")
+															.build();
+			PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
+			stmt.setString(1, baseService.getTenantInfo().getTenantID());
+			stmt.setInt(2, cId);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				categoryList.add(rs.getInt(1));
+			}
+			return categoryList;
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+	}
 
 }

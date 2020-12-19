@@ -24,6 +24,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer>{
 	String findAllTaskCreatedByEmployeeQuery = "select t from Task t where t.tenant = :tenant and t.employeeId = :employee";
 	String deleteTaskQuery = "delete from Task where tenant = :tenant and employeeId = :employee and taskId = :id";
 	String findAllOverdueTasksQuery = "select t from Task t where t.tenant = :tenant and t.endDate < :endDate and t.status = 'Pending'";
+	String findPendingOverdueTasksCountQuery = "select count(*) from Task t where t.tenant = :tenant and t.status = 'Pending' or t.status = 'Overdue'";
 	
 	@Query(findTaskAssignedByIdQuery)
 	Task findTaskAssignedById(@Param("tenant") Tenant tenant, @Param("employee") EmployeeInfo employee, @Param("id") int id);
@@ -40,5 +41,8 @@ public interface TaskRepository extends JpaRepository<Task, Integer>{
 
 	@Query(findAllOverdueTasksQuery)
 	List<Task> findAllOverdueTasks(@Param("tenant") Tenant tenant, @Param("endDate") long endDate);
+	
+	@Query(findPendingOverdueTasksCountQuery)
+	int findPendingOverdueTasksCount(@Param("tenant") Tenant tenant);
 	
 }

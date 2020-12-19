@@ -71,4 +71,11 @@ public interface ProductService {
 
 	List<Product> searchProductsByMatchingNameOrCode(String searchTerm);
 
+	List<Integer> getProductRecursiveByCategoryId(int cId) throws Exception;
+
+	List<Product> getProductRecursiveByCategoryId(int cId, String limit, String offset, String sortByField,
+			String sortByType, boolean includeInactive) throws Exception;
+
+	void deleteProductById(int pId);
+
 }

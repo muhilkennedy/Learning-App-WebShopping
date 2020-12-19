@@ -1,0 +1,19 @@
+<ng-template tabHeading>
+  <a class="notification">
+    <i class="fa fa-tasks"></i>
+  </a>
+</ng-template>
+<div class="p-3">
+  <h6>Scheduled Tasks</h6>
+</div>
+<div style="width: 100%;">
+  <ul class="list-group">
+    <ngx-loading [show]="loading"></ngx-loading>
+    <li class="list-group-item" style="margin-left: -50px;">
+      <ul> <button mat-button class="btn btn-ghost-warning" style="border: 1px solid;" (click)="dashboardDatasync()">DashboardSyncTask</button> </ul>
+    </li>
+    <li class="list-group-item" style="margin-left: -50px;">
+      <ul> <button mat-button class="btn btn-ghost-warning" style="border: 1px solid;" (click)="deleteCategorytask()">DeletedCategoryProductsTask</button> </ul>
+    </li>
+  </ul>
+</div>

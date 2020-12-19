@@ -30,7 +30,7 @@ public class MYSQLDatabaseBackupScheduledTask extends ScheduledTask {
 	@Override
 	public void execute() {
 		logger.info("Scheduled Task - " + MYSQLDatabaseBackupScheduledTask.class.getCanonicalName() + " Started");
-		newTaskAudit(DBUtil.Key_BackUpTask, PurgeTenantScheduledTask.class.getCanonicalName());
+		newTaskAudit(DBUtil.Key_BackUpTask, MYSQLDatabaseBackupScheduledTask.class.getCanonicalName());
 		markInProgress();
 		
 		String folderPath = "DatabaseBackup";
