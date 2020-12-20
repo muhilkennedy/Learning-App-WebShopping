@@ -8,6 +8,10 @@ npm install -g localtunnel
 lt --port 8080 --subdomain muhilbackend
 generated static url -> https://muhilbackend.loca.lt
 
+staqlab-tunnel 8080 hostname=muhil
+staqlab-tunnel 4200 hostname=muhil1
+ng serve --host 0.0.0.0 --disableHostCheck true
+
 MYSQL Backup cmds:
 export:
 mysqldump -uroot -proot@123 clouddatabase > E:\12dump.sql

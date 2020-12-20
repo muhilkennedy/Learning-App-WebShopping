@@ -124,7 +124,7 @@ export class TenantInitializer {
                   }
                   //load app only if tenant is active.
                   if(this.tenantStore.tenantActive){
-                     resolve();
+                     resolve(true);
                   }
                   else{
                     alert("Tenant not Active! Please contact support!")
@@ -132,7 +132,7 @@ export class TenantInitializer {
                 },
                 (error:any) => {
                     console.log("error in loading tenant");
-                    alert("Tenant not Active/Reachable at the moment! Please try again later!");
+                    alert("Tenant Server not Reachable at the moment! Please try again later!");
                 }
               );
     });

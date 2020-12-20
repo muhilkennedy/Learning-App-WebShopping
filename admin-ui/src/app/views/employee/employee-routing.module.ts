@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { CreateEmployeeComponent } from './create-employee/create-employee.component';
+import { CustomerComponent } from './customer/customer.component';
 import { EmployeePermissionComponent } from './employee-permission/employee-permission.component';
 import { EmployeeComponent } from './employee.component';
 
@@ -20,6 +21,13 @@ const routes: Routes = [
         component: EmployeeComponent,
         data: {
           title: 'Manage Employee'
+        }
+      },
+      {
+        path: 'customer',
+        component: CustomerComponent,
+        data: {
+          title: 'Manage Customer'
         }
       },
       {

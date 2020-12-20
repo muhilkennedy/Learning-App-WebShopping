@@ -42,11 +42,7 @@ public class TaskUpdateScheduledTask extends ScheduledTask{
 				markInProgress();
 				baseService.setTenantInfo(tenant);
 				//Set overdue tasks
-				taskService.findAllOverdueTasks().stream().forEach(task -> {
-					task.setStatus(TaskServiceImpl.Key_Status_Overdue);
-					notificationService.createNotification("Overdue Task(s)!", task.getAssignee());
-					taskService.save(task);
-				});
+				updateTaskStatus();
 				markCompleted();
 			} catch (Exception e) {
 				audit.setFailureInfo(e.getMessage());
@@ -57,6 +53,31 @@ public class TaskUpdateScheduledTask extends ScheduledTask{
 			baseService.clear();
 		});
 		logger.info("Scheduled Task - " + TaskUpdateScheduledTask.class.getCanonicalName() + " Completed");		
+	}
+	
+	public void executeForCurrentTenant() {
+		logger.info("Scheduled Task - " + TaskUpdateScheduledTask.class.getCanonicalName() + " Triggered for realm : " + baseService.getTenantInfo().getTenantID());
+		try {
+			newTaskAudit(baseService.getTenantInfo(), TaskUpdateScheduledTask.class.getCanonicalName());
+			markInProgress();
+			updateTaskStatus();
+			markCompleted();
+		} catch (Exception e) {
+			audit.setFailureInfo(e.getMessage());
+			markFailed();
+			logger.error(
+					"Scheduled Task - " + TaskUpdateScheduledTask.class.getCanonicalName() + " Exception ",
+					e.getMessage());
+		}
+		logger.info("Scheduled Task - " + TaskUpdateScheduledTask.class.getCanonicalName() + " Completed");
+	}
+	
+	private void updateTaskStatus() {
+		taskService.findAllOverdueTasks().stream().forEach(task -> {
+			task.setStatus(TaskServiceImpl.Key_Status_Overdue);
+			notificationService.createNotification("Overdue Task(s)!", task.getAssignee());
+			taskService.save(task);
+		});
 	}
 	
 	

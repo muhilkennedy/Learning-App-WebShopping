@@ -3,6 +3,9 @@ import { FormControl, Validators} from '@angular/forms';
 import { EmployeeService } from '../../../shared/employee/employee.service';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { Alert, AlertService } from '../../../shared/_alert';
+import { Observable } from 'rxjs';
+import { SatesAndCityService } from '../../../shared/employee/satesandcity.service';
+import { map, startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'app-create-employee',
@@ -79,12 +82,57 @@ export class CreateEmployeeComponent implements OnInit {
     Validators.required
   ]);
 
+  //autoComplete
+  stateControl = new FormControl('', [
+    Validators.required
+  ]);
+  stateOptions: any[];
+  filteredStateOptions: Observable<any[]>;
+  setState(state){
+    this.state = state;
+    let index = this.stateOptions.indexOf(state);
+    let cityString = this.cityStateService.s_a[index+1];
+    let cities:[] = cityString.split("|");
+    this.cityOptions.length = 0;
+    this.cityOptions = cities;
+  }
+
+  cityControl = new FormControl('', [
+    Validators.required
+  ]);
+  cityOptions: any[] = new Array();
+  filteredCityOptions: Observable<any[]>;
+  setCity(city){
+    this.city = city.trim();
+  }
+
   constructor(private empService: EmployeeService,
-              private alertService: AlertService) {
+              private alertService: AlertService,
+              private cityStateService: SatesAndCityService) {
+    this.stateOptions = cityStateService.state_arr;
+    this.cityOptions = cityStateService.s_a[0].split("|");
     this.activeUser = true;
   }
 
   ngOnInit(): void {
+    this.filteredStateOptions = this.stateControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterState(value))
+    );
+    this.filteredCityOptions = this.cityControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterCity(value))
+    );
+  }
+
+  private _filterState(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.stateOptions.filter(option => option.toLowerCase().indexOf(filterValue) === 0);
+  }
+
+  private _filterCity(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.cityOptions.filter(option => option.toLowerCase().indexOf(" "+filterValue) === 0);
   }
 
   slidetoggle(){
@@ -125,11 +173,11 @@ export class CreateEmployeeComponent implements OnInit {
       this.alertService.warn('Street Name is Required', this.alertoptions);
       hasError = true;
     }
-    if(this.cityFormControl.hasError('required')){
+    if(this.cityControl.hasError('required')){
       this.alertService.warn('City Name is Required', this.alertoptions);
       hasError = true;
     }
-    if(this.stateFormControl.hasError('required')){
+    if(this.stateControl.hasError('required')){
       this.alertService.warn('State Name is Required', this.alertoptions);
       hasError = true;
     }
