@@ -18,6 +18,7 @@ export class TaskService {
 
   resetDashboardScheduledTaskEndpoint = "/secure/admin/scheduledtask/triggerResetDashBoardTask";
   deleteCategoryScheduledTaskEndpoint = "/secure/admin/scheduledtask/triggerDeleteCategoryTask";
+  taskUpdateScheduledTaskEndpoint= "/secure/admin/scheduledtask/triggerTaskUpdateTask";
 
   constructor(private http: HttpClient) { }
 
@@ -67,6 +68,10 @@ export class TaskService {
 
   deleteCategoryScheduledTask(): Observable<any> {
     return this.http.post(environment.backendBaseUrl+this.deleteCategoryScheduledTaskEndpoint, null);
+  }
+
+  taskUpdateScheduledTask(): Observable<any> {
+    return this.http.post(environment.backendBaseUrl+this.taskUpdateScheduledTaskEndpoint, null);
   }
 
 }

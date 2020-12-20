@@ -62,7 +62,6 @@ private Logger logger = LoggerFactory.getLogger(DeactivateProductsForDeletedCate
 		try {
 			newTaskAudit(baseService.getTenantInfo(), DeactivateProductsForDeletedCategory.class.getCanonicalName());
 			markInProgress();
-			// perform today columns reset
 			deleteProducts();
 			markCompleted();
 		} catch (Exception e) {

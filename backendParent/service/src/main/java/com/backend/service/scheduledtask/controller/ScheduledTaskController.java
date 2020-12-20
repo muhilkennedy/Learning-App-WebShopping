@@ -17,6 +17,7 @@ import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.Response;
 import com.backend.service.scheduledtask.DeactivateProductsForDeletedCategory;
 import com.backend.service.scheduledtask.ResetDashboardStatusScheduledTask;
+import com.backend.service.scheduledtask.TaskUpdateScheduledTask;
 
 /**
  * @author Muhil
@@ -33,6 +34,9 @@ public class ScheduledTaskController {
 	
 	@Autowired
 	private DeactivateProductsForDeletedCategory deactivateProductsTask;
+	
+	@Autowired
+	private TaskUpdateScheduledTask taskUpdateTask;
 	
 	@RequestMapping(value = "/triggerResetDashBoardTask", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse triggerResetDashBoardTask(HttpServletRequest request) {
@@ -57,6 +61,21 @@ public class ScheduledTaskController {
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("triggerDeleteCategoryTask : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/triggerTaskUpdateTask", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse triggerTaskUpdateTask(HttpServletRequest request) {
+		GenericResponse response = new GenericResponse();
+		try {
+			taskUpdateTask.executeForCurrentTenant();
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("triggerTaskUpdateTask : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);

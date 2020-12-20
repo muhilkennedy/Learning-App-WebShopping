@@ -17,3 +17,14 @@
 .addicon:hover  {
   transform: scale(1.5);
 }
+
+.blink {
+  color: yellowgreen;
+  animation: blinker 1.5s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}

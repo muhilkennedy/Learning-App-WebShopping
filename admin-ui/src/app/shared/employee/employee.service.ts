@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { SatesAndCityService } from './satesandcity.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,7 @@ export class EmployeeService {
   getCustomerByIdEndpoint = "/secure/admin/employee/getCustomerById";
   getCustomerByMobileEndpoint = "/secure/admin/employee/getCustomerByMobile";
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, public stateAndCityService: SatesAndCityService) { }
 
   createEmployee(firstName, lastName,
                 email, mobile, designation, active, dob, selectedGender,

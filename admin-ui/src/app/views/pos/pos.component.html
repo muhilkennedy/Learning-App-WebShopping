@@ -40,8 +40,11 @@
           <div [hidden]="!barcodeValue">
             {{ barcodeValue }}
           </div> -->
+          <div *ngIf="!newCustomer" class="blink"><label> </label></div><!-- just some space filler-->
+          <div *ngIf="newCustomer" class="blink"><small><strong><i class="fa fa-user"></i> New Customer</strong></small></div>
           <label>Total : </label><strong> {{calculateRoundedSubtotal()}} ₹</strong>
-          <button mat-button class="btn btn-warning" (click)="clearData()">Clear Data</button>
+          <br/>
+          <button mat-button class="btn btn-warning" (click)="clearData()">Clear</button>
         </div>
       </div>
     </div>

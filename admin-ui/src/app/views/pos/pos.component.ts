@@ -41,6 +41,7 @@ export class PosComponent implements OnInit {
   disablePayment: boolean = true;
   subTotal: number = 0;
   totalQuantity: number = 0;
+  newCustomer = false;
 
   amountPaid: number;
   balanceAmount: number;
@@ -59,6 +60,13 @@ export class PosComponent implements OnInit {
   @HostListener('keydown', ['$event']) onKeyDown(e) {
     if (e.keyCode == 13 && e.shiftKey ) {
       this.addItem();
+    }
+  }
+
+  //clear all entries shift+delete
+  @HostListener('keydown', ['$event']) onKeyUp(e) {
+    if (e.keyCode == 46 && e.shiftKey ) {
+      this.clearData();
     }
   }
 
@@ -195,9 +203,10 @@ export class PosComponent implements OnInit {
                           this.customerEmail = resp.data.emailId;
                           this.customerName = resp.data.firstName;
                           this.customerLoyality = resp.data.loyalitypoint;
+                          this.newCustomer = false;
                         }
                         else{
-                          this.alertService.error('Failed : ' + resp.errorMessages);
+                          this.newCustomer = true;
                         }
                         this.loading = false;
                       },
@@ -394,6 +403,7 @@ export class PosComponent implements OnInit {
     newProd.quantity = 0;
     this.itemList.push(newProd);
     this.amountPaid = undefined;
+    this.newCustomer = false;
   }
 
   processBill(){
