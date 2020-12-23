@@ -1,7 +1,6 @@
 package com.backend.api.admin.controller;
 
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,26 +19,26 @@ import org.springframework.web.multipart.MultipartFile;
 import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.Response;
 import com.backend.commons.util.CommonUtil;
-import com.backend.commons.util.RSAUtil;
 import com.backend.core.entity.TenantDetails;
+import com.backend.core.service.BaseService;
 import com.backend.core.service.TenantService;
-import com.backend.core.util.ConfigUtil;
+import com.backend.core.util.RSAUtil;
 
 /**
  * @author Muhil
  *
  */
 @RestController
-@RequestMapping("tenant")
+@RequestMapping("secure/admin/tenant")
 public class TenantController {
 	
 	private static Logger logger = LoggerFactory.getLogger(TenantController.class);
 	
 	@Autowired
-	private TenantService tenantService;
+	private BaseService baseService;
 	
 	@Autowired
-	private ConfigUtil configUtil;
+	private TenantService tenantService;
 	
 	@RequestMapping(value = "/updateTenant", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<String> updateTenant(HttpServletRequest request, @RequestParam(value = "myFile", required = false) MultipartFile file,
@@ -48,16 +47,15 @@ public class TenantController {
 			@RequestParam(value = "tenantPin", required = false) String tenantPin, @RequestParam(value = "tenantTwitter", required = false) String tenantTwitter,
 			@RequestParam(value = "tenantFacebook", required = false) String tenantFacebook, @RequestParam(value = "tenantInsta", required = false) String tenantInsta,
 			@RequestParam(value = "businessEmail", required = false) String businessEmail, @RequestParam(value = "tenantCity", required = false) String tenantCity,
-			@RequestParam(value = "businessEmailPassword", required = false) String businessEmailPassword) {
+			@RequestParam(value = "businessEmailPassword", required = false) String businessEmailPassword,
+			@RequestParam(value = "gstIn", required = false) String gst, @RequestParam(value = "fssai", required = false) String fssai) {
 		GenericResponse<String> response = new GenericResponse<>();
 		try {
 			TenantDetails tenantDetail = new TenantDetails();
 			tenantDetail.setTenantDetailId(tenantDetailId);
 			tenantDetail.setBusinessEmail(businessEmail);
 			if (!StringUtils.isEmpty(businessEmailPassword)) {
-				String encryptedPassword = Base64.getEncoder()
-						.encodeToString(RSAUtil.encrypt(businessEmailPassword, configUtil.getRsaPublic()));
-				tenantDetail.setBusinessEmailPassword(encryptedPassword);
+				tenantDetail.setBusinessEmailPassword(RSAUtil.decrypt(businessEmailPassword, baseService.getTenantInfo().fetchPrivateKey()));
 			}
 			tenantDetail.setTenantCity(tenantCity);
 			tenantDetail.setTenantContact(tenantContact);
@@ -66,7 +64,26 @@ public class TenantController {
 			tenantDetail.setTenantTwitter(tenantTwitter);
 			tenantDetail.setTenantInsta(tenantInsta);
 			tenantDetail.setTenantStreet(tenantStreet);
+			tenantDetail.setGstIn(gst);
+			tenantDetail.setFssai(fssai);
 			tenantService.updateTenantDetails(tenantDetail, file != null ? CommonUtil.getThumbnailImage(file.getBytes()) : null);
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("updateTenant : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/updateTenantFssai", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> updateTenant(HttpServletRequest request, @RequestParam(value = "fssai", required = false) String fssai){
+		GenericResponse<String> response = new GenericResponse<>();
+		try {
+			TenantDetails tenantDetail = new TenantDetails();
+			tenantDetail.setFssai(fssai);
+			tenantService.updateTenantDetails(tenantDetail, null);
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("updateTenant : " + ex);

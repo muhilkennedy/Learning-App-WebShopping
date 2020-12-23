@@ -19,7 +19,7 @@ export class ManageProductComponent implements OnInit {
   pName: string;
   brand: string;
   cost: number;
-  offer: number;
+  offer: number = 0;
   pDescription: string;
   productActive: boolean = true;
   fileToUpdate: File;
@@ -37,6 +37,11 @@ export class ManageProductComponent implements OnInit {
     ]);
     options: any[];
     filteredOptions: Observable<any[]>;
+
+   alertOptions = {
+      autoClose: true,
+      keepAfterRouteChange: false
+   };
 
   constructor(private sanitizer: DomSanitizer, private productService: ProductService,
               private alertService: AlertService) {
@@ -119,7 +124,7 @@ export class ManageProductComponent implements OnInit {
                         this.unitsInStock)
                         .subscribe((resp:any) => {
                           if(resp.statusCode  === 200){
-                            this.alertService.success('Product created succesfully');
+                            this.alertService.success('Product created succesfully', this.alertOptions);
                           }
                           else{
                             this.alertService.error('Failed : ' + resp.errorMessages);
@@ -130,6 +135,17 @@ export class ManageProductComponent implements OnInit {
                           this.alertService.error("something went wrong!");
                           this.loading = false;
                         });
+  }
+
+  getDiscountedPrice(): number{
+    return (this.cost - (this.cost * this.offer)/100);
+  }
+
+  showFinalCost(): boolean{
+    if(this.cost != undefined){
+      return true;
+    }
+    return false;
   }
 
 }

@@ -14,13 +14,18 @@ import javax.imageio.ImageIO;
 import javax.sql.rowset.serial.SerialBlob;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.xmlgraphics.util.uri.CommonURIResolver;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
+import com.backend.core.dao.EmployeeDao;
+import com.backend.core.dao.InvoiceDao;
 import com.backend.core.entity.HomePageMedia;
 import com.backend.core.entity.Tenant;
 import com.backend.core.entity.TenantDetails;
@@ -45,6 +50,12 @@ public class TenantInfoLoading {
 	
 	@Autowired
 	private HomeMediaService mediaService;
+	
+	@Autowired
+	private EmployeeDao employeeDao;
+	
+	@Autowired
+	private InvoiceDao invoiceDao;
 	
 	/**
 	 * This method is for dev purposes only. 
@@ -127,22 +138,37 @@ public class TenantInfoLoading {
 				realm.setUniqueName(tenantDetails[0].trim());
 				realm.setActive(Boolean.parseBoolean(tenantDetails[2].trim()));
 				realm.setPurge(Boolean.parseBoolean(tenantDetails[4].trim()));
-				String originsList = tenantDetails[3].trim().replace("[", "").replace("]", "");
-				String[] allowedOrigins = originsList.split("-");
-				tenantService.removeOrigins(realm.getTenantID());
-				for (String origin : allowedOrigins) {
-					tenantService.addAllowedOrigin(realm.getTenantID(), origin);
-				}
 			} else {
 				realm = new Tenant(tenantDetails[1].trim(), tenantDetails[0].trim(),
 						Boolean.parseBoolean(tenantDetails[2].trim()), Boolean.parseBoolean(tenantDetails[4].trim()));
 			}
+			String originsList = tenantDetails[3].trim().replace("[", "").replace("]", "");
+			resetOriginList(realm, originsList);
 			RSAKeyPairGenerator rsa = new RSAKeyPairGenerator();
 			realm.setPublicKey(rsa.getPublicKey());
 			realm.setPrivateKey(rsa.getPrivateKey());
-			tenantService.save(realm);
+			tenantService.saveAndFlush(realm);
 			tenantMap.remove(tenantDetails[1].trim());
 			logger.info("loaded tenant -> " + realm.getUniqueName());
+			if(!employeeDao.isCustomerSupportAdminPresent(realm.getTenantID())) {
+				employeeDao.createAdminUserForTenant(realm.getTenantID());
+			}
+			if (!invoiceDao.containsInvoiceTemplate(realm.getTenantID())) {
+				ClassPathResource classPathResource = new ClassPathResource("invoiceTemplate/Invoice-Template.docx");
+
+				InputStream inputStream = classPathResource.getInputStream();
+				File file = File.createTempFile("invoice", ".docx");
+				try {
+					FileUtils.copyInputStreamToFile(inputStream, file);
+				} finally {
+					IOUtils.closeQuietly(inputStream);
+				}
+
+				invoiceDao.createInvoiceTemplate(realm.getTenantID(),
+						new SerialBlob(FileUtils.readFileToByteArray(file)));
+				
+				deleteDirectoryOrFile(file);
+			}
 		}
 		// remaing tenants are considered removed.
 		if (!tenantMap.isEmpty()) {
@@ -154,6 +180,36 @@ public class TenantInfoLoading {
 		}
 	}
 	
+	private boolean deleteDirectoryOrFile(File dir) {
+		if(dir != null) {
+			if (dir.isDirectory()) {
+				File[] children = dir.listFiles();
+				for (int i = 0; i < children.length; i++) {
+					boolean success = deleteDirectoryOrFile(children[i]);
+					if (!success) {
+						return false;
+					}
+				}
+			}
+			logger.info("Removing Dir - " + dir.getPath());
+			return dir.delete();
+		}
+		return false;
+	}
+	
+//	@PostConstruct
+//	private void loadEmailTemplates() throws Exception {
+//		ClassPathResource classPathResource = new ClassPathResource("emailTemplates/emailOTP.ftl");
+//
+//		InputStream inputStream = classPathResource.getInputStream();
+//		File file = File.createTempFile("emailTemplate", ".ftl");
+//		try {
+//			FileUtils.copyInputStreamToFile(inputStream, file);
+//		} finally {
+//			IOUtils.closeQuietly(inputStream);
+//		}
+//	}
+	
 	private Map<String, Tenant> getTenantMap() {
 		List<Tenant> tenantList = tenantService.getAllTenants();
 		Map<String, Tenant> tenantMap = new HashMap<String, Tenant>();
@@ -161,6 +217,16 @@ public class TenantInfoLoading {
 			tenantMap.put(tenant.getTenantID(), tenant);
 		});
 		return tenantMap;
+	}
+	
+	private void resetOriginList(Tenant realm, String originsList) throws Exception {
+		String[] allowedOrigins = originsList.split("\\|");
+		if(tenantService.findTenantByID(realm.getTenantID()) != null) {
+			tenantService.removeOrigins(realm.getTenantID());
+			for (String origin : allowedOrigins) {
+				tenantService.addAllowedOrigin(realm.getTenantID(), origin);
+			}
+		}
 	}
 
 }

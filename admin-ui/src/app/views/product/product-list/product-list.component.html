@@ -10,6 +10,19 @@
           <table class="table table-responsive-sm filterbar">
             <tr>
               <td>
+                <input type="text"
+                      class="form-control"  placeholder="Product Name/Code"
+                      id="pname" name="pname"
+                      [formControl]="myControl"
+                      [matAutocomplete]="auto"
+                      (keyup)="getProducts($event)">
+                <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" >
+                  <mat-option *ngFor="let option of filteredOptions | async" >
+                    {{option.productName}}
+                  </mat-option>
+                </mat-autocomplete>
+              </td>
+              <td>
                 <form [formGroup]="myForm" *ngIf="!searchByProduts">
                   <ng-multiselect-dropdown
                       name="category"
@@ -24,10 +37,6 @@
                       (onDeSelectAll)="onDeSelectAll($event)">
                   </ng-multiselect-dropdown>
                 </form>
-                <mat-checkbox [(ngModel)]="loadActiveItemsOnly" (change)="loadActiveItems()">
-                  Active Products only
-                </mat-checkbox>
-                <i class="fa fa-exchange" (click)="searchByProduts = !searchByProduts" style="cursor: pointer;"></i>
               </td>
               <td>
                 <div class="btn-group" dropdown style="width: 100%;">
@@ -46,6 +55,24 @@
                 </div>
               </td>
               <td>
+                <mat-checkbox [(ngModel)]="loadActiveItemsOnly" (change)="loadActiveItems()">
+                  Show Active Products
+                </mat-checkbox>
+              </td>
+              <td>
+                <i class="fa fa-filter" (click)="moreFilters = !moreFilters" style="cursor: pointer;"> More Filters</i>
+              </td>
+            </tr>
+            <tr *ngIf="moreFilters">
+              <td>
+                <mat-checkbox [(ngModel)]="outOfStock" (change)="loadOutOfStockItems()">
+                  Show Out Of Stock Products
+                </mat-checkbox>
+              </td>
+              <td>
+
+              </td>
+              <td>
                 <mat-paginator style="margin-block-start: -0.5rem; margin-left: -13rem !important;" [length]="totalRecords"
                 [pageSize]="pageSize"
                 [pageSizeOptions]="pageSizeOptions"
@@ -59,42 +86,34 @@
     </div>
   </div>
   <div class="row">
-    <!-- collapse content -->
-    <!-- <p>
-      <button class="btn btn-primary" type="button" (click)="isCollapsed = !isCollapsed">
-        Button with data-target
-      </button>
-    </p>
-    <div [collapse]="isCollapsed">
-      <div class="card card-body">
-
-      </div>
-    </div> -->
-
-
-  </div>
+</div>
+<alert class="p-4 text-center"></alert>
 <div class="row">
   <div class="col-md-3 col-sm-4" *ngFor="let prod of products">
-    <div class="card">
+    <div class="card" [ngClass]="{'outofstock': !(prod.quantityInStock > 0)}">
       <ngx-loading [show]="loading"></ngx-loading>
-       <!-- <carousel [interval]="false">
-        <slide *ngFor="let slide of homeImages">
-          <label>Media-ID -> {{slide.mediaId}}</label>
-          <img src={{slide.image}} alt="slides" style="display: block; width: 100%;">
-          <div class="carousel-caption d-none d-md-block" style="color: black;">
-            <h3>{{slide.title}}</h3>
-            <p>{{slide.description}}</p>
-          </div>
-        </slide>
-      </carousel> -->
-      <div class="card-body text-center">
-        <div class="text-muted small text-uppercase font-weight-bold">MRP - {{prod.cost}}<small> ₹ </small> | Discount - {{prod.offer}}%</div>
-        <div class="h2 py-3">{{prod.productName}} - {{prod.productCode}}</div>
+      <div class="card-body" >
+        <i class="expandicon float-right fa fa-expand" (click)="editProduct(prod.productId)" ></i>
+        <div class="text-muted small text-uppercase font-weight-bold">MRP - {{prod.cost}}<small> ₹ </small> | Discount - {{prod.offer}}%
+        </div>
+        <div class="h2 py-3">{{prod.productName}}</div>
+        <div class="h3">{{prod.productCode}}</div>
         <div class="chart-wrapper mx-auto">
           <p>{{prod.brandName}}</p>
+        </div>
+        <div class="float-left">
+          <i *ngIf="!(prod.quantityInStock > 0)" class="expandexclamicon fa fa-exclamation-circle" matTooltip="OUT OF STOCK"></i>
+        </div>
+        <div class="float-right">
+          <mat-slide-toggle
+            color="warn"
+            [checked]="prod.active"
+            (change)="toggleProductActive(prod)">
+          </mat-slide-toggle>
         </div>
       </div>
     </div>
   </div>
 </div>
 </div>
+

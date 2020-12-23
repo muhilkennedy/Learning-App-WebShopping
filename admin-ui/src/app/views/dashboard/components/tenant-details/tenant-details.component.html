@@ -54,6 +54,32 @@
     <br/>
     <div class="input-group">
       <span class="input-group-prepend fixed-prependWidth">
+        <button disabled class="btn"><i class="fa fa-money"></i> Tenant GSTIN</button>
+      </span>
+      <ngx-loading [show]="loadTenantGst"></ngx-loading>
+      <input [disabled]="!editTenantGst" type="text" id="tenantgst" name="tenantgst" class="form-control" placeholder="Goods and Service Tax Identification Number" [(ngModel)] = "tenantGstIn">
+      <span class="input-group-append">
+        <button *ngIf="!editTenantGst" type="button" class="btn btn-outline-primary" (click)="editTenantGst = true"><i class="fa fa-edit"></i></button>
+        <button *ngIf="editTenantGst" type="button" class="btn btn-outline-danger" (click)="editTenantGst = false"><i class="fa fa-remove"></i></button>
+        <button *ngIf="editTenantGst" type="button" class="btn btn-outline-success" (click)="editTenantGst = true; updateTenantGst()"><i class="fa fa-check"></i></button>
+      </span>
+    </div>
+    <br/>
+    <div class="input-group">
+      <span class="input-group-prepend fixed-prependWidth">
+        <button disabled class="btn"><i class="fa fa-money"></i> Tenant FSSAI</button>
+      </span>
+      <ngx-loading [show]="loadTenantFssai"></ngx-loading>
+      <input [disabled]="!editTenantFssai" type="text" id="tenantgst" name="tenantgst" class="form-control" placeholder="Food Safety and Standards Authority of India" [(ngModel)] = "tenantFssai">
+      <span class="input-group-append">
+        <button *ngIf="!editTenantFssai" type="button" class="btn btn-outline-primary" (click)="editTenantFssai = true"><i class="fa fa-edit"></i></button>
+        <button *ngIf="editTenantFssai" type="button" class="btn btn-outline-danger" (click)="editTenantFssai = false"><i class="fa fa-remove"></i></button>
+        <button *ngIf="editTenantFssai" type="button" class="btn btn-outline-success" (click)="editTenantFssai = true; updateTenantFssai()"><i class="fa fa-check"></i></button>
+      </span>
+    </div>
+    <br/>
+    <div class="input-group">
+      <span class="input-group-prepend fixed-prependWidth">
         <button disabled class="btn"><i class="fa fa-address-book"></i> Tenant Address</button>
       </span>
       <ngx-loading [show]="loadTenantStreet"></ngx-loading>
@@ -134,12 +160,12 @@
       <span class="input-group-prepend fixed-prependWidth">
         <button disabled class="btn"><i class="fa fa-registered"></i> Tenant LOGO</button>
       </span>
-      <ngx-loading [show]="loadTenantInsta"></ngx-loading>
-      <input [disabled]="!editTenantInsta" type="file" id="updateFile" (change)="handleFileUpdate($event.target.files)">
+      <ngx-loading [show]="loadTenantLogo"></ngx-loading>
+      <input [disabled]="!editTenantLogo" type="file" id="updateFile" (change)="handleFileUpdate($event.target.files)">
       <span class="input-group-append">
-        <button *ngIf="!editTenantInsta" type="button" class="btn btn-outline-primary" (click)="editTenantInsta = true"><i class="fa fa-edit"></i></button>
-        <button *ngIf="editTenantInsta" type="button" class="btn btn-outline-danger" (click)="editTenantInsta = false"><i class="fa fa-remove"></i></button>
-        <button *ngIf="editTenantInsta" type="button" class="btn btn-outline-success" (click)="editTenantInsta = true; updateTenantLogo()"><i class="fa fa-check"></i></button>
+        <button *ngIf="!editTenantLogo" type="button" class="btn btn-outline-primary" (click)="editTenantLogo = true"><i class="fa fa-edit"></i></button>
+        <button *ngIf="editTenantLogo" type="button" class="btn btn-outline-danger" (click)="editTenantLogo = false"><i class="fa fa-remove"></i></button>
+        <button *ngIf="editTenantLogo" type="button" class="btn btn-outline-success" (click)="editTenantLogo = true; updateTenantLogo()"><i class="fa fa-check"></i></button>
       </span>
     </div>
   </div>

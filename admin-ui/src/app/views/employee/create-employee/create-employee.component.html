@@ -128,19 +128,37 @@
               <tr>
                 <td>
                   <mat-form-field appearance="outline" class="matitem">
-                    <mat-label>City</mat-label>
-                    <input required matInput placeholder="city" [formControl]="cityFormControl" name="city" [(ngModel)] = 'city'>
-                    <mat-error *ngIf="cityFormControl.hasError('required')">
-                      City Name is <strong>required</strong>
-                    </mat-error>
+                      <input type="text" appearance="outline" id="state" name="state"
+                             placeholder="Select STATE"
+                             matInput
+                             [formControl]="stateControl"
+                             [matAutocomplete]="stateAuto"
+                             [(ngModel)]="state">
+                      <mat-autocomplete autoActiveFirstOption #stateAuto="matAutocomplete" >
+                        <mat-option (onSelectionChange)="setState(option)" *ngFor="let option of filteredStateOptions | async" [value]="option">
+                          {{option}}
+                        </mat-option>
+                      </mat-autocomplete>
+                      <mat-error *ngIf="stateControl.hasError('required')">
+                        State Name is <strong>required</strong>
+                      </mat-error>
                   </mat-form-field>
                 </td>
                 <td>
                   <mat-form-field appearance="outline" class="matitem">
-                    <mat-label>State</mat-label>
-                    <input required matInput placeholder="State" [formControl]="stateFormControl" name="state" [(ngModel)] = 'state'>
-                    <mat-error *ngIf="stateFormControl.hasError('required')">
-                      State Name is <strong>required</strong>
+                    <input type="text" appearance="outline" id="city" name="state"
+                           placeholder="Select CITY"
+                           matInput
+                           [formControl]="cityControl"
+                           [matAutocomplete]="cityAuto"
+                           [(ngModel)]="city">
+                    <mat-autocomplete autoActiveFirstOption #cityAuto="matAutocomplete" >
+                      <mat-option (onSelectionChange)="setCity(tempCity)" *ngFor="let tempCity of filteredCityOptions | async" [value]="tempCity">
+                        {{tempCity}}
+                      </mat-option>
+                    </mat-autocomplete>
+                    <mat-error *ngIf="cityControl.hasError('required')">
+                      City Name is <strong>required</strong>
                     </mat-error>
                   </mat-form-field>
                 </td>

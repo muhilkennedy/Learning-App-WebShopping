@@ -1,6 +1,5 @@
 package com.backend.api.controller;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -16,13 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.Response;
-import com.backend.commons.util.CommonUtil;
 import com.backend.core.util.Constants;
 import com.backend.persistence.entity.Product;
+import com.backend.persistence.helper.ProductPOJO;
 import com.backend.persistence.service.ProductService;
 
 /**
@@ -32,29 +30,31 @@ import com.backend.persistence.service.ProductService;
 @RestController
 @RequestMapping("product")
 public class ProductController {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(ProductController.class);
-	
+
 	@Autowired
 	private ProductService productService;
-	
+
 	/*
-	 * ############################################ 
-	 * 				common access
+	 * ############################################
+	 * common access
 	 * ############################################
 	 */
 	@RequestMapping(value = "/getProducts", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<Product> getProducts(HttpServletRequest request,
-												@RequestParam(value = "pIds", required = false) List<Integer> pIds,
-												@RequestParam(value = "cIds", required = false) List<Integer> cIds,
-												@RequestParam(value = "sortField", required = false) String sortByField,
-												@RequestParam(value = "sortType", required = false) String sortByType,
-												@RequestParam(value = "includeInactive", required = false) boolean includeInactive) {
+			@RequestParam(value = "pIds", required = false) List<Integer> pIds,
+			@RequestParam(value = "cIds", required = false) List<Integer> cIds,
+			@RequestParam(value = "sortField", required = false) String sortByField,
+			@RequestParam(value = "sortType", required = false) String sortByType,
+			@RequestParam(value = "includeInactive", required = false) boolean includeInactive,
+			@RequestParam(value = "outOfStock", required = false) boolean outOfStock) {
 		GenericResponse<Product> response = new GenericResponse<>();
 		try {
 			String limit = request.getHeader(Constants.Header_Limit);
 			String offset = request.getHeader(Constants.Header_Offset);
-			response.setDataList(productService.getProducts(cIds, pIds, limit, offset, sortByField, sortByType, includeInactive));
+			response.setDataList(
+					productService.getProducts(cIds, pIds, limit, offset, sortByField, sortByType, includeInactive, outOfStock));
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("getProducts : " + ex);
@@ -64,11 +64,27 @@ public class ProductController {
 		}
 		return response;
 	}
-	
+
+	@RequestMapping(value = "/getProductsById", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Product> getProductsById(HttpServletRequest request,
+			@RequestParam(value = "pIds", required = false) List<Integer> pIds) {
+		GenericResponse<Product> response = new GenericResponse<>();
+		try {
+			response.setDataList(productService.getProducts(pIds));
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("getProductsById : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+
 	@RequestMapping(value = "/getProductCount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<Map<String, Integer>> getProductCount(HttpServletRequest request,
-																 @RequestParam(value = "cIds", required = false) List<Integer> cIds,
-																 @RequestParam(value = "includeInactive", required = false) boolean includeInactive) {
+			@RequestParam(value = "cIds", required = false) List<Integer> cIds,
+			@RequestParam(value = "includeInactive", required = false) boolean includeInactive) {
 		GenericResponse<Map<String, Integer>> response = new GenericResponse<>();
 		try {
 			Map<String, Integer> productCount = new HashedMap<String, Integer>();
@@ -84,54 +100,16 @@ public class ProductController {
 		}
 		return response;
 	}
-	/*
-	 * ############################################ 
-	 * 				secure access
-	 * ############################################
-	 */
-	@RequestMapping(value = "/secure/admin/createOrUpdateProduct", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<Product> createOrUpdateProduct(HttpServletRequest request, @RequestParam(value = "productImage", required = false) MultipartFile file,
-												@RequestParam(value = "categoryId", required = false) String catId,
-												@RequestParam(value = "productId", required = false) String pId,
-												@RequestParam(value = "productName", required = false) String productName,
-												@RequestParam(value = "productBrand", required = false) String productBrand,
-												@RequestParam(value = "cost", required = false) String cost,
-												@RequestParam(value = "offer", required = false) String offer,
-												@RequestParam(value = "description", required = false) String description,
-												@RequestParam(value = "active", required = false) String active,
-												@RequestParam(value = "code", required = false) String pcode,
-												@RequestParam(value = "units", required = false) String unitsInStock) {
-	    GenericResponse<Product> response = new GenericResponse<>();
+
+	@RequestMapping(value = "/getProductsImage", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Product> getProductsImage(HttpServletRequest request,
+			@RequestParam(value = "pIds", required = true) List<Integer> pIds) {
+		GenericResponse<Product> response = new GenericResponse<>();
 		try {
-			//Initial checks
-			if(CommonUtil.isValidStringParam(pId) && CommonUtil.isValidStringParam(catId)) {
-				response.setErrorMessages(Arrays.asList("Both Category Id and Product Id cannot be empty!"));
-				response.setStatus(Response.Status.BAD_REQUEST);
-				return response;
-			}
-			//create pojo object
-			Product productPojo = new Product();
-			productPojo.setProductName(productName);
-			productPojo.setProductDescription(description);
-			productPojo.setBrandName(productBrand);
-			productPojo.setCost(CommonUtil.isValidStringParam(cost)? new BigDecimal(cost) : new BigDecimal(0));
-			productPojo.setOffer(CommonUtil.isValidStringParam(offer)? Integer.parseInt(offer) : 0);
-			productPojo.setProductId(CommonUtil.isValidStringParam(pId)? Integer.parseInt(pId) : -1);
-			productPojo.setActive(CommonUtil.isValidStringParam(active)? Boolean.parseBoolean(active) : false);
-			productPojo.setProductCode(pcode);
-			productPojo.setQuantityInStock(CommonUtil.isValidStringParam(offer)? Integer.parseInt(unitsInStock) : -1);
-			Product product = productService.createOrUpdateProduct(productPojo, Integer.parseInt(catId), file != null? file.getBytes() : null );
-			if(product != null) {
-				response.setData(product);
-				response.setStatus(Response.Status.OK);
-			}
-			else {
-				response.setErrorMessages(Arrays.asList("Failed To Create Product!"));
-				response.setStatus(Response.Status.ERROR);
-			}
-			
+			response.setDataList(productService.getProductImages(pIds));
+			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
-			logger.error("createOrUpdateProduct : " + ex);
+			logger.error("getProductsImage : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
@@ -139,15 +117,46 @@ public class ProductController {
 		return response;
 	}
 	
-	@RequestMapping(value = "/secure/admin/getProductByCode", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<Product> getProductByCode(HttpServletRequest request,
-												@RequestParam(value = "pCode", required = true) String pCode) {
+	@RequestMapping(value = "/getProductsByName", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Product> getProductsByName(HttpServletRequest request,
+			@RequestParam(value = "searchTerm", required = true) String searchTerm) {
 		GenericResponse<Product> response = new GenericResponse<>();
 		try {
-			response.setData(productService.getProductByCode(pCode));
+			response.setDataList(productService.searchProductsByMatchingName(searchTerm));
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
-			logger.error("getProductByCode : " + ex);
+			logger.error("getProductsByName : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/getProductsByNameOrCode", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Product> getProductsByNameOrCode(HttpServletRequest request,
+			@RequestParam(value = "searchTerm", required = true) String searchTerm) {
+		GenericResponse<Product> response = new GenericResponse<>();
+		try {
+			response.setDataList(productService.searchProductsByMatchingNameOrCode(searchTerm));
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("getProductsByNameOrCode : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/getFeaturedProducts", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Product> getFeaturedProducts(HttpServletRequest request) {
+		GenericResponse<Product> response = new GenericResponse<>();
+		try {
+			response.setDataList(productService.getFeaturedProducts());
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("getFeaturedProducts : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
@@ -155,4 +164,42 @@ public class ProductController {
 		return response;
 	}
 
+	@RequestMapping(value = "/getFeaturedProductImages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<ProductPOJO> getFeaturedProductImages(HttpServletRequest request) {
+		GenericResponse<ProductPOJO> response = new GenericResponse<>();
+		try {
+			response.setDataList(productService.getFeaturedProducts());
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("getFeaturedProductImages : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/getProdctsRecursiveByCategory", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Product> getProdctsRecursiveByCategory(HttpServletRequest request,@RequestParam(value = "pIds", required = false) List<Integer> pIds,
+			@RequestParam(value = "cIds", required = false) int cId,
+			@RequestParam(value = "sortField", required = false) String sortByField,
+			@RequestParam(value = "sortType", required = false) String sortByType,
+			@RequestParam(value = "includeInactive", required = false) boolean includeInactive) {
+		String limit = request.getHeader(Constants.Header_Limit);
+		String offset = request.getHeader(Constants.Header_Offset);
+		GenericResponse<Product> response = new GenericResponse<>();
+		try {
+			response.setDataList(productService.getProductRecursiveByCategoryId(cId, limit, offset, sortByField, sortByType, includeInactive));
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("getProdctsRecursiveByCategory : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+
+	
 }

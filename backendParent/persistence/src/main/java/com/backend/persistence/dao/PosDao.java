@@ -1,10 +1,17 @@
 package com.backend.persistence.dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -12,7 +19,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.backend.commons.util.CommonUtil;
+import com.backend.commons.util.SQLQueryHandler;
 import com.backend.core.service.BaseService;
+import com.backend.core.util.Constants;
 import com.backend.core.util.DBUtil;
 import com.backend.persistence.helper.POSData;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,7 +50,7 @@ public class PosDao {
 	public void createPOS (JSONObject json) throws Exception {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con
-					.prepareStatement("INSERT INTO pointofsale VALUES(?)");
+					.prepareStatement("insert into pointofsale values(?)");
 			stmt.setString(1, json.toString());
 			stmt.executeUpdate();
 		} catch (Exception ex) {
@@ -52,7 +62,7 @@ public class PosDao {
 	public List<POSData> getPOS (String mobile, String tenantId) throws Exception{
 		List<POSData> json = new ArrayList<POSData>();
 		try (Connection con = dbUtil.getConnectionInstance()) {
-			PreparedStatement stmt = con.prepareStatement("SELECT * FROM pointofsale WHERE pos->\"$.tenantId\" = ? and pos->\"$.mobile\" = ?");
+			PreparedStatement stmt = con.prepareStatement("select * from pointofsale where pos->\"$.tenantId\" = ? and pos->\"$.mobile\" = ?");
 			stmt.setString(1, tenantId);
 			stmt.setString(2, mobile);
 			ResultSet rs = stmt.executeQuery();
@@ -67,13 +77,200 @@ public class PosDao {
 		}
 	}
 	
+	public int getPOSCount (String tenantId) throws Exception{
+		int count = 0;
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			PreparedStatement stmt = con.prepareStatement("select count(*) from pointofsale where pos->\"$.tenantId\" = ?");
+			stmt.setString(1, tenantId);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				count = rs.getInt(1);
+			}
+			return count;
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+	}
+	
+	public List<POSData> getPOS (String tenantId, String limit, String offset) throws Exception{
+		List<POSData> json = new ArrayList<POSData>();
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+															.setQuery("select * from pointofsale")
+															.setWhereClause()
+															.setAndCondition("pos->\"$.tenantId\"", tenantId)
+															.setOrderBy("pos->\"$.timeCreated\"")
+															.setSortOrder("desc")
+														  	.setLimit(limit)
+														  	.setOffset(offset)
+															.build();
+			PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				POSData data = new ObjectMapper().readValue(rs.getString(1), POSData.class);
+				json.add(data);
+			}
+			return json;
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+	}
+	
+	public int getPOSCount (String tenantId, String condition , long date) throws Exception{
+		Date curdate = new Date(date);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(curdate);
+		calendar.add(Calendar.DAY_OF_YEAR, 1);
+		date = CommonUtil.convertToUTC(date);
+		long nextDate = CommonUtil.convertToUTC(calendar.getTimeInMillis());
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			SQLQueryHandler sqlHandler = null;
+			switch(condition) {
+				case "eq" : sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+															.setQuery("select count(*) from pointofsale")
+															.setWhereClause()
+															.setAndCondition("pos->\"$.tenantId\"", tenantId)
+															.andSetGreaterThanCondition("pos->\"$.timeCreated\"", date)
+															.andSetLessThanCondition("pos->\"$.timeCreated\"", nextDate)
+															.setOrderBy("pos->\"$.timeCreated\"")
+															.setSortOrder("desc")
+															.build();	
+							break;
+				case "lt" : sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+															.setQuery("select * from pointofsale")
+															.setWhereClause()
+															.setAndCondition("pos->\"$.tenantId\"", tenantId)
+															.andSetLessThanCondition("pos->\"$.timeCreated\"", date)
+															.setOrderBy("pos->\"$.timeCreated\"")
+															.setSortOrder("desc")
+															.build();
+							break;
+				case "gt" : sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+															.setQuery("select * from pointofsale")
+															.setWhereClause()
+															.setAndCondition("pos->\"$.tenantId\"", tenantId)
+															.andSetGreaterThanCondition("pos->\"$.timeCreated\"", date)
+															.setOrderBy("pos->\"$.timeCreated\"")
+															.setSortOrder("desc")
+															.build();
+			}
+			PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
+			ResultSet rs = stmt.executeQuery();
+			if(rs.next()) {
+				return rs.getInt(1);
+			}
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+		return 0;
+	}
+	
+	public List<POSData> getPOS (String tenantId, String limit, String offset, String condition , long date) throws Exception{
+		List<POSData> json = new ArrayList<POSData>();
+		Date curdate = new Date(date);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(curdate);
+		calendar.add(Calendar.DAY_OF_YEAR, 1);
+		date = CommonUtil.convertToUTC(date);
+		long nextDate = CommonUtil.convertToUTC(calendar.getTimeInMillis());
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			SQLQueryHandler sqlHandler = null;
+			switch(condition) {
+				case "eq" : sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+															.setQuery("select * from pointofsale")
+															.setWhereClause()
+															.setAndCondition("pos->\"$.tenantId\"", tenantId)
+															.andSetGreaterThanCondition("pos->\"$.timeCreated\"", date)
+															.andSetLessThanCondition("pos->\"$.timeCreated\"", nextDate)
+															.setOrderBy("pos->\"$.timeCreated\"")
+															.setSortOrder("desc")
+														  	.setLimit(limit)
+														  	.setOffset(offset)
+															.build();	
+							break;
+				case "lt" : sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+															.setQuery("select * from pointofsale")
+															.setWhereClause()
+															.setAndCondition("pos->\"$.tenantId\"", tenantId)
+															.andSetLessThanCondition("pos->\"$.timeCreated\"", date)
+															.setOrderBy("pos->\"$.timeCreated\"")
+															.setSortOrder("desc")
+														  	.setLimit(limit)
+														  	.setOffset(offset)
+															.build();
+							break;
+				case "gt" : sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+															.setQuery("select * from pointofsale")
+															.setWhereClause()
+															.setAndCondition("pos->\"$.tenantId\"", tenantId)
+															.andSetGreaterThanCondition("pos->\"$.timeCreated\"", date)
+															.setOrderBy("pos->\"$.timeCreated\"")
+															.setSortOrder("desc")
+														  	.setLimit(limit)
+														  	.setOffset(offset)
+															.build();
+			}
+			PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				POSData data = new ObjectMapper().readValue(rs.getString(1), POSData.class);
+				json.add(data);
+			}
+			return json;
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+	}
+	
+	public Map<String, BigDecimal> getPosWeeklyTotal(String tenantId) throws Exception {
+		Map<String, BigDecimal> orders = new LinkedHashMap<String, BigDecimal>();
+		Date curdate = new Date();
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constants.Asia_Calcutta));
+		calendar.set(curdate.getYear() + 1900, curdate.getMonth(), curdate.getDate(), 0, 0, 0);
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			for (int i = 0; i < 7; i++) {
+				SimpleDateFormat df = new SimpleDateFormat(Constants.DATETIMEFORMAT_2);
+				df.setTimeZone(TimeZone.getTimeZone(Constants.Timezone_IST));
+				String tDate = df.format(calendar.getTime());
+				long todaysDate = CommonUtil.convertToUTC(calendar.getTimeInMillis());
+				calendar.add(Calendar.DAY_OF_YEAR, 1);
+				long nextDate = CommonUtil.convertToUTC(calendar.getTimeInMillis());
+				SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+						.setQuery("select * from pointofsale")
+						.setWhereClause()
+						.setAndCondition("pos->\"$.tenantId\"", tenantId)
+						.andSetGreaterThanCondition("pos->\"$.timeCreated\"", todaysDate)
+						.andSetLessThanCondition("pos->\"$.timeCreated\"", nextDate)
+						.build();
+				PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
+				ResultSet rs = stmt.executeQuery();
+				BigDecimal subTotal = new BigDecimal(0);
+				while (rs.next()) {
+					POSData data = new ObjectMapper().readValue(rs.getString(1), POSData.class);
+					subTotal = subTotal.add(new BigDecimal(data.getSubTotal()));
+				}
+				orders.put(tDate, subTotal);
+				calendar.add(Calendar.DAY_OF_YEAR, -2);
+			}
+
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+		return orders;
+	}
+	
 	/***********
 	 * POS_SYNC 
 	 ***********/
 	public void createPOSSYNC (String mobile) throws Exception {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con
-					.prepareStatement("INSERT INTO possync VALUES(?,?)");
+					.prepareStatement("insert into possync VALUES(?,?)");
 			stmt.setString(1, mobile);
 			stmt.setString(2, baseService.getTenantInfo().getTenantID());
 			stmt.executeQuery();
@@ -86,7 +283,7 @@ public class PosDao {
 	public List<String> getPOSSYNC (String tenantId) throws Exception{
 		List<String> mobile = new ArrayList<String>();
 		try (Connection con = dbUtil.getConnectionInstance()) {
-			PreparedStatement stmt = con.prepareStatement("SELECT * FROM POSSYNC WHERE TENANTID = ?");
+			PreparedStatement stmt = con.prepareStatement("select * from possync where tenantid = ?");
 			stmt.setString(1, tenantId);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
@@ -102,7 +299,7 @@ public class PosDao {
 	public void deletePOSSYNC (String tenantId) throws Exception {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con
-					.prepareStatement("DELETE FROM POSSYNC WHERE TENANTID = ?");
+					.prepareStatement("delete from possync where tenantid = ?");
 			stmt.setString(1, tenantId);
 			stmt.executeUpdate();
 		} catch (Exception ex) {
@@ -120,7 +317,7 @@ public class PosDao {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			int currentValue = 0;
 			int incrementBy = 0; 
-			PreparedStatement stmt = con.prepareStatement("SELECT * FROM POSSEQUENCE");
+			PreparedStatement stmt = con.prepareStatement("select * from possequence");
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) {
 				currentValue = rs.getInt(1);
@@ -132,7 +329,7 @@ public class PosDao {
 			else {
 				throw new Exception("POS SEQUENCE GENERATION ERROR");
 			}
-			stmt = con.prepareStatement("UPDATE POSSEQUENCE SET CURRENTSEQUENCVALUE = ? WHERE CURRENTSEQUENCVALUE = ?");
+			stmt = con.prepareStatement("update possequence set currentsequencevalue = ? where currentsequencevalue = ?");
 			stmt.setInt(1, (currentValue + incrementBy));
 			stmt.setInt(2, currentValue);
 			stmt.executeUpdate();

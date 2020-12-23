@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.backend.core.dao.EmployeeDao;
 import com.backend.core.serviceImpl.CacheService;
-import com.backend.persistence.dao.EmployeeDao;
 
 /**
  * @author Muhil Kennedy
@@ -30,7 +30,6 @@ public class EmployeeLoggedInStatusScheduleTask extends ScheduledTask {
 	@Scheduled(cron = " 0 0/1 * * * * ")
 	@Override
 	public void execute() {
-		logger.info("Scheduled Task - " + EmployeeLoggedInStatusScheduleTask.class.getCanonicalName() + " Started");
 		CacheService.getLoggedInStatusCacheMap().entrySet().parallelStream().forEach(item -> {
 			try {
 				if (checkTimeLapsed(item.getValue())) {
@@ -43,7 +42,6 @@ public class EmployeeLoggedInStatusScheduleTask extends ScheduledTask {
 				e.printStackTrace();
 			}
 		});
-		logger.info("Scheduled Task - " + EmployeeLoggedInStatusScheduleTask.class.getCanonicalName() + " Completed");
 	}
 	
 	private boolean checkTimeLapsed(Date date) {

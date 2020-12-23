@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -10,9 +11,13 @@ export class HeaderComponent implements OnInit {
 
   orgName = environment.orgName;
 
-  constructor() { }
+  constructor(private route: Router) { }
 
   ngOnInit(): void {
+  }
+
+  navigateToLoginPage(){
+    this.route.navigate(['/login']);
   }
 
 }

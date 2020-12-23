@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { SatesAndCityService } from './satesandcity.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +18,12 @@ export class EmployeeService {
   statusUpdateEndpoint = "/secure/admin/employee/activateEmployee";
   getEmployeesByIdEndPoint = "/secure/admin/employee/getEmployeesById";
   getAllEmployeeNamesAndEmailEndpoint = "/secure/admin/employee/getAllEmployeeNames";
+  toggleOrderPickUpEndpoint = "/secure/admin/employee/toggleOrderPickUp";
 
-  constructor(private http: HttpClient) { }
+  getCustomerByIdEndpoint = "/secure/admin/employee/getCustomerById";
+  getCustomerByMobileEndpoint = "/secure/admin/employee/getCustomerByMobile";
+
+  constructor(private http: HttpClient, public stateAndCityService: SatesAndCityService) { }
 
   createEmployee(firstName, lastName,
                 email, mobile, designation, active, dob, selectedGender,
@@ -69,6 +74,10 @@ export class EmployeeService {
     return this.http.put(environment.backendBaseUrl+this.updatePermissionEndpoint, httpOptions);
   }
 
+  toggleOrderPickup(): Observable<any>{
+    return this.http.put(environment.backendBaseUrl+this.toggleOrderPickUpEndpoint, null);
+  }
+
   changeEmployeeStatus(employeeId:number, status: boolean): Observable<any>{
     const httpOptions = {
       employeeId: employeeId,
@@ -104,6 +113,20 @@ export class EmployeeService {
 
   getAllEmployeeNamesAndEmail(): Observable<any> {
     return this.http.get(environment.backendBaseUrl+this.getAllEmployeeNamesAndEmailEndpoint);
+  }
+
+  getCustomerById(customerId){
+    const httpOptions = {
+      params: {id: customerId}
+    };
+    return this.http.get(environment.backendBaseUrl+this.getCustomerByIdEndpoint, httpOptions);
+  }
+
+  getCustomerByMobile(mobile){
+    const httpOptions = {
+      params: {mobile: mobile}
+    };
+    return this.http.get(environment.backendBaseUrl+this.getCustomerByMobileEndpoint, httpOptions);
   }
 
 }

@@ -3,6 +3,8 @@ import { TenantStoreService } from '../../../../service/tenantStore/tenant-store
 import { TenantService } from '../../../../shared/tenant/tenant.service';
 import { AlertService } from '../../../../shared/_alert';
 
+declare var rsaencrypt: Function;
+
 @Component({
   selector: 'app-tenant-details',
   templateUrl: './tenant-details.component.html',
@@ -21,6 +23,8 @@ export class TenantDetailsComponent implements OnInit {
   editTenantInsta = false;
   editTenantBusinessEmailPassword = false;
   editTenantLogo = false;
+  editTenantGst = false;
+  editTenantFssai = false;
 
   loadTenantEmail = false;
   loadTenantBusinessEmail = false;
@@ -33,6 +37,8 @@ export class TenantDetailsComponent implements OnInit {
   loadTenantInsta = false;
   loadTenantBusinessEmailPassword = false;
   loadTenantLogo = false;
+  loadTenantGst = false;
+  loadTenantFssai = false;
 
   tenantDetailId: number;
   tenantEmail: string;
@@ -46,6 +52,8 @@ export class TenantDetailsComponent implements OnInit {
   tenantInsta: string;
   tenantBusinessEmailPassword: string = "Dummy Text";
   tenantLogo: File = null;
+  tenantGstIn: string;
+  tenantFssai: string;
 
   constructor(private tenantStore: TenantStoreService,
               private tenantService: TenantService,
@@ -62,11 +70,13 @@ export class TenantDetailsComponent implements OnInit {
     this.tenantFacebook = this.tenantStore.tenantFacebook;
     this.tenantTwitter = this.tenantStore.tenantTwitter;
     this.tenantInsta = this.tenantStore.tenantInsta;
+    this.tenantGstIn = this.tenantStore.tenantGstIn;
+    this.tenantFssai = this.tenantStore.tenantFssai;
   }
 
   updateTenantEmail(){
     this.loadTenantEmail = true;
-    this.tenantService.updateTenantDetails(this.tenantDetailId, '', this.tenantEmail, '', '', '', '', '', '', '', '', '')
+    this.tenantService.updateTenantDetails(this.tenantDetailId, '', this.tenantEmail, '', '', '', '', '', '', '', '', '', '')
                       .subscribe((resp:any) => {
                         if(resp.statusCode === 200){
                           this.editTenantEmail = false;
@@ -86,11 +96,12 @@ export class TenantDetailsComponent implements OnInit {
   }
   updateTenantLogo(){
     this.loadTenantLogo = true;
-    this.tenantService.updateTenantDetails(this.tenantDetailId, this.tenantLogo, '', '', '', '', '', '', '', '', '', '')
+    this.tenantService.updateTenantDetails(this.tenantDetailId, this.tenantLogo, '', '', '', '', '', '', '', '', '', '', '')
                       .subscribe((resp:any) => {
                         if(resp.statusCode === 200){
                           this.editTenantLogo = false;
                           this.loadTenantLogo = false;
+                          window.location.reload();
                         }
                         else{
                           alert("error");
@@ -103,7 +114,7 @@ export class TenantDetailsComponent implements OnInit {
 
   updateTenantBusinessEmail(){
     this.loadTenantBusinessEmail = true;
-    this.tenantService.updateTenantDetails(this.tenantDetailId, '', '', this.tenantBusinessEmail, '', '', '', '', '', '', '', '')
+    this.tenantService.updateTenantDetails(this.tenantDetailId, '', '', this.tenantBusinessEmail, '', '', '', '', '', '', '', '', '')
                       .subscribe((resp:any) => {
                         if(resp.statusCode === 200){
                           this.editTenantBusinessEmail = false;
@@ -120,7 +131,7 @@ export class TenantDetailsComponent implements OnInit {
 
   updateTenantBusinessEmailPassword(){
     this.loadTenantBusinessEmailPassword = true;
-    this.tenantService.updateTenantDetails(this.tenantDetailId, '', '', '', this.tenantBusinessEmailPassword, '', '', '', '', '', '', '')
+    this.tenantService.updateTenantDetails(this.tenantDetailId, '', '', '', rsaencrypt(this.tenantBusinessEmailPassword, this.tenantStore.publicKey), '', '', '', '', '', '', '', '')
                       .subscribe((resp:any) => {
                         if(resp.statusCode === 200){
                           this.editTenantBusinessEmailPassword = false;
@@ -137,7 +148,7 @@ export class TenantDetailsComponent implements OnInit {
 
   updateTenantContact(){
     this.loadTenantContact = true;
-    this.tenantService.updateTenantDetails(this.tenantDetailId, '', '', '', '', this.tenantContact, '', '', '', '', '', '')
+    this.tenantService.updateTenantDetails(this.tenantDetailId, '', '', '', '', this.tenantContact, '', '', '', '', '', '', '')
                       .subscribe((resp:any) => {
                         if(resp.statusCode === 200){
                           this.editTenantContact = false;
@@ -154,7 +165,7 @@ export class TenantDetailsComponent implements OnInit {
 
   updateTenantStreet(){
     this.loadTenantStreet = true;
-    this.tenantService.updateTenantDetails(this.tenantDetailId, '', '', '', '', '', this.tenantStreet, '', '', '', '', '')
+    this.tenantService.updateTenantDetails(this.tenantDetailId, '', '', '', '', '', this.tenantStreet, '', '', '', '', '', '')
                       .subscribe((resp:any) => {
                         if(resp.statusCode === 200){
                           this.editTenantStreet = false;
@@ -171,7 +182,7 @@ export class TenantDetailsComponent implements OnInit {
 
   updateTenantCity(){
     this.loadTenantCity = true;
-    this.tenantService.updateTenantDetails(this.tenantDetailId, '', '', '', '', '', '', this.tenantCity, '', '', '', '')
+    this.tenantService.updateTenantDetails(this.tenantDetailId, '', '', '', '', '', '', this.tenantCity, '', '', '', '', '')
                       .subscribe((resp:any) => {
                         if(resp.statusCode === 200){
                           this.editTenantCity = false;
@@ -188,7 +199,7 @@ export class TenantDetailsComponent implements OnInit {
 
   updateTenantPin(){
     this.loadTenantPin = true;
-    this.tenantService.updateTenantDetails(this.tenantDetailId, '', '', '', '', '', '', '', this.tenantPin, '', '', '')
+    this.tenantService.updateTenantDetails(this.tenantDetailId, '', '', '', '', '', '', '', this.tenantPin, '', '', '', '')
                       .subscribe((resp:any) => {
                         if(resp.statusCode === 200){
                           this.editTenantPin = false;
@@ -205,7 +216,7 @@ export class TenantDetailsComponent implements OnInit {
 
   updateTenantFacebook(){
     this.loadTenantFacebook = true;
-    this.tenantService.updateTenantDetails(this.tenantDetailId, '', '', '', '', '', '', '', '', this.tenantFacebook, '', '')
+    this.tenantService.updateTenantDetails(this.tenantDetailId, '', '', '', '', '', '', '', '', this.tenantFacebook, '', '', '')
                       .subscribe((resp:any) => {
                         if(resp.statusCode === 200){
                           this.editTenantFacebook = false;
@@ -222,7 +233,7 @@ export class TenantDetailsComponent implements OnInit {
 
   updateTenantTwitter(){
     this.loadTenantTwitter = true;
-    this.tenantService.updateTenantDetails(this.tenantDetailId, '', '', '', '', '', '', '', '', '', this.tenantTwitter, '')
+    this.tenantService.updateTenantDetails(this.tenantDetailId, '', '', '', '', '', '', '', '', '', this.tenantTwitter, '', '')
                       .subscribe((resp:any) => {
                         if(resp.statusCode === 200){
                           this.editTenantFacebook = false;
@@ -239,11 +250,45 @@ export class TenantDetailsComponent implements OnInit {
 
   updateTenantInsta(){
     this.loadTenantInsta = true;
-    this.tenantService.updateTenantDetails(this.tenantDetailId, '', '', '', '', '', '', '', '', '', '', this.tenantInsta)
+    this.tenantService.updateTenantDetails(this.tenantDetailId, '', '', '', '', '', '', '', '', '', '', this.tenantInsta, '')
                       .subscribe((resp:any) => {
                         if(resp.statusCode === 200){
                           this.editTenantInsta = false;
                           this.loadTenantInsta = false;
+                        }
+                        else{
+                          alert("error");
+                        }
+                      },
+                      (error:any) => {
+                        alert("error");
+                      });
+  }
+
+  updateTenantGst(){
+    this.loadTenantGst = true;
+    this.tenantService.updateTenantDetails(this.tenantDetailId, '', '', '', '', '', '', '', '', '', '', '', this.tenantGstIn)
+                      .subscribe((resp:any) => {
+                        if(resp.statusCode === 200){
+                          this.editTenantGst = false;
+                          this.loadTenantGst = false;
+                        }
+                        else{
+                          alert("error");
+                        }
+                      },
+                      (error:any) => {
+                        alert("error");
+                      });
+  }
+
+  updateTenantFssai(){
+    this.loadTenantFssai = true;
+    this.tenantService.updateFssai(this.tenantFssai)
+                      .subscribe((resp:any) => {
+                        if(resp.statusCode === 200){
+                          this.editTenantFssai = false;
+                          this.loadTenantFssai = false;
                         }
                         else{
                           alert("error");

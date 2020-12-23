@@ -7,7 +7,7 @@ public class TaskPOJO {
 	private int assigneeId;
 	private String assigneeName;
 	private String assigneeEmail;
-	private Date enddate;
+	private long enddate;
 	private String content;
 	private String status;
 	private String creatorId;
@@ -30,11 +30,11 @@ public class TaskPOJO {
 		this.assigneeId = assigneeId;
 	}
 
-	public Date getEnddate() {
+	public long getEnddate() {
 		return enddate;
 	}
 
-	public void setEnddate(Date enddate) {
+	public void setEnddate(long enddate) {
 		this.enddate = enddate;
 	}
 

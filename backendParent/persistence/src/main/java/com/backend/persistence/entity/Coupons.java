@@ -1,7 +1,6 @@
 package com.backend.persistence.entity;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +11,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.backend.commons.util.CommonUtil;
 import com.backend.core.entity.Tenant;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * @author Muhil
@@ -24,6 +25,7 @@ public class Coupons implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "TENANTID", nullable = false)
 	private Tenant tenant;
@@ -43,10 +45,10 @@ public class Coupons implements Serializable{
 	private int discount;
 	
 	@Column(name = "STARTDATE")
-	private Date startDate;
+	private long startDate;
 	
 	@Column(name = "ENDDATE")
-	private Date endDate;
+	private long endDate;
 	
 	@Column(name = "FREESHIPPING")
 	private boolean freeShipping;
@@ -56,12 +58,15 @@ public class Coupons implements Serializable{
 	
 	@Column(name = "ACTIVE")
 	private boolean active;
+
+	@Column(name = "ISDELETED")
+	private boolean deleted;
 	
 	public Coupons() {
 		super();
 	}
 
-	public Coupons(Tenant tenant, String title, int discount, Date startdate, Date endDate, boolean freeShipping,
+	public Coupons(Tenant tenant, String title, int discount, long startdate, long endDate, boolean freeShipping,
 			int perUserUsage, boolean active, String code) {
 		super();
 		this.tenant = tenant;
@@ -95,20 +100,20 @@ public class Coupons implements Serializable{
 		this.discount = discount;
 	}
 
-	public Date getStartDate() {
-		return startDate;
+	public long getStartDate() {
+		return CommonUtil.convertToIST(startDate);
 	}
 
-	public void setStartDate(Date startdate) {
-		this.startDate = startdate;
+	public void setStartDate(long startDate) {
+		this.startDate = CommonUtil.convertToUTC(startDate);
 	}
 
-	public Date getEndDate() {
-		return endDate;
+	public long getEndDate() {
+		return CommonUtil.convertToIST(endDate);
 	}
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+	public void setEndDate(long endDate) {
+		this.endDate = CommonUtil.convertToUTC(endDate);
 	}
 
 	public boolean isFreeShipping() {
@@ -145,6 +150,14 @@ public class Coupons implements Serializable{
 
 	public int getCouponId() {
 		return couponId;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 	
 }

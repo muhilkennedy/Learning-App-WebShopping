@@ -16,6 +16,8 @@ public class BaseServiceImpl implements BaseService{
 	private ThreadLocal<Tenant> tenantInfo = new ThreadLocal<Tenant>();
 	
 	private ThreadLocal<User> userInfo = new ThreadLocal<User>();
+	
+	private ThreadLocal<String> origin = new ThreadLocal<String>();
 
 	@Override
 	public Tenant getTenantInfo() {
@@ -38,9 +40,20 @@ public class BaseServiceImpl implements BaseService{
 	}
 	
 	@Override
+	public String getOrigin() {
+		return origin.get();
+	}
+
+	@Override
+	public void setOrigin(String origin) {
+		this.origin.set(origin);
+	}
+
+	@Override
 	public void clear() {
 		setTenantInfo(null);
 		setUserInfo(null);
+		setOrigin(null);
 	}
 	
 }

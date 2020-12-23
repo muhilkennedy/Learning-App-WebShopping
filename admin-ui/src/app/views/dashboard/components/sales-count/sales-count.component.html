@@ -1,0 +1,141 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header">
+        <i class="fa fa-line-chart"></i>SALES REPORT
+      </div>
+      <div class="card-body">
+        <ngx-loading [show]="donutLoading"></ngx-loading>
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="callout callout-primary">
+                  <small class="text-muted">In-Store Sales</small>
+                  <br>
+                  <strong class="h4">{{totalPOSCount}}</strong>
+                </div>
+              </div><!--/.col-->
+              <div class="col-sm-6">
+                <div class="callout callout-warning">
+                  <small class="text-muted">Online Orders</small>
+                  <br>
+                  <strong class="h4">{{totoalOrdersCount}}</strong>
+                </div>
+              </div><!--/.col-->
+            </div><!--/.row-->
+            <hr class="mt-0">
+            <div class="chart-wrapper">
+              <canvas baseChart class="chart"
+              [data]="doughnutChartData"
+              [labels]="doughnutChartLabels"
+              [chartType]="doughnutChartType"
+              [colors]="pieChartColors"
+              (chartHover)="chartHovered($event)"
+              (chartClick)="chartClicked($event)"></canvas>
+            </div>
+
+          </div><!--/.col-->
+
+          <div class="col-md-6">
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="callout callout-success">
+                  <small class="text-muted">Registered Customers</small>
+                  <br>
+                  <strong class="h4">{{totalCustomers}}</strong>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="callout">
+                  <button mat-button class="btn btn-ghost-success" style="border: 1px solid;" (click)="generateReport()">
+                    <i class="fa fa-line-chart"></i> Generate Cost Report
+                  </button>
+                </div>
+              </div>
+            </div>
+            <hr class="mt-0">
+            <div *ngIf="weeklyReportGenrated">
+              <div class="row">
+                <div class="col-md-12">
+                  <ngx-loading [show]="barLoading"></ngx-loading>
+                  <div class="chart-wrapper">
+                    <canvas baseChart class="chart"
+                    [datasets]="barChartData"
+                    [labels]="barChartLabels"
+                    [options]="barChartOptions"
+                    [legend]="barChartLegend"
+                    [chartType]="barChartType"
+                    [colors]="barChartColors"
+                    (chartHover)="chartHovered($event)"
+                    (chartClick)="chartClicked($event)"></canvas>
+                  </div>
+                </div>
+              </div>
+              <hr class="mt-0">
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="">
+                  <div class="brand-card">
+                    <div class="brand-card-header bg-xing">
+                      <i class="fa fa-comments"></i>
+                      <div class="chart-wrapper">
+                        <canvas baseChart class="chart"
+                        [datasets]="brandBoxChartData2"
+                        [labels]="brandBoxChartLabels"
+                        [options]="brandBoxChartOptions"
+                        [colors]="brandBoxChartColours"
+                        [legend]="brandBoxChartLegend"
+                        [chartType]="brandBoxChartType"></canvas>
+                      </div>
+                    </div>
+                    <div class="brand-card-body">
+                      <div>
+                        <div class="text-value">{{totalMessageCount}}</div>
+                        <div class="text-uppercase text-muted small">Total SMS Sent</div>
+                      </div>
+                      <div>
+                        <div class="text-value">{{msgSentToday}}</div>
+                        <div class="text-uppercase text-muted small">SMS Sent Today</div>
+                      </div>
+                    </div>
+                </div><!--/.col-->
+              </div>
+            </div><!--/.col-->
+            <div class="col-md-6">
+              <div class="">
+                <div class="brand-card">
+                  <div class="brand-card-header bg-google-plus">
+                    <i class="fa fa-google-plus"></i>
+                    <div class="chart-wrapper">
+                      <canvas baseChart class="chart"
+                      [datasets]="brandBoxChartData1"
+                      [labels]="brandBoxChartLabels"
+                      [options]="brandBoxChartOptions"
+                      [colors]="brandBoxChartColours"
+                      [legend]="brandBoxChartLegend"
+                      [chartType]="brandBoxChartType"></canvas>
+                    </div>
+                  </div>
+                  <div class="brand-card-body">
+                    <div>
+                      <div class="text-value">{{totalGmailCount}}</div>
+                      <div class="text-uppercase text-muted small">Total EMAIL Sent</div>
+                    </div>
+                    <div>
+                      <div class="text-value">{{mailSentToday}}</div>
+                      <div class="text-uppercase text-muted small">Email Sent Today</div>
+                    </div>
+                  </div>
+              </div><!--/.col-->
+          </div>
+        </div>
+          </div>
+        </div>
+        <br>
+
+      </div>
+    </div>
+  </div><!--/.col-->
+</div><!--/.row-->

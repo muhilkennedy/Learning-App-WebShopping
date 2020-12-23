@@ -18,10 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import com.backend.commons.util.CommonUtil;
 import com.backend.commons.util.JWTUtil;
+import com.backend.core.entity.EmployeeInfo;
 import com.backend.core.service.BaseService;
 import com.backend.core.util.ConfigUtil;
-import com.backend.persistence.entity.EmployeeInfo;
+import com.backend.persistence.entity.CustomerInfo;
+import com.backend.persistence.service.CustomerInfoService;
 import com.backend.persistence.service.EmployeeService;
 
 @Component
@@ -38,6 +41,9 @@ public class TokenFilter implements Filter {
 	
 	@Autowired
 	private EmployeeService empService;
+	
+	@Autowired
+	private CustomerInfoService customerService;
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -56,10 +62,6 @@ public class TokenFilter implements Filter {
 							empInfo.setEmployeePermissions(empService.getEmployeePermissionsForTenant(empInfo));
 							if (empInfo != null) {
 								baseService.setUserInfo(empInfo);
-								logger.info("Tenant - " + baseService.getTenantInfo().getTenantID());
-								logger.info("User - " + (baseService.getUserInfo() instanceof EmployeeInfo
-										? "Employee Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()
-										: "Client Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()));
 							} else {
 								((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
 										"Invalid User Request.... token might have been tampered");
@@ -67,7 +69,18 @@ public class TokenFilter implements Filter {
 							}
 						} else {
 							// load client user data
+							CustomerInfo customer = customerService.getCustomerByEmail(email);
+							if (customer != null) {
+								baseService.setUserInfo(customer);
+							} else {
+								((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
+										"Invalid User Request.... token might have been tampered");
+								return;
+							}
 						}
+						logger.info("User - " + (baseService.getUserInfo() instanceof EmployeeInfo
+								? "Employee Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()
+								: "Client Email : " + ((CustomerInfo) baseService.getUserInfo()).getEmailId()));
 						chain.doFilter(request, response);
 					} else {
 						((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
@@ -86,54 +99,72 @@ public class TokenFilter implements Filter {
 				return;
 			}
 		} else {
-			//running in dev mode
-			// validate token in case of logout and token auth
-			if(req.getRequestURI().contains("employeeLogout") 
-					|| req.getRequestURI().contains("employeeTokenAuthentication")
-					|| req.getRequestURI().contains("stillLoggedIn")
-					|| req.getRequestURI().contains("deactivateEmployee")
-					|| req.getRequestURI().contains("todo")
-					|| req.getRequestURI().contains("task")
-					|| req.getRequestURI().contains("pushNotification")
-					|| req.getRequestURI().contains("employeePasswordUpdate")) {
-				String token = req.getHeader(HttpHeaders.AUTHORIZATION);
-				if (token != null && !StringUtils.isEmpty(JWTUtil.extractToken(token))) {
-					try {
-						String jwtToken = JWTUtil.extractToken(token);
-						if (JWTUtil.validateToken(jwtToken)) {
-							String email = JWTUtil.getUserEmailFromToken(jwtToken);
-							if (JWTUtil.isEmployeeUser(jwtToken)) {
-								EmployeeInfo empInfo = empService.findEmployeeByEmail(email);
-								empInfo.setEmployeePermissions(empService.getEmployeePermissionsForTenant(empInfo));
-								if (empInfo != null) {
-									baseService.setUserInfo(empInfo);
-									logger.info("Tenant - " + baseService.getTenantInfo().getTenantID());
-									logger.info("User - " + (baseService.getUserInfo() instanceof EmployeeInfo
-											? "Employee Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()
-											: "Client Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()));
-								} else {
-									((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
-											"Invalid User Request.... token might have been tampered");
-									return;
-								}
+			// running in dev mode
+			// consider token if provided or load default admin/customer user any way for further access.
+			String token = req.getHeader(HttpHeaders.AUTHORIZATION);
+			if (token != null && !StringUtils.isEmpty(JWTUtil.extractToken(token))) {
+				try {
+					String jwtToken = JWTUtil.extractToken(token);
+					if (JWTUtil.validateToken(jwtToken)) {
+						String email = JWTUtil.getUserEmailFromToken(jwtToken);
+						if (JWTUtil.isEmployeeUser(jwtToken)) {
+							EmployeeInfo empInfo = empService.findEmployeeByEmail(email);
+							empInfo.setEmployeePermissions(empService.getEmployeePermissionsForTenant(empInfo));
+							if (empInfo != null) {
+								baseService.setUserInfo(empInfo);
 							} else {
-								// load client user data
+								((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
+										"Invalid User Request.... token might have been tampered");
+								return;
 							}
 						} else {
-							((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
-									"Token Validation failed");
-							return;
+							CustomerInfo customer = customerService.getCustomerByEmail(email);
+							if (customer != null) {
+								baseService.setUserInfo(customer);
+							} else {
+								((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
+										"Invalid User Request.... token might have been tampered");
+								return;
+							}
 						}
-					} catch (Exception e) {
-						logger.error("doFilter :: Exception - " + e.getMessage());
-						((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST,
-								"Error in handling the request - " + e.getMessage());
+						logger.info("User - " + (baseService.getUserInfo() instanceof EmployeeInfo
+								? "Employee Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()
+								: "Client Email : " + ((CustomerInfo) baseService.getUserInfo()).getEmailId()));
+					} else {
+						((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
+								"Token Validation failed");
 						return;
 					}
-				} else {
+				} catch (Exception e) {
+					logger.error("doFilter :: Exception - " + e.getMessage());
 					((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST,
-							"Authorization Header is Missing");
+							"Error in handling the request - " + e.getMessage());
 					return;
+				}
+			} else {
+				// load default user
+				String userType = req.getHeader("USER-TYPE");
+				if(userType != null && userType.equalsIgnoreCase(CommonUtil.Key_customerUser)) {
+					CustomerInfo cusInfo = customerService.getCustomerById(1);
+					if(cusInfo != null) {
+						baseService.setUserInfo(cusInfo);
+					}else {
+						((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
+								"Invalid User Request.... cannot set default dev user");
+						return;
+					}
+				}
+				else {
+					EmployeeInfo empInfo = empService.findEmployeeById(1);
+					empInfo.setEmployeePermissions(empService.getEmployeePermissionsForTenant(empInfo));
+					if (empInfo != null) {
+						baseService.setUserInfo(empInfo);
+						logger.info("Default Admin Id Used - " + empInfo.getEmailId());
+					} else {
+						((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
+								"Invalid User Request.... cannot set default dev user");
+						return;
+					}
 				}
 			}
 			chain.doFilter(request, response);

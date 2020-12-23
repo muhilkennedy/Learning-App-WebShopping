@@ -17,8 +17,17 @@ export class UserStoreService {
   private _profilePic: string;
   private _employeeAddress: any[];
   private _employeePermissions: any[];
+  private _pickUpOrders: boolean;
 
   constructor() { }
+
+  public get pickUpOrders(): boolean {
+    return this._pickUpOrders;
+  }
+
+  public set pickUpOrders(value: boolean) {
+    this._pickUpOrders = value;
+  }
 
   public get JwtToken(): string {
     return this._JwtToken;

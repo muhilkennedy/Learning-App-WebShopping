@@ -104,7 +104,7 @@
 		<dependency>
 		    <groupId>org.springframework.social</groupId>
 		    <artifactId>spring-social-facebook</artifactId>
-		    <version>2.0.2.RELEASE</version>
+		    <version>2.0.3.RELEASE</version>
 		</dependency>
 		<!-- Spring Security -->
 		<dependency>
@@ -228,32 +228,6 @@
 		    <version>4.2</version>
 		</dependency>
 		<!-- Messaging service -->
-		<!-- dependency>
-	    <groupId>org.springframework</groupId>
-		    <artifactId>spring-messaging</artifactId>
-		</dependency>
-		<dependency>
-		   <groupId>org.springframework.security</groupId>
-		   <artifactId>spring-security-messaging</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-websocket</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-amqp</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-reactor-netty</artifactId>
-		</dependency>
-		<dependency>
-	    <groupId>org.springframework</groupId>
-		    <artifactId>spring-websocket</artifactId>
-		</dependency-->
 		<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
@@ -272,7 +246,12 @@
             <artifactId>stomp-websocket</artifactId>
             <version>2.3.3</version>
         </dependency>
-
+		<!-- MySql Backup -->
+		<dependency>
+		    <groupId>com.smattme</groupId>
+		    <artifactId>mysql-backup4j</artifactId>
+		    <version>1.2.0</version>
+		</dependency>
 	</dependencies>
 	
   <modules>

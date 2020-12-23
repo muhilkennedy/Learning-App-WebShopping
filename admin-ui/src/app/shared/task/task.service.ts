@@ -14,11 +14,20 @@ export class TaskService {
   getAllEmployeeNamesAndEmailEndpoint = "/secure/admin/employee/getAllEmployeeNames";
   deleteTaskEndpoint = "/secure/admin/task/deleteTask";
   updateTaskEndpoint = "/secure/admin/task/updateTask";
+  getPendingOverdueCountEndpoint = "/secure/admin/task/getPendingOverdueTaskCount";
+
+  resetDashboardScheduledTaskEndpoint = "/secure/admin/scheduledtask/triggerResetDashBoardTask";
+  deleteCategoryScheduledTaskEndpoint = "/secure/admin/scheduledtask/triggerDeleteCategoryTask";
+  taskUpdateScheduledTaskEndpoint= "/secure/admin/scheduledtask/triggerTaskUpdateTask";
 
   constructor(private http: HttpClient) { }
 
   getAssignedTask(): Observable<any> {
     return this.http.get(environment.backendBaseUrl+this.getAssignedTaskEndpoint);
+  }
+
+  getPendingOverdueCount(): Observable<any> {
+    return this.http.get(environment.backendBaseUrl+this.getPendingOverdueCountEndpoint);
   }
 
   getCreatedTask(): Observable<any> {
@@ -51,6 +60,18 @@ export class TaskService {
       status : status
     }
     return this.http.put(environment.backendBaseUrl+this.updateTaskEndpoint, body);
+  }
+
+  resetDashboardScheduled(): Observable<any> {
+    return this.http.post(environment.backendBaseUrl+this.resetDashboardScheduledTaskEndpoint, null);
+  }
+
+  deleteCategoryScheduledTask(): Observable<any> {
+    return this.http.post(environment.backendBaseUrl+this.deleteCategoryScheduledTaskEndpoint, null);
+  }
+
+  taskUpdateScheduledTask(): Observable<any> {
+    return this.http.post(environment.backendBaseUrl+this.taskUpdateScheduledTaskEndpoint, null);
   }
 
 }

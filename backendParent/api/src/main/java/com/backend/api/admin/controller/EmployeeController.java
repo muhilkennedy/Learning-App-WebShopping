@@ -23,12 +23,14 @@ import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.Response;
 import com.backend.api.service.LoginService;
 import com.backend.commons.service.EmailService;
-import com.backend.commons.util.RSAUtil;
+import com.backend.core.entity.EmployeeInfo;
+import com.backend.core.entity.EmployeePermissions;
 import com.backend.core.service.BaseService;
 import com.backend.core.serviceImpl.CacheService;
 import com.backend.core.util.Constants;
-import com.backend.persistence.entity.EmployeeInfo;
-import com.backend.persistence.entity.EmployeePermissions;
+import com.backend.core.util.RSAUtil;
+import com.backend.persistence.entity.CustomerInfo;
+import com.backend.persistence.service.CustomerInfoService;
 import com.backend.persistence.service.EmployeeService;
 
 /**
@@ -46,6 +48,9 @@ public class EmployeeController {
 	
 	@Autowired
 	private EmployeeService empService;
+	
+	@Autowired
+	private CustomerInfoService customerService;
 	
 	@Autowired
 	private EmailService emailService;
@@ -357,6 +362,52 @@ public class EmployeeController {
 		}
 		return response;
 	}
+	
+	@RequestMapping(value = "/toggleOrderPickUp", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> toggleOrderPickUp(HttpServletRequest request) {
+		GenericResponse<String> response = new GenericResponse<>();
+		try {
+			empService.toggleOrderPickUp();
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("toggleOrderPickUp : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/getCustomerById", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<CustomerInfo> getCustomerById(HttpServletRequest request, @RequestParam(value = "id", required = true) int id) {
+		GenericResponse<CustomerInfo> response = new GenericResponse<CustomerInfo>();
+		try {
+			response.setData(customerService.getCustomerById(id));
+			response.setStatus(Response.Status.OK);
 
+		} catch (Exception ex) {
+			logger.error("getCustomerById : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+
+	@RequestMapping(value = "/getCustomerByMobile", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<CustomerInfo> getCustomerByMobile(HttpServletRequest request, @RequestParam(value = "mobile", required = true) String mobile) {
+		GenericResponse<CustomerInfo> response = new GenericResponse<CustomerInfo>();
+		try {
+			response.setData(customerService.getCustomerByMobile(mobile));
+			response.setStatus(Response.Status.OK);
+
+		} catch (Exception ex) {
+			logger.error("getCustomerByMobile : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
 	
 }

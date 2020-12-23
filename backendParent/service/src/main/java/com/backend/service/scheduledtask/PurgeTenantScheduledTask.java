@@ -28,7 +28,8 @@ public class PurgeTenantScheduledTask extends ScheduledTask {
 	private EmployeeService empService;
 
 	// cron = sec min hour day mon dayOfWeek.
-	@Scheduled(cron = " 0 0 0 * * * ")
+	@Scheduled(cron = " 0 0 0 * * * ", zone = "IST")
+	@Override
 	public void execute() {
 		logger.info("Scheduled Task - " + PurgeTenantScheduledTask.class.getCanonicalName() + " Started");
 		TenantUtil.getAllTenants().stream().filter(tenant -> tenant.doPurge()).forEach(tenant -> {
@@ -38,9 +39,9 @@ public class PurgeTenantScheduledTask extends ScheduledTask {
 				baseService.setTenantInfo(tenant);
 				// perform purge operations
 				//remove employees information for tenant
-				empService.findAllEmployeeForTenant().stream().forEach(employee -> {
+				/*empService.findAllEmployeeForTenant().stream().forEach(employee -> {
 					empService.delete(employee);
-				});
+				});*/
 				
 				//remove sales information 
 				

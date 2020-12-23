@@ -4,7 +4,7 @@ export const navItems: INavData[] = [
   {
     name: 'Dashboard',
     url: '/dashboard',
-    icon: 'icon-speedometer',
+    icon: 'icon-home',
   },
   {
     title: true,
@@ -26,11 +26,16 @@ export const navItems: INavData[] = [
         icon: 'icon-list'
       },
       {
-        name: 'Manage Product',
+        name: 'Create Product',
         url: '/product/manage-product',
-        icon: 'icon-pencil'
+        icon: 'icon-plus'
       }
     ]
+  },
+  {
+    name: 'Manage Orders',
+    url: '/orders',
+    icon: 'icon-note',
   },
   {
     name: 'Sales',
@@ -38,14 +43,14 @@ export const navItems: INavData[] = [
     icon: 'icon-wallet',
     children: [
       {
-        name: 'Orders',
-        url: '/sales/orders',
-        icon: 'icon-basket'
+        name: 'POS Transactions',
+        url: '/sales/transactions',
+        icon: 'icon-credit-card'
       },
       {
-        name: 'Approval',
-        url: '/sales/approval',
-        icon: 'icon-note'
+        name: 'Online Transactions',
+        url: '/sales/orders',
+        icon: 'icon-basket'
       }
     ]
   },
@@ -69,12 +74,17 @@ export const navItems: INavData[] = [
   {
     name: 'Employee Actions',
     url: '/employee',
-    icon: 'icon-people',
+    icon: 'icon-list',
     children: [
+      {
+        name: 'Manage Customers',
+        url: '/employee/customer',
+        icon: 'icon-people'
+      },
       {
         name: 'Manage Employee',
         url: '/employee/employee',
-        icon: 'icon-user-follow'
+        icon: 'icon-user'
       },
       {
         name: 'Onboard Employee',
@@ -101,7 +111,7 @@ export const navItems: INavData[] = [
   {
     name: 'Invoice Template',
     url: '/invoice-template',
-    icon: 'icon-doc'
+    icon: 'icon-printer'
   },
   {
     name: 'Media',

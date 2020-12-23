@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.PingInfo;
 import com.backend.api.messages.Response;
+import com.backend.core.entity.EmployeeInfo;
 import com.backend.core.entity.HomePageMedia;
 import com.backend.core.service.BaseService;
 import com.backend.core.service.HomeMediaService;
 import com.backend.core.util.Constants;
-import com.backend.persistence.entity.EmployeeInfo;
 import com.backend.persistence.service.EmployeeService;
 
 
@@ -55,7 +55,7 @@ public class BaseController {
 		info.setPublicKey(baseService.getTenantInfo().fetchPublicKey());
 		response.setStatus(Response.Status.OK);
 		response.setData(info);
-		response.setDataList(Arrays.asList(baseService.getTenantInfo().getTenantDetail(), mediaService.getHomePageMediaCount()));
+		response.setDataList(Arrays.asList(baseService.getTenantInfo().getTenantDetail(), baseService.getTenantInfo().getTenantDetail().fetchTenantLogo()));
 		return response;
 	}
 	
@@ -76,6 +76,11 @@ public class BaseController {
 		GenericResponse<EmployeeInfo> response = new GenericResponse<EmployeeInfo>();
 		response.setDataList(empService.findAllEmployeeForTenant());
 		return response;
+	}
+	
+	@RequestMapping("/social/google")
+	public String test(HttpServletRequest request) {
+		return "hello";
 	}
 	
 

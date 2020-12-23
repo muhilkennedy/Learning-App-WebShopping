@@ -50,6 +50,7 @@
                 <div>
                   <h2>Nutty Shop</h2>
                   <img src="../../../assets/img/brand/Brand-Icon.png" />
+                  <!-- <img src="https://drive.google.com/file/d/1lVCNFMofG8-f1sIkRiTHNl90fZ5Q723u/view?usp=sharing" /> -->
                 </div>
               </div>
             </div>
@@ -122,7 +123,7 @@
           </button>
         </div>
         <div *ngIf="showPassword">
-          <button type="button" class="btn btn-warning" (click)="updatePassword()">
+          <button type="button" class="btn btn-warning" (click)="updatePassword(); primaryModal.hide()">
             <i class="fa fa-lock"></i> Update Password
           </button>
         </div>

@@ -13,12 +13,16 @@ import org.springframework.transaction.annotation.Transactional;
 import com.backend.api.service.LoginService;
 import com.backend.commons.exceptions.InvalidUserException;
 import com.backend.commons.util.CommonUtil;
+import com.backend.core.entity.EmployeeAddress;
+import com.backend.core.entity.EmployeeInfo;
 import com.backend.core.interfaces.User;
 import com.backend.core.service.BaseService;
 import com.backend.core.serviceImpl.CacheService;
 import com.backend.core.util.ConfigUtil;
-import com.backend.persistence.entity.EmployeeAddress;
-import com.backend.persistence.entity.EmployeeInfo;
+import com.backend.core.util.DashboardStatusUtil;
+import com.backend.core.util.RSAUtil;
+import com.backend.persistence.entity.CustomerInfo;
+import com.backend.persistence.service.CustomerInfoService;
 import com.backend.persistence.service.EmployeeService;
 
 @Service
@@ -35,6 +39,9 @@ public class LoginServiceImpl implements LoginService {
 
 	@Autowired
 	private EmployeeService empService;
+	
+	@Autowired
+	private CustomerInfoService customerService;
 
 	@Override
 	public User loginUser(User user) {
@@ -42,9 +49,17 @@ public class LoginServiceImpl implements LoginService {
 			EmployeeInfo empInfo = (EmployeeInfo) user;
 			EmployeeInfo actualUser = empService.findEmployeeByEmail(empInfo.getEmailId());
 			if (actualUser != null && BCrypt.checkpw(empInfo.fetchPassword(), actualUser.fetchPassword())) {
-				actualUser.setLastLogin(new Date());
+				actualUser.setLastLogin(CommonUtil.convertToUTC(new Date().getTime()));
 				CacheService.setLoggedInSatus(actualUser.getEmployeeId(), new Date());
 				actualUser.setLoggedIn(true);
+				return actualUser;
+			}
+		}
+		else {
+			CustomerInfo cusInfo = (CustomerInfo) user;
+			CustomerInfo actualUser = customerService.getCustomerByEmail(cusInfo.getEmailId());
+			if(actualUser != null && BCrypt.checkpw(cusInfo.fetchPassword(), actualUser.fetchPassword())){
+				actualUser.setLastLogin(CommonUtil.convertToUTC(new Date().getTime()));
 				return actualUser;
 			}
 		}
@@ -58,8 +73,13 @@ public class LoginServiceImpl implements LoginService {
 			EmployeeInfo empInfo = (EmployeeInfo) user;
 			empInfo = empService.findEmployeeByEmail(empInfo.getEmailId());
 			empInfo.setLoggedIn(false);
-			empInfo.setLastLogin(new Date());
+			empInfo.setLastLogin(new Date().getTime());
 			empService.save(empInfo);
+		}
+		else {
+			CustomerInfo cusInfo = (CustomerInfo) user;
+			cusInfo.setLastLogin(CommonUtil.convertToUTC(new Date().getTime()));
+			customerService.save(cusInfo);
 		}
 	}
 
@@ -108,6 +128,17 @@ public class LoginServiceImpl implements LoginService {
 				empService.save(empInfo);
 				return generatedPassword;
 			}
+			else {
+				CustomerInfo cusInfo = (CustomerInfo) user;
+				cusInfo.setTenant(baseService.getTenantInfo());
+				cusInfo.setPassword(RSAUtil.decrypt(cusInfo.fetchPassword(), baseService.getTenantInfo().fetchPrivateKey()));
+				String encrptedPassword = BCrypt.hashpw(cusInfo.fetchPassword(), BCrypt.gensalt(CommonUtil.saltRounds));
+				cusInfo.setPassword(encrptedPassword);
+				cusInfo.setActive(true);
+				cusInfo.setLoginMode(CommonUtil.Key_internalUser);
+				customerService.save(cusInfo);
+				DashboardStatusUtil.incrementCustomerCount(baseService.getTenantInfo());
+			}
 
 		} catch (Exception ex) {
 			logger.error("Error Creating user - Exception :", ex.getMessage());
@@ -119,6 +150,14 @@ public class LoginServiceImpl implements LoginService {
 	@Override
 	public boolean checkIfUserExists(String email) {
 		if(empService.findEmployeeByEmailOrId(email) != null) {
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean checkIfCustomerExists(String email) {
+		if(customerService.getCustomerByEmail(email) != null) {
 			return true;
 		}
 		return false;
