@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -64,6 +65,12 @@ public class CommonUtil {
 	public static final String Symbol_INR = " ₹ ";
 	public static final String Symbol_PERCENT = " % ";
 	public static final String Document_Extention = ".docx";
+	public static final String PDF_Extension = ".pdf";
+	public static final String Png_Extension = ".png";
+	public static final String Jpeg_Extension = ".jpeg";
+	
+	public static final String Invoice_Name = "Invoice";
+	public static final String Icon_name = "icon";
 	
 	public static final List<String> template_Supported_Extentions = new ArrayList<String>() {
 		private static final long serialVersionUID = 1L;
@@ -253,6 +260,13 @@ public class CommonUtil {
 	 */
 	public static boolean isValidStringParam(String param) {
 		if (!StringUtils.isEmpty(param) && !param.equalsIgnoreCase("null") && !param.equalsIgnoreCase("undefined")) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean isValidDecimalParam(BigDecimal param) {
+		if (param != null) {
 			return true;
 		}
 		return false;

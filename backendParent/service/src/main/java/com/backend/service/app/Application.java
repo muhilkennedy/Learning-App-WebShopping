@@ -11,6 +11,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.backend.core.util.ConfigUtil;
@@ -26,6 +27,7 @@ import com.backend.core.util.ConfigUtil;
 @ConfigurationPropertiesScan( basePackages = {"com.backend.commons" ,"com.backend.core", "com.backend.api"  })
 @EntityScan(basePackages = { "com.backend.core", "com.backend.persistence" })
 @EnableJpaRepositories(basePackages = { "com.backend.core", "com.backend.persistence" })
+@EnableAsync
 @EnableScheduling
 @Configuration
 public class Application {

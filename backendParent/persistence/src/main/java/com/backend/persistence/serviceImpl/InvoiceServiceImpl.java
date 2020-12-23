@@ -5,10 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -18,9 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.sql.rowset.serial.SerialBlob;
 import javax.sql.rowset.serial.SerialException;
 import javax.transaction.Transactional;
@@ -140,16 +134,21 @@ public class InvoiceServiceImpl implements InvoiceService{
 	}
 	
 	@Override
-	public void createOrderInvoice(Orders order) throws Exception{
+	public OrderInvoice getInvoiceByOrder(Orders order) {
+		return orderInvoiceRepo.findOrdersByOrderId(baseService.getTenantInfo(), order);
+	}
+	
+	@Override
+	public OrderInvoice createOrderInvoice(Orders order) throws Exception{
 		OrderInvoice invoice = new OrderInvoice();
 		invoice.setDocument(generateInvoice(order));
 		invoice.setOrderId(order);
 		invoice.setTenant(baseService.getTenantInfo());
-		orderInvoiceRepo.save(invoice);
+		orderInvoiceRepo.saveAndFlush(invoice);
+		return invoice;
 	}
 	
 	private Blob generateInvoice(Orders order) throws Exception {
-		String g = baseService.getTenantInfo().getTenantID();
 		InvoiceTemplate currentTemplate = invoiceRepository.findInvoiceTemplateForTenant(baseService.getTenantInfo());
 		InputStream is = currentTemplate.getDocument().getBinaryStream();
 		XWPFDocument poiDocx = new XWPFDocument(is);
@@ -168,7 +167,6 @@ public class InvoiceServiceImpl implements InvoiceService{
 		if(productTable == null) {
 			throw new Exception("Cannot able to find Product table!");
 		}
-		MathContext mc = new MathContext(2);
 		BigDecimal subTotal = new BigDecimal(0);
 		BigDecimal totalDiscount = new BigDecimal(0);
 		List<OrderDetails> items = order.getOrderDetails();
@@ -225,8 +223,7 @@ public class InvoiceServiceImpl implements InvoiceService{
 		map.put(Key_CustomerPin, user.getCustomerAddress().get(0).getPincode());
 		try {
 			map.put(Key_CustomerMobile, "Contact : " + user.getMobile());
-		} catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException
-				| NoSuchPaddingException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		map.put(Key_CustomerEmail, "Email-Id : " + user.getEmailId());

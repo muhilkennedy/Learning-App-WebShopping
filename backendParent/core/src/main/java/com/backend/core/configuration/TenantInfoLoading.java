@@ -14,10 +14,13 @@ import javax.imageio.ImageIO;
 import javax.sql.rowset.serial.SerialBlob;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.xmlgraphics.util.uri.CommonURIResolver;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
@@ -150,12 +153,22 @@ public class TenantInfoLoading {
 			if(!employeeDao.isCustomerSupportAdminPresent(realm.getTenantID())) {
 				employeeDao.createAdminUserForTenant(realm.getTenantID());
 			}
-			if(!invoiceDao.containsInvoiceTemplate(realm.getTenantID())) {
-				File file = ResourceUtils.getFile(
-					      "classpath:invoiceTemplate/Invoice-Template.docx");
-				invoiceDao.createInvoiceTemplate(realm.getTenantID(), new SerialBlob(FileUtils.readFileToByteArray(file)));
+			if (!invoiceDao.containsInvoiceTemplate(realm.getTenantID())) {
+				ClassPathResource classPathResource = new ClassPathResource("invoiceTemplate/Invoice-Template.docx");
+
+				InputStream inputStream = classPathResource.getInputStream();
+				File file = File.createTempFile("invoice", ".docx");
+				try {
+					FileUtils.copyInputStreamToFile(inputStream, file);
+				} finally {
+					IOUtils.closeQuietly(inputStream);
+				}
+
+				invoiceDao.createInvoiceTemplate(realm.getTenantID(),
+						new SerialBlob(FileUtils.readFileToByteArray(file)));
+				
+				deleteDirectoryOrFile(file);
 			}
-			
 		}
 		// remaing tenants are considered removed.
 		if (!tenantMap.isEmpty()) {
@@ -167,6 +180,36 @@ public class TenantInfoLoading {
 		}
 	}
 	
+	private boolean deleteDirectoryOrFile(File dir) {
+		if(dir != null) {
+			if (dir.isDirectory()) {
+				File[] children = dir.listFiles();
+				for (int i = 0; i < children.length; i++) {
+					boolean success = deleteDirectoryOrFile(children[i]);
+					if (!success) {
+						return false;
+					}
+				}
+			}
+			logger.info("Removing Dir - " + dir.getPath());
+			return dir.delete();
+		}
+		return false;
+	}
+	
+//	@PostConstruct
+//	private void loadEmailTemplates() throws Exception {
+//		ClassPathResource classPathResource = new ClassPathResource("emailTemplates/emailOTP.ftl");
+//
+//		InputStream inputStream = classPathResource.getInputStream();
+//		File file = File.createTempFile("emailTemplate", ".ftl");
+//		try {
+//			FileUtils.copyInputStreamToFile(inputStream, file);
+//		} finally {
+//			IOUtils.closeQuietly(inputStream);
+//		}
+//	}
+	
 	private Map<String, Tenant> getTenantMap() {
 		List<Tenant> tenantList = tenantService.getAllTenants();
 		Map<String, Tenant> tenantMap = new HashMap<String, Tenant>();
@@ -177,10 +220,12 @@ public class TenantInfoLoading {
 	}
 	
 	private void resetOriginList(Tenant realm, String originsList) throws Exception {
-		String[] allowedOrigins = originsList.split("\\|"); 
-		tenantService.removeOrigins(realm.getTenantID());
-		for (String origin : allowedOrigins) {
-			tenantService.addAllowedOrigin(realm.getTenantID(), origin);
+		String[] allowedOrigins = originsList.split("\\|");
+		if(tenantService.findTenantByID(realm.getTenantID()) != null) {
+			tenantService.removeOrigins(realm.getTenantID());
+			for (String origin : allowedOrigins) {
+				tenantService.addAllowedOrigin(realm.getTenantID(), origin);
+			}
 		}
 	}
 

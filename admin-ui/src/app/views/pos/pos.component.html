@@ -14,32 +14,37 @@
           </div> -->
         </div>
         <div class="card-body">
-          <input type="number" class="form-control" matInput placeholder="Customer Mobile" id="customernumber" name="customernumber" [(ngModel)]="customerMobile">
+          <input type="number" class="form-control" matInput placeholder="Customer Mobile" id="customernumber" name="customernumber" [(ngModel)]="customerMobile" (keyup)="getCustomerDetails($event)">
         </div>
       </div>
     </div>
     <div class="col-sm-4">
       <div class="card">
         <div class="card-body">
-            <label>Customer Name : </label>
+            <label>Customer Name : </label><strong> {{customerName | uppercase}}</strong>
             <br/>
-            <label>Customer Email : </label>
+            <label>Customer Email : </label><small> {{customerEmail}}</small>
             <br/>
-            <label>Loyalty Points : </label>
+            <label>Loyalty Points : </label><strong> {{customerLoyality}}</strong>
         </div>
       </div>
     </div>
     <div class="col-sm-2">
       <div class="card">
         <div class="card-body">
-          <barcode-scanner-livestream
+          <!-- <barcode-scanner-livestream
             type="code_128"
             (valueChanges)="onValueChanges($event)"
             (started)="(onStarted($event))"
           ></barcode-scanner-livestream>
           <div [hidden]="!barcodeValue">
             {{ barcodeValue }}
-          </div>
+          </div> -->
+          <div *ngIf="!newCustomer" class="blink"><label> </label></div><!-- just some space filler-->
+          <div *ngIf="newCustomer" class="blink"><small><strong><i class="fa fa-user"></i> New Customer</strong></small></div>
+          <label>Total : </label><strong> {{calculateRoundedSubtotal()}} ₹</strong>
+          <br/>
+          <button mat-button class="btn btn-warning" (click)="clearData()">Clear</button>
         </div>
       </div>
     </div>
@@ -57,18 +62,20 @@
             <thead class="thead-light">
               <tr>
                 <th>SL.NO</th>
-                <th>Item Name</th>
                 <th>Item Code</th>
-                <th>MRP</th>
+                <th style="width: 200px;">Item Name</th>
+                <th>MRP(₹)</th>
                 <th>QUANTITY</th>
-                <th>DISCONT</th>
-                <th>TOTAL</th>
+                <th>DISCOUNT(%)</th>
+                <th>TOTAL(₹)</th>
                 <th></th>
               </tr>
             </thead>
             <tbody style="background: white;">
               <tr *ngFor="let item of itemList; let i = index">
                 <td>{{i+1}}</td>
+                <td *ngIf="!(item.itemCode === null || item.itemCode === undefined)"><input type="text" class="form-control" matInput placeholder="Product Code" id="pcode-{{i}}" name="pcode-{{i}}" [(ngModel)]="item.itemCode"></td>
+                <td *ngIf="(item.itemCode === null || item.itemCode === undefined)"><input autofocus type="text" class="form-control" matInput placeholder="Product BAR Code" id="pbcode-{{i}}" name="pbcode-{{i}}" [(ngModel)]="itemBarCode" (change)="codeDetected()"></td>
                 <td *ngIf="(item.itemCode === null || item.itemCode === undefined)">
                     <input type="text"
                            class="form-control" matInput placeholder="Product Name"
@@ -85,10 +92,9 @@
                     </mat-autocomplete>
                 </td>
                 <td *ngIf="!(item.itemCode === null || item.itemCode === undefined)"><input type="text" class="form-control" matInput placeholder="Product Name" id="pname-{{i}}" name="pname-{{i}}" [(ngModel)]="item.itemName"></td>
-                <td><input type="text" class="form-control" matInput placeholder="Product Code" id="pcode-{{i}}" name="pcode-{{i}}" [(ngModel)]="item.itemCode"></td>
                 <td><input type="number" class="form-control" style="width: 75%;" matInput placeholder="MRP" id="mrp-{{i}}" name="mrp-{{i}}" [(ngModel)]="item.mrp"></td>
                 <td><input type="number" class="form-control" style="width: 75%;" matInput placeholder="Quantity" id="q-{{i}}" name="q-{{i}}" [(ngModel)]="item.quantity"></td>
-                <td><input type="number" class="form-control" style="width: 50%;" matInput placeholder="Discount" id="dis-{{i}}" name="dis-{{i}}" [(ngModel)]="item.discount"></td>
+                <td><input type="number" class="form-control" style="width: 50%;" matInput placeholder="Offer" id="dis-{{i}}" name="dis-{{i}}" [(ngModel)]="item.discount"></td>
                 <td>{{calculateTotal(item) | number:'1.2-2'}}</td>
                 <td>
                   <i *ngIf="(itemList.length === i+1)" class="addicon fa fa-plus-circle" (click)="addItem()"></i>
@@ -119,10 +125,16 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
                 <td>
-                  <mat-form-field>
+                  <input *ngIf="paymentMode==='cash'" type="number" class="form-control" style="width: 75%;" matInput placeholder="AmountPaid" id="amountPaid" name="amountPaid" [(ngModel)]="amountPaid">
+                </td>
+                <td>
+                  <div *ngIf="paymentMode==='cash'">
+                    <label>Balance = </label><strong>{{calculateBalance()}} ₹</strong>
+                  </div>
+                </td>
+                <td>
+                  <mat-form-field style="width: 100px;">
                     <mat-label>Payment Mode</mat-label>
                     <mat-select [(value)]="paymentMode">
                       <mat-option [value]="option" *ngFor="let option of paymentTypes">{{ option }}</mat-option>

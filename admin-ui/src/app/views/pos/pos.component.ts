@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { ViewChild, AfterViewInit } from "@angular/core";
 import { BarecodeScannerLivestreamComponent } from "ngx-barcode-scanner";
 // import { PosProduct } from '../../shared/pos/posProduct';
@@ -11,6 +11,7 @@ import { PosService } from '../../shared/pos/pos.service';
 import { FormControl, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { EmployeeService } from '../../shared/employee/employee.service';
 
 class PosProduct{
   itemID: number;
@@ -34,11 +35,18 @@ export class PosComponent implements OnInit {
   customerMobile: number;
   customerName: string;
   customerEmail: string;
+  customerLoyality: string;
 
   totalDiscount: number = 0;
   disablePayment: boolean = true;
   subTotal: number = 0;
   totalQuantity: number = 0;
+  newCustomer = false;
+
+  amountPaid: number;
+  balanceAmount: number;
+
+  focusElementReference: any
 
   paymentTypes: string[] = ['cash', 'card', 'gpay', 'phone pe', 'paytm', 'others'];
   paymentMode: string = this.paymentTypes[0];
@@ -55,13 +63,24 @@ export class PosComponent implements OnInit {
     }
   }
 
+  //clear all entries shift+delete
+  @HostListener('keydown', ['$event']) onKeyUp(e) {
+    if (e.keyCode == 46 && e.shiftKey ) {
+      this.clearData();
+    }
+  }
+
   addItem(){
     let newProd:PosProduct = new PosProduct();
+    newProd.mrp = 0;
+    newProd.discount = 0;
+    newProd.quantity = 0;
     this.itemList.push(newProd);
   }
 
   constructor(private printService: PrintService, private productService: ProductService,
-              private alertService: AlertService, private posService: PosService){
+              private alertService: AlertService, private posService: PosService,
+              private empService: EmployeeService){
     this.usbPrintDriver = new UsbDriver();
         this.printService.isConnected.subscribe(result => {
             this.status = result;
@@ -76,6 +95,11 @@ export class PosComponent implements OnInit {
   ngOnInit(): void {
     let newProd:PosProduct = new PosProduct();
     this.itemList.push(newProd);
+    let notificationInterval = setInterval(() => { this.changeFocus() }, 500);
+  }
+
+  ngAfterViewInit(){
+    console.log("after view")
   }
 
   //PRINTER RELATED
@@ -103,7 +127,7 @@ export class PosComponent implements OnInit {
   }
 
   //CAMERA BARCODE SCANNER
-  @ViewChild(BarecodeScannerLivestreamComponent)
+  /*@ViewChild(BarecodeScannerLivestreamComponent)
   barecodeScanner: BarecodeScannerLivestreamComponent;
   barcodeValue: string = '';
   ngAfterViewInit() {
@@ -117,6 +141,31 @@ export class PosComponent implements OnInit {
   }
   onStarted(started) {
     console.log("Camera Active = ",started);
+  }*/
+
+  //BARCODE SCANNER
+  itemBarCode = '';
+  codeDetected(){
+    let item;
+    if(this.itemList !== undefined && this.itemList.length > 0){
+      item = this.itemList.filter(item => (item.itemCode !== undefined && item.itemCode === this.itemBarCode));
+    }
+    if(item !== undefined && item.length > 0){
+      this.incrementQuantity();
+
+    }
+    else{
+      this.getProductFromCode(this.itemBarCode);
+    }
+  }
+
+  changeFocus(){
+    let focusElementReferenceLocal = document.getElementById('pbcode-'+(this.itemList.length-1));
+    if ((this.focusElementReference === undefined || this.focusElementReference instanceof HTMLElement)
+          && this.focusElementReference != focusElementReferenceLocal ) {
+          this.focusElementReference = focusElementReferenceLocal;
+          this.focusElementReference.focus();
+    }
   }
 
   //PRODUCT APP LOGIC
@@ -135,8 +184,42 @@ export class PosComponent implements OnInit {
     this.getProductFromMatchingText(searchTerm);
   }
 
+  incrementQuantity(){
+    this.itemList.forEach(item => {
+      if(item.itemCode ===  this.itemBarCode){
+        ++item.quantity;
+        this.itemBarCode = '';
+      }
+    });
+  }
+
+  getCustomerDetails(){
+    let mobile = this.customerMobile.toString();
+    if(mobile.length === 10 && ( this.customerEmail === undefined || this.customerEmail === null)){
+      this.loading = true;
+      this.empService.getCustomerByMobile(mobile)
+                      .subscribe((resp:any) => {
+                        if(resp.statusCode  === 200 && resp.data !== null){
+                          this.customerEmail = resp.data.emailId;
+                          this.customerName = resp.data.firstName;
+                          this.customerLoyality = resp.data.loyalitypoint;
+                          this.newCustomer = false;
+                        }
+                        else{
+                          this.newCustomer = true;
+                        }
+                        this.loading = false;
+                      },
+                      (error:any) => {
+                        this.alertService.error("something went wrong!");
+                        this.loading = false;
+                      });
+    }
+  }
+
   getProductFromMatchingText(searchTerm){
-    if (searchTerm.length > 3 && this.previousSearchTerm !== searchTerm) {
+    // && this.previousSearchTerm !== searchTerm
+    if (searchTerm.length > 3 && searchTerm.length < 5) {
       this.productService.getProductByMatchingNameOrCode(searchTerm)
                           .subscribe((resp:any) => {
                             if(resp.statusCode  === 200){
@@ -156,7 +239,7 @@ export class PosComponent implements OnInit {
                             this.alertService.error("something went wrong!");
                             this.loading = false;
                           });
-                        }
+    }
   }
 
   private _filter(value: string): string[] {
@@ -186,7 +269,7 @@ export class PosComponent implements OnInit {
 
   getProductFromCode(code){
     this.loading = true;
-    this.productService.getPoductByCode(code)
+    this.productService.getProductByCode(code)
                         .subscribe((resp: any) => {
                           if(resp.statusCode === 200){
                             let newProd:PosProduct;
@@ -207,12 +290,20 @@ export class PosComponent implements OnInit {
                             if(doPush){
                               this.itemList.push(newProd);
                             }
+                            //insert dummy row
+                            newProd = new PosProduct();
+                            newProd.mrp = 0;
+                            newProd.discount = 0;
+                            newProd.quantity = 0;
+                            this.itemList.push(newProd);
+
                             this.disablePayment = false;
                           }
                           else if (resp.statusCode === 204){
-                            this.alertService.warn("Product " + this.barcodeValue + " Not Found",this.alertoptions);
+                            this.alertService.warn("Product " + this.itemBarCode + " Not Found",this.alertoptions);
                           }
                           this.loading = false;
+                          this.itemBarCode = '';
                         },
                         (error) => {
                           alert(error);
@@ -257,6 +348,10 @@ export class PosComponent implements OnInit {
     return Math.round(this.subTotal);
   }
 
+  calculateBalance(): number{
+    return this.amountPaid !== undefined ? this.amountPaid - this.calculateRoundedSubtotal() : null;
+  }
+
   calculateTotalQuantity(): number{
     let quantity = 0;
     this.itemList.forEach(item => {
@@ -296,8 +391,24 @@ export class PosComponent implements OnInit {
     this.itemList.splice(index, 1);
   }
 
+  clearData(){
+    this.itemList.length = 0;
+    this.customerEmail = null;
+    this.customerLoyality = null;
+    this.customerMobile = undefined;
+    this.customerName = null;
+    let newProd = new PosProduct();
+    newProd.mrp = 0;
+    newProd.discount = 0;
+    newProd.quantity = 0;
+    this.itemList.push(newProd);
+    this.amountPaid = undefined;
+    this.newCustomer = false;
+  }
+
   processBill(){
     this.loading = true;
+    this.cleanseItemList();
     this.posService.createPOS(this.customerMobile, this.paymentMode, this.calculateRoundedSubtotal(), this.itemList)
                     .subscribe((resp: any) => {
                       if(resp.statusCode === 200){

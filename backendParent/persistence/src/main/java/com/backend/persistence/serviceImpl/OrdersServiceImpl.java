@@ -2,9 +2,11 @@ package com.backend.persistence.serviceImpl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -13,8 +15,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.backend.commons.service.EmailService;
 import com.backend.commons.util.CommonUtil;
 import com.backend.commons.util.OrdersUtil;
+import com.backend.core.configuration.PaymentModes;
 import com.backend.core.entity.EmployeeInfo;
 import com.backend.core.service.BaseService;
 import com.backend.core.util.DashboardStatusUtil;
@@ -24,6 +28,7 @@ import com.backend.persistence.entity.Coupons;
 import com.backend.persistence.entity.CustomerCart;
 import com.backend.persistence.entity.CustomerInfo;
 import com.backend.persistence.entity.OrderDetails;
+import com.backend.persistence.entity.OrderInvoice;
 import com.backend.persistence.entity.Orders;
 import com.backend.persistence.entity.Product;
 import com.backend.persistence.repository.OrderDetailsRepository;
@@ -66,6 +71,9 @@ public class OrdersServiceImpl implements OrdersService {
 	
 	@Autowired
 	private CustomerInfoService customerService;
+	
+	@Autowired
+	private EmailService emailService;
 
 	@Override
 	public void save(Orders order) {
@@ -101,13 +109,14 @@ public class OrdersServiceImpl implements OrdersService {
 	}
 
 	@Override
-	public void createCustomerOrder(int couponId) throws Exception {
+	public void createCustomerOrder(int couponId, int paymentMode) throws Exception {
 		Coupons coupon = couponService.findCouponById(couponId);
 		CustomerInfo customer = (CustomerInfo) baseService.getUserInfo();
 		// create initial order object
 		Orders order = new Orders();
 		order.setOrderDate(CommonUtil.convertToUTC(new Date().getTime()));
 		order.setStatus(OrdersUtil.orderStatus.Pending.toString());
+		order.setPaymentModeId(paymentMode);
 		order.setCustomerId(customer.getCustomerId());
 		order.setTenant(baseService.getTenantInfo());
 		if (coupon != null) {
@@ -151,9 +160,11 @@ public class OrdersServiceImpl implements OrdersService {
 		// create unassigned order to be picked up by a employee.
 		createUnassignedOrder(order.getOrderId());
 		customerService.clearCustomerCart();
+		OrderInvoice invoice = invoiceService.createOrderInvoice(order);
+		emailService.sendOrderStatusEmail(String.valueOf(order.getOrderId()), order.getStatus(), order.getSubTotal().toString(),
+				order.getOrderDate(), PaymentModes.paymentModes.get(order.getPaymentModeId()), customer.getEmailId(),
+				customer.getFirstName(), customer.getLastName(), baseService.getOrigin(), invoice.getDocument());
 		DashboardStatusUtil.incremenOnlineCount(baseService.getTenantInfo());
-		invoiceService.createOrderInvoice(order);
-		
 	}
 
 	@Override
@@ -197,6 +208,7 @@ public class OrdersServiceImpl implements OrdersService {
 				break;
 			case "cancelled":
 				order.setStatus(OrdersUtil.orderStatus.Cancelled.toString());
+				DashboardStatusUtil.decrementOnlineCount(baseService.getTenantInfo());
 				break;
 			case "outfordelivery":
 				order.setStatus(OrdersUtil.orderStatus.OutForDelivery.toString());
@@ -214,8 +226,24 @@ public class OrdersServiceImpl implements OrdersService {
 				order.setStatus(OrdersUtil.orderStatus.Pending.toString());
 				break;
 			}
+			ordersRepo.saveAndFlush(order);
+			CustomerInfo customer = customerService.getCustomerById(order.getCustomerId());
+			Blob invoiceBlob= null;
+			//send invoice again incase of delivered status.
+			if (order.getStatus().equals(OrdersUtil.orderStatus.Delivered.toString())) {
+				OrderInvoice invoice = invoiceService.getInvoiceByOrder(order);
+				invoiceBlob = invoice != null ? invoice.getDocument() : null;
+			}
+			emailService.sendOrderStatusEmail(String.valueOf(order.getOrderId()), order.getStatus(),
+					order.getSubTotal().toString(), order.getOrderDate(),
+					PaymentModes.paymentModes.get(order.getPaymentModeId()), customer.getEmailId(),
+					customer.getFirstName(), customer.getLastName(), baseService.getOrigin(), invoiceBlob);
 		}
-		ordersRepo.saveAndFlush(order);
+	}
+	
+	@Override
+	public Map<String, BigDecimal> ordersWeeklyReport() throws Exception{
+		return ordersDao.getOrdersWeeklyTotal(baseService.getTenantInfo().getTenantID());
 	}
 
 }

@@ -121,6 +121,9 @@ public class TenantServiceImpl implements TenantService {
 		if(!StringUtils.isEmpty(tenantDetails.getGstIn())){
 			actualTenantDetail.setGstIn(tenantDetails.getGstIn());
 		}
+		if(!StringUtils.isEmpty(tenantDetails.getFssai())){
+			actualTenantDetail.setFssai(tenantDetails.getFssai());
+		}
 		tenantDetailsRepo.save(actualTenantDetail);
 	}
 

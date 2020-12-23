@@ -1,6 +1,7 @@
 package com.backend.persistence.serviceImpl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -116,17 +117,17 @@ public class ProductServiceImpl implements ProductService {
 	
 	@Override
 	public List<Product> getProducts(List<Integer> cIds, List<Integer> pIds, String limit, String offset,
-			boolean includeInactive) throws Exception {
-		return productDao.getProducts(cIds, pIds, limit, offset, includeInactive);
+			boolean includeInactive, boolean outOfStock) throws Exception {
+		return productDao.getProducts(cIds, pIds, limit, offset, includeInactive, outOfStock);
 	}
 	
 	@Override
-	public List<Product> getProducts(List<Integer> cIds, List<Integer> pIds, String limit, String offset, String sortByField, String sortBytype,
-			boolean includeInactive) throws Exception {
-		if(CommonUtil.isValidStringParam(sortByField) && CommonUtil.isValidStringParam(sortBytype)) {
-			return productDao.getProducts(cIds, pIds, limit, offset, sortByField, sortBytype, includeInactive);
+	public List<Product> getProducts(List<Integer> cIds, List<Integer> pIds, String limit, String offset, String sortByField, String sortByType,
+			boolean includeInactive, boolean outOfStock) throws Exception {
+		if(CommonUtil.isValidStringParam(sortByField) && CommonUtil.isValidStringParam(sortByType)) {
+			return productDao.getProducts(cIds, pIds, limit, offset, sortByField, sortByType, includeInactive, outOfStock);
 		}
-		return productDao.getProducts(cIds, pIds, limit, offset, includeInactive);
+		return productDao.getProducts(cIds, pIds, limit, offset, includeInactive, outOfStock);
 	}
 	
 	@Override
@@ -137,6 +138,16 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public List<Product> getProducts(List<Integer> ids){
 		return productRepo.findProductByIds(baseService.getTenantInfo(), ids);
+	}
+	
+	@Override
+	public List<Integer> getProductRecursiveByCategoryId(int cId) throws Exception{
+		return productDao.getProductsIdsByCategoryId(cId);
+	}
+	
+	@Override
+	public List<Product> getProductRecursiveByCategoryId(int cId, String limit, String offset, String sortByField, String sortByType, boolean includeInactive) throws Exception{
+		return getProducts(Arrays.asList(cId), null, limit, offset, sortByField, sortByType, includeInactive, false);
 	}
 
 	@Override
@@ -232,12 +243,25 @@ public class ProductServiceImpl implements ProductService {
 	public void deleteProductsForCategory(Category category) {
 		List<Product> products = getAllProductsForCategory(category);
 		products.stream().forEach(product -> {
-			product.setActive(false);
-			product.setDeleted(true);
-			product.setLastModified(CommonUtil.convertToUTC(new Date().getTime()));
-			product.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
-			save(product);
+			markProductDeleted(product);
 		});
+	}
+	
+	@Override
+	public void deleteProductById(int pId) {
+		Product product = getProductById(pId);
+		if(product != null) {
+			markProductDeleted(product);
+		}
+	}
+	
+	private void markProductDeleted(Product product) {
+		product.setActive(false);
+		product.setDeleted(true);
+		product.setProductCode(product.getProductCode() + ":" + System.currentTimeMillis());
+		product.setLastModified(CommonUtil.convertToUTC(new Date().getTime()));
+		product.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
+		save(product);
 	}
 
 	@Override

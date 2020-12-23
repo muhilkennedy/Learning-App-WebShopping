@@ -1,6 +1,8 @@
 package com.backend.persistence.service;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import com.backend.persistence.entity.OrderDetails;
 import com.backend.persistence.entity.Orders;
@@ -15,8 +17,6 @@ public interface OrdersService {
 
 	List<Integer> getAllUnassignedOrders() throws Exception;
 
-	void createCustomerOrder(int couponId) throws Exception;
-
 	List<Orders> getOrders(int limit, int offset);
 
 	void updateOrderStatus(String status, int orderId) throws Exception;
@@ -26,5 +26,9 @@ public interface OrdersService {
 	List<Orders> getOrdersAssignedForEmployee(String status);
 
 	List<Orders> getOrders(String limit, String offset, String condition, long date, String status) throws Exception;
+
+	void createCustomerOrder(int couponId, int paymentMode) throws Exception;
+
+	Map<String, BigDecimal> ordersWeeklyReport() throws Exception;
 
 }

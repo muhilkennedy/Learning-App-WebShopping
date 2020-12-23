@@ -47,12 +47,14 @@ import { CreateEmployeeComponent } from './create-employee/create-employee.compo
 import { EmployeePermissionComponent } from './employee-permission/employee-permission.component';
 import { EmployeeComponent } from './employee.component';
 import { NgxTypeaheadModule } from 'ngx-typeahead';
+import { CustomerComponent } from './customer/customer.component';
 
 @NgModule({
   declarations: [
     EmployeeComponent,
     CreateEmployeeComponent,
-    EmployeePermissionComponent
+    EmployeePermissionComponent,
+    CustomerComponent
   ],
   imports: [
     EmployeeRoutingModule,

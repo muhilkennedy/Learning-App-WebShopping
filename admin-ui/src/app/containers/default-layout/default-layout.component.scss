@@ -15,7 +15,17 @@
   right: -10px;
   padding: 2px 5px;
   border-radius: 50%;
-  background: darkcyan;
+  background: green;
   color: white;
+}
+
+.toolbaricon{
+  color: green;
+  cursor: pointer;
+  transition: transform .2s;
+}
+
+.toolbaricon:hover  {
+  transform: scale(1.5);
 }
 

@@ -14,6 +14,7 @@ public class DataSourceProperties {
 	private String url;
 	private String username;
 	private String password;
+	private String database;
 
 	public void setUrl(String url) {
 		this.url = url;
@@ -37,5 +38,13 @@ public class DataSourceProperties {
 
 	public String getPassword() {
 		return password;
+	}
+
+	public String getDatabase() {
+		return database;
+	}
+
+	public void setDatabase(String database) {
+		this.database = database;
 	}
 }

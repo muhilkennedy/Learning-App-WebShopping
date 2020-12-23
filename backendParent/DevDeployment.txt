@@ -1,4 +1,5 @@
 install ngrok for dynamic url -> ok for testing locally
+ngrok.exe http 8080
 
 LOCALTUNNEL: (for prod deployment)
 
@@ -6,3 +7,15 @@ npm install -g localtunnel
 
 lt --port 8080 --subdomain muhilbackend
 generated static url -> https://muhilbackend.loca.lt
+
+staqlab-tunnel 8080 hostname=muhil
+staqlab-tunnel 4200 hostname=muhil1
+ng serve --host 0.0.0.0 --port 4200 --disableHostCheck true
+ng serve  --port 4200 --host 0.0.0.0 --publicHost muhil.staqlab-tunnel.com
+
+MYSQL Backup cmds:
+export:
+mysqldump -uroot -proot@123 clouddatabase > E:\12dump.sql
+
+import:
+mysql -uroot -proot@123 new_database_name < E:\12dump.sql

@@ -61,6 +61,9 @@ public class Orders implements Serializable {
 	@Column(name = "COUPONID")
 	private int couponId;
 	
+	@Column(name = "PAYMENTMODEID")
+	private int paymentModeId;
+	
 	@Column(name = "EMPLOYEEID", nullable = true)
 	private int employeeId;
 	
@@ -160,6 +163,14 @@ public class Orders implements Serializable {
 	
 	public OrderInvoice fetchOrderInvoice() {
 		return this.invoice;
+	}
+
+	public int getPaymentModeId() {
+		return paymentModeId;
+	}
+
+	public void setPaymentModeId(int paymentModeId) {
+		this.paymentModeId = paymentModeId;
 	}
 
 }

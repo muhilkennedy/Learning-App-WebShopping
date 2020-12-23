@@ -65,6 +65,15 @@ public class DashboardStatusUtil {
 		dashboardRepo.save(report);
 	}
 	
+	public static void decrementOnlineCount(Tenant tenant) {
+		DashboardReport report = getDashboardStatus(tenant);
+		if(report != null) {
+			report.setOnlineCountToday(report.getOnlineCountToday() - 1);
+			report.setTotalOnlineCount(report.getTotalOnlineCount() - 1);
+		}
+		dashboardRepo.save(report);
+	}
+	
 	public static void incrementPosCount(Tenant tenant) {
 		DashboardReport report = getDashboardStatus(tenant);
 		if(report != null) {

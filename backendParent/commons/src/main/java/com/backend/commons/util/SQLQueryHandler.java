@@ -156,7 +156,11 @@ public class SQLQueryHandler {
 			return setAndCondition(fieldName, value.toString(), true);
 		}
 		
-		public SQLQueryBuilder andSetAndCondition(String fieldName, int value) {
+		public SQLQueryBuilder andSetAndCondition(String fieldName, Integer value) {
+			if(value ==  null)
+			{
+				return this;
+			}
 			return setAndCondition(fieldName, value, true);
 		}
 		
@@ -252,6 +256,13 @@ public class SQLQueryHandler {
 			}
 			setEndBrace();
 			return this;
+		}
+		
+		public SQLQueryBuilder andSetLessThanCondition (String fieldName, Integer value) {
+			if(value == null) {
+				return this;
+			}
+			return andSetLessThanCondition(fieldName, value.toString());
 		}
 		
 		public SQLQueryBuilder andSetLessThanCondition (String fieldName, String value) {

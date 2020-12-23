@@ -54,7 +54,7 @@ public class DashboardReport implements Serializable{
 	@Column(name = "POSTODAY")
 	private int posCountToday;
 	
-	@Column(name = "ONINETODAY")
+	@Column(name = "ONLINETODAY")
 	private int onlineCountToday;
 	
 	@Column(name = "TOTALCUSTOMERS")

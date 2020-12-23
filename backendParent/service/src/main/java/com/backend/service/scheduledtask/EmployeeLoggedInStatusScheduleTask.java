@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import com.backend.core.dao.EmployeeDao;
 import com.backend.core.serviceImpl.CacheService;
-import com.backend.core.util.ConfigUtil;
 
 /**
  * @author Muhil Kennedy
@@ -26,17 +25,11 @@ public class EmployeeLoggedInStatusScheduleTask extends ScheduledTask {
 	
 	@Autowired
 	private EmployeeDao empDao;
-	
-	@Autowired
-	private ConfigUtil configUtil;
 
 	// cron = sec min hour day mon dayOfWeek.
 	@Scheduled(cron = " 0 0/1 * * * * ")
 	@Override
 	public void execute() {
-		if(configUtil.isProdMode()) {
-			logger.info("Scheduled Task - " + EmployeeLoggedInStatusScheduleTask.class.getCanonicalName() + " Started");
-		}
 		CacheService.getLoggedInStatusCacheMap().entrySet().parallelStream().forEach(item -> {
 			try {
 				if (checkTimeLapsed(item.getValue())) {
@@ -49,9 +42,6 @@ public class EmployeeLoggedInStatusScheduleTask extends ScheduledTask {
 				e.printStackTrace();
 			}
 		});
-		if(configUtil.isProdMode()) {
-			logger.info("Scheduled Task - " + EmployeeLoggedInStatusScheduleTask.class.getCanonicalName() + " Completed");
-		}
 	}
 	
 	private boolean checkTimeLapsed(Date date) {

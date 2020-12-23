@@ -1,6 +1,5 @@
 package com.backend.persistence.service;
 
-import java.util.Date;
 import java.util.List;
 
 import com.backend.persistence.entity.Task;
@@ -22,5 +21,7 @@ public interface TaskService {
 	void updateTask(int id, String status);
 
 	List<Task> findAllOverdueTasks();
+	
+	int findPendingAndOverdueTasksCount();
 
 }

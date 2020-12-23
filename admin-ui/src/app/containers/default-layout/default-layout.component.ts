@@ -9,6 +9,7 @@ import { TaskService } from '../../shared/task/task.service';
 import { EmployeeService } from '../../shared/employee/employee.service';
 import { OrdersService } from '../../shared/orders/orders.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TenantStoreService } from '../../service/tenantStore/tenant-store.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -24,15 +25,16 @@ export class DefaultLayoutComponent implements OnInit{
   public userPermissions: any[];
   public loading = false;
   public realmName = environment.tenantId;
-  activeTaskCount = 0;
+  public noticationCount: number;
+  public taskCount: number;
   now:number;
   orderCountInterval:any;
 
-  constructor(public userStore: UserStoreService,
+  constructor(public tenantStore: TenantStoreService,
+              public userStore: UserStoreService,
               private router: Router,
               private loginService: LoginService,
               private cookieService: CookieService,
-              private taskService: TaskService,
               private empService: EmployeeService,
               private orderService: OrdersService,
               private _snackBar: MatSnackBar){
@@ -168,8 +170,6 @@ export class DefaultLayoutComponent implements OnInit{
         else if(this.userStore==undefined || this.userStore.userId == undefined){
           this.router.navigate(['/login']);
         }
-      // }
-
   }
 
   toggleMinimize(e) {
@@ -240,7 +240,7 @@ export class DefaultLayoutComponent implements OnInit{
     }
   }
 
-  newOrdersCount:number = 0;
+  newOrdersCount:number ;
   getNewOrdersCount(){
     this.orderService.getUnassignedOrdersCount()
                      .subscribe((resp:any)=>{
@@ -254,7 +254,12 @@ export class DefaultLayoutComponent implements OnInit{
                             });
                             snackBarRef.onAction().subscribe(()=> this.navigateToOrders());
                           }
-                          this.newOrdersCount = resp.data;
+                          if(resp.data === 0){
+                            this.newOrdersCount = undefined;
+                          }
+                          else{
+                            this.newOrdersCount = resp.data;
+                          }
                         }
                      },
                      (error:any)=>{
@@ -264,6 +269,14 @@ export class DefaultLayoutComponent implements OnInit{
 
   navigateToOrders(){
     this.router.navigate(['/orders']);
+  }
+
+  updateNotificationBadge(event){
+    this.noticationCount = event;
+  }
+
+  updateTaskBadge(event){
+    this.taskCount = event;
   }
 
 }

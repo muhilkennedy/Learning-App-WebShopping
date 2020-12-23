@@ -131,7 +131,7 @@ public class LoginServiceImpl implements LoginService {
 			else {
 				CustomerInfo cusInfo = (CustomerInfo) user;
 				cusInfo.setTenant(baseService.getTenantInfo());
-				cusInfo.setPassword(RSAUtil.decrypt(cusInfo.fetchPassword(), baseService.getTenantInfo().fetchPrivateKey())); 
+				cusInfo.setPassword(RSAUtil.decrypt(cusInfo.fetchPassword(), baseService.getTenantInfo().fetchPrivateKey()));
 				String encrptedPassword = BCrypt.hashpw(cusInfo.fetchPassword(), BCrypt.gensalt(CommonUtil.saltRounds));
 				cusInfo.setPassword(encrptedPassword);
 				cusInfo.setActive(true);

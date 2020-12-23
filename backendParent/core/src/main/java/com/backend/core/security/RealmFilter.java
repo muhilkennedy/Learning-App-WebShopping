@@ -1,6 +1,7 @@
 package com.backend.core.security;
 
 import java.io.IOException;
+import java.net.InetAddress;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -17,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
+import org.springframework.web.context.request.RequestContextHolder;
 
 import com.backend.core.entity.Tenant;
 import com.backend.core.service.BaseService;
@@ -45,6 +46,8 @@ public class RealmFilter implements Filter {
 			HttpServletResponse res = (HttpServletResponse) response;
 			String tenantId = req.getHeader(Constants.Header_TenantId);
 			logger.info("doFilter :: Realm Filter");
+			String requestIP = getIPFromRequest(req);
+			//verify for DOS attack
 			//Allow access for cross site request due to multiple deployments.
 			res.setHeader("Access-Control-Allow-Origin", req.getHeader(Constants.Header_Origin));
 			res.setHeader("Access-Control-Allow-Credentials","true");
@@ -148,5 +151,29 @@ public class RealmFilter implements Filter {
 			request.getSession().setAttribute(tenantId, tenant);
 		}
 	}
+	
+	private String getIPFromRequest(HttpServletRequest request) {
+        String ip = null;
+        if (request == null) {
+            return null;
+        }
+
+        /*try {
+            ip = InetAddress.getLocalHost().getHostAddress();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (!StringUtils.isEmpty(ip))
+            return ip;*/
+
+        for (String header : Constants.IP_HEADER_CANDIDATES) {
+            String ipList = request.getHeader(header);
+            if (ipList != null && ipList.length() != 0 && !"unknown".equalsIgnoreCase(ipList)) {
+                return ipList.split(",")[0];
+            }
+        }
+
+        return request.getRemoteAddr();
+    }
 
 }

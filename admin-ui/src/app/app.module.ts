@@ -88,6 +88,7 @@ import { environment } from '../environments/environment';
 import { NotFoundComponent } from './component/not-found/not-found.component';
 import { PushNotificationComponent } from './containers/push-notification/push-notification.component';
 import { ChatMessengerComponent } from './containers/chat-messenger/chat-messenger.component';
+import { ScheduledTasksComponent } from './containers/scheduled-tasks/scheduled-tasks.component';
 
 
 @Injectable()
@@ -107,24 +108,32 @@ export class TenantInitializer {
                   this.tenantStore.publicKey = resp.data.publicKey;
                   //set tenant details
                   let tenantDetails = resp.dataList[0];
-                  this.tenantStore.tenantDetailId = tenantDetails.tenantDetailId;
-                  this.tenantStore.tenantEmail = tenantDetails.tenantEmail;
-                  this.tenantStore.tenantFacebook = tenantDetails.tenantFacebook;
-                  this.tenantStore.tenantInsta = tenantDetails.tenantInsta;
-                  this.tenantStore.tenantTwitter = tenantDetails.tenantTwitter;
-                  this.tenantStore.tenantStreet = tenantDetails.tenantStreet;
-                  this.tenantStore.tenantCity = tenantDetails.tenantCity;
-                  this.tenantStore.tenantPin = tenantDetails.tenantPin;
-                  this.tenantStore.tenantContact = tenantDetails.tenantContact;
-                  this.tenantStore.businessEmail = tenantDetails.businessEmail;
-                  this.tenantStore.tenantGstIn = tenantDetails.gstIn;
+                  if(tenantDetails != null && tenantDetails !== undefined){
+                    this.tenantStore.tenantDetailId = tenantDetails.tenantDetailId;
+                    this.tenantStore.tenantEmail = tenantDetails.tenantEmail;
+                    this.tenantStore.tenantFacebook = tenantDetails.tenantFacebook;
+                    this.tenantStore.tenantInsta = tenantDetails.tenantInsta;
+                    this.tenantStore.tenantTwitter = tenantDetails.tenantTwitter;
+                    this.tenantStore.tenantStreet = tenantDetails.tenantStreet;
+                    this.tenantStore.tenantCity = tenantDetails.tenantCity;
+                    this.tenantStore.tenantPin = tenantDetails.tenantPin;
+                    this.tenantStore.tenantContact = tenantDetails.tenantContact;
+                    this.tenantStore.businessEmail = tenantDetails.businessEmail;
+                    this.tenantStore.tenantGstIn = tenantDetails.gstIn;
+                    this.tenantStore.tenantFssai = tenantDetails.fssai;
+                  }
+                  this.tenantStore.tenantLogo = resp.dataList[1];
                   //load app only if tenant is active.
                   if(this.tenantStore.tenantActive){
-                     resolve();
+                     resolve(true);
+                  }
+                  else{
+                    alert("Tenant not Active! Please contact support!")
                   }
                 },
                 (error:any) => {
                     console.log("error in loading tenant");
+                    alert("Tenant Server not Reachable at the moment! Please try again later!");
                 }
               );
     });
@@ -210,6 +219,7 @@ export function init_tenant(initializer: TenantInitializer) {
     NotFoundComponent,
     PushNotificationComponent,
     ChatMessengerComponent,
+    ScheduledTasksComponent,
   ],
   providers: [{
     provide: LocationStrategy,

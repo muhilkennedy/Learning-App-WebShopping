@@ -394,5 +394,20 @@ public class EmployeeController {
 		return response;
 	}
 
+	@RequestMapping(value = "/getCustomerByMobile", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<CustomerInfo> getCustomerByMobile(HttpServletRequest request, @RequestParam(value = "mobile", required = true) String mobile) {
+		GenericResponse<CustomerInfo> response = new GenericResponse<CustomerInfo>();
+		try {
+			response.setData(customerService.getCustomerByMobile(mobile));
+			response.setStatus(Response.Status.OK);
+
+		} catch (Exception ex) {
+			logger.error("getCustomerByMobile : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
 	
 }

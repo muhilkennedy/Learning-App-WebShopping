@@ -21,16 +21,18 @@ export class ProductListComponent implements OnInit {
   pIds:any[] = new Array();
   cIds:any[] = new Array();
 
-  isCollapsed: boolean = false;
+  isFilterCollapsed: boolean = false;
   searchByProduts: boolean = false;
+  moreFilters: boolean = false;
 
   loadActiveItemsOnly: boolean = true;
+  outOfStock: boolean = false;
 
   sortField: string;
   sortType: string;
 
   toggleFilterCollapse(){
-    this.isCollapsed = !this.isCollapsed;
+    this.isFilterCollapsed = !this.isFilterCollapsed;
   }
 
    // MatPaginator Inputs
@@ -95,7 +97,7 @@ export class ProductListComponent implements OnInit {
     this.loading = true;
     this.setProductCount();
     this.productService.getProducts(this.pIds, this.cIds, this.offset, this.pageSize,
-                                    this.sortField, this.sortType, this.loadActiveItemsOnly)
+                                    this.sortField, this.sortType, this.loadActiveItemsOnly, this.outOfStock)
                         .subscribe((resp:any) => {
                           if(resp.statusCode === 200){
                             this.products = resp.dataList;
@@ -126,6 +128,10 @@ export class ProductListComponent implements OnInit {
   }
 
   loadActiveItems(){
+    this.setProducts();
+  }
+
+  loadOutOfStockItems(){
     this.setProducts();
   }
 

@@ -47,13 +47,14 @@ public class ProductController {
 			@RequestParam(value = "cIds", required = false) List<Integer> cIds,
 			@RequestParam(value = "sortField", required = false) String sortByField,
 			@RequestParam(value = "sortType", required = false) String sortByType,
-			@RequestParam(value = "includeInactive", required = false) boolean includeInactive) {
+			@RequestParam(value = "includeInactive", required = false) boolean includeInactive,
+			@RequestParam(value = "outOfStock", required = false) boolean outOfStock) {
 		GenericResponse<Product> response = new GenericResponse<>();
 		try {
 			String limit = request.getHeader(Constants.Header_Limit);
 			String offset = request.getHeader(Constants.Header_Offset);
 			response.setDataList(
-					productService.getProducts(cIds, pIds, limit, offset, sortByField, sortByType, includeInactive));
+					productService.getProducts(cIds, pIds, limit, offset, sortByField, sortByType, includeInactive, outOfStock));
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("getProducts : " + ex);
@@ -177,6 +178,28 @@ public class ProductController {
 		}
 		return response;
 	}
+	
+	@RequestMapping(value = "/getProdctsRecursiveByCategory", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Product> getProdctsRecursiveByCategory(HttpServletRequest request,@RequestParam(value = "pIds", required = false) List<Integer> pIds,
+			@RequestParam(value = "cIds", required = false) int cId,
+			@RequestParam(value = "sortField", required = false) String sortByField,
+			@RequestParam(value = "sortType", required = false) String sortByType,
+			@RequestParam(value = "includeInactive", required = false) boolean includeInactive) {
+		String limit = request.getHeader(Constants.Header_Limit);
+		String offset = request.getHeader(Constants.Header_Offset);
+		GenericResponse<Product> response = new GenericResponse<>();
+		try {
+			response.setDataList(productService.getProductRecursiveByCategoryId(cId, limit, offset, sortByField, sortByType, includeInactive));
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("getProdctsRecursiveByCategory : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
 
 	
 }
