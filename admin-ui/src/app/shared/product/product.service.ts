@@ -80,7 +80,7 @@ export class ProductService {
     return this.http.get(environment.backendBaseUrl+this.getProductByIdsEndpoint, httpOptions);
   }
 
-  getProducts(pIds, cIds, offset, limit, sortField, sortType, loadInactive){
+  getProducts(pIds, cIds, offset, limit, sortField, sortType, loadInactive, outOfStock){
       //Set Headers
       let requestHeaders = new HttpHeaders().set('Content-Type', 'application/json')
       .append('Offset', offset)
@@ -93,7 +93,8 @@ export class ProductService {
           cIds: cIds,
           sortField: sortField,
           sortType: sortType,
-          includeInactive: loadInactive
+          includeInactive: loadInactive,
+          outOfStock: outOfStock
         }
       };
       return this.http.get(environment.backendBaseUrl+this.getProductsEndpoint, httpOptions);

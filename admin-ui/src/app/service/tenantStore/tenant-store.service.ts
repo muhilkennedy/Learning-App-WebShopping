@@ -11,6 +11,7 @@ export class TenantStoreService {
   private _tenantActive: boolean;
   private _publicKey: string;
   //tenant details
+  private _tenantLogo: string;
   private _tenantDetailId: number;
   private _tenantEmail: string;
   private _businessEmail: string;
@@ -26,6 +27,14 @@ export class TenantStoreService {
 
   constructor() {
     this.tenantId = environment.tenantId;
+  }
+
+  public get tenantLogo(): string {
+    return this._tenantLogo;
+  }
+
+  public set tenantLogo(value: string) {
+    this._tenantLogo = value;
   }
 
   set tenantGstIn(gst: string){

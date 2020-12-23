@@ -122,6 +122,7 @@ export class TenantInitializer {
                     this.tenantStore.tenantGstIn = tenantDetails.gstIn;
                     this.tenantStore.tenantFssai = tenantDetails.fssai;
                   }
+                  this.tenantStore.tenantLogo = resp.dataList[1];
                   //load app only if tenant is active.
                   if(this.tenantStore.tenantActive){
                      resolve(true);

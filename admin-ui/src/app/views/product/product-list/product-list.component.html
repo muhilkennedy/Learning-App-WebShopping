@@ -10,7 +10,7 @@
           <table class="table table-responsive-sm filterbar">
             <tr>
               <td>
-                <input type="text" *ngIf="searchByProduts"
+                <input type="text"
                       class="form-control"  placeholder="Product Name/Code"
                       id="pname" name="pname"
                       [formControl]="myControl"
@@ -21,6 +21,8 @@
                     {{option.productName}}
                   </mat-option>
                 </mat-autocomplete>
+              </td>
+              <td>
                 <form [formGroup]="myForm" *ngIf="!searchByProduts">
                   <ng-multiselect-dropdown
                       name="category"
@@ -35,10 +37,6 @@
                       (onDeSelectAll)="onDeSelectAll($event)">
                   </ng-multiselect-dropdown>
                 </form>
-                <mat-checkbox [(ngModel)]="loadActiveItemsOnly" (change)="loadActiveItems()">
-                  Active Products only
-                </mat-checkbox>
-                <i class="fa fa-exchange" (click)="searchByProduts = !searchByProduts" style="cursor: pointer;"></i>
               </td>
               <td>
                 <div class="btn-group" dropdown style="width: 100%;">
@@ -55,6 +53,24 @@
                     <!-- <li class="divider dropdown-divider"></li> -->
                   </ul>
                 </div>
+              </td>
+              <td>
+                <mat-checkbox [(ngModel)]="loadActiveItemsOnly" (change)="loadActiveItems()">
+                  Show Active Products
+                </mat-checkbox>
+              </td>
+              <td>
+                <i class="fa fa-filter" (click)="moreFilters = !moreFilters" style="cursor: pointer;"> More Filters</i>
+              </td>
+            </tr>
+            <tr *ngIf="moreFilters">
+              <td>
+                <mat-checkbox [(ngModel)]="outOfStock" (change)="loadOutOfStockItems()">
+                  Show Out Of Stock Products
+                </mat-checkbox>
+              </td>
+              <td>
+
               </td>
               <td>
                 <mat-paginator style="margin-block-start: -0.5rem; margin-left: -13rem !important;" [length]="totalRecords"
@@ -100,3 +116,4 @@
   </div>
 </div>
 </div>
+

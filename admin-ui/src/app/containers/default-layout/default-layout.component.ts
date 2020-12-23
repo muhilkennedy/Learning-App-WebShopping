@@ -9,6 +9,7 @@ import { TaskService } from '../../shared/task/task.service';
 import { EmployeeService } from '../../shared/employee/employee.service';
 import { OrdersService } from '../../shared/orders/orders.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TenantStoreService } from '../../service/tenantStore/tenant-store.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -29,7 +30,8 @@ export class DefaultLayoutComponent implements OnInit{
   now:number;
   orderCountInterval:any;
 
-  constructor(public userStore: UserStoreService,
+  constructor(public tenantStore: TenantStoreService,
+              public userStore: UserStoreService,
               private router: Router,
               private loginService: LoginService,
               private cookieService: CookieService,

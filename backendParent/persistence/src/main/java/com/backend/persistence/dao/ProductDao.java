@@ -33,8 +33,12 @@ public class ProductDao {
 	@Autowired
 	private BaseService baseService;
 	
-	public List<Product> getProducts(List<Integer> cIds, List<Integer> pIds, String limit, String offset, Boolean includeInactive) throws Exception {
+	public List<Product> getProducts(List<Integer> cIds, List<Integer> pIds, String limit, String offset, Boolean includeInactive, Boolean outOfStock) throws Exception {
 		List<Product> productList = new ArrayList<Product>();
+		Integer quantity = null;
+		if(outOfStock == true) {
+			quantity = 1;
+		}
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			//.setAndCondition("active", "true", true)
 			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
@@ -45,6 +49,7 @@ public class ProductDao {
 															.andSetAndCondition("isdeleted", false)
 															.andSetOrConditions("categoryid", cIds)
 															.andSetOrConditions("productid", pIds)
+															.andSetLessThanCondition("unitsinstock", quantity)
 														  	.setLimit(limit)
 														  	.setOffset(offset)
 															.build();
@@ -73,8 +78,12 @@ public class ProductDao {
 	}
 
 	public List<Product> getProducts(List<Integer> cIds, List<Integer> pIds, String limit, String offset,
-			String sortByField, String sortBytype, Boolean includeInactive) throws Exception {
+			String sortByField, String sortBytype, Boolean includeInactive, Boolean outOfStock) throws Exception {
 		List<Product> productList = new ArrayList<Product>();
+		Integer quantity = null;
+		if(outOfStock == true) {
+			quantity = 1;
+		}
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			// .setAndCondition("active", "true", true)
 			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
@@ -85,6 +94,7 @@ public class ProductDao {
 															.andSetOrConditions("productid", pIds)
 															.andSetAndCondition("active", includeInactive)
 															.andSetAndCondition("isdeleted", false)
+															.andSetLessThanCondition("unitsinstock", quantity)
 															.setOrderBy(sortByField)
 															.setSortOrder(sortBytype)
 															.setLimit(limit)

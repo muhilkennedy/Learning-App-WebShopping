@@ -33,13 +33,7 @@ public interface ProductService {
 	Product createOrUpdateProduct(Product product, int categoryId, byte[] productPic)
 			throws SerialException, SQLException, Exception;
 
-	List<Product> getProducts(List<Integer> cIds, List<Integer> pIds, String limit, String offset,
-			boolean includeInactive) throws Exception;
-
 	int getProductsCount(List<Integer> cIds, boolean includeInactive) throws Exception;
-
-	List<Product> getProducts(List<Integer> cIds, List<Integer> pIds, String limit, String offset, String sortByField,
-			String sortBytype, boolean includeInactive) throws Exception;
 
 	void deleteProductsForCategory(Category category);
 
@@ -77,5 +71,11 @@ public interface ProductService {
 			String sortByType, boolean includeInactive) throws Exception;
 
 	void deleteProductById(int pId);
+
+	List<Product> getProducts(List<Integer> cIds, List<Integer> pIds, String limit, String offset, String sortByField,
+			String sortByType, boolean includeInactive, boolean outOfStock) throws Exception;
+
+	List<Product> getProducts(List<Integer> cIds, List<Integer> pIds, String limit, String offset,
+			boolean includeInactive, boolean outOfStock) throws Exception;
 
 }
