@@ -117,17 +117,17 @@ public class ProductServiceImpl implements ProductService {
 	
 	@Override
 	public List<Product> getProducts(List<Integer> cIds, List<Integer> pIds, String limit, String offset,
-			boolean includeInactive) throws Exception {
-		return productDao.getProducts(cIds, pIds, limit, offset, includeInactive);
+			boolean includeInactive, boolean outOfStock) throws Exception {
+		return productDao.getProducts(cIds, pIds, limit, offset, includeInactive, outOfStock);
 	}
 	
 	@Override
 	public List<Product> getProducts(List<Integer> cIds, List<Integer> pIds, String limit, String offset, String sortByField, String sortByType,
-			boolean includeInactive) throws Exception {
+			boolean includeInactive, boolean outOfStock) throws Exception {
 		if(CommonUtil.isValidStringParam(sortByField) && CommonUtil.isValidStringParam(sortByType)) {
-			return productDao.getProducts(cIds, pIds, limit, offset, sortByField, sortByType, includeInactive);
+			return productDao.getProducts(cIds, pIds, limit, offset, sortByField, sortByType, includeInactive, outOfStock);
 		}
-		return productDao.getProducts(cIds, pIds, limit, offset, includeInactive);
+		return productDao.getProducts(cIds, pIds, limit, offset, includeInactive, outOfStock);
 	}
 	
 	@Override
@@ -147,7 +147,7 @@ public class ProductServiceImpl implements ProductService {
 	
 	@Override
 	public List<Product> getProductRecursiveByCategoryId(int cId, String limit, String offset, String sortByField, String sortByType, boolean includeInactive) throws Exception{
-		return getProducts(Arrays.asList(cId), null, limit, offset, sortByField, sortByType, includeInactive);
+		return getProducts(Arrays.asList(cId), null, limit, offset, sortByField, sortByType, includeInactive, false);
 	}
 
 	@Override

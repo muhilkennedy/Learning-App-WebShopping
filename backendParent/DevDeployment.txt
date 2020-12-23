@@ -10,7 +10,8 @@ generated static url -> https://muhilbackend.loca.lt
 
 staqlab-tunnel 8080 hostname=muhil
 staqlab-tunnel 4200 hostname=muhil1
-ng serve --host 0.0.0.0 --disableHostCheck true
+ng serve --host 0.0.0.0 --port 4200 --disableHostCheck true
+ng serve  --port 4200 --host 0.0.0.0 --publicHost muhil.staqlab-tunnel.com
 
 MYSQL Backup cmds:
 export:

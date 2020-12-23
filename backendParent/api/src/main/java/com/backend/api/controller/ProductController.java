@@ -47,13 +47,14 @@ public class ProductController {
 			@RequestParam(value = "cIds", required = false) List<Integer> cIds,
 			@RequestParam(value = "sortField", required = false) String sortByField,
 			@RequestParam(value = "sortType", required = false) String sortByType,
-			@RequestParam(value = "includeInactive", required = false) boolean includeInactive) {
+			@RequestParam(value = "includeInactive", required = false) boolean includeInactive,
+			@RequestParam(value = "outOfStock", required = false) boolean outOfStock) {
 		GenericResponse<Product> response = new GenericResponse<>();
 		try {
 			String limit = request.getHeader(Constants.Header_Limit);
 			String offset = request.getHeader(Constants.Header_Offset);
 			response.setDataList(
-					productService.getProducts(cIds, pIds, limit, offset, sortByField, sortByType, includeInactive));
+					productService.getProducts(cIds, pIds, limit, offset, sortByField, sortByType, includeInactive, outOfStock));
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("getProducts : " + ex);

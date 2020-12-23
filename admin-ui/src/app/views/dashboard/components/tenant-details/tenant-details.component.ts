@@ -101,6 +101,7 @@ export class TenantDetailsComponent implements OnInit {
                         if(resp.statusCode === 200){
                           this.editTenantLogo = false;
                           this.loadTenantLogo = false;
+                          window.location.reload();
                         }
                         else{
                           alert("error");
