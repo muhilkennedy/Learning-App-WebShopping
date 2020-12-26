@@ -18,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.Response;
-import com.backend.commons.util.CommonUtil;
 import com.backend.core.entity.TenantDetails;
 import com.backend.core.service.BaseService;
 import com.backend.core.service.TenantService;
@@ -66,7 +65,7 @@ public class TenantController {
 			tenantDetail.setTenantStreet(tenantStreet);
 			tenantDetail.setGstIn(gst);
 			tenantDetail.setFssai(fssai);
-			tenantService.updateTenantDetails(tenantDetail, file != null ? CommonUtil.getThumbnailImage(file.getBytes()) : null);
+			tenantService.updateTenantDetails(tenantDetail, file != null ? file.getBytes() : null);
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("updateTenant : " + ex);

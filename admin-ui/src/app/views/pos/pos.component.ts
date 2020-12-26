@@ -57,7 +57,7 @@ export class PosComponent implements OnInit {
   };
 
   //Insert new entry incase of shift and enter key press
-  @HostListener('keydown', ['$event']) onKeyDown(e) {
+  @HostListener('keyup', ['$event']) onKeyDown(e) {
     if (e.keyCode == 13 && e.shiftKey ) {
       this.addItem();
     }

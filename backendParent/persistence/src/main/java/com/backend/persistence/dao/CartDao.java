@@ -78,7 +78,7 @@ public class CartDao {
 			stmt.setInt(3, productid);
 			stmt.executeUpdate();
 		} catch (Exception ex) {
-			logger.error("Exception inserting into cart- " + ex);
+			logger.error("Exception removing from cart- " + ex);
 			throw new Exception(ex.getMessage());
 		}
 	}
@@ -122,7 +122,7 @@ public class CartDao {
 				return rs.getInt(1);
 			}
 		} catch (Exception ex) {
-			logger.error("Exception inserting into cart- " + ex);
+			logger.error("Exception in getting cart count- " + ex);
 			throw new Exception(ex.getMessage());
 		}
 		return 0;

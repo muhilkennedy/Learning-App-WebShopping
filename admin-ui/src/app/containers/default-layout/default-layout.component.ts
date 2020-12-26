@@ -212,6 +212,10 @@ export class DefaultLayoutComponent implements OnInit{
     this.router.navigate(['/profile']);
   }
 
+  delivery(){
+    this.router.navigate(['/delivery']);
+  }
+
   tasks(){
     this.router.navigate(['/task',true]);
   }
