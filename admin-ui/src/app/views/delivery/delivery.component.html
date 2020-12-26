@@ -1,0 +1,115 @@
+<alert class="p-4 text-center"></alert>
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <ngx-loading [show]="loading"></ngx-loading>
+        <div class="card-header">
+          <i class="fa fa-map-marker"></i>Create New Pincode
+          <div class="float-right">
+            <i *ngIf="!isCardCollapsed" class="fa fa-toggle-up toggleIcon" (click)="isCardCollapsed = !isCardCollapsed"></i>
+            <i *ngIf="isCardCollapsed" class="fa fa-toggle-down toggleIcon" (click)="isCardCollapsed = !isCardCollapsed"></i>
+          </div>
+          <button mat-button class="btn btn-ghost-success float-right" style="border: 1px solid;" (click)="createPincodeConfig()">
+            <i class="fa fa-map-pin"></i> Create Pincode
+          </button>
+        </div>
+        <div [collapse]="isCardCollapsed">
+        <div class="card-body">
+          <div class="row">
+            <table class="table table-responsive-sm">
+              <tr>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>Pincode</mat-label>
+                    <input matInput placeholder="Pincode" [(ngModel)]="pincode" required>
+                  </mat-form-field>
+                </td>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>Delivery Charge</mat-label>
+                    <input matInput type="number" placeholder="Delivery Charge" [(ngModel)]="deliveryCharge">
+                  </mat-form-field>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>Delivery From Time</mat-label>
+                    <input matInput type="time" class="example-right-align" [(ngModel)]="fromTime">
+                  </mat-form-field>
+                </td>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>Delivery End Time</mat-label>
+                    <input matInput type="time" class="example-right-align" [(ngModel)]="tillTime" >
+                  </mat-form-field>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>Minimum Amount For Free Delivery</mat-label>
+                    <input matInput type="number" placeholder="Minimum Amount For Free Delivery" [(ngModel)]="minimumChargeForFreeDelivery" required>
+                  </mat-form-field>
+                </td>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>Time To Deliver (hours)</mat-label>
+                    <input matInput type="number" placeholder="Time To Deliver" [(ngModel)]="minimumDeliveryInHours" required>
+                  </mat-form-field>
+                  <mat-hint><small>In Days - {{this.minimumDeliveryInHours/24 | number:'1.2-2'}}</small></mat-hint>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <ngx-loading [show]="loading"></ngx-loading>
+        <div class="card-header">
+          <i class="fa fa-list-alt"></i>Avaliable Pincode List
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <table class="table table-responsive-sm">
+              <tr>
+                <th>Pincode</th>
+                <th>Delivery Charge</th>
+                <th>From Time</th>
+                <th>End Time</th>
+                <th>Min. Amt. For Delivery</th>
+                <th>Min. Time For Delivery</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+              <tbody>
+                <tr *ngFor="let pin of pincodedetails">
+                  <td>{{pin.pincode}}</td>
+                  <td>{{pin.deliverycharge}}</td>
+                  <td>{{pin.deliveryfromtime}}</td>
+                  <td>{{pin.deliverytilltime}}</td>
+                  <td>{{pin.minimumamtforfreedelivery}}</td>
+                  <td>{{pin.minimumdeliveryhours}}</td>
+                  <td>
+                    <span *ngIf="pin.active" class="badge badge-success">Deliverable</span>
+                    <span *ngIf="!pin.active" class="badge badge-warning">Not-Deliverable</span>
+                  </td>
+                  <td>
+                    <mat-slide-toggle color="accent" [checked]="pin.active" (change)="togglePinConfig(pin.pincode)"></mat-slide-toggle>
+                    <i class="fa fa-trash" style="color: red; cursor: pointer;" (click)="deletePinConfig(pin.pincode)"></i>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -36,6 +36,8 @@ export class LoginComponent {
   showOtp = false;
   showPassword = false;
   rememberMe = false;
+  tenantLogo:any;
+  tenantName: string;
 
   constructor(private router: Router,
       private tenantStore: TenantStoreService,
@@ -44,6 +46,8 @@ export class LoginComponent {
       protected alertService: AlertService,
       private _snackBar: MatSnackBar,
       private cookieService: CookieService){
+        this.tenantLogo = this.tenantStore.tenantLogo;
+        this.tenantName = this.tenantStore.tenantName;
   }
 
   emailFormControl = new FormControl('', [
