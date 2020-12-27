@@ -38,10 +38,7 @@ public class DeactivateCouponsScheduledTask extends ScheduledTask {
 				markInProgress();
 				baseService.setTenantInfo(tenant);
 				//deactivate coupons.
-				coupService.findExpiredCoupons().stream().forEach(coupon -> {
-					coupon.setActive(CommonUtil.Key_inactive);
-					coupService.save(coupon);
-				});
+				deactivateCoupons();
 				markCompleted();
 			} catch (Exception e) {
 				audit.setFailureInfo(e.getMessage());
@@ -52,6 +49,30 @@ public class DeactivateCouponsScheduledTask extends ScheduledTask {
 			baseService.clear();
 		});
 		logger.info("Scheduled Task - " + DeactivateCouponsScheduledTask.class.getCanonicalName() + " Completed");
+	}
+	
+	public void executeForCurrentTenant() {
+		logger.info("Scheduled Task - " + DeactivateCouponsScheduledTask.class.getCanonicalName() + " Triggered for realm : " + baseService.getTenantInfo().getTenantID());
+		try {
+			newTaskAudit(baseService.getTenantInfo(), DeactivateCouponsScheduledTask.class.getCanonicalName());
+			markInProgress();
+			deactivateCoupons();
+			markCompleted();
+		} catch (Exception e) {
+			audit.setFailureInfo(e.getMessage());
+			markFailed();
+			logger.error(
+					"Scheduled Task - " + DeactivateCouponsScheduledTask.class.getCanonicalName() + " Exception ",
+					e.getMessage());
+		}
+		logger.info("Scheduled Task - " + DeactivateCouponsScheduledTask.class.getCanonicalName() + " Completed");
+	}
+	
+	private void deactivateCoupons() {
+		coupService.findExpiredCoupons().stream().forEach(coupon -> {
+			coupon.setActive(CommonUtil.Key_inactive);
+			coupService.save(coupon);
+		});
 	}
 
 }

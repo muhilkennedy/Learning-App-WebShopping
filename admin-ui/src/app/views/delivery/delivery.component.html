@@ -21,13 +21,13 @@
               <tr>
                 <td>
                   <mat-form-field appearance="outline" class="matitem">
-                    <mat-label>Pincode</mat-label>
+                    <mat-label>PinCode</mat-label>
                     <input matInput placeholder="Pincode" [(ngModel)]="pincode" required>
                   </mat-form-field>
                 </td>
                 <td>
                   <mat-form-field appearance="outline" class="matitem">
-                    <mat-label>Delivery Charge</mat-label>
+                    <mat-label>Delivery Charge (inr)</mat-label>
                     <input matInput type="number" placeholder="Delivery Charge" [(ngModel)]="deliveryCharge">
                   </mat-form-field>
                 </td>
@@ -49,7 +49,7 @@
               <tr>
                 <td>
                   <mat-form-field appearance="outline" class="matitem">
-                    <mat-label>Minimum Amount For Free Delivery</mat-label>
+                    <mat-label>Minimum Amount For Free Delivery (inr)</mat-label>
                     <input matInput type="number" placeholder="Minimum Amount For Free Delivery" [(ngModel)]="minimumChargeForFreeDelivery" required>
                   </mat-form-field>
                 </td>
@@ -57,8 +57,8 @@
                   <mat-form-field appearance="outline" class="matitem">
                     <mat-label>Time To Deliver (hours)</mat-label>
                     <input matInput type="number" placeholder="Time To Deliver" [(ngModel)]="minimumDeliveryInHours" required>
+                    <mat-hint><small>In Days - {{this.minimumDeliveryInHours/24 | number:'1.0-1'}}</small></mat-hint>
                   </mat-form-field>
-                  <mat-hint><small>In Days - {{this.minimumDeliveryInHours/24 | number:'1.2-2'}}</small></mat-hint>
                 </td>
               </tr>
             </table>
@@ -102,7 +102,8 @@
                   </td>
                   <td>
                     <mat-slide-toggle color="accent" [checked]="pin.active" (change)="togglePinConfig(pin.pincode)"></mat-slide-toggle>
-                    <i class="fa fa-trash" style="color: red; cursor: pointer;" (click)="deletePinConfig(pin.pincode)"></i>
+                    <label>|</label>
+                    <i class="fa fa-trash trashicon" (click)="deletePinConfig(pin.pincode)"></i>
                   </td>
                 </tr>
               </tbody>

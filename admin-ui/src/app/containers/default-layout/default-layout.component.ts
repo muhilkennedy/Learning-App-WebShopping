@@ -29,6 +29,8 @@ export class DefaultLayoutComponent implements OnInit{
   public taskCount: number;
   now:number;
   orderCountInterval:any;
+  showDeliveryConfig: boolean = false;
+  showScheduledTasks: boolean = false;
 
   constructor(public tenantStore: TenantStoreService,
               public userStore: UserStoreService,
@@ -108,12 +110,14 @@ export class DefaultLayoutComponent implements OnInit{
           //allow all access
           this.addNavItem("/employee");
           this.addNavItem("/report");
+          this.showScheduledTasks = true;
         }
         //manager permission
         if(permissionIds.includes(2)){
           // remove employee functionality
           this.addNavItem("/sales");
           this.addNavItem("/invoice-template");
+          this.showDeliveryConfig = true;
         }
         //marketing permission
         if(permissionIds.includes(3)){

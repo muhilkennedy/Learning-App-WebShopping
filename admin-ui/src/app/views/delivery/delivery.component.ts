@@ -1,9 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertService } from '../../shared/_alert';
-import { UserStoreService } from '../../service/userStore/user-store.service';
-import { ProfileService } from '../../shared/profile/profile.service';
-import { DomSanitizer } from '@angular/platform-browser';
-import { TenantStoreService } from '../../service/tenantStore/tenant-store.service';
 import { DeliveryService } from '../../shared/delivery/delivery.service';
 declare var rsaencrypt: Function;
 
@@ -29,7 +25,7 @@ export class DeliveryComponent implements OnInit {
 
   }
 
-  constructor(private deliveryService:DeliveryService){
+  constructor(private deliveryService:DeliveryService, private alertService: AlertService){
     this.getAllPinConfigs();
   }
 
@@ -42,17 +38,22 @@ export class DeliveryComponent implements OnInit {
                             this.pincodedetails = resp.dataList;
                           }
                           else{
-                            alert('failed');
+                            this.alertService.error("Failed : " + resp.errorMessages);
                           }
                           this.loading = false;
                         },
                         (error:any) => {
-                          alert("Failed")
+                          this.alertService.error("Something went wrong! Try again later!");
                         })
   }
 
   createPincodeConfig(){
     this.loading = true;
+    if(this.pincode === undefined || this.pincode === null || this.pincode === ''){
+      this.alertService.warn("Pincode is Mandatory");
+      this.loading = false;
+      return;
+    }
     this.deliveryService.createConfig(this.pincode, this.deliveryCharge,
       this.minimumChargeForFreeDelivery, this.fromTime, this.tillTime, this.minimumDeliveryInHours)
                         .subscribe((resp: any) => {
@@ -60,12 +61,12 @@ export class DeliveryComponent implements OnInit {
                             this.getAllPinConfigs();
                           }
                           else{
-                            alert('failed');
+                            this.alertService.error("Failed : " + resp.errorMessages);
                           }
                           this.loading = false;
                         },
                         (error:any) => {
-                          alert("Failed")
+                          this.alertService.error("Something went wrong! Try again later!");
                         })
   }
 
@@ -77,12 +78,12 @@ export class DeliveryComponent implements OnInit {
                             this.getAllPinConfigs();
                           }
                           else{
-                            alert('failed');
+                            this.alertService.error("Failed : " + resp.errorMessages);
                           }
                           this.loading = false;
                         },
                         (error:any) => {
-                          alert("Failed")
+                          this.alertService.error("Something went wrong! Try again later!");
                         })
   }
 
@@ -94,12 +95,12 @@ export class DeliveryComponent implements OnInit {
                             this.getAllPinConfigs();
                           }
                           else{
-                            alert('failed');
+                            this.alertService.error("Failed : " + resp.errorMessages);
                           }
                           this.loading = false;
                         },
                         (error:any) => {
-                          alert("Failed")
+                          this.alertService.error("Something went wrong! Try again later!");
                         })
   }
 

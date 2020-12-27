@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.Response;
+import com.backend.service.scheduledtask.DeactivateCouponsScheduledTask;
 import com.backend.service.scheduledtask.DeactivateProductsForDeletedCategory;
 import com.backend.service.scheduledtask.ResetDashboardStatusScheduledTask;
 import com.backend.service.scheduledtask.TaskUpdateScheduledTask;
@@ -37,6 +38,9 @@ public class ScheduledTaskController {
 	
 	@Autowired
 	private TaskUpdateScheduledTask taskUpdateTask;
+	
+	@Autowired
+	private DeactivateCouponsScheduledTask deactivateCouponsTask;
 	
 	@RequestMapping(value = "/triggerResetDashBoardTask", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse triggerResetDashBoardTask(HttpServletRequest request) {
@@ -73,6 +77,21 @@ public class ScheduledTaskController {
 		GenericResponse response = new GenericResponse();
 		try {
 			taskUpdateTask.executeForCurrentTenant();
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("triggerTaskUpdateTask : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/triggerDeactivateCouponsTask", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse triggerDeactivateCouponsTask(HttpServletRequest request) {
+		GenericResponse response = new GenericResponse();
+		try {
+			deactivateCouponsTask.executeForCurrentTenant();
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("triggerTaskUpdateTask : " + ex);

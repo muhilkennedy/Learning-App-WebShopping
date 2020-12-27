@@ -19,6 +19,7 @@ export class TaskService {
   resetDashboardScheduledTaskEndpoint = "/secure/admin/scheduledtask/triggerResetDashBoardTask";
   deleteCategoryScheduledTaskEndpoint = "/secure/admin/scheduledtask/triggerDeleteCategoryTask";
   taskUpdateScheduledTaskEndpoint= "/secure/admin/scheduledtask/triggerTaskUpdateTask";
+  deactivateCouponsTaskEndpoint = "/secure/admin/scheduledtask/triggerDeactivateCouponsTask";
 
   constructor(private http: HttpClient) { }
 
@@ -72,6 +73,10 @@ export class TaskService {
 
   taskUpdateScheduledTask(): Observable<any> {
     return this.http.post(environment.backendBaseUrl+this.taskUpdateScheduledTaskEndpoint, null);
+  }
+
+  deactivateCouponsScheduledTask(): Observable<any> {
+    return this.http.post(environment.backendBaseUrl+this.deactivateCouponsTaskEndpoint, null);
   }
 
 }
