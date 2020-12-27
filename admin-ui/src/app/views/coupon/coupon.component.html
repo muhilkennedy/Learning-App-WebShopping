@@ -50,7 +50,8 @@
                   </td>
                   <td>
                     <mat-slide-toggle color="accent" [checked]="coupon.active" (change)="toggleCouponStatus(coupon)"></mat-slide-toggle>
-                    <i class="fa fa-trash" style="color: red; cursor: pointer;" (click)="deleteCoupon(coupon)"></i>
+                    <label>|</label>
+                    <i class="fa fa-trash trashicon" style="color: red; cursor: pointer;" (click)="deleteCoupon(coupon)"></i>
                   </td>
                 </tr>
               </tbody>

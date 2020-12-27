@@ -89,7 +89,7 @@ export class ManageProductComponent implements OnInit {
       this.fileToUpdate = files.item(0);
     }
     else{
-      alert('Format not supported! Please upload jpeg/jpg/png file');
+      this.alertService.warn('Format not supported! Please upload jpeg/jpg/png file');
     }
   }
 

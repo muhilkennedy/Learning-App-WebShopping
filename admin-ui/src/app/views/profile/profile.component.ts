@@ -70,7 +70,22 @@ export class ProfileComponent implements OnInit {
 
   handleFileUpdate(files: FileList) {
     this.profilePic = URL.createObjectURL(files.item(0));
-    this.fileToUpdate = files.item(0);
+    if (this.isValidFile(files.item(0).name)) {
+      this.fileToUpdate = files.item(0);
+    }
+    else{
+      this.alertService.warn('Format not supported! Please upload jpeg/jpg file');
+    }
+  }
+
+  isValidFile(name: String) {
+    var ext = name.substring(name.lastIndexOf('.') + 1);
+    if (ext.toLowerCase() == 'jpeg' || ext.toLowerCase() == 'jpg') {
+        return true;
+    }
+    else {
+        return false;
+    }
   }
 
   save(){

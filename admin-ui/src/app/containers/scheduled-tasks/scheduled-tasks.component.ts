@@ -46,9 +46,26 @@ export class ScheduledTasksComponent implements OnInit {
                       alert('Scheduled Task Error!');
                     })
   }
+
   taskUpdate(){
     this.loading = true;
     this.taskService.taskUpdateScheduledTask()
+                    .subscribe((resp:any) => {
+                      if(resp.statusCode === 200){
+                        this.loading = false;
+                      }
+                      else{
+                        alert('Scheduled Task Error!');
+                      }
+                    },
+                    (error:any) => {
+                      alert('Scheduled Task Error!');
+                    })
+  }
+
+  deactivateCoupons(){
+    this.loading = true;
+    this.taskService.deactivateCouponsScheduledTask()
                     .subscribe((resp:any) => {
                       if(resp.statusCode === 200){
                         this.loading = false;
