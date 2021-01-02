@@ -1,0 +1,29 @@
+To check docker images:
+docker images
+
+To check docker container:
+docker ps -a
+
+To build new JDK file:
+mvn clean install
+
+To build backend image:
+docker build -t manivannan11/backend .
+
+To run the eniter application:
+docker-compose up
+
+To open MySql container:
+docker exec -it d590e996930d mysql -uroot -p
+
+To check docker network:
+docker network ls
+
+To connect and run backend image with existing sql container:
+docker run --name backend --network b14d49d4d907 -p 8080:8080 --link backendparent_myapp-mysql_1:mysql backend
+
+MySql backup:
+docker exec a64daba711c7 /usr/bin/mysqldump -u devuser --password=Dev@1234 clouddatabase > backup.sql
+
+Restore MySql:
+cat backup1.sql | docker exec -i 3bec01d15445 /usr/bin/mysql -u devuser --password=Dev@1234 clouddatabase 
