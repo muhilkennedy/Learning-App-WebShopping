@@ -1,0 +1,103 @@
+<header id="header"><!--header-->
+  <!--header_top-->
+  <!-- <div class="header_top">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="contactinfo">
+            <ul class="nav nav-pills">
+              <li><a href="#"><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
+              <li><a href="#"><i class="fa fa-envelope"></i> info@domain.com</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="social-icons pull-right">
+            <ul class="nav navbar-nav">
+              <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+              <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+              <li><a href="#"><i class="fa fa-instagram"></i></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+
+  <div class="header-middle"><!--header-middle-->
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-3">
+          <div class="logo pull-left">
+            <a (click)="openHome()"><img class="tenantlogo" src="{{tenantStore.tenantLogo}}" alt="TenantLogo" /></a>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="shop-menu pull-right">
+
+          </div>
+        </div>
+        <div class="col-sm-1">
+          <div *ngIf="isLoggedIn()" class="shop-menu pull-right">
+            <label>Hi </label><span> {{userStore.firstName}}</span>
+          </div>
+        </div>
+        <div class="col-sm-1">
+          <div class="shop-menu pull-right">
+            <a class="notification" style="cursor: pointer;" (click)="openCart()">
+              <i class="fa fa-shopping-cart"> Cart</i>
+              <span class="badge">{{userStore.cartCount}}</span>
+            </a>
+          </div>
+        </div>
+        <div  *ngIf="!isLoggedIn()" class="col-sm-1">
+          <div class="shop-menu pull-right">
+            <a style="cursor: pointer;" (click)="openLogin()"><i class="fa fa-lock"></i> Login</a>
+          </div>
+        </div>
+        <div  *ngIf="isLoggedIn()" class="col-sm-1">
+          <div class="shop-menu pull-right">
+            <a style="cursor: pointer;" ><i class="fa fa-user"></i> Profile</a>
+          </div>
+        </div>
+        <!-- <div class="col-sm-9">
+          <div class="shop-menu pull-right">
+            <ul class="nav navbar-nav">
+              <li><a href="#"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+              <li><a href="#"><i class="fa fa-lock"></i> Login</a></li>
+            </ul>
+          </div>
+        </div> -->
+      </div>
+    </div>
+  </div><!--/header-middle-->
+
+  <div class="header-bottom">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+          </div>
+          <div class="mainmenu pull-left">
+            <ul class="nav navbar-nav collapse navbar-collapse">
+              <li><a style="cursor: pointer;" (click)="openHome()" class="active"><i class="fa fa-home"></i> Home</a></li>
+              <li><a style="cursor: pointer;" (click)="openProductList()"><i class="fa fa-shopping-cart"></i> Shop Now</a></li>
+              <li><a style="cursor: pointer;" (click)="openContact()"><i class="fa fa-phone"></i> Contact</a></li>
+              <!-- <li>
+                <div class="search_box">
+                <input type="text" placeholder="Search"/>
+              </div></li> -->
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</header>

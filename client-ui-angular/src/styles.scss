@@ -1,0 +1,47 @@
+/* You can add global styles to this file, and also import other style files */
+@import '../src/assets/css/bootstrap.min.css';
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* Importing Bootstrap SCSS file. */
+@import '~bootstrap/scss/bootstrap';
+
+.regular-price {
+  font-size: 24px;
+  color: #fe7865;
+  font-weight: 600;
+}
+
+.product-description .product-price .discount-price {
+  font-size: 18px;
+  color: #c4c4c4;
+  position: relative;
+  margin-left: 10px; }
+.product-description .product-price .discount-price::before {
+  position: absolute;
+  content: '';
+  width: 100%;
+  height: 1px;
+  background-color: #222;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  -o-transform: translateY(-50%);
+  transform: translateY(-50%); }
+
+.single-product-items .product-item-image .product-discount-tag {
+  width: 70px;
+  height: 70px;
+  background-color: #fe7865;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  text-align: center;
+  border-radius: 50%; }
+  .single-product-items .product-item-image .product-discount-tag p {
+    color: #fff;
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 70px; }
