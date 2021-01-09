@@ -1,0 +1,108 @@
+<section id="slider"><!--slider-->
+  <div class="container">
+    <ngx-loading [show]="loading"></ngx-loading>
+    <div class="row">
+      <div class="col-sm-12">
+        <div id="slider-carousel" class="carousel slide" data-ride="carousel">
+          <ol class="carousel-indicators">
+            <li data-target="#slider-carousel" data-slide-to="0" class="active"></li>
+            <!-- <li data-target="#slider-carousel" data-slide-to="1"></li>
+            <li data-target="#slider-carousel" data-slide-to="2"></li> -->
+            <li data-target="#slider-carousel" *ngFor="let m of homeMedia; let i = index" ></li>
+          </ol>
+
+          <div class="carousel-inner">
+            <div class="item active">
+              <div class="col-sm-6" *ngIf="mandateHomeMedia !== undefined">
+                <h1><span>{{mandateHomeMedia.title}}</span></h1>
+                <h2>{{mandateHomeMedia.message}}</h2>
+                <p>{{mandateHomeMedia.description}}</p>
+                <button *ngIf="isShopNow()" type="button" class="btn btn-default get">Shop Now</button>
+                <button *ngIf="isContactNow()" type="button" class="btn btn-default get">Click Here For ContactInfo</button>
+              </div>
+              <div class="col-sm-6" *ngIf="mandateHomeMedia !== undefined">
+                <img src="{{mandateHomeMedia.image}}" class="girl img-responsive" alt="" />
+              </div>
+            </div>
+            <div class="item" *ngFor="let media of homeMedia">
+              <div class="col-sm-6" >
+                <h1><span>{{media.title}}</span></h1>
+                <h2>{{media.message}}</h2>
+                <p>{{media.description}}</p>
+                <!-- <button type="button" class="btn btn-default get">Get it now</button> -->
+              </div>
+              <div class="col-sm-6">
+                <img src={{media.image}} class="girl img-responsive" alt="" />
+              </div>
+            </div>
+          </div>
+
+          <a href="#slider-carousel" class="left control-carousel hidden-xs" data-slide="prev">
+            <i class="fa fa-angle-left"></i>
+          </a>
+          <a href="#slider-carousel" class="right control-carousel hidden-xs" data-slide="next">
+            <i class="fa fa-angle-right"></i>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section><!--/slider-->
+
+<section id="featured">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12 padding-right">
+        <div class="features_items"><!--features_items-->
+          <h2 class="title text-center">Features Products</h2>
+          <div class="col-sm-4" *ngFor="let prod of featuresProducts">
+            <div class="product-image-wrapper" style="border-color: antiquewhit">
+              <div class="single-products">
+                <div class="productinfo text-center">
+                  <div class="productinfo text-center">
+                    <div *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0" class="vc">
+                      <p>{{prod.productContent.offer}}% Off</p>
+                     </div>
+                    <img style="object-fit: cover;" width="250px" height="300px" src={{getProductImage(prod)}} alt="" />
+                    <h3>{{prod.productContent.productName}}</h3>
+                    <p>{{prod.productContent.brandName}}</p>
+                    <span *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0" style="text-decoration: line-through;">₹ {{prod.productContent.cost}} </span>
+                    <span class="regular-price"> ₹{{prod.productContent.sellingCost}}</span>
+                    <br/>
+                    <br/>
+                    <a class="btn btn-default add-to-cart" (click)="addToCart(prod.productContent)"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                  </div>
+                </div>
+              </div>
+              <!-- <div class="choose">
+                <ul class="nav nav-pills nav-justified">
+                  <li><a href=""><i class="fa fa-plus-square"></i>Add to wishlist</a></li>
+                  <li><a href=""><i class="fa fa-plus-square"></i>Add to compare</a></li>
+                </ul>
+              </div> -->
+            </div>
+          </div>
+        </div><!--features_items-->
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr/>
+
+<section id="banner">
+  <div class="container">
+    <div class="row" *ngIf="homeBannerLength != undefined && homeBannerLength > 0">
+    <ngb-carousel>
+      <ng-template ngbSlide *ngFor="let slide of homeBanner">
+          <img class="bannerstyle" src={{slide.image}} alt="slides">
+          <!-- <div class="carousel-caption">
+              <p>{{slide.title}}</p>
+          </div> -->
+      </ng-template>
+    </ngb-carousel>
+  </div>
+  </div>
+</section>
+<br/>

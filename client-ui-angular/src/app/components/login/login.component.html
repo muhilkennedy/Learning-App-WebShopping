@@ -1,0 +1,70 @@
+<ngx-loading [show]="loading"></ngx-loading>
+<section id="loginform"><!--form-->
+  <div class="container">
+    <hr/>
+    <div class="row">
+      <div class="col-sm-12" style="text-align: -webkit-center;">
+        <div class="login-form"><!--login form-->
+          <h2>Social Login</h2>
+          <div class="social-container">
+            <div class="button-container">
+              <button (click)="googleLogin()" mat-mini-fab color="accent" style="background-color: aliceblue;">
+                <!-- <mat-icon>plus_one</mat-icon> -->
+                <i class="fa fa-google-plus" style="color: red;"></i>
+              </button>
+              <div class="vertical"></div>
+              <button disabled mat-mini-fab color="accent">
+                <!-- <mat-icon>plus_one</mat-icon> -->
+                <i class="fa fa-facebook" style="color: blue;"></i>
+              </button>
+            </div>
+            <!-- <a href="#" class="social" disabled><i class="fa fa-facebook" style="color: blue;"></i></a> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr/>
+    <div class="row">
+      <div class="col-sm-4">
+        <ngx-loading [show]="signInLoading"></ngx-loading>
+        <div class="login-form"><!--login form-->
+          <h2>Login to your account</h2>
+          <form>
+            <input type="email" name="emailid" placeholder="Email Address" [(ngModel)]="emailId"/>
+            <input type="password" name="password"  placeholder="Password" [(ngModel)]="password"/>
+            <span>
+              <input type="checkbox" class="checkbox" name="rememberme" [(ngModel)]="rememberMe"/>
+              Keep me signed in
+            </span>
+            <button type="submit" class="btn btn-default" (click)="login()">Login</button>
+          </form>
+        </div><!--/login form-->
+      </div>
+      <div class="col-sm-4" style="text-align: -webkit-center; padding-top: 50px;">
+        <h2 class="or">OR</h2>
+      </div>
+      <div class="col-sm-4">
+        <ngx-loading [show]="registerLoding"></ngx-loading>
+        <div class="signup-form"><!--sign up form-->
+          <h2>New User Signup!</h2>
+          <form>
+          <table>
+            <tr>
+              <td>
+                <input type="text" name="fname" placeholder="First Name" [(ngModel)]="fName"/>
+              </td>
+              <td>
+                <input type="text" name="lname"  placeholder="Last Name" [(ngModel)]="lName"/>
+              </td>
+            </tr>
+          </table>
+            <input type="email" name="email"  placeholder="Email Address" [(ngModel)]="emailId"/>
+            <input type="password" name="pass"  placeholder="Password" [(ngModel)]="password"/>
+            <button type="submit" class="btn btn-default" (click)="registerCustomer()">Signup</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <hr/>
+  </div>
+</section>

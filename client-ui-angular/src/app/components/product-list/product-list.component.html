@@ -1,0 +1,94 @@
+<section>
+  <div class="container">
+    <ngx-loading [show]="loading"></ngx-loading>
+    <div class="row">
+      <div class="col-sm-3">
+        <div class="left-sidebar">
+          <h2>Category</h2>
+          <div class="panel-group category-products" id="accordian"><!--category-productsr-->
+
+            <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+              <!-- This is the tree node template for leaf nodes -->
+              <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+                <!-- use a disabled button to provide padding for tree leaf -->
+                <button mat-icon-button disabled></button>
+                <a style="cursor: pointer;" (click)="getProducts(node.catId)">{{node.catName}}</a>
+              </mat-tree-node>
+              <!-- This is the tree node template for expandable nodes -->
+              <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding>
+                <button mat-icon-button matTreeNodeToggle
+                        [attr.aria-label]="'Toggle ' + node.name">
+                  <mat-icon class="mat-icon-rtl-mirror">
+                    {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                  </mat-icon>
+                </button>
+                <a style="cursor: pointer;" (click)="getProducts(node.catId)">{{node.catName}}</a>
+              </mat-tree-node>
+            </mat-tree>
+
+          </div><!--/category-productsr-->
+
+          <!--brands_products-->
+          <!-- <div class="brands_products">
+            <h2>Brands</h2>
+            <div class="brands-name">
+              <ul class="nav nav-pills nav-stacked">
+                <li><a href=""> <span class="pull-right">(50)</span>Acne</a></li>
+                <li><a href=""> <span class="pull-right">(56)</span>Grüne Erde</a></li>
+              </ul>
+            </div>
+          </div> -->
+
+          <!-- FILTERS -->
+          <div class="price-range">
+            <h2>Filters</h2>
+            <div class="well">
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="col-sm-9 padding-right">
+        <div class="features_items">
+          <ngx-loading [show]="productLoading"></ngx-loading>
+          <h2 class="title text-center">PRODUCTS</h2>
+          <div class="col-sm-4" *ngFor="let prod of products">
+            <div class="product-image-wrapper">
+              <div class="single-products">
+                <div class="productinfo text-center">
+                  <div *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0" class="vc">
+                    <p>{{prod.productContent.offer}}% Off</p>
+                   </div>
+                  <img style="object-fit: cover;" width="250px" height="300px" src={{getProductImage(prod)}} alt="product Image" />
+                  <h3>{{prod.productContent.productName}}</h3>
+                  <p>{{prod.productContent.brandName}}</p>
+                  <span *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0" style="text-decoration: line-through;">₹ {{prod.productContent.cost}} </span>
+                  <span class="regular-price"> ₹{{prod.productContent.sellingCost}}</span>
+                  <br/>
+                  <br/>
+                  <a (click)="addToCart(prod.productContent)" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="row">
+      <div class="col-sm-3">
+        <div class="left-sidebar">
+        </div>
+      </div>
+      <div class="col-sm-9">
+      <mat-paginator [length]="productCount"
+                     [pageSize]="pageSize"
+                     [pageSizeOptions]="pageSizeOptions"
+                     (page)="action($event)">
+      </mat-paginator>
+      </div>
+    </div>
+  </div>
+</section>
