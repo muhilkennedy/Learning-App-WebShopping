@@ -51,7 +51,7 @@ public class RealmFilter implements Filter {
 			//Allow access for cross site request due to multiple deployments.
 			res.setHeader("Access-Control-Allow-Origin", req.getHeader(Constants.Header_Origin));
 			res.setHeader("Access-Control-Allow-Credentials","true");
-			String origin = req.getHeader(Constants.Header_Origin);
+			String origin = req.getHeader(Constants.Header_RequestFrom);
 			if(StringUtils.isNotEmpty(origin)) {
 				baseService.setOrigin(origin);
 			}
@@ -61,7 +61,7 @@ public class RealmFilter implements Filter {
 				chain.doFilter(request, response);
 			}
 			// incase of socket request seperate interceptor will handle header parsing and realm initialization.
-			else if(req.getRequestURI().contains("wsocket") || req.getRequestURI().contains("socket")) {
+			else if(req.getRequestURI().contains("wsocket") || req.getRequestURI().contains("socket") || req.getRequestURI().contains("social/googleredirect")) {
 				chain.doFilter(req, res);
 			}
 			// Incase of prod mode both tenantId and Origin url mandatory.

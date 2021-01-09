@@ -59,6 +59,23 @@ public class PosDao {
 		}
 	}
 	
+	public POSData getPOSById (String id, String tenantId) throws Exception{
+		POSData data = new POSData();
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			PreparedStatement stmt = con.prepareStatement("select * from pointofsale where pos->\"$.tenantId\" = ? and pos->\"$.primaryKey\" = ?");
+			stmt.setString(1, tenantId);
+			stmt.setString(2, id);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				data = new ObjectMapper().readValue(rs.getString(1), POSData.class);
+			}
+			return data;
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+	}
+	
 	public List<POSData> getPOS (String mobile, String tenantId) throws Exception{
 		List<POSData> json = new ArrayList<POSData>();
 		try (Connection con = dbUtil.getConnectionInstance()) {

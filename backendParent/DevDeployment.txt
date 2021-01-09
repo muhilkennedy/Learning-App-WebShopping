@@ -19,3 +19,7 @@ mysqldump -uroot -proot@123 clouddatabase > E:\12dump.sql
 
 import:
 mysql -uroot -proot@123 new_database_name < E:\12dump.sql
+
+consent:
+772727132288-2bv75lhs16rsohc5rg3pscui1ugl9jff
+A21v5mAmXUrNrMyrlnYTvN2Q

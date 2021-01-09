@@ -24,13 +24,14 @@ private Logger logger = LoggerFactory.getLogger(InvoiceDao.class);
 	@Autowired
 	private DBUtil dbUtil;
 	
-	public void createInvoiceTemplate(String tenantId, Blob blob) throws Exception {
+	public void createInvoiceTemplate(String tenantId, Blob blob, Blob posBlob) throws Exception {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con
-					.prepareStatement("insert into invoicetemplate (tenantid , document, active) values (?, ?, ?);");
+					.prepareStatement("insert into invoicetemplate (tenantid , document, posDocument, active) values (?, ?, ?, ?)");
 			stmt.setString(1, tenantId);
 			stmt.setBlob(2, blob);
-			stmt.setBoolean(3, true);
+			stmt.setBlob(3, posBlob);
+			stmt.setBoolean(4, true);
 			stmt.executeUpdate();
 		} catch (Exception ex) {
 			logger.error("Error in template for -> " + tenantId);

@@ -8,6 +8,16 @@
   transform: scale(1.5);
 }
 
+.printicon{
+  color: chocolate;
+  cursor: pointer;
+  transition: transform .2s;
+}
+
+.printicon:hover  {
+  transform: scale(1.5);
+}
+
 .button1{
   outline: 0px !important;
 }

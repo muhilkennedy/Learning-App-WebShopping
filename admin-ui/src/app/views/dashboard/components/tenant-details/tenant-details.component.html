@@ -158,6 +158,19 @@
     <br/>
     <div class="input-group">
       <span class="input-group-prepend fixed-prependWidth">
+        <button disabled class="btn"><i class="fa fa-tag"></i> Tenant TagLine</button>
+      </span>
+      <ngx-loading [show]="loadTenantTag"></ngx-loading>
+      <input [disabled]="!editTenantTag" type="text" id="tagLine" name="insta" class="form-control" placeholder="Tenant TagLine" [(ngModel)] = "tenantTagLine">
+      <span class="input-group-append">
+        <button *ngIf="!editTenantTag" type="button" class="btn btn-outline-primary" (click)="editTenantTag = true"><i class="fa fa-edit"></i></button>
+        <button *ngIf="editTenantTag" type="button" class="btn btn-outline-danger" (click)="editTenantTag = false"><i class="fa fa-remove"></i></button>
+        <button *ngIf="editTenantTag" type="button" class="btn btn-outline-success" (click)="editTenantTag = true; updateTenantTagLine()"><i class="fa fa-check"></i></button>
+      </span>
+    </div>
+    <br/>
+    <div class="input-group">
+      <span class="input-group-prepend fixed-prependWidth">
         <button disabled class="btn"><i class="fa fa-registered"></i> Tenant LOGO</button>
       </span>
       <ngx-loading [show]="loadTenantLogo"></ngx-loading>

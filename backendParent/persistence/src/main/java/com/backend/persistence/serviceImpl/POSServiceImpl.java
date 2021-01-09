@@ -1,5 +1,6 @@
 package com.backend.persistence.serviceImpl;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import com.backend.persistence.entity.CustomerInfo;
 import com.backend.persistence.entity.Product;
 import com.backend.persistence.helper.POSData;
 import com.backend.persistence.service.CustomerInfoService;
+import com.backend.persistence.service.InvoiceService;
 import com.backend.persistence.service.POSService;
 import com.backend.persistence.service.ProductService;
 
@@ -45,12 +47,16 @@ public class POSServiceImpl implements POSService {
 	@Autowired
 	private EmailService emailService;
 	
+	@Autowired
+	private InvoiceService invoiceService;
+	
 	@Override
-	public void createPOS(POSData data) throws Exception {
+	public String createPOS(POSData data) throws Exception {
 		data.setTimeCreated(CommonUtil.convertToUTC(data.getTimeCreated()));
 		JSONObject json = new JSONObject(data);
 		json.put(TenantUtil.Key_TenantId, baseService.getTenantInfo().getTenantID());
-		json.put(DBUtil.Key_PrimaryKey, posDao.getPOSKEY());
+		String posKey = posDao.getPOSKEY();
+		json.put(DBUtil.Key_PrimaryKey, posKey);
 		json.put(POSData.Key_CreatedBy, ((EmployeeInfo)baseService.getUserInfo()).getFirstName());
 		json.put(POSData.Key_CreatedById, ((EmployeeInfo)baseService.getUserInfo()).getEmployeeId());
 		posDao.createPOS(json);
@@ -70,11 +76,17 @@ public class POSServiceImpl implements POSService {
 										customer.getEmailId(), customer.getFirstName(), customer.getLastName(), baseService.getOrigin());
 			}
 		}
+		return posKey;
 	}
 	
 	@Override
 	public List<POSData> getPOSDATA (String mobile) throws Exception{
 		return posDao.getPOS(mobile, baseService.getTenantInfo().getTenantID());
+	}
+	
+	@Override
+	public POSData getPOSDATAById(String id) throws Exception {
+		return posDao.getPOSById(id, baseService.getTenantInfo().getTenantID());
 	}
 	
 	@Override
@@ -96,6 +108,15 @@ public class POSServiceImpl implements POSService {
 	@Override
 	public Map<String, BigDecimal> posWeeklyReport() throws Exception{
 		return posDao.getPosWeeklyTotal(baseService.getTenantInfo().getTenantID());
+	}
+	
+	@Override
+	public File getPOSInvoice(String id) throws Exception {
+		POSData posData = getPOSDATAById(id);
+		if(posData != null ) {
+			return invoiceService.generatePOSInvoice(posData);
+		}
+		return null;
 	}
 
 }

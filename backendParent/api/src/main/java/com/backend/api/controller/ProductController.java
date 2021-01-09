@@ -64,6 +64,28 @@ public class ProductController {
 		}
 		return response;
 	}
+	
+	@RequestMapping(value = "/getProductsWithImages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Product> getProductsWithImages(HttpServletRequest request,
+			@RequestParam(value = "pIds", required = false) List<Integer> pIds,
+			@RequestParam(value = "cIds", required = false) List<Integer> cIds,
+			@RequestParam(value = "sortField", required = false) String sortByField,
+			@RequestParam(value = "sortType", required = false) String sortByType) {
+		GenericResponse<Product> response = new GenericResponse<>();
+		try {
+			String limit = request.getHeader(Constants.Header_Limit);
+			String offset = request.getHeader(Constants.Header_Offset);
+			response.setDataList(
+					productService.getProducts(cIds, pIds, limit, offset, sortByField, sortByType));
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("getProductsWithImages : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
 
 	@RequestMapping(value = "/getProductsById", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<Product> getProductsById(HttpServletRequest request,

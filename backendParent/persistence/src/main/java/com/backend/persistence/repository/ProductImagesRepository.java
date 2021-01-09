@@ -22,12 +22,16 @@ import com.backend.persistence.entity.ProductImages;
 public interface ProductImagesRepository extends JpaRepository<ProductImages, Integer> {
 	
 	String findAllImagesForProductQuery = "select pi from ProductImages pi where pi.tenant = :tenant and pi.productId = :pId";
+	String findAllImagesForProductByIdQuery = "select * from ProductImages where tenantid = :tenant and productid = :pId";
 	String findImageByIdQuery  = "select pi from ProductImages pi where pi.tenant = :tenant and pi.pImagesId = :imageId";
 	String deleteByIdQuery = "delete from ProductImages pi where pi.tenant = :tenant and pi.pImagesId = :imageId";
 	String getProductCountByIdQuery = "select count(*) from ProductImages pi where pi.tenant = :tenant and pi.productId = :pId";
 	
 	@Query(findAllImagesForProductQuery)
 	List<ProductImages> findAllImagesForProduct(@Param("tenant") Tenant realm, @Param("pId") Product product);
+	
+	@Query(value = findAllImagesForProductByIdQuery, nativeQuery = true)
+	List<ProductImages> findAllImagesForProduct(@Param("tenant") String realm, @Param("pId") int pId);
 	
 	@Query(findImageByIdQuery)
 	ProductImages findImageById(@Param("tenant") Tenant realm, @Param("imageId") int imageId);

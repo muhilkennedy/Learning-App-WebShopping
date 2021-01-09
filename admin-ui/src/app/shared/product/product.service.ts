@@ -112,7 +112,7 @@ export class ProductService {
   }
 
   createOrUpdateProduct(file, catId, productId, productName, productBrand, cost, offer,
-                        description, active, pcode, unitsInStock){
+                        description, active, pcode, unitsInStock, sellingCost){
     const uploadData = new FormData();
     if(file === undefined){
       file=null;
@@ -128,6 +128,7 @@ export class ProductService {
     uploadData.append('active', active);
     uploadData.append('code', pcode);
     uploadData.append('units', unitsInStock);
+    uploadData.append('sellingCost', sellingCost);
     return this.http.post(environment.backendBaseUrl+this.updateOrCreateProductEndpoint, uploadData);
   }
 

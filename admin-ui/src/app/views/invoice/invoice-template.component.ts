@@ -16,6 +16,12 @@ export class InvoiceTemplateComponent implements OnInit {
   pdfSrc: string;
   downloadURl;
 
+  posLoading: boolean  = false;
+  posDocumentLoading: boolean = true;
+  posFileToUpdate: File;
+  posPdfSrc: string;
+  posDownloadUrl;
+
   constructor(private alertService: AlertService, private invoiceService: InvoiceService,
     private sanitizer: DomSanitizer){
 
@@ -24,11 +30,22 @@ export class InvoiceTemplateComponent implements OnInit {
   ngOnInit(){
     this.getActiveTemplatePDF();
     this.prepareDownloadFile();
+    this.getPosActiveTemplatePDF();
+    this.preparePosDownloadFile();
   }
 
   handleFileUpdate(files: FileList) {
     if (this.isValidFile(files.item(0).name)) {
       this.fileToUpdate = files.item(0);
+    }
+    else{
+      this.alertService.error('Format not supported! Please upload doc/docx file');
+    }
+  }
+
+  handlePosFileUpdate(files: FileList) {
+    if (this.isValidFile(files.item(0).name)) {
+      this.posFileToUpdate = files.item(0);
     }
     else{
       this.alertService.error('Format not supported! Please upload doc/docx file');
@@ -95,6 +112,62 @@ export class InvoiceTemplateComponent implements OnInit {
                           else{
                             const blob = new Blob([resp], { type: 'application/octet-stream' });
                             this.downloadURl = this.sanitizer.bypassSecurityTrustResourceUrl(window.URL.createObjectURL(blob));}
+                        },
+                        (error) => {
+                          this.alertService.error("Something went wrong!", error)
+                      });
+  }
+
+  uploadPosFile(){
+    this.posLoading = true;
+    this.invoiceService.uploadPosTemplate(this.posFileToUpdate)
+                        .subscribe((resp: any) => {
+                          if(resp.statusCode === 200){
+                            this.alertService.success("Template Uploaded Successfully!");
+                            this.getPosActiveTemplatePDF();
+                            this.preparePosDownloadFile();
+                          }
+                          else{
+                            this.alertService.error("Failed to upload template : " + resp.errorMessages);
+                          }
+                          this.posLoading = false;
+                        },
+                        (error) => {
+                          this.alertService.error("Something went wrong!", error)
+                          this.loading = false;
+                      });
+
+  }
+
+  getPosActiveTemplatePDF(){
+    this.posDocumentLoading = true;
+    this.invoiceService.getPOSTemplate()
+                        .subscribe((resp: any) => {
+                          if(resp.statusCode != undefined && resp.statusCode === 204){
+                            this.alertService.warn("No Active template Found! Please upload a Invoice Template");
+                          }
+                          else{
+                            let file = new Blob([resp], { type: 'application/vnd.openxmlformats' });
+                            var fileURL = URL.createObjectURL(file);
+                            this.posPdfSrc = fileURL;
+                          }
+                          this.posDocumentLoading = false;
+                        },
+                        (error) => {
+                          this.alertService.error("Something went wrong!", error)
+                          this.documentLoading = false;
+                      });
+  }
+
+  preparePosDownloadFile(){
+    this.invoiceService.getPosTemplateDocument()
+                        .subscribe((resp: any) => {
+                          if(resp.statusCode != undefined && resp.statusCode === 204){
+                            this.alertService.warn("No Active template Found! Please upload a Invoice Template");
+                          }
+                          else{
+                            const blob = new Blob([resp], { type: 'application/octet-stream' });
+                            this.posDownloadUrl = this.sanitizer.bypassSecurityTrustResourceUrl(window.URL.createObjectURL(blob));}
                         },
                         (error) => {
                           this.alertService.error("Something went wrong!", error)

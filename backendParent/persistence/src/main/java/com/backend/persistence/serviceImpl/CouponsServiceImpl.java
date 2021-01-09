@@ -76,4 +76,18 @@ public class CouponsServiceImpl implements CouponsService {
 		}
 	}
 	
+	@Override
+	public Coupons getCouponByCode(String code) {
+		return coupRepo.findCouponByCode(baseService.getTenantInfo(), code);
+	}
+	
+	@Override
+	public Coupons verifyIfCouponApplicableById(String code) {
+		Coupons coupon = getCouponByCode(code);
+		if(coupon != null && coupon.isActive()) {
+			return coupon;
+		}
+		return null;
+	}
+	
 }

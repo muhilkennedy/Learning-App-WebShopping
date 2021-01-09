@@ -64,6 +64,9 @@ public class Orders implements Serializable {
 	@Column(name = "PAYMENTMODEID")
 	private int paymentModeId;
 	
+	@Column(name = "ORDERPLACEDTIME")
+	private long orderPlacedTime;
+	
 	@Column(name = "EMPLOYEEID", nullable = true)
 	private int employeeId;
 	
@@ -72,6 +75,9 @@ public class Orders implements Serializable {
 	
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
 	private List<OrderDetails> orderDetails;
+	
+	@Column(name = "CUSTOMERADDRESSID")
+	private int customerAddressId;
 
 	public Tenant getTenant() {
 		return tenant;
@@ -171,6 +177,22 @@ public class Orders implements Serializable {
 
 	public void setPaymentModeId(int paymentModeId) {
 		this.paymentModeId = paymentModeId;
+	}
+
+	public int getCustomerAddressId() {
+		return customerAddressId;
+	}
+
+	public void setCustomerAddressId(int customerAddressId) {
+		this.customerAddressId = customerAddressId;
+	}
+
+	public long getOrderPlacedTime() {
+		return orderPlacedTime;
+	}
+
+	public void setOrderPlacedTime(long orderPlacedTime) {
+		this.orderPlacedTime = orderPlacedTime;
 	}
 
 }

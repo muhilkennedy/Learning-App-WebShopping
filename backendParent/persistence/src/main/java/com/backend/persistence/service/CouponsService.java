@@ -22,4 +22,8 @@ public interface CouponsService {
 
 	Coupons findCouponById(int id);
 
+	Coupons getCouponByCode(String code);
+
+	Coupons verifyIfCouponApplicableById(String code);
+
 }

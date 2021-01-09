@@ -131,6 +131,18 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	@Override
+	public List<ProductPOJO> getProducts(List<Integer> cIds, List<Integer> pIds, String limit, String offset, String sortByField, String sortByType) throws Exception {
+		//considering always only one category will be sent from client
+		if(cIds != null && cIds.size() > 0) {
+			cIds = getProductRecursiveByCategoryId(cIds.get(0));
+		}
+		if(CommonUtil.isValidStringParam(sortByField) && CommonUtil.isValidStringParam(sortByType)) {
+			return productDao.getProductsWithImages(cIds, pIds, limit, offset, sortByField, sortByType);
+		}
+		return productDao.getProductsWithImages(cIds, pIds, limit, offset, null, null);
+	}
+	
+	@Override
 	public int getProductsCount(List<Integer> cIds, boolean includeInactive) throws Exception {
 		return productDao.getProductsCount(cIds, includeInactive);
 	}
@@ -142,7 +154,7 @@ public class ProductServiceImpl implements ProductService {
 	
 	@Override
 	public List<Integer> getProductRecursiveByCategoryId(int cId) throws Exception{
-		return productDao.getProductsIdsByCategoryId(cId);
+		return productDao.getChildCategoriesIdByCategoryId(cId);
 	}
 	
 	@Override
@@ -187,6 +199,9 @@ public class ProductServiceImpl implements ProductService {
 			}
 			if (product.getOffer() != null && product.getOffer().floatValue() >= 0) {
 				newProduct.setOffer(product.getOffer());
+			}
+			if (product.getSellingCost() != null && product.getSellingCost().floatValue() > 0) {
+				newProduct.setSellingCost(product.getSellingCost());
 			}
 			if (product.getQuantityInStock() >= 0) {
 				newProduct.setQuantityInStock(product.getQuantityInStock());

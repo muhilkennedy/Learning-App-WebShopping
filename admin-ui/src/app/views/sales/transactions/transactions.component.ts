@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { EmployeeService } from '../../../shared/employee/employee.service';
 import { PosService } from '../../../shared/pos/pos.service';
@@ -177,6 +177,28 @@ export class TransactionsComponent implements OnInit {
     if(this.customerDetails !== undefined && this.customerDetails.customerAddress !== null){
       return this.customerDetails.customerAddress[0].pincode;
     }
+  }
+
+  @ViewChild('printModal') myModal;
+  posId:string;
+  showPrintBill(id){
+    this.posId = id;
+    this.myModal.show();
+  }
+
+  getPDF()
+  {
+    this.loading = true;
+    this.posService.getPDF(this.posId)
+                    .subscribe((resp: any) => {
+                        window.open(window.URL.createObjectURL( new Blob([resp], { type: 'application/pdf' })),"_blank");
+                        this.loading = false;
+                        this.myModal.hide();
+                    },
+                    (error) => {
+                      this.alertService.error("Something went wrong!", error)
+                    });
+
   }
 
 }

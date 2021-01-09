@@ -45,6 +45,7 @@ import { PosComponent } from './pos.component';
 import { PosRoutingModule } from './pos-routing.module';
 import { ThermalPrintModule } from 'ng-thermal-print';
 import { BarecodeScannerLivestreamModule } from 'ngx-barcode-scanner';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 @NgModule({
   declarations: [
@@ -103,7 +104,8 @@ import { BarecodeScannerLivestreamModule } from 'ngx-barcode-scanner';
     MatTreeModule,
     AlertModule,
     ThermalPrintModule,
-    BarecodeScannerLivestreamModule
+    BarecodeScannerLivestreamModule,
+    ModalModule
   ]
 })
 export class PosModule { }
