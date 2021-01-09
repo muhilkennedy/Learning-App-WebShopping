@@ -197,5 +197,10 @@ public class LoginServiceImpl implements LoginService {
 			empService.save(info);
 		}
 	}
+	
+	@Override
+	public CustomerInfo getCustomerByEmail(String email) {
+		return customerService.getCustomerByEmail(email);
+	}
 
 }

@@ -7,7 +7,7 @@
           <!--remove later-->
           <!-- <strong>Status: {{status}}</strong> -->
           <div class="float-right">
-              <button (click)="requestUsb()">Connect to USB</button>
+              <!-- <button (click)="requestUsb()">Connect to USB</button> -->
           </div>
           <!-- <div class="float-right">
               <button (click)="print()" [disabled]="status === false"> Print!</button>
@@ -65,6 +65,7 @@
                 <th>Item Code</th>
                 <th style="width: 200px;">Item Name</th>
                 <th>MRP(₹)</th>
+                <th>PRICE(₹)</th>
                 <th>QUANTITY</th>
                 <th>DISCOUNT(%)</th>
                 <th>TOTAL(₹)</th>
@@ -93,6 +94,7 @@
                 </td>
                 <td *ngIf="!(item.itemCode === null || item.itemCode === undefined)"><input type="text" class="form-control" matInput placeholder="Product Name" id="pname-{{i}}" name="pname-{{i}}" [(ngModel)]="item.itemName"></td>
                 <td><input type="number" class="form-control" style="width: 75%;" matInput placeholder="MRP" id="mrp-{{i}}" name="mrp-{{i}}" [(ngModel)]="item.mrp"></td>
+                <td><input type="number" class="form-control" style="width: 75%;" matInput placeholder="MRP" id="mrp-{{i}}" name="mrp-{{i}}" [(ngModel)]="item.sellingCost"></td>
                 <td><input type="number" class="form-control" style="width: 75%;" matInput placeholder="Quantity" id="q-{{i}}" name="q-{{i}}" [(ngModel)]="item.quantity"></td>
                 <td><input type="number" class="form-control" style="width: 50%;" matInput placeholder="Offer" id="dis-{{i}}" name="dis-{{i}}" [(ngModel)]="item.discount"></td>
                 <td>{{calculateTotal(item) | number:'1.2-2'}}</td>
@@ -105,6 +107,7 @@
                 <td></td>
                 <td></td>
                 <td></td>
+                <td></td>
                 <td><small>Total Discount : </small></td>
                 <td>{{calculateTotalDiscount() | number:'1.2-2'}}</td>
                 <td>SUB-TOTAL : </td>
@@ -112,6 +115,7 @@
                 <td></td>
               </tr>
               <tr>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -147,6 +151,27 @@
             </tbody>
           </table>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- confirm print dialog -->
+<div bsModal #primaryModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-primary" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Confirm PDF Generation</h4>
+      </div>
+      <div class="modal-body">
+        <p style="color: green;">SAVE TREES BY USING E-BILL</p>
+        <h3>Do you want to Print POS Bill ?</h3>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="primaryModal.hide()">Close</button>
+          <button type="button" class="btn btn-warning" (click)="getPDF()">
+            <i class="fa fa-print"></i> Print
+          </button>
       </div>
     </div>
   </div>

@@ -10,5 +10,5 @@ export const environment = {
   backendBaseUrl:"http://localhost:8080",
   contextPath:"",
   origin:"http://localhost:4200",
-  orgName: "Nutty Shop"
+  orgName: "Ria Groceries"
 };

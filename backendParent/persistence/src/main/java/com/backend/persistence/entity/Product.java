@@ -54,6 +54,9 @@ public class Product implements Serializable {
 	@Column(name = "COST")
 	private BigDecimal cost;
 	
+	@Column(name = "SELLINGCOST")
+	private BigDecimal sellingCost;
+	
 	@Column(name = "OFFER")
 	private BigDecimal offer;
 	
@@ -218,6 +221,14 @@ public class Product implements Serializable {
 
 	public void setProductRating(int productRating) {
 		this.productRating = productRating;
+	}
+	
+	public BigDecimal getSellingCost() {
+		return sellingCost;
+	}
+
+	public void setSellingCost(BigDecimal sellingCost) {
+		this.sellingCost = sellingCost;
 	}
 
 	@PrePersist

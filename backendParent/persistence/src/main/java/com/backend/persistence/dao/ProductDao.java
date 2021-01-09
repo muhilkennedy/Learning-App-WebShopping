@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import com.backend.core.util.DBUtil;
 import com.backend.persistence.entity.Product;
 import com.backend.persistence.entity.ProductImages;
 import com.backend.persistence.helper.ProductPOJO;
+import com.backend.persistence.repository.ProductImagesRepository;
 
 /**
  * @author Muhil
@@ -29,6 +31,9 @@ public class ProductDao {
 	
 	@Autowired
 	private DBUtil dbUtil;
+	
+	@Autowired
+	private ProductImagesRepository pImageRepo;
 	
 	@Autowired
 	private BaseService baseService;
@@ -68,7 +73,55 @@ public class ProductDao {
 				product.setLastModified(rs.getLong(11));
 				product.setLastModifiedById(rs.getInt(12));
 				product.setActive(rs.getBoolean(13));
+				product.setProductRating(rs.getInt(15));
+				product.setSellingCost(rs.getBigDecimal(16));
 				productList.add(product);
+			}
+			return productList;
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+	}
+	
+	public List<ProductPOJO> getProductsWithImages(List<Integer> cIds, List<Integer> pIds, String limit, String offset, String sortByField, String sortBytype) throws Exception {
+		List<ProductPOJO> productList = new ArrayList<ProductPOJO>();
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			//.setAndCondition("active", "true", true)
+			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+															.setQuery("select * from product")
+															.setWhereClause()
+															.setAndCondition("tenantid", baseService.getTenantInfo().getTenantID())
+															.andSetAndCondition("active", true)
+															.andSetAndCondition("isdeleted", false)
+															.andSetOrConditions("categoryid", cIds)
+															.andSetOrConditions("productid", pIds)
+															.setOrderBy(sortByField)
+															.setSortOrder(sortBytype)
+														  	.setLimit(limit)
+														  	.setOffset(offset)
+															.build();
+			PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				Product product = new Product();
+				product.setProductId(rs.getInt(3));
+				product.setProductName(rs.getString(4));
+				product.setBrandName(rs.getString(5));
+				product.setCost(rs.getBigDecimal(6));
+				product.setOffer(rs.getBigDecimal(7));
+				product.setProductDescription(rs.getString(8));
+				product.setProductCode(rs.getString(9));
+				product.setQuantityInStock(rs.getInt(10));
+				product.setLastModified(rs.getLong(11));
+				product.setLastModifiedById(rs.getInt(12));
+				product.setActive(rs.getBoolean(13));
+				product.setProductRating(rs.getInt(15));
+				product.setSellingCost(rs.getBigDecimal(16));
+				ProductPOJO pojo = new ProductPOJO();
+				pojo.setProductContent(product);
+				pojo.setProductImage(pImageRepo.findAllImagesForProduct(baseService.getTenantInfo(), product));
+				productList.add(pojo);
 			}
 			return productList;
 		} catch (Exception ex) {
@@ -115,6 +168,8 @@ public class ProductDao {
 				product.setLastModified(rs.getLong(11));
 				product.setLastModifiedById(rs.getInt(12));
 				product.setActive(rs.getBoolean(13));
+				product.setProductRating(rs.getInt(15));
+				product.setSellingCost(rs.getBigDecimal(16));
 				productList.add(product);
 			}
 			return productList;
@@ -183,13 +238,12 @@ public class ProductDao {
 		List<ProductPOJO> productList = new ArrayList<ProductPOJO>();
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
-															.setQuery("select pi.productid, pi.productname, pi.brand, pi.cost, pi.offer, pi.description, pi.unitsinstock, im.image "
-																	+ "from product as pi join homepagefeatured as fp join productimages as im "
-																	+ "on pi.productid = fp.productid and pi.productid = im.productid and pi.active = true and im.primaryimage = true")
+															.setQuery("select  pi.productid, pi.productname, pi.brand, pi.cost, pi.offer, pi.description, pi.unitsinstock from product as pi where pi.productid in (select productid from homepagefeatured where tenantid = ?)")
 															.setAndCondition("pi.tenantid", baseService.getTenantInfo().getTenantID(), true)
 															.build();
 															
 			PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
+			stmt.setString(1, baseService.getTenantInfo().getTenantID());
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
 				ProductPOJO pojo = new ProductPOJO();
@@ -203,11 +257,11 @@ public class ProductDao {
 				product.setProductDescription(rs.getString(6));
 				product.setQuantityInStock(rs.getInt(7));
 				
-				ProductImages image = new ProductImages();
-				image.setImage(rs.getBlob(8));
+//				ProductImages image = new ProductImages();
+//				image.setImage(pImageRepo.);
 				
 				pojo.setProductContent(product);
-				pojo.setProductImage(image);
+				pojo.setProductImage(pImageRepo.findAllImagesForProduct(baseService.getTenantInfo().getTenantID(), product.getProductId()));
 				productList.add(pojo);
 			}
 			return productList;
@@ -281,7 +335,7 @@ public class ProductDao {
 			select *
 			from cat_tree;*/
 	
-	public List<Integer> getProductsIdsByCategoryId(int cId) throws Exception {
+	public List<Integer> getChildCategoriesIdByCategoryId(int cId) throws Exception {
 		List<Integer> categoryList = new ArrayList<Integer>();
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			//.setAndCondition("active", "true", true)

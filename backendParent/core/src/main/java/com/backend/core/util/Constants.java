@@ -8,6 +8,7 @@ public class Constants {
 	public static final String Header_Offset = "Offset";
 	public static final String Header_Scope = "Scope";
 	public static final String Header_RequestOrigin = "Request-Origin";
+	public static final String Header_RequestFrom = "Request-From";
 
 	public static final String Token_Bearer = "Bearer";
 	

@@ -40,6 +40,9 @@ public class InvoiceTemplate  implements Serializable {
 	@Column(name = "DOCUMENT")
 	private Blob document;
 	
+	@Column(name = "POSDOCUMENT")
+	private Blob posDocument;
+	
 	public InvoiceTemplate() {
 		super();
 	}
@@ -82,6 +85,14 @@ public class InvoiceTemplate  implements Serializable {
 
 	public void setDocument(Blob document) {
 		this.document = document;
+	}
+
+	public Blob getPosDocument() {
+		return posDocument;
+	}
+
+	public void setPosDocument(Blob posDocument) {
+		this.posDocument = posDocument;
 	}
 
 }

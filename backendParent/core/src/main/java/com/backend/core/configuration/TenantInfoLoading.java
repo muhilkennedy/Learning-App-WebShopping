@@ -147,19 +147,25 @@ public class TenantInfoLoading {
 						Boolean.parseBoolean(tenantDetails[2].trim()), Boolean.parseBoolean(tenantDetails[4].trim()));
 			}
 			String originsList = tenantDetails[3].trim().replace("[", "").replace("]", "");
-			resetOriginList(realm, originsList);
 			RSAKeyPairGenerator rsa = new RSAKeyPairGenerator();
 			realm.setPublicKey(rsa.getPublicKey());
 			realm.setPrivateKey(rsa.getPrivateKey());
 			tenantService.saveAndFlush(realm);
+			resetOriginList(realm, originsList);
 			tenantMap.remove(tenantDetails[1].trim());
+			realm = tenantService.findTenantByID(realm.getTenantID());
+			TenantDetails additionalTenantDetails = realm.getTenantDetail();
+			if(additionalTenantDetails == null) {
+				TenantDetails newTenantDetail = new TenantDetails();
+				newTenantDetail.setTenantID(realm);
+				tenantService.saveTenantDetail(newTenantDetail);
+			}
 			logger.info("loaded tenant -> " + realm.getUniqueName());
 			if(!employeeDao.isCustomerSupportAdminPresent(realm.getTenantID())) {
 				employeeDao.createAdminUserForTenant(realm.getTenantID());
 			}
 			if (!invoiceDao.containsInvoiceTemplate(realm.getTenantID())) {
 				ClassPathResource classPathResource = new ClassPathResource("invoiceTemplate/Invoice-Template.docx");
-
 				InputStream inputStream = classPathResource.getInputStream();
 				File file = File.createTempFile("invoice", ".docx");
 				try {
@@ -167,14 +173,24 @@ public class TenantInfoLoading {
 				} finally {
 					IOUtils.closeQuietly(inputStream);
 				}
+				
+				ClassPathResource classPathResourcePos = new ClassPathResource("invoiceTemplate/POS-Template.docx");
+				InputStream is = classPathResourcePos.getInputStream();
+				File posFile = File.createTempFile("invoice", ".docx");
+				try {
+					FileUtils.copyInputStreamToFile(is, posFile);
+				} finally {
+					IOUtils.closeQuietly(is);
+				}
 
 				invoiceDao.createInvoiceTemplate(realm.getTenantID(),
-						new SerialBlob(FileUtils.readFileToByteArray(file)));
+						new SerialBlob(FileUtils.readFileToByteArray(file)), new SerialBlob(FileUtils.readFileToByteArray(posFile)));
 				
 				deleteDirectoryOrFile(file);
+				deleteDirectoryOrFile(posFile);
 			}
 		}
-		// remaing tenants are considered removed.
+		// remaining tenants are considered removed.
 		if (!tenantMap.isEmpty()) {
 			tenantMap.entrySet().parallelStream().forEach(tenant -> {
 				tenant.getValue().setPurge(false);

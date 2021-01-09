@@ -39,14 +39,14 @@
                   <input matInput placeholder="Product Name" [(ngModel)]="pName" required>
                 </mat-form-field>
               </td>
-            </tr>
-            <tr>
               <td>
                 <mat-form-field appearance="outline" class="matitem">
                   <mat-label>Product Brand</mat-label>
                   <input matInput type="text" class="example-right-align" [(ngModel)]="brand" required>
                 </mat-form-field>
               </td>
+            </tr>
+            <tr>
               <td>
                 <mat-form-field appearance="outline" class="matitem">
                   <mat-label>Product Cost</mat-label>
@@ -54,23 +54,27 @@
                   <mat-hint>Product MRP</mat-hint>
                 </mat-form-field>
               </td>
-            </tr>
-            <tr>
               <td>
                 <mat-form-field appearance="outline" class="matitem">
-                  <mat-label>Product Offer/Discount</mat-label>
-                  <input matInput type="number" class="example-right-align" [(ngModel)]="offer" required>
+                  <mat-label>Selling Cost(inr)</mat-label>
+                  <input matInput placeholder="Product Selling Cost" [(ngModel)]="sellingCost" required (keyup)="onSellingCostKeyUp($event)">
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field appearance="outline" class="matitem">
+                  <mat-label>Product Offer/Discount(%)</mat-label>
+                  <input disabled matInput type="number" class="example-right-align" [(ngModel)]="offer" required>
                   <mat-hint>Offer applicable to this particular product <small *ngIf="showFinalCost()">(SELLING COST - <b>{{getDiscountedPrice()}} ₹</b>)</small></mat-hint>
                 </mat-form-field>
               </td>
+            </tr>
+            <tr>
               <td>
                 <mat-form-field appearance="outline" class="matitem">
                   <mat-label>Product CODE</mat-label>
                   <input matInput placeholder="Product BAR/QR CODE" [(ngModel)]="pCode" required>
                 </mat-form-field>
               </td>
-            </tr>
-            <tr>
               <td>
                 <mat-form-field appearance="outline" class="matitem">
                   <mat-label>Units In Stock</mat-label>
@@ -99,6 +103,7 @@
               </td>
               <td>
               </td>
+              <td></td>
             </tr>
           </table>
         </div>

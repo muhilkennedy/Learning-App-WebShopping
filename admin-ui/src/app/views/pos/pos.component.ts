@@ -12,6 +12,8 @@ import { FormControl, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { EmployeeService } from '../../shared/employee/employee.service';
+import { environment } from '../../../environments/environment';
+import { DomSanitizer } from '@angular/platform-browser';
 
 class PosProduct{
   itemID: number;
@@ -21,6 +23,7 @@ class PosProduct{
   quantity: number;
   discount: number;
   total: number;
+  sellingCost: number;
 }
 
 @Component({
@@ -45,6 +48,8 @@ export class PosComponent implements OnInit {
 
   amountPaid: number;
   balanceAmount: number;
+
+  posId:string;
 
   focusElementReference: any
 
@@ -80,7 +85,7 @@ export class PosComponent implements OnInit {
 
   constructor(private printService: PrintService, private productService: ProductService,
               private alertService: AlertService, private posService: PosService,
-              private empService: EmployeeService){
+              private empService: EmployeeService, private sanitizer: DomSanitizer){
     this.usbPrintDriver = new UsbDriver();
         this.printService.isConnected.subscribe(result => {
             this.status = result;
@@ -259,6 +264,7 @@ export class PosComponent implements OnInit {
     prod.discount = option.offer;
     prod.mrp = option.cost;
     prod.quantity = 1;
+    prod.sellingCost = option.sellingCost;
     this.itemList.push(prod);
     this.cleanseItemList();
   }
@@ -287,6 +293,7 @@ export class PosComponent implements OnInit {
                             newProd.discount = resp.data.offer;
                             newProd.itemCode = resp.data.productCode;
                             newProd.quantity = 1;
+                            newProd.sellingCost = resp.data.sellingCost;
                             if(doPush){
                               this.itemList.push(newProd);
                             }
@@ -320,10 +327,8 @@ export class PosComponent implements OnInit {
   }
 
   calculateTotal(item: PosProduct): number{
-    let discountedMrp = item.mrp;
     if(item.discount > 0){
-      discountedMrp = (item.mrp * item.discount) / 100;
-      item.total = ((item.mrp-discountedMrp) * item.quantity);
+      item.total = (item.sellingCost * item.quantity);
     }
     else{
       item.total = item.mrp * item.quantity;
@@ -369,7 +374,7 @@ export class PosComponent implements OnInit {
     let discount = 0;
     this.itemList.forEach(item => {
       if(item != null || item != undefined){
-        discount += ((item.mrp * item.discount) / 100 ) * item.quantity;
+        discount += (item.mrp - item.sellingCost) * item.quantity;
       }
     })
     if(discount >= 0){
@@ -404,15 +409,17 @@ export class PosComponent implements OnInit {
     this.itemList.push(newProd);
     this.amountPaid = undefined;
     this.newCustomer = false;
+    this.posId = null;
   }
 
   processBill(){
     this.loading = true;
     this.cleanseItemList();
-    this.posService.createPOS(this.customerMobile, this.paymentMode, this.calculateRoundedSubtotal(), this.itemList)
+    this.posService.createPOS(this.calculateTotalQuantity(), this.customerMobile, this.paymentMode, this.calculateRoundedSubtotal(), this.subTotal, this.itemList)
                     .subscribe((resp: any) => {
                       if(resp.statusCode === 200){
-                        //proceed with bill printing
+                        this.posId = resp.data;
+                        this.myModal.show();
                       }
                       else{
                         alert("Failed");
@@ -423,6 +430,26 @@ export class PosComponent implements OnInit {
                       alert("failed!");
                       this.loading = false;
                     })
+  }
+
+  @ViewChild('primaryModal') myModal;
+
+  getPDF()
+  {
+    this.loading = true;
+    this.posService.getPDF(this.posId)
+                    .subscribe((resp: any) => {
+                       this.clearData();
+                        // let blob = new Blob([resp], { type: 'application/octet-stream' });
+                        // let downloadURl = this.sanitizer.bypassSecurityTrustResourceUrl(window.URL.createObjectURL(blob));
+                        window.open(window.URL.createObjectURL( new Blob([resp], { type: 'application/pdf' })),"_blank");
+                        this.loading = false;
+                        this.myModal.hide();
+                    },
+                    (error) => {
+                      this.alertService.error("Something went wrong!", error)
+                    });
+
   }
 
 }

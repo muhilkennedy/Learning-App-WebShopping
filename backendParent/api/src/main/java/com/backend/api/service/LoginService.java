@@ -2,6 +2,7 @@ package com.backend.api.service;
 
 import com.backend.commons.exceptions.InvalidUserException;
 import com.backend.core.interfaces.User;
+import com.backend.persistence.entity.CustomerInfo;
 
 public interface LoginService {
 
@@ -22,5 +23,7 @@ public interface LoginService {
 	boolean updateEmployeePasswordWithCheck(String newPassword, String oldPassword);
 
 	boolean checkIfCustomerExists(String email);
+
+	CustomerInfo getCustomerByEmail(String email);
 
 }

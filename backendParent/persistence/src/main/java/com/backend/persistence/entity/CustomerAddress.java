@@ -48,6 +48,9 @@ public class CustomerAddress implements Serializable {
 
 	@Column(name = "PINCODE")
 	private String pincode;
+	
+	@Column(name = "MOBILECONTACT")
+	private String mobileContact;
 
 	@JsonIgnore
 	@ManyToOne
@@ -116,6 +119,14 @@ public class CustomerAddress implements Serializable {
 
 	public void setCustomer(CustomerInfo customer) {
 		this.customer = customer;
+	}
+
+	public String getMobileContact() {
+		return mobileContact;
+	}
+
+	public void setMobileContact(String mobileContact) {
+		this.mobileContact = mobileContact;
 	}
 
 }

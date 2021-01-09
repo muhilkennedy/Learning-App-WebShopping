@@ -24,9 +24,17 @@ export class TenantStoreService {
   private _tenantTwitter: string;
   private _tenantGstIn: string;
   private _tenantFssai: string;
+  private _tenantTagLine: string;
 
   constructor() {
     this.tenantId = environment.tenantId;
+  }
+
+  public get tenantTagLine(): string {
+    return this._tenantTagLine;
+  }
+  public set tenantTagLine(value: string) {
+    this._tenantTagLine = value;
   }
 
   public get tenantLogo(): string {

@@ -78,4 +78,7 @@ public interface ProductService {
 	List<Product> getProducts(List<Integer> cIds, List<Integer> pIds, String limit, String offset,
 			boolean includeInactive, boolean outOfStock) throws Exception;
 
+	List<ProductPOJO> getProducts(List<Integer> cIds, List<Integer> pIds, String limit, String offset,
+			String sortByField, String sortByType) throws Exception;
+
 }

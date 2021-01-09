@@ -1,6 +1,7 @@
 package com.backend.api.controller;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.api.admin.messages.EmployeePOJOHelper;
@@ -23,11 +25,13 @@ import com.backend.api.messages.UserPOJOHelper;
 import com.backend.api.service.LoginService;
 import com.backend.commons.service.EmailService;
 import com.backend.commons.service.OtpService;
+import com.backend.commons.service.TokenStorage;
 import com.backend.commons.util.CommonUtil;
 import com.backend.commons.util.JWTUtil;
 import com.backend.core.entity.EmployeeInfo;
 import com.backend.core.interfaces.User;
 import com.backend.core.service.BaseService;
+import com.backend.core.serviceImpl.CacheService;
 import com.backend.core.util.ConfigUtil;
 import com.backend.core.util.RSAUtil;
 import com.backend.persistence.entity.CustomerInfo;
@@ -56,6 +60,9 @@ public class LoginController {
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private TokenStorage tokenService;
 	
 	@RequestMapping(value = "/employeeAuthentication", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<JWTResponse> employeeLogin(HttpServletRequest request, @RequestBody UserPOJOHelper userObj) {
@@ -240,6 +247,31 @@ public class LoginController {
 		}
 		return response;
 	}
-
-
+	
+	@RequestMapping(value = "/googleCustomerKeyAuth", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> googleCustomerKeyAuth(HttpServletRequest request,
+										@RequestParam(value = "key", required = true) String key) {
+		GenericResponse<String> response = new GenericResponse<String>();
+		try {
+			if(tokenService.getUserToken(key) != null) {
+				CustomerInfo customer = loginService.getCustomerByEmail(JWTUtil.getUserEmailFromToken(tokenService.getUserToken(key)));
+				if(customer != null) {
+					response.setData(tokenService.getUserToken(key));
+					response.setDataList(Arrays.asList(customer));
+					response.setStatus(Response.Status.OK);
+				}
+				else {
+					response.setErrorMessages(Arrays.asList("Auth Error"));
+					response.setStatus(Response.Status.NO_CONTENT);
+				}
+			}
+		} catch (Exception ex) {
+			logger.error("googleCustomerKeyAuth : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
 }

@@ -9,16 +9,19 @@ import { environment } from '../../../environments/environment';
 export class PosService {
 
   createPOSEndpoint = "/secure/admin/pos/createPOS";
-  getPOSdataEndpoint = "/secure/admin/pos/getPOS"
+  getPOSdataEndpoint = "/secure/admin/pos/getPOS";
+  viewPDFEndpoint = "/secure/admin/pos/viewPdf";
 
   constructor(private http: HttpClient){}
 
-  createPOS(mobile, payment, subTotal, products): Observable<any>{
+  createPOS(totalQty, mobile, payment, subTotal, actualSubTotal, products): Observable<any>{
     const body = {
       timeCreated: new Date().getTime(),
       mobile: mobile,
       paymentMode: payment,
       subTotal: subTotal,
+      actualSubTotal: actualSubTotal,
+      totalQuantity: totalQty,
       posProduct: products
      };
     const httpOptions = {
@@ -41,6 +44,11 @@ export class PosService {
       }
     }
     return this.http.get(environment.backendBaseUrl+this.getPOSdataEndpoint, httpOptions);
+   }
+
+   getPDF(posId){
+    const options = { responseType: Blob  };
+    return this.http.get<any>(environment.backendBaseUrl+this.viewPDFEndpoint, { responseType: 'arraybuffer' as 'json', params : {id : posId} });
    }
 
 }

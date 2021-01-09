@@ -63,6 +63,7 @@ public class TenantController {
 			tenantDetail.setTenantTwitter(tenantTwitter);
 			tenantDetail.setTenantInsta(tenantInsta);
 			tenantDetail.setTenantStreet(tenantStreet);
+			tenantDetail.setTenantPin(tenantPin);
 			tenantDetail.setGstIn(gst);
 			tenantDetail.setFssai(fssai);
 			tenantService.updateTenantDetails(tenantDetail, file != null ? file.getBytes() : null);
@@ -77,11 +78,28 @@ public class TenantController {
 	}
 	
 	@RequestMapping(value = "/updateTenantFssai", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<String> updateTenant(HttpServletRequest request, @RequestParam(value = "fssai", required = false) String fssai){
+	public GenericResponse<String> updateTenant(HttpServletRequest request, @RequestParam(value = "fssai", required = true) String fssai){
 		GenericResponse<String> response = new GenericResponse<>();
 		try {
 			TenantDetails tenantDetail = new TenantDetails();
 			tenantDetail.setFssai(fssai);
+			tenantService.updateTenantDetails(tenantDetail, null);
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("updateTenant : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/updateTagLine", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> updateTagLine(HttpServletRequest request, @RequestParam(value = "tagLine", required = true) String tagLine){
+		GenericResponse<String> response = new GenericResponse<>();
+		try {
+			TenantDetails tenantDetail = new TenantDetails();
+			tenantDetail.setTagLine(tagLine);
 			tenantService.updateTenantDetails(tenantDetail, null);
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {

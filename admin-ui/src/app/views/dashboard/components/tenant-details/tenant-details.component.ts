@@ -25,6 +25,7 @@ export class TenantDetailsComponent implements OnInit {
   editTenantLogo = false;
   editTenantGst = false;
   editTenantFssai = false;
+  editTenantTag = false;
 
   loadTenantEmail = false;
   loadTenantBusinessEmail = false;
@@ -39,6 +40,7 @@ export class TenantDetailsComponent implements OnInit {
   loadTenantLogo = false;
   loadTenantGst = false;
   loadTenantFssai = false;
+  loadTenantTag = false;
 
   tenantDetailId: number;
   tenantEmail: string;
@@ -54,6 +56,7 @@ export class TenantDetailsComponent implements OnInit {
   tenantLogo: File = null;
   tenantGstIn: string;
   tenantFssai: string;
+  tenantTagLine: string;
 
   constructor(private tenantStore: TenantStoreService,
               private tenantService: TenantService,
@@ -72,6 +75,7 @@ export class TenantDetailsComponent implements OnInit {
     this.tenantInsta = this.tenantStore.tenantInsta;
     this.tenantGstIn = this.tenantStore.tenantGstIn;
     this.tenantFssai = this.tenantStore.tenantFssai;
+    this.tenantTagLine = this.tenantStore.tenantTagLine;
   }
 
   updateTenantEmail(){
@@ -289,6 +293,23 @@ export class TenantDetailsComponent implements OnInit {
                         if(resp.statusCode === 200){
                           this.editTenantFssai = false;
                           this.loadTenantFssai = false;
+                        }
+                        else{
+                          alert("error");
+                        }
+                      },
+                      (error:any) => {
+                        alert("error");
+                      });
+  }
+
+  updateTenantTagLine(){
+    this.loadTenantTag = true;
+    this.tenantService.updateTagLine(this.tenantTagLine)
+                      .subscribe((resp:any) => {
+                        if(resp.statusCode === 200){
+                          this.editTenantTag = false;
+                          this.loadTenantTag = false;
                         }
                         else{
                           alert("error");

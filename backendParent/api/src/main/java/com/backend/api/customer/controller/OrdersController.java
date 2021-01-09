@@ -18,7 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.Response;
 import com.backend.commons.util.CommonUtil;
+import com.backend.persistence.entity.DeliveryConfiguration;
 import com.backend.persistence.entity.Orders;
+import com.backend.persistence.service.CouponsService;
+import com.backend.persistence.service.DeliveryService;
 import com.backend.persistence.service.OrdersService;
 
 /**
@@ -34,6 +37,12 @@ public class OrdersController {
 	@Autowired
 	private OrdersService orderService;
 	
+	@Autowired
+	private DeliveryService deliveryService;
+	
+	@Autowired
+	private CouponsService couponService;
+	
 	@RequestMapping(value = "/placeOrder", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<Orders> customerTokenAuthentication(HttpServletRequest request, @RequestParam(value = "couponId", required = false) String couponId,
 			@RequestParam(value = "paymentMode", required = false) String paymentMode) {
@@ -43,6 +52,25 @@ public class OrdersController {
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("placeOrder : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/getPincodeAndCouponDetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<DeliveryConfiguration> getPincodeDetails(HttpServletRequest request, @RequestParam(value = "pincode", required = true) String pincode,
+			 														@RequestParam(value = "coupon", required = false) String coupon) {
+		GenericResponse<DeliveryConfiguration> response = new GenericResponse<DeliveryConfiguration>();
+		try {
+			response.setData(deliveryService.getDeliveryConfiguration(pincode));
+			if(CommonUtil.isValidStringParam(coupon)) {
+				response.setDataList(Arrays.asList(couponService.verifyIfCouponApplicableById(coupon)));
+			}
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("getPincodeDetails : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);

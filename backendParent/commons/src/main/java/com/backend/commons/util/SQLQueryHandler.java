@@ -3,6 +3,8 @@ package com.backend.commons.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.common.base.Functions;
 import com.google.common.collect.Lists;
 
@@ -81,11 +83,17 @@ public class SQLQueryHandler {
 		}
 		
 		public SQLQueryBuilder setGroupby(String fieldName) {
+			if(StringUtils.isBlank(fieldName)) {
+				return this;
+			}
 			this.query = query.concat(Key_GroupBy).concat(fieldName);
 			return this;
 		}
 		
 		public SQLQueryBuilder setOrderBy(String fieldName) {
+			if(StringUtils.isBlank(fieldName)) {
+				return this;
+			}
 			this.query = query.concat(Key_OrderBy).concat(fieldName);
 			return this;
 		}
@@ -101,6 +109,9 @@ public class SQLQueryHandler {
 		}
 		
 		public SQLQueryBuilder setSortOrder(String sortOrder) {
+			if(StringUtils.isBlank(sortOrder)) {
+				return this;
+			}
 			return setSortOrder(sortOrder.equals(Key_Descending.trim()) ? true : false);
 		}
 		
