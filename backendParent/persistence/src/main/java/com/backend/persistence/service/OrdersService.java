@@ -27,8 +27,10 @@ public interface OrdersService {
 
 	List<Orders> getOrders(String limit, String offset, String condition, long date, String status) throws Exception;
 
-	void createCustomerOrder(int couponId, int paymentMode) throws Exception;
-
 	Map<String, BigDecimal> ordersWeeklyReport() throws Exception;
+
+	void createCustomerOrder(int couponId, int paymentMode, int addressId) throws Exception;
+
+	List<Orders> getCustomerOrders();
 
 }

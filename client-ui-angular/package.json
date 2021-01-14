@@ -1,6 +1,9 @@
 {
-  "name": "client-ui-angular",
-  "version": "0.0.0",
+  "name": "com.angular.client",
+  "displayName": "ClientUI",
+  "version": "1.0.0",
+  "description": "Angular WebApplication",
+  "author": "Muhil Kennedy",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

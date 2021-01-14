@@ -1,0 +1,48 @@
+<section id="profile">
+  <div class="container">
+    <ngx-loading [show]="loading"></ngx-loading>
+    <div class="row">
+      <div class="col-sm-12">
+        <table class="table table-condensed">
+          <tbody>
+            <tr>
+              <td>Customer ID</td>
+              <td>:</td>
+              <td><label>{{userStore.userId}}</label></td>
+            </tr>
+            <tr>
+              <td>First Name</td>
+              <td>:</td>
+              <td><label>{{userStore.firstName}}</label></td>
+            </tr>
+            <tr>
+              <td>Last Name</td>
+              <td>:</td>
+              <td><label>{{userStore.lastName}}</label></td>
+            </tr>
+            <tr>
+              <td>Email ID</td>
+              <td>:</td>
+              <td><label>{{userStore.emailId}}</label></td>
+            </tr>
+            <tr>
+              <td>Mobile Number</td>
+              <td>:</td>
+              <td>
+                <mat-form-field class="matitem" style="width: 200px;">
+                  <input type="text"
+                         placeholder="Mobile Number"
+                         matInput
+                         [(ngModel)]="userStore.mobile">
+                  <button matSuffix type="button" class="btn btn-primary" (click)="updateMobile()">
+                    Update</button>
+                </mat-form-field>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <br/>
+  </div>
+</section>

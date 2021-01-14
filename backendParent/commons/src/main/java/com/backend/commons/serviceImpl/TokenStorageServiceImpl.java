@@ -48,7 +48,7 @@ public class TokenStorageServiceImpl implements TokenStorage {
 	public String getUserToken(String key) {
 		try {
 			return tokenCache.get(key);
-		} catch (ExecutionException e) {
+		} catch (Exception e) {
 			logger.error("Requested Item released from Cache - " + e.getMessage());
 			return null;
 		}

@@ -25,9 +25,17 @@ export class TenantStoreService {
   private _tenantGstIn: string;
   private _tenantFssai: string;
   private _tenantTagLine: string;
+  private _tenantGmap: string;
 
   constructor() {
     this.tenantId = environment.tenantId;
+  }
+
+  public get tenantGmap(): string {
+    return this._tenantGmap;
+  }
+  public set tenantGmap(value: string) {
+    this._tenantGmap = value;
   }
 
   public get tenantTagLine(): string {

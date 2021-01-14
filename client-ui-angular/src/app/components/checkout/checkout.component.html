@@ -4,24 +4,10 @@
     <div class="breadcrumbs">
       <ol class="breadcrumb">
         <li><a href="#">Home</a></li>
-        <li><a href="#">Cart</a></li>
+        <li><a (click)="openCart()">Cart</a></li>
         <li class="active">Check out</li>
       </ol>
     </div><!--/breadcrums-->
-
-    <div class="step-one">
-      <h2 class="heading">Customer Address</h2>
-    </div>
-    <div class="checkout-options">
-      <ul class="nav">
-        <li *ngFor="let add of customerAddress">
-          <label for="address_{{add.addressId}}">
-            <input id="address_{{add.addressId}}" [value]='add.addressId' type="radio" name="enums" [(ngModel)]="addressSelected">
-            {{add.doorNumber}},{{add.street}},{{add.city}}
-          </label>
-        </li>
-      </ul>
-    </div><!--/checkout-options-->
 
     <div class="register-req">
       <p>Please add address to profile for easy access!</p>
@@ -38,7 +24,7 @@
               <input type="text" placeholder="Street Name" [(ngModel)]="street" id="street" name="street">
               <input type="text" placeholder="City" [(ngModel)]="city" id="city" name="city">
               <input type="text" placeholder="State" [(ngModel)]="state" id="state" name="state">
-              <input type="number" placeholder="Pincode" [(ngModel)]="this.pincodeDetails.pincode" id="pincode" name="pincode">
+              <input disabled type="number" placeholder="Pincode" [(ngModel)]="this.pincodeDetails.pincode" id="pincode" name="pincode">
             </form>
             <a class="btn btn-primary" (click)="addAddress()">Add Address to Profile</a>
           </div>
@@ -60,60 +46,42 @@
         </div>
       </div>
     </div>
+
+    <br/>
+    <div class="step-one">
+      <h2 class="heading">Select Address For Delivery</h2>
+    </div>
+    <div class="checkout-options">
+      <ul class="nav">
+        <li *ngFor="let add of customerAddress">
+          <label for="address_{{add.addressId}}">
+            <input id="address_{{add.addressId}}" [value]='add.addressId' type="radio" name="enums" [(ngModel)]="addressSelected">
+            {{add.doorNumber}},{{add.street}},{{add.city}}
+          </label>
+        </li>
+      </ul>
+    </div>
+
     <div class="review-payment">
       <h2>Review & Payment</h2>
     </div>
-
-    <div class="table-responsive cart_info">
-      <table class="table table-condensed">
-        <thead>
-          <tr class="cart_menu">
-            <td class="description">Item</td>
-            <td class="price">MRP</td>
-            <td class="price">Our Price</td>
-            <td class="quantity">Quantity</td>
-            <td class="total">Total</td>
-            <td></td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of cartItems">
-            <td class="cart_description">
-              <h4><a href="">{{item.product.productName}}</a></h4>
-              <p>Web ID: {{item.product.productCode}}</p>
-            </td>
-            <td class="cart_price">
-              <p>{{item.product.cost}}</p>
-            </td>
-            <td class="cart_total">
-              <p class="cart_total_price" style="font-size: 20px;">{{calculatePrice(item)}}</p>
-            </td>
-            <td class="cart_quantity">
-              <div class="cart_quantity_button">
-                <a class="cart_quantity_down" (click)="decrementItem(item)"> - </a>
-                <input class="cart_quantity_input" type="text" name="quantity" [(ngModel)]="item.quantity" autocomplete="off" size="2">
-                <a class="cart_quantity_up" (click)="incrementItem(item)"> + </a>
-              </div>
-            </td>
-            <td class="cart_total">
-              <p class="cart_total_price">₹ {{calculateTotal(item)}}</p>
-            </td>
-            <td class="cart_delete">
-              <a class="cart_quantity_delete" ><i class="fa fa-times"></i></a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="review-payment">
+      <h6>Delivery Time For Selected Pincode : {{pincodeDetails.deliveryfromtime}} - {{pincodeDetails.deliverytilltime}}</h6>
+      <span>
+        <label><i class="fa fa-truck"></i><strong> . Guaranteed Delivery Within {{pincodeDetails.minimumdeliveryhours}} Hrs</strong></label>
+      </span>
     </div>
-    <div class="payment-options">
-        <!-- <span>
-          <label><input type="checkbox"> Direct Bank Transfer</label>
-        </span> -->
+    <app-cart [cartPage]=false></app-cart>
+
+    <div class="payment-options" style="position: relative;">
         <span>
           <label><i class="fa fa-info"></i><strong> . Payment will be accepted on door step delivery</strong></label>
         </span>
         <div style="float: right;">
-          <button class="btn btn-default update">Confirm and Place Order</button>
+          <button mat-raised-button class="btn btn-default update" (click)="placeOrder()"
+            [ngClass]="{'spinner' : buttonLoading}" [disabled]="buttonLoading">
+            Confirm and Place Order
+          </button>
         </div>
     </div>
   </div>

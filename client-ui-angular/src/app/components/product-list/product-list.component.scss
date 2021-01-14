@@ -2,29 +2,15 @@
   border: 1px solid antiquewhite !important;
 }
 
-
-.vc {
-  background: yellow;
+.offer-overlay {
+  background: #654ea3;
   color: #fff;
-  width: 58px;
-  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 5px 10px;
   position: absolute;
 }
-.vc:after {
-  width: 0;
-  height: 0;
-  border: 12.5px solid transparent;
-  position: absolute;
-  content: "";
-  right: -23px;
-  top: 0px;
-}
-.vc:before {
-    width: 0;
-    height: 0;
-    border: 13px solid transparent;
-    position: absolute;
-    content: "";
-    right: -23px;
-    top: -1px;
+
+.btnStyle{
+  width: inherit;
 }

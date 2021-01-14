@@ -40,4 +40,6 @@ public interface CustomerInfoService {
 
 	void addCustomerAddress(CustomerAddress address);
 
+	void updateCustomerMobile(String mobile);
+
 }

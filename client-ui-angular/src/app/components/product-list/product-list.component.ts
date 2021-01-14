@@ -1,7 +1,10 @@
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { Component, OnInit } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { CartService } from 'src/app/service/cart/cart.service';
 import { ProductService } from 'src/app/service/product/product.service';
 import { UserStoreService } from 'src/app/service/shared/user-store/user-store.service';
@@ -56,6 +59,7 @@ export class ProductListComponent implements OnInit {
   productCount:number = 0;
   products:any[] = new Array();
   categoryTree:any[] = new Array();
+  selectedCategoryId: any;
 
   // MatPaginator Inputs
   offset = 0;
@@ -70,6 +74,21 @@ export class ProductListComponent implements OnInit {
     let pageIndex:number = event.pageIndex;
     this.offset = pageIndex * this.pageSize;
     this.setProducts(new Array(), null, null);
+  }
+
+  //autoComplete
+  myControl = new FormControl('', [ ]);
+  options: any[] = new Array();
+  filteredOptions: Observable<any[]>;
+  productSearched: string;
+  previousSearchTerm = '';
+  getProductsForSearch(event: any){
+    let searchTerm = '';
+    searchTerm += event.target.value;
+    console.log(searchTerm);
+    if(searchTerm.length > 3 && searchTerm.length < 5){
+      this.getProductFromMatchingText(searchTerm, null, null);
+    }
   }
 
   constructor(private productService: ProductService, private userStore: UserStoreService,
@@ -163,6 +182,7 @@ export class ProductListComponent implements OnInit {
 
   getProducts(catId){
     this.setProducts(catId, null, null);
+    this.selectedCategoryId = catId;
   }
 
   addToCart(prod){
@@ -188,4 +208,70 @@ export class ProductListComponent implements OnInit {
     }
   }
 
+  getProductFromMatchingText(searchTerm, sortField, sortType){
+      this.productService.getProductsBySearchTerm(this.selectedCategoryId , searchTerm, this.pageSize, this.offset, sortField, sortType)
+                          .subscribe((resp:any) => {
+                            if(resp.statusCode  === 200){
+                              this.products.length = 0;
+                              this.products = resp.dataList;
+                            }
+                            else{
+                              alert('Failed : ' + resp.errorMessages);
+                            }
+                            this.loading = false;
+                          },
+                          (error:any) => {
+                            alert("something went wrong!");
+                            this.loading = false;
+                          });
+      // .subscribe((resp:any) => {
+      //   if(resp.statusCode  === 200){
+      //     this.options = resp.dataList;
+      //     this.filteredOptions = this.myControl.valueChanges.pipe(
+      //       startWith(''),
+      //       map(value => this._filter(value))
+      //     );
+      //   }
+      //   else{
+      //     alert('Failed : ' + resp.errorMessages);
+      //   }
+      //   this.previousSearchTerm = searchTerm;
+      //   this.loading = false;
+      // },
+      // (error:any) => {
+      //   alert("something went wrong!");
+      //   this.loading = false;
+      // });
+  }
+
+  private _filter(value: string): string[] {
+    if(value === undefined || value === "")
+    {
+      return;
+    }
+    const filterValue = value.toLowerCase();
+    return this.options.filter(option => (option.productName.toLowerCase().indexOf(filterValue) === 0 ||
+                                          option.productCode.toLowerCase().indexOf(filterValue) === 0));
+  }
+
+  selectProduct(){
+
+  }
+
+  searchAction(){
+    this.getProductFromMatchingText(this.productSearched, null, null);
+  }
+
+  sortBy(sortField:string, sortType: string){
+    if(this.productSearched !== undefined && this.productSearched !== null && this.productSearched !== ''){
+      this.searchAction();
+    }
+    else{
+      this.setProducts(this.selectedCategoryId, sortField, sortType);
+    }
+  }
+
+  clearSort(){
+      this.setProducts(this.selectedCategoryId, null, null);
+  }
 }

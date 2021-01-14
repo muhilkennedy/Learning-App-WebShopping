@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { CartService } from 'src/app/service/cart/cart.service';
 import { LoginService } from 'src/app/service/login/login.service';
+import { OrderService } from 'src/app/service/order/order.service';
 import { CommonsService } from 'src/app/service/shared/commons/commons.service';
 import { UserStoreService } from 'src/app/service/shared/user-store/user-store.service';
 
@@ -12,9 +14,11 @@ import { UserStoreService } from 'src/app/service/shared/user-store/user-store.s
 export class CheckoutComponent implements OnInit {
 
   loading = false;
+  buttonLoading = false;
 
   constructor(private userStore: UserStoreService, private commonService: CommonsService,
-              private cartService: CartService, private loginService: LoginService) { }
+              private cartService: CartService, private loginService: LoginService,
+              private orderService: OrderService, private router: Router) { }
 
   couponDetails:any;
   pincodeDetails:any;
@@ -35,39 +39,6 @@ export class CheckoutComponent implements OnInit {
     this.customerAddress = this.userStore.customerAddress;
   }
 
-  incrementItem(item){
-    this.loading = true;
-    item.quantity++;
-    this.cartService.updateProductQuantity(item.product.productId, item.quantity)
-                    .subscribe((resp:any) => {
-                      if(resp.statusCode !== 200){
-                        item.quantity--;
-                      }
-                      this.loading = false;
-                    },
-                    (error: any) => {
-                      alert("Something went wrong!");
-                      item.quantity--;
-                    })
-
-  }
-
-  decrementItem(item){
-    this.loading = true;
-    item.quantity--;
-    this.cartService.updateProductQuantity(item.product.productId, item.quantity)
-                    .subscribe((resp:any) => {
-                      if(resp.statusCode !== 200){
-                        item.quantity++;
-                      }
-                      this.loading = false;
-                    },
-                    (error: any) => {
-                      alert("Something went wrong!");
-                      item.quantity--;
-                    })
-  }
-
   cartSubtotal():number{
     let total = 0;
     this.cartItems.forEach(item => {
@@ -83,7 +54,7 @@ export class CheckoutComponent implements OnInit {
   calculatePrice(item):number{
     let product = item.product;
     if(product.offer > 0){
-      return product.cost-((product.cost*product.offer)/100)
+      return product.sellingCost;
     }
     return product.cost;
   }
@@ -126,7 +97,8 @@ export class CheckoutComponent implements OnInit {
 
   addAddress(){
     this.loading = true;
-    this.cartService.addAddress(this.mobile, this.door, this.street, this.city, this.state, this.pincodeDetails.pincode)
+    this.cartService.addAddress(this.mobile, this.door, this.street, this.city, this.state,
+                                this.pincodeDetails.pincode)
                     .subscribe((resp:any) => {
                       if(resp.statusCode === 200){
                         this.loginService.autheticateCustomerToken()
@@ -141,11 +113,54 @@ export class CheckoutComponent implements OnInit {
                                             alert("Something went wrong!");
                                           })
                       }
-                      this.loading = false;
                     },
                     (error: any) => {
                       alert("Something went wrong!");
                     })
+  }
+
+  placeOrder(){
+    this.loading = true;
+    this.buttonLoading = true;
+    let coupon = null;
+    let paymentMode = null;
+    let addressId = null;
+    if(this.addressSelected === undefined || this.addressSelected === undefined){
+      alert("Please select the address!");
+      this.loading = false;
+      this.buttonLoading = false;
+      return;
+    }
+    else{
+      addressId = this.addressSelected;
+    }
+    if(this.couponDetails !== undefined && this.couponDetails !== null && this.couponDetails.couponId !== undefined){
+      coupon = this.couponDetails.coupon;
+    }
+    this.orderService.placeOrder(coupon, paymentMode, addressId)
+                      .subscribe((resp:any) => {
+                        if(resp.statusCode === 200){
+                          this.userStore.cartCount = 0;
+                          alert("Order placed!");
+                          this.openOrders();
+                        }
+                        else{
+                          alert("Failed to place order!");
+                        }
+                        this.loading = false;
+                        this.buttonLoading = false;
+                      },
+                      (error: any) => {
+                        alert("Something went wrong!");
+                      })
+  }
+
+  openCart(){
+    this.router.navigate(['/cart']);
+  }
+
+  openOrders(){
+    this.router.navigate(['/orders']);
   }
 
 }

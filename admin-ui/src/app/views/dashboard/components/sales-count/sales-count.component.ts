@@ -124,6 +124,7 @@ export class SalesCountComponent implements OnInit {
                           this.msgSentToday = resp.data.totalSmsCount;
                           this.doughnutChartData.push(resp.data.posCountToday);
                           this.doughnutChartData.push(resp.data.onlineCountToday);
+                          this.totalCustomers = resp.data.totalCustomers;
                         }
                         else{
 

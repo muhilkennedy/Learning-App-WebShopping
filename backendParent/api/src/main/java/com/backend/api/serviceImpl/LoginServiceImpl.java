@@ -103,7 +103,7 @@ public class LoginServiceImpl implements LoginService {
 	 * @return - generated password incase of successfull creation else null.
 	 */
 	@Override
-	public String createUser(User user) {
+	public String createUser(User user) throws Exception{
 		String generatedPassword = null;
 		try {
 			if (user instanceof EmployeeInfo) {
@@ -142,7 +142,7 @@ public class LoginServiceImpl implements LoginService {
 
 		} catch (Exception ex) {
 			logger.error("Error Creating user - Exception :", ex.getMessage());
-			ex.printStackTrace();
+			throw new Exception("Error Creating user : " + ex.getMessage());
 		}
 		return generatedPassword;
 	}

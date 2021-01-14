@@ -39,35 +39,35 @@
         </div>
         <div class="col-sm-1">
           <div *ngIf="isLoggedIn()" class="shop-menu pull-right">
-            <label>Hi </label><span> {{userStore.firstName}}</span>
+            <button mat-button disabled style="color: brown;">
+              <label>Hi {{userStore.firstName}}</label>
+            </button>
           </div>
         </div>
         <div class="col-sm-1">
           <div class="shop-menu pull-right">
-            <a class="notification" style="cursor: pointer;" (click)="openCart()">
+            <button mat-button class="notification"  (click)="openCart()">
               <i class="fa fa-shopping-cart"> Cart</i>
               <span class="badge">{{userStore.cartCount}}</span>
-            </a>
+            </button>
           </div>
         </div>
         <div  *ngIf="!isLoggedIn()" class="col-sm-1">
           <div class="shop-menu pull-right">
-            <a style="cursor: pointer;" (click)="openLogin()"><i class="fa fa-lock"></i> Login</a>
+            <button mat-button (click)="openLogin()"><i class="fa fa-lock"></i> Login</button>
           </div>
         </div>
         <div  *ngIf="isLoggedIn()" class="col-sm-1">
           <div class="shop-menu pull-right">
-            <a style="cursor: pointer;" ><i class="fa fa-user"></i> Profile</a>
+            <button mat-button [matMenuTriggerFor]="menu"><i class="fa fa-user"></i> Profile</button>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="openProfie()">Account</button>
+              <button mat-menu-item (click)="openOrders()">Online Orders</button>
+              <button mat-menu-item (click)="openPOSOrders()">POS Orders</button>
+              <button mat-menu-item (click)="logout()">Logout</button>
+            </mat-menu>
           </div>
         </div>
-        <!-- <div class="col-sm-9">
-          <div class="shop-menu pull-right">
-            <ul class="nav navbar-nav">
-              <li><a href="#"><i class="fa fa-shopping-cart"></i> Cart</a></li>
-              <li><a href="#"><i class="fa fa-lock"></i> Login</a></li>
-            </ul>
-          </div>
-        </div> -->
       </div>
     </div>
   </div><!--/header-middle-->
@@ -86,9 +86,9 @@
           </div>
           <div class="mainmenu pull-left">
             <ul class="nav navbar-nav collapse navbar-collapse">
-              <li><a style="cursor: pointer;" (click)="openHome()" class="active"><i class="fa fa-home"></i> Home</a></li>
-              <li><a style="cursor: pointer;" (click)="openProductList()"><i class="fa fa-shopping-cart"></i> Shop Now</a></li>
-              <li><a style="cursor: pointer;" (click)="openContact()"><i class="fa fa-phone"></i> Contact</a></li>
+              <li><a style="cursor: pointer;" (click)="openHome()" [ngClass]="{'active' : isHomeClicked}"><i class="fa fa-home"></i> Home</a></li>
+              <li><a style="cursor: pointer;" (click)="openProductList()" [ngClass]="{'active' : isShowNowClicked}"><i class="fa fa-shopping-cart"></i> Shop Now</a></li>
+              <li><a style="cursor: pointer;" (click)="openContact()" [ngClass]="{'active' : isContactClicked}"><i class="fa fa-phone"></i> Contact</a></li>
               <!-- <li>
                 <div class="search_box">
                 <input type="text" placeholder="Search"/>

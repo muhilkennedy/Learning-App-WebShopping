@@ -134,5 +134,12 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 		customer.getCustomerAddress().add(address);
 		save(customer);
 	}
+	
+	@Override
+	public void updateCustomerMobile(String mobile) {
+		CustomerInfo customer = (CustomerInfo)baseService.getUserInfo();
+		customer.setMobile(mobile);
+		save(customer);
+	}
 
 }

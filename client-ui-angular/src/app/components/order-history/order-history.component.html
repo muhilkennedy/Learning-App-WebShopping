@@ -1,0 +1,43 @@
+<section id="cart_items">
+  <div class="container">
+    <div class="breadcrumbs">
+      <ol class="breadcrumb">
+        <li><a href="#">Home</a></li>
+        <li class="active">Order History</li>
+      </ol>
+    </div>
+    <div class="table-responsive cart_info">
+      <ngx-loading [show]="loading"></ngx-loading>
+      <table class="table table-condensed">
+        <thead>
+          <tr class="cart_menu">
+            <td class="description">OrderId</td>
+            <td class="price">Order Date</td>
+            <td class="price">Status</td>
+            <td class="price">Subtotal</td>
+            <td class="price">Ordered Items</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of orders">
+            <td>
+              {{order.orderId}}
+            </td>
+            <td>
+              {{order.orderDate | date: 'dd/MM/yyyy hh:mm a'}}
+            </td>
+            <td>
+              {{order.status}}
+            </td>
+            <td>
+              {{order.subTotal}}
+            </td>
+            <td>
+              <i class="fa fa-shopping-cart carticon" (click)="setOrderItems(order.orderDetails)"></i>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

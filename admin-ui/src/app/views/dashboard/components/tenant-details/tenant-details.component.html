@@ -119,6 +119,19 @@
     <br/>
     <div class="input-group">
       <span class="input-group-prepend fixed-prependWidth">
+        <button disabled class="btn"><i class="fa fa-map-marker"></i> Tenant GMAP</button>
+      </span>
+      <ngx-loading [show]="loadGmap"></ngx-loading>
+      <input [disabled]="!editGmap" type="text" id="gmap" name="gmap" class="form-control" placeholder="Tenant Gmap" [(ngModel)] = "tenantGmap">
+      <span class="input-group-append">
+        <button *ngIf="!editGmap" type="button" class="btn btn-outline-primary" (click)="editGmap = true"><i class="fa fa-edit"></i></button>
+        <button *ngIf="editGmap" type="button" class="btn btn-outline-danger" (click)="editGmap = false"><i class="fa fa-remove"></i></button>
+        <button *ngIf="editGmap" type="button" class="btn btn-outline-success" (click)="editGmap = true; updateTenantGmap()"><i class="fa fa-check"></i></button>
+      </span>
+    </div>
+    <br/>
+    <div class="input-group">
+      <span class="input-group-prepend fixed-prependWidth">
         <button disabled class="btn"><i class="fa fa-facebook"></i> Tenant FaceBoook</button>
       </span>
       <ngx-loading [show]="loadTenantFacebook"></ngx-loading>

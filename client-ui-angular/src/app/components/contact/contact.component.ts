@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { TenantStoreService } from 'src/app/service/shared/tenant-store/tenant-store.service';
 
 @Component({
@@ -8,9 +9,14 @@ import { TenantStoreService } from 'src/app/service/shared/tenant-store/tenant-s
 })
 export class ContactComponent implements OnInit {
 
-  constructor(public tenantStore: TenantStoreService) { }
+  gmapUrl:any;
+  view = false;
+
+  constructor(public tenantStore: TenantStoreService, private sanitizer: DomSanitizer) { }
 
   ngOnInit(): void {
+    this.gmapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.tenantStore.tenantGmap);
+    this.view = true;
   }
 
 }

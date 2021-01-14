@@ -1,0 +1,9 @@
+.carticon{
+  color: green;
+  cursor: pointer;
+  transition: transform .2s;
+}
+
+.carticon:hover  {
+  transform: scale(1.5);
+}

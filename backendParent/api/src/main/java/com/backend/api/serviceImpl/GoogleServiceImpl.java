@@ -75,6 +75,7 @@ public class GoogleServiceImpl implements SocialLoginService {
 			info.setLoginMode(CommonUtil.Key_googleUser);
 			info.setActive(true);
 			info.setTenant(baseService.getTenantInfo());
+			DashboardStatusUtil.incrementCustomerCount(baseService.getTenantInfo());
 		}
 		else {
 			// we do this every time incase of any update done by user in google!
@@ -84,7 +85,6 @@ public class GoogleServiceImpl implements SocialLoginService {
 		}
 		info.setLastLogin(CommonUtil.convertToUTC(new Date().getTime()));
 		custService.save(info);
-		DashboardStatusUtil.incrementCustomerCount(baseService.getTenantInfo());
 	}
 	
 	

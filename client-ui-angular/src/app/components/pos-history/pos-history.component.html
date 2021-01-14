@@ -1,0 +1,47 @@
+<section id="cart_items">
+  <div class="container">
+    <div class="breadcrumbs">
+      <ol class="breadcrumb">
+        <li><a href="#">Home</a></li>
+        <li class="active">Order History</li>
+      </ol>
+    </div>
+    <div class="table-responsive cart_info">
+      <ngx-loading [show]="loading"></ngx-loading>
+      <table class="table table-condensed">
+        <thead>
+          <tr class="cart_menu">
+            <td class="description">OrderId</td>
+            <td class="price">Order Date</td>
+            <td class="price">Billed By</td>
+            <td class="price">Paid By</td>
+            <td class="price">SubTotal</td>
+            <td>Items List</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of orders">
+            <td>
+              {{order.primaryKey}}
+            </td>
+            <td>
+              {{order.timeCreated | date: 'dd/MM/yyyy hh:mm a'}}
+            </td>
+            <td>
+              {{order.createdBy}}
+            </td>
+            <td>
+              {{order.paymentMode}}
+            </td>
+            <td>
+              {{order.actualSubTotal}}
+            </td>
+            <td>
+              <i class="fa fa-shopping-cart carticon" (click)="setOrderItems(order.posProduct)"></i>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

@@ -1,7 +1,6 @@
 package com.backend.api.controller;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.api.admin.messages.CustomerPOJOHelper;
 import com.backend.api.admin.messages.EmployeePOJOHelper;
 import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.JWTResponse;
@@ -31,7 +31,6 @@ import com.backend.commons.util.JWTUtil;
 import com.backend.core.entity.EmployeeInfo;
 import com.backend.core.interfaces.User;
 import com.backend.core.service.BaseService;
-import com.backend.core.serviceImpl.CacheService;
 import com.backend.core.util.ConfigUtil;
 import com.backend.core.util.RSAUtil;
 import com.backend.persistence.entity.CustomerInfo;
@@ -226,17 +225,68 @@ public class LoginController {
 		return response;
 	}
 	
-	@RequestMapping(value = "/registerCustomer", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<CustomerInfo> registerCustomer(HttpServletRequest request,
-														  @RequestBody CustomerInfo cusObj) {
-		GenericResponse<CustomerInfo> response = new GenericResponse<CustomerInfo>();
+	@RequestMapping(value = "/customerForgotPassword", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> customerForgotPassword(HttpServletRequest request, @RequestBody CustomerPOJOHelper cusObj) {
+		GenericResponse<String> response = new GenericResponse<>();
 		try {
-			if(loginService.checkIfCustomerExists(cusObj.getEmailId())) {
-				response.setErrorMessages(Arrays.asList("Email Id Exists"));
+			if (cusObj.getCustomerInfo() != null && loginService.checkIfUserExists(cusObj.getCustomerInfo().getEmailId())) {
+				String otp = otpService.generateOtp(cusObj.getCustomerInfo().getEmailId() + CommonUtil.Key_clientOTP);
+				if(!configUtil.isProdMode()) {
+					logger.info("OTP - " + otp);
+				}
+				emailService.sendOtpEmail(cusObj.getCustomerInfo().getEmailId(), otp);
+				response.setStatus(Response.Status.OK);
+			} else {
+				response.setErrorMessages(Arrays.asList("User does not exists"));
 				response.setStatus(Response.Status.ERROR);
 			}
-			else {
-				loginService.createUser(cusObj);
+		} catch (Exception ex) {
+			logger.error("customerForgotPassword : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/sendRegisterEmailOtp", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> sendRegisterEmailOtp(HttpServletRequest request,  @RequestBody CustomerPOJOHelper cusObj) {
+		GenericResponse<String> response = new GenericResponse<>();
+		try {
+			if (cusObj.getCustomerInfo() != null) {
+				String otp = otpService.generateOtp(cusObj.getCustomerInfo().getEmailId() + CommonUtil.Key_clientOTP);
+				if(!configUtil.isProdMode()) {
+					logger.info("OTP - " + otp);
+				}
+				emailService.sendOtpEmail(cusObj.getCustomerInfo().getEmailId(), otp);
+				response.setStatus(Response.Status.OK);
+			} else {
+				response.setErrorMessages(Arrays.asList("User Object is NULL"));
+				response.setStatus(Response.Status.ERROR);
+			}
+		} catch (Exception ex) {
+			logger.error("sendRegisterEmailOtp : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/registerCustomer", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<CustomerInfo> registerCustomer(HttpServletRequest request,
+			@RequestBody CustomerPOJOHelper cusObj) {
+		GenericResponse<CustomerInfo> response = new GenericResponse<CustomerInfo>();
+		try {
+			String otp = otpService.getOtp(cusObj.getCustomerInfo().getEmailId() + CommonUtil.Key_clientOTP);
+			if (loginService.checkIfCustomerExists(cusObj.getCustomerInfo().getEmailId())) {
+				response.setErrorMessages(Arrays.asList("Email Id Exists"));
+				response.setStatus(Response.Status.ERROR);
+			} else if (cusObj.getOtp() != null && !otp.equals(cusObj.getOtp())) {
+				response.setErrorMessages(Arrays.asList("Invalid/Expired OTP...Please Refresh to continue !"));
+				response.setStatus(Response.Status.ERROR);
+			} else {
+				loginService.createUser(cusObj.getCustomerInfo());
 				response.setStatus(Response.Status.OK);
 			}
 		} catch (Exception ex) {

@@ -48,7 +48,7 @@ public class OtpServiceImpl implements OtpService {
 	public String getOtp(String key) {
 		try {
 			return otpCache.get(key);
-		} catch (ExecutionException e) {
+		} catch (Exception e) {
 			logger.error("Requested Item released from Cache - " + e.getMessage());
 			return null;
 		}

@@ -81,4 +81,7 @@ public interface ProductService {
 	List<ProductPOJO> getProducts(List<Integer> cIds, List<Integer> pIds, String limit, String offset,
 			String sortByField, String sortByType) throws Exception;
 
+	List<ProductPOJO> getProductsWithSearchTerm(List<Integer> cIds, String SearchTerm, String limit, String offset,
+			String sortByField, String sortByType) throws Exception;
+
 }

@@ -33,6 +33,7 @@ import com.backend.persistence.entity.Orders;
 import com.backend.persistence.entity.Product;
 import com.backend.persistence.repository.OrderDetailsRepository;
 import com.backend.persistence.repository.OrdersRepository;
+import com.backend.persistence.repository.ProductRepository;
 import com.backend.persistence.service.CouponsService;
 import com.backend.persistence.service.CustomerInfoService;
 import com.backend.persistence.service.InvoiceService;
@@ -74,6 +75,9 @@ public class OrdersServiceImpl implements OrdersService {
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private ProductRepository productRepo;
 
 	@Override
 	public void save(Orders order) {
@@ -109,7 +113,7 @@ public class OrdersServiceImpl implements OrdersService {
 	}
 
 	@Override
-	public void createCustomerOrder(int couponId, int paymentMode) throws Exception {
+	public void createCustomerOrder(int couponId, int paymentMode, int addressId) throws Exception {
 		Coupons coupon = couponService.findCouponById(couponId);
 		CustomerInfo customer = (CustomerInfo) baseService.getUserInfo();
 		// create initial order object
@@ -118,6 +122,7 @@ public class OrdersServiceImpl implements OrdersService {
 		order.setStatus(OrdersUtil.orderStatus.Pending.toString());
 		order.setPaymentModeId(paymentMode);
 		order.setCustomerId(customer.getCustomerId());
+		order.setCustomerAddressId(addressId);
 		order.setTenant(baseService.getTenantInfo());
 		if (coupon != null) {
 			order.setCouponId(coupon.getCouponId());
@@ -140,16 +145,11 @@ public class OrdersServiceImpl implements OrdersService {
 			orderDetailsRepo.save(detail);
 			Product product = item.getProduct();
 			BigDecimal total = new BigDecimal(0);
-			if (product.getOffer().compareTo(new BigDecimal(0)) > 0) {
-				BigDecimal discountedPrice = product.getCost().multiply(product.getOffer()).divide(new BigDecimal(100));
-				discountedPrice = product.getCost().subtract(discountedPrice);
-				total = discountedPrice.abs().multiply(new BigDecimal(item.getQuantity()));
-			}
-			else {
-				total = product.getCost().multiply(new BigDecimal(item.getQuantity()));
-			}
+			total = product.getSellingCost().multiply(new BigDecimal(item.getQuantity()));
 			subTotal = subTotal.add(total);
 			orderDetails.add(detail);
+			product.setQuantityInStock(product.getQuantityInStock()-item.getQuantity());
+			productRepo.save(product);
 		}
 		if (coupon != null) {
 			subTotal = subTotal.multiply(new BigDecimal(coupon.getDiscount())).divide(new BigDecimal(100));
@@ -189,6 +189,12 @@ public class OrdersServiceImpl implements OrdersService {
 	public List<Orders> getOrdersAssignedForEmployee(String status) {
 		return ordersRepo.findOrdersByStatusForEmployee(baseService.getTenantInfo(),
 				((EmployeeInfo) baseService.getUserInfo()).getEmployeeId(), status);
+	}
+	
+	@Override
+	public List<Orders> getCustomerOrders() {
+		return ordersRepo.findCustomerOrders(baseService.getTenantInfo().getTenantID(),
+				((CustomerInfo) baseService.getUserInfo()).getCustomerId());
 	}
 	
 	@Override

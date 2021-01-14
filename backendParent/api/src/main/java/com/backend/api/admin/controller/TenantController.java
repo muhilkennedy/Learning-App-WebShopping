@@ -110,5 +110,22 @@ public class TenantController {
 		}
 		return response;
 	}
+	
+	@RequestMapping(value = "/updateMapLocation", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> updateMapLocation(HttpServletRequest request, @RequestParam(value = "location", required = true) String location){
+		GenericResponse<String> response = new GenericResponse<>();
+		try {
+			TenantDetails tenantDetail = new TenantDetails();
+			tenantDetail.setGmapLocation(location);
+			tenantService.updateTenantDetails(tenantDetail, null);
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("updateMapLocation : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
 
 }

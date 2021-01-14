@@ -89,6 +89,7 @@ import { NotFoundComponent } from './component/not-found/not-found.component';
 import { PushNotificationComponent } from './containers/push-notification/push-notification.component';
 import { ChatMessengerComponent } from './containers/chat-messenger/chat-messenger.component';
 import { ScheduledTasksComponent } from './containers/scheduled-tasks/scheduled-tasks.component';
+import { PushNotificationsModule, PushNotificationsService } from 'ng-push';
 
 
 @Injectable()
@@ -122,6 +123,7 @@ export class TenantInitializer {
                     this.tenantStore.tenantGstIn = tenantDetails.gstIn;
                     this.tenantStore.tenantFssai = tenantDetails.fssai;
                     this.tenantStore.tenantTagLine = tenantDetails.tagLine;
+                    this.tenantStore.tenantGmap = tenantDetails.gmapLocation;
                   }
                   this.tenantStore.tenantLogo = resp.dataList != null ? resp.dataList[1] : null;
                   //load app only if tenant is active.
@@ -211,7 +213,8 @@ export function init_tenant(initializer: TenantInitializer) {
     NgMultiSelectDropDownModule.forRoot(),
     ThermalPrintModule,
     BarecodeScannerLivestreamModule,
-    PdfViewerModule
+    PdfViewerModule,
+    PushNotificationsModule
   ],
   declarations: [
     AppComponent,
@@ -236,7 +239,9 @@ export function init_tenant(initializer: TenantInitializer) {
     {
       provide: HTTP_INTERCEPTORS,
       useClass: InterceptorService,
-      multi: true },
+      multi: true
+    },
+    PushNotificationsService
   ],
   bootstrap: [ AppComponent ]
 })

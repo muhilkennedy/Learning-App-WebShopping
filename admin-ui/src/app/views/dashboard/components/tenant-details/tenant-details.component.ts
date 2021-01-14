@@ -26,6 +26,7 @@ export class TenantDetailsComponent implements OnInit {
   editTenantGst = false;
   editTenantFssai = false;
   editTenantTag = false;
+  editGmap = false;
 
   loadTenantEmail = false;
   loadTenantBusinessEmail = false;
@@ -41,6 +42,7 @@ export class TenantDetailsComponent implements OnInit {
   loadTenantGst = false;
   loadTenantFssai = false;
   loadTenantTag = false;
+  loadGmap = false;
 
   tenantDetailId: number;
   tenantEmail: string;
@@ -57,6 +59,7 @@ export class TenantDetailsComponent implements OnInit {
   tenantGstIn: string;
   tenantFssai: string;
   tenantTagLine: string;
+  tenantGmap: string;
 
   constructor(private tenantStore: TenantStoreService,
               private tenantService: TenantService,
@@ -76,6 +79,7 @@ export class TenantDetailsComponent implements OnInit {
     this.tenantGstIn = this.tenantStore.tenantGstIn;
     this.tenantFssai = this.tenantStore.tenantFssai;
     this.tenantTagLine = this.tenantStore.tenantTagLine;
+    this.tenantGmap = this.tenantStore.tenantGmap;
   }
 
   updateTenantEmail(){
@@ -208,6 +212,23 @@ export class TenantDetailsComponent implements OnInit {
                         if(resp.statusCode === 200){
                           this.editTenantPin = false;
                           this.loadTenantPin = false;
+                        }
+                        else{
+                          alert("error");
+                        }
+                      },
+                      (error:any) => {
+                        alert("error");
+                      });
+  }
+
+  updateTenantGmap(){
+    this.loadGmap = true;
+    this.tenantService.updateTenantLocation(this.tenantGmap)
+                      .subscribe((resp:any) => {
+                        if(resp.statusCode === 200){
+                          this.editGmap = false;
+                          this.loadGmap = false;
                         }
                         else{
                           alert("error");

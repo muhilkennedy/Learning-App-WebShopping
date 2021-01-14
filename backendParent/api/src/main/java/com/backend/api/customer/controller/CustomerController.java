@@ -63,6 +63,26 @@ public class CustomerController {
 		return response;
 	}
 	
+	@RequestMapping(value = "/updateMobile", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse updateMobile(HttpServletRequest request,
+												@RequestParam(value = "mobile", required = true) String mobile) {
+		GenericResponse response = new GenericResponse();
+		try {
+			if (CommonUtil.isValidStringParam(mobile)) {
+				customerService.updateCustomerMobile(mobile);
+				response.setStatus(Response.Status.OK);
+			} else {
+				response.setStatus(Response.Status.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			logger.error("updateMobile : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
 	@RequestMapping(value = "/addCustomerAddress", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<String> addCustomerAddress(HttpServletRequest request, @RequestBody CustomerInfo customer) {
 		GenericResponse<String> response = new GenericResponse<String>();

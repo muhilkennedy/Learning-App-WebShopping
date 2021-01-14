@@ -19,12 +19,16 @@ export class LoginComponent implements OnInit {
   loading = false;
   registerLoding = false;
   signInLoading = false;
+  buttonLoading = false;
+  buttonDisable = false;
 
   emailId:string;
   password:string;
+  otp:string;
   fName:string;
   lName:string;
-  rememberMe:boolean;
+  mobile:string;
+  rememberMe:boolean = false;
 
   constructor(private loginService: LoginService, private tenantStore: TenantStoreService,
               private route: Router, private cookieService: CookieService,
@@ -56,7 +60,7 @@ export class LoginComponent implements OnInit {
 
   registerCustomer(){
     this.registerLoding = true;
-    this.loginService.createCustomer(this.fName, this.lName, this.emailId, rsaencrypt(this.password, this.tenantStore.publicKey))
+    this.loginService.createCustomer(this.fName, this.lName, this.emailId, rsaencrypt(this.password, this.tenantStore.publicKey), this.otp)
                       .subscribe((resp:any) => {
                         if(resp.statusCode === 200){
                           alert("sucess!");
@@ -109,17 +113,40 @@ export class LoginComponent implements OnInit {
 
   setCartItems(){
     this.cartService.getCartCount()
-    .subscribe((resp:any) => {
-      if(resp.statusCode === 200){
-        this.userStore.cartCount = resp.data;
-      }
-      else{
-        alert('Failed : ' + resp.errorMessages);
-      }
-      },
-      (error:any) => {
-        alert('Something went wrong!');
-      });
+                    .subscribe((resp:any) => {
+                      if(resp.statusCode === 200){
+                        this.userStore.cartCount = resp.data;
+                      }
+                      else{
+                        alert('Failed : ' + resp.errorMessages);
+                      }
+                      },
+                      (error:any) => {
+                        alert('Something went wrong!');
+                      });
+  }
+
+  sendRegisterOTP(){
+    this.buttonLoading=true;
+    this.buttonDisable = true;
+    if(this.emailId === undefined || this.emailId === null || this.emailId === ''){
+      alert("Email is mandatory!")
+      this.buttonLoading = false;
+      this.buttonDisable = false;
+      return;
+    }
+    this.loginService.sendRegisterOtp(this.emailId)
+                      .subscribe((resp:any) => {
+                          if(resp.statusCode !== 200){
+                            alert('Failed : ' + resp.errorMessages);
+                            this.buttonDisable = false;
+                          }
+                          this.buttonLoading = false;
+                      },
+                      (error:any) => {
+                        alert('Something went wrong!');
+                        this.buttonDisable = false;
+                      });
   }
 
 }

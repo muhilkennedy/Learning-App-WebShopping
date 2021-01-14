@@ -44,6 +44,7 @@ public class SQLQueryHandler {
 		public static final String Key_GroupBy = " group by ";
 		public static final String Key_Ascending = " asc ";
 		public static final String Key_Descending = " desc ";
+		public static final String Key_Like = " like ";
 
 		public SQLQueryHandler build() {
 			return new SQLQueryHandler(this);
@@ -331,6 +332,28 @@ public class SQLQueryHandler {
 				}
 				this.query = query.concat(Key_OffsetCondition.concat(value));
 			}
+			return this;
+		}
+		
+		public SQLQueryBuilder andSetLikeCondition (String fieldName, String value) {
+			if(value == null) {
+				return this;
+			}
+			setAndCondition();
+			setStartBrace();
+			this.query = this.query.concat(fieldName.concat(Key_Like).concat(value));
+			setEndBrace();
+			return this;
+		}
+		
+		public SQLQueryBuilder orSetLikeCondition (String fieldName, String value) {
+			if(value == null) {
+				return this;
+			}
+			setOrCondition();
+			setStartBrace();
+			this.query = this.query.concat(fieldName.concat(Key_Like).concat(value));
+			setEndBrace();
 			return this;
 		}
  
