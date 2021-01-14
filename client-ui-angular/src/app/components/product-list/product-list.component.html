@@ -5,8 +5,7 @@
       <div class="col-sm-3">
         <div class="left-sidebar">
           <h2>Category</h2>
-          <div class="panel-group category-products" id="accordian"><!--category-productsr-->
-
+          <div class="panel-group category-products" id="accordian"><!--category-products-->
             <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
               <!-- This is the tree node template for leaf nodes -->
               <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
@@ -42,11 +41,53 @@
           <!-- FILTERS -->
           <div class="price-range">
             <h2>Filters</h2>
-            <div class="well">
-
+            <div class="well" style="width: 100%;">
+              <mat-form-field class="matitem" style="width: 200px;">
+                <input type="text"
+                       placeholder="Search Product"
+                       matInput
+                       [formControl]="myControl"
+                       [(ngModel)]="productSearched">
+                <!--<input type="text"
+                       placeholder="Search Product"
+                       matInput
+                       [formControl]="myControl"
+                       [matAutocomplete]="auto"
+                       [(ngModel)]="productSearched"
+                       (keyup)="getProductsForSearch($event)">
+                <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" >
+                  <mat-option (onSelectionChange)="selectProduct(option)" *ngFor="let option of filteredOptions | async" [value]="option.productId">
+                    {{option.productName}}
+                  </mat-option>
+                </mat-autocomplete> -->
+                <button matSuffix type="button" class="btn btn-primary" (click)="searchAction()"><i class="fa fa-search"></i></button>
+              </mat-form-field>
+              <table>
+                <tr>
+                  <td style="padding-top: 20px;">
+                    <label>Sort By Cost : </label>
+                  </td>
+                  <td>
+                    <button matSuffix type="button" class="btn btn-primary btnStyle" (click)="sortBy('sellingCost', 'asc')"><i class="fa fa-sort-amount-asc"></i></button>
+                  </td>
+                  <td>
+                    <button matSuffix type="button" class="btn btn-primary btnStyle" (click)="sortBy('sellingCost', 'desc')"><i class="fa fa-sort-amount-desc"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding-top: 20px;">
+                    <label>Sort By Offer : </label>
+                  </td>
+                  <td>
+                    <button matSuffix type="button" class="btn btn-primary btnStyle" (click)="sortBy('offer', 'asc')"><i class="fa fa-sort-amount-asc"></i></button>
+                  </td>
+                  <td>
+                    <button matSuffix type="button" class="btn btn-primary btnStyle" (click)="sortBy('offer', 'desc')"><i class="fa fa-sort-amount-desc"></i></button>
+                  </td>
+                </tr>
+              </table>
             </div>
           </div>
-
         </div>
       </div>
 
@@ -58,9 +99,9 @@
             <div class="product-image-wrapper">
               <div class="single-products">
                 <div class="productinfo text-center">
-                  <div *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0" class="vc">
-                    <p>{{prod.productContent.offer}}% Off</p>
-                   </div>
+                  <span class="offer-overlay" *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0">
+                    {{prod.productContent.offer}}% Off
+                  </span>
                   <img style="object-fit: cover;" width="250px" height="300px" src={{getProductImage(prod)}} alt="product Image" />
                   <h3>{{prod.productContent.productName}}</h3>
                   <p>{{prod.productContent.brandName}}</p>
@@ -68,7 +109,8 @@
                   <span class="regular-price"> ₹{{prod.productContent.sellingCost}}</span>
                   <br/>
                   <br/>
-                  <a (click)="addToCart(prod.productContent)" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                  <a *ngIf="prod.productContent.quantityInStock > 0" (click)="addToCart(prod.productContent)" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                  <a *ngIf="prod.productContent.quantityInStock <= 0" disabled class="btn btn-default add-to-cart"><i class="fa fa-frown-o"></i>Out of Stock</a>
               </div>
             </div>
             </div>

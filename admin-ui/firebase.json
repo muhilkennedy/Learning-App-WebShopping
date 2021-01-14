@@ -1,7 +1,6 @@
 {
   "hosting": {
-    "site": "admin-51b0d",
-    "public": "dist",
+    "public": "www",
     "ignore": [
       "firebase.json",
       "**/.*",

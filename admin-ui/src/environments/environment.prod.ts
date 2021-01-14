@@ -1,9 +1,9 @@
 export const environment = {
   production: true,
-  BuildOrigin: "android",
-  tenantId: "devTenant",
-  backendBaseUrl:"https://backendspringbootmicroservice.loca.lt",
+  BuildOrigin: "web",
+  tenantId: "ria.mpm",
+  backendBaseUrl:"https://muhil.staqlab-tunnel.com",
   contextPath:"",
-  origin:"http://localhost:4200",
-  orgName: "Nutty Shop"
+  origin:"https://riagroceriesdevadmin.web.app",
+  orgName: "Ria Groceries"
 };

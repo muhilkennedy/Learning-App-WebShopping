@@ -127,6 +127,9 @@ public class TenantServiceImpl implements TenantService {
 		if(!StringUtils.isEmpty(tenantDetails.getTagLine())){
 			actualTenantDetail.setTagLine(tenantDetails.getTagLine());
 		}
+		if(!StringUtils.isEmpty(tenantDetails.getGmapLocation())){
+			actualTenantDetail.setGmapLocation(tenantDetails.getGmapLocation());
+		}
 		tenantDetailsRepo.save(actualTenantDetail);
 	}
 

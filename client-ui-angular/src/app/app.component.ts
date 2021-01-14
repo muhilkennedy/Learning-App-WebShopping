@@ -54,7 +54,7 @@ export class AppComponent implements OnInit{
                           }
                           },
                           (error:any) => {
-                            alert('Something went wrong!');
+                            console.log("Token Authentication Failed!");
                           });
     }
   }

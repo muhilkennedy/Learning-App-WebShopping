@@ -23,4 +23,6 @@ public interface POSService {
 
 	File getPOSInvoice(String id) throws Exception;
 
+	List<POSData> getPOSDATAForCustomer() throws Exception;
+
 }

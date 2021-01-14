@@ -85,6 +85,15 @@ public class POSServiceImpl implements POSService {
 	}
 	
 	@Override
+	public List<POSData> getPOSDATAForCustomer () throws Exception{
+		String mobile = ((CustomerInfo)baseService.getUserInfo()).getMobile();
+		if(mobile != null) {
+			return getPOSDATA(mobile);
+		}
+		return null;
+	}
+	
+	@Override
 	public POSData getPOSDATAById(String id) throws Exception {
 		return posDao.getPOSById(id, baseService.getTenantInfo().getTenantID());
 	}

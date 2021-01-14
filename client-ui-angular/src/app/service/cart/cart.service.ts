@@ -13,6 +13,7 @@ export class CartService {
   getCustomerEndpoint = "/secure/customer/getCustomerCart";
   updateQuantityEndpoint = "/secure/customer/updateProductQuantity";
   addAddressEndpoint = "/secure/customer/addCustomerAddress";
+  removeFromCartEndpoint = "/secure/customer/removeProductFromCart";
 
   getPinCodeDetailsEndpoint = "/secure/orders/getPincodeAndCouponDetails";
 
@@ -71,5 +72,12 @@ export class CartService {
     };
     return this.http.post(environment.backendBaseUrl+this.addAddressEndpoint, body, httpOptions);
   }
+
+  removeProductFromCart(id): Observable<any>{
+    const uploadData = new FormData();
+    uploadData.append('productId', id);
+    return this.http.post(environment.backendBaseUrl+this.removeFromCartEndpoint, uploadData);
+  }
+
 
 }

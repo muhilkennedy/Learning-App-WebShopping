@@ -1,0 +1,32 @@
+<div class="table-responsive cart_info">
+  <table class="table table-condensed">
+    <thead>
+      <tr class="cart_menu">
+        <td class="description">ITEM NAME</td>
+        <td class="price">MRP</td>
+        <td class="price">OUR PRICE</td>
+        <td class="price">QUANTITY</td>
+        <td class="price">TOTAL</td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let pos of posDetails">
+        <td>
+          {{pos.itemName}}
+        </td>
+        <td>
+          {{pos.mrp}}
+        </td>
+        <td>
+          {{pos.sellingCost}}
+        </td>
+        <td>
+          {{pos.quantity}}
+        </td>
+        <td>
+          {{pos.total}}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

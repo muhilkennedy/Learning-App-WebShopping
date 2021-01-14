@@ -33,7 +33,7 @@
             <input type="email" name="emailid" placeholder="Email Address" [(ngModel)]="emailId"/>
             <input type="password" name="password"  placeholder="Password" [(ngModel)]="password"/>
             <span>
-              <input type="checkbox" class="checkbox" name="rememberme" [(ngModel)]="rememberMe"/>
+              <input type="checkbox" class="checkbox" name="rememberme" [(ngModel)]="rememberMe" />
               Keep me signed in
             </span>
             <button type="submit" class="btn btn-default" (click)="login()">Login</button>
@@ -57,10 +57,32 @@
                 <input type="text" name="lname"  placeholder="Last Name" [(ngModel)]="lName"/>
               </td>
             </tr>
+            <tr>
+              <td>
+                <input type="email" name="email"  placeholder="Email Address" [(ngModel)]="emailId"/>
+              </td>
+              <td style="padding-left: 10px;">
+                <button type="submit" class="btn btn-default" (click)="sendRegisterOTP()"
+                    [ngClass]="{'spinner' : buttonLoading}" [disabled]="buttonDisable">
+                  Send EMAIL-OTP
+                </button>
+                <mat-hint *ngIf="buttonDisable"><small>OTP Valid For 5 Mins</small></mat-hint>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <input required type="password" name="pass" minlength="10"  placeholder="New Password" [(ngModel)]="password"/>
+              </td>
+              <td>
+                <input type="otp" name="otp"  placeholder="Email OTP" [(ngModel)]="otp"/>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <button type="submit" class="btn btn-default" (click)="registerCustomer()">Signup</button>
+              </td>
+            </tr>
           </table>
-            <input type="email" name="email"  placeholder="Email Address" [(ngModel)]="emailId"/>
-            <input type="password" name="pass"  placeholder="Password" [(ngModel)]="password"/>
-            <button type="submit" class="btn btn-default" (click)="registerCustomer()">Signup</button>
           </form>
         </div>
       </div>

@@ -13,6 +13,8 @@ export class LoginService {
   autheticateCustomerTokenEndpoint = "/secure/customer/customerTokenAuthentication";
   registerCustomerEndpoint = "/login/registerCustomer";
   customerLoginEndpoint = "/login/customerAuthentication";
+  sendRegisterOTPEndpoint = "/login/sendRegisterEmailOtp";
+  forgotPasswordEndPoint = "/login/login/customerForgotPassword";
 
   constructor(private http: HttpClient) { }
 
@@ -30,12 +32,15 @@ export class LoginService {
     return this.http.post(environment.backendBaseUrl+this.autheticateCustomerTokenEndpoint, null);
   }
 
-  createCustomer(firstName, lastName, email, password) : Observable<any>{
+  createCustomer(firstName, lastName, email, password, otp) : Observable<any>{
     const body = {
+        customerInfo :{
           emailId : email,
-          firstName : firstName,
-          lastName : lastName,
-          password : password
+            firstName : firstName,
+            lastName : lastName,
+            password : password
+        },
+        otp: otp
     };
     const httpOptions = {
     headers: new HttpHeaders({
@@ -49,9 +54,9 @@ export class LoginService {
     const body = {
           customerInfo : {
             emailId : email,
-            password : password,
-            rememberMe: rememberMe
-          }
+            password : password
+          },
+          rememberMe: rememberMe
     };
     const httpOptions = {
     headers: new HttpHeaders({
@@ -59,6 +64,34 @@ export class LoginService {
       }),
     };
     return this.http.post(environment.backendBaseUrl+this.customerLoginEndpoint, body, httpOptions);
+  }
+
+  sendRegisterOtp(emailId) : Observable<any>{
+    const body = {
+      customerInfo : {
+           emailId : emailId
+        }
+    };
+    const httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+      }),
+    };
+    return this.http.post(environment.backendBaseUrl+this.sendRegisterOTPEndpoint, body, httpOptions);
+  }
+
+  forgotPassWord(emailId) : Observable<any>{
+    const body = {
+      customerInfo : {
+           emailId : emailId
+        }
+    };
+    const httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+      }),
+    };
+    return this.http.post(environment.backendBaseUrl+this.forgotPasswordEndPoint, body, httpOptions);
   }
 
 }

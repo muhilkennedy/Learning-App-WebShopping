@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.Response;
+import com.backend.commons.util.CommonUtil;
 import com.backend.core.util.Constants;
 import com.backend.persistence.entity.Product;
 import com.backend.persistence.helper.ProductPOJO;
@@ -215,6 +216,28 @@ public class ProductController {
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("getProdctsRecursiveByCategory : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/getProductsBySearchText", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<ProductPOJO> getProductsBySearchText(HttpServletRequest request,
+			@RequestParam(value = "searchTerm", required = true) String searchTerm,
+			@RequestParam(value = "cIds", required = false) String cId,
+			@RequestParam(value = "sortField", required = false) String sortByField,
+			@RequestParam(value = "sortType", required = false) String sortByType,
+			@RequestParam(value = "includeInactive", required = false) boolean includeInactive) {
+		GenericResponse<ProductPOJO> response = new GenericResponse<>();
+		try {
+			String limit = request.getHeader(Constants.Header_Limit);
+			String offset = request.getHeader(Constants.Header_Offset);
+			response.setDataList(productService.getProductsWithSearchTerm(CommonUtil.isValidStringParam(cId)? Arrays.asList(Integer.parseInt(cId)) : null, searchTerm, limit, offset, sortByField, sortByType));
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("getProductsBySearchText : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);

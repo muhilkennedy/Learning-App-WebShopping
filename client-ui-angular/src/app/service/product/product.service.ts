@@ -11,6 +11,7 @@ export class ProductService {
   featuredProductsEndpoint = "/product/getFeaturedProducts";
   getProductsEndpoint = "/product/getProductsWithImages";
   getProductCountEndpoint = "/product/getProductCount";
+  getProductsBySearchTermEndpoint = "/product/getProductsBySearchText";
 
   getCategoriesEndpoint = "/category/getCategories";
 
@@ -26,6 +27,9 @@ export class ProductService {
     .append('Offset', offset)
     .append('Limit', limit);
 
+    if(cIds === undefined || cIds === null || cIds === ''){
+      cIds = new Array();
+    }
     const httpOptions = {
       headers: requestHeaders,
       params: {
@@ -39,6 +43,9 @@ export class ProductService {
 
   getproductCount(cIds): Observable<any>{
     let requestHeaders = new HttpHeaders().set('Content-Type', 'application/json')
+    if(cIds === undefined || cIds === null || cIds === ''){
+      cIds = new Array();
+    }
     const httpOptions = {
       headers: requestHeaders,
       params: {
@@ -50,6 +57,23 @@ export class ProductService {
 
   getAllCategories(): Observable<any>{
     return this.http.get(environment.backendBaseUrl+this.getCategoriesEndpoint);
+  }
+
+  getProductsBySearchTerm(cIds, searchTerm, limit, offset, sortField, sortType): Observable<any>{
+     let requestHeaders = new HttpHeaders().set('Content-Type', 'application/json')
+     .append('Offset', offset)
+     .append('Limit', limit);
+
+     const httpOptions = {
+       headers: requestHeaders,
+       params: {
+         searchTerm:searchTerm,
+         cIds: cIds,
+         sortField: sortField,
+         sortType: sortType
+       }
+     };
+     return this.http.get(environment.backendBaseUrl+this.getProductsBySearchTermEndpoint, httpOptions);
   }
 
 }

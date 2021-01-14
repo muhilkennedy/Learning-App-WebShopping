@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CartService } from 'src/app/service/cart/cart.service';
 import { CommonsService } from 'src/app/service/shared/commons/commons.service';
@@ -23,9 +23,13 @@ export class CartComponent implements OnInit {
   pincodeDetails:any;
   couponDetails:any;
 
+  @Input()
+  cartPage: boolean = true;
+
   ngOnInit(): void {
-    this.loading = true;
-    this.cartService.getCustomerCart()
+    if(this.userStore !== undefined && this.userStore.emailId !== undefined){
+      this.loading = true;
+      this.cartService.getCustomerCart()
                     .subscribe((resp:any) => {
                       if(resp.statusCode === 200){
                         this.cartItems = resp.dataList;
@@ -36,7 +40,12 @@ export class CartComponent implements OnInit {
                     (error: any) => {
                       alert("Something went wrong!");
                     })
-    this.setPinAndCouonDetails(this.pincode, null);
+      this.setPinAndCouonDetails(this.pincode, null);
+    }
+    else{
+      alert("Please Login to Access Cart!");
+      this.router.navigate(['/login']);
+    }
   }
 
   setPinAndCouonDetails(pincode, coupon){
@@ -103,7 +112,7 @@ export class CartComponent implements OnInit {
   calculatePrice(item):number{
     let product = item.product;
     if(product.offer > 0){
-      return product.cost - product.sellingCost;
+      return product.sellingCost;
     }
     return product.cost;
   }
@@ -166,6 +175,30 @@ export class CartComponent implements OnInit {
 
   gotoCheckout(){
     this.router.navigate(['/checkout']);
+  }
+
+  removeFromCart(prod){
+    this.loading = true;
+    this.cartService.removeProductFromCart(prod.productId)
+                    .subscribe((resp:any) => {
+                      if(resp.statusCode !== 200){
+                        alert("failed to remove from cart");
+                      }
+                      let index = 0;
+                      this.cartItems.forEach(item => {
+                        if(item.product.productId === prod.productId){
+                          this.cartItems.splice(index, 1);
+                          this.userStore.cartCount--;
+                          this.loading = false;
+                          return;
+                        }
+                        index++;
+                      });
+                      this.loading = false;
+                    },
+                    (error: any) => {
+                      alert("Something went wrong!");
+                    })
   }
 
 }

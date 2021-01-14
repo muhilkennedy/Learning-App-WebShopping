@@ -58,6 +58,11 @@ import { NotFoundComponent } from './components/shared/not-found/not-found.compo
 import { AuthenticateComponent } from './components/shared/authenticate/authenticate.component';
 import { CartComponent } from './components/cart/cart.component';
 import { CheckoutComponent } from './components/checkout/checkout.component';
+import { OrderHistoryComponent } from './components/order-history/order-history.component';
+import { OrdersDialogComponent } from './components/order-history/orders-dialog/orders-dialog.component';
+import { PosHistoryComponent } from './components/pos-history/pos-history.component';
+import { ProfileComponent } from './components/profile/profile.component';
+import { PosDialogComponent } from './components/pos-history/pos-dialog/pos-dialog.component';
 
 @Injectable()
 export class TenantInitializer {
@@ -90,6 +95,7 @@ export class TenantInitializer {
                     this.tenantStore.tenantGstIn = tenantDetails.gstIn;
                     this.tenantStore.tenantFssai = tenantDetails.fssai;
                     this.tenantStore.tenantTagLine = tenantDetails.tagLine;
+                    this.tenantStore.tenantGmap = tenantDetails.gmapLocation;
                   }
                   this.tenantStore.tenantLogo = resp.dataList[1];
                   //load app only if tenant is active.
@@ -125,7 +131,12 @@ export function init_tenant(initializer: TenantInitializer) {
     NotFoundComponent,
     AuthenticateComponent,
     CartComponent,
-    CheckoutComponent
+    CheckoutComponent,
+    OrderHistoryComponent,
+    OrdersDialogComponent,
+    PosHistoryComponent,
+    ProfileComponent,
+    PosDialogComponent
   ],
   imports: [
     HttpClientModule,

@@ -198,7 +198,7 @@ export class PosComponent implements OnInit {
     });
   }
 
-  getCustomerDetails(){
+  getCustomerDetails(event){
     let mobile = this.customerMobile.toString();
     if(mobile.length === 10 && ( this.customerEmail === undefined || this.customerEmail === null)){
       this.loading = true;

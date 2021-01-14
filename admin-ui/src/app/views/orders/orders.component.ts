@@ -197,4 +197,10 @@ export class OrdersComponent implements OnInit {
     }
   }
 
+  getDeliveryContact(){
+    if(this.customerDetails !== undefined && this.customerDetails.customerAddress !== null){
+      return this.customerDetails.customerAddress[0].mobileContact;
+    }
+  }
+
 }

@@ -129,6 +129,52 @@ public class ProductDao {
 			throw new Exception(ex.getMessage());
 		}
 	}
+	
+	public List<ProductPOJO> getProductsBasedOnSearchTerm(List<Integer> cIds, String SearchTerm, String limit, String offset, String sortByField, String sortBytype) throws Exception {
+		List<ProductPOJO> productList = new ArrayList<ProductPOJO>();
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			//.setAndCondition("active", "true", true)
+			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+															.setQuery("select * from product")
+															.setWhereClause()
+															.setAndCondition("tenantid", baseService.getTenantInfo().getTenantID())
+															.andSetAndCondition("active", true)
+															.andSetAndCondition("isdeleted", false)
+															.andSetOrConditions("categoryid", cIds)
+															.andSetLikeCondition("productname", "\"%" + SearchTerm + "%\"")
+															.setOrderBy(sortByField)
+															.setSortOrder(sortBytype)
+														  	.setLimit(limit)
+														  	.setOffset(offset)
+															.build();
+			PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				Product product = new Product();
+				product.setProductId(rs.getInt(3));
+				product.setProductName(rs.getString(4));
+				product.setBrandName(rs.getString(5));
+				product.setCost(rs.getBigDecimal(6));
+				product.setOffer(rs.getBigDecimal(7));
+				product.setProductDescription(rs.getString(8));
+				product.setProductCode(rs.getString(9));
+				product.setQuantityInStock(rs.getInt(10));
+				product.setLastModified(rs.getLong(11));
+				product.setLastModifiedById(rs.getInt(12));
+				product.setActive(rs.getBoolean(13));
+				product.setProductRating(rs.getInt(15));
+				product.setSellingCost(rs.getBigDecimal(16));
+				ProductPOJO pojo = new ProductPOJO();
+				pojo.setProductContent(product);
+				pojo.setProductImage(pImageRepo.findAllImagesForProduct(baseService.getTenantInfo(), product));
+				productList.add(pojo);
+			}
+			return productList;
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+	}
 
 	public List<Product> getProducts(List<Integer> cIds, List<Integer> pIds, String limit, String offset,
 			String sortByField, String sortBytype, Boolean includeInactive, Boolean outOfStock) throws Exception {

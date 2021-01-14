@@ -10,7 +10,7 @@ public interface LoginService {
 
 	void updateUserPassword(User user) throws InvalidUserException;
 
-	String createUser(User user);
+	String createUser(User user) throws Exception;
 
 	boolean checkIfUserExists(String email);
 

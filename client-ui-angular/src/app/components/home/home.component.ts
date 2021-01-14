@@ -17,7 +17,7 @@ export class HomeComponent implements OnInit {
   loading = true;
   mediaArray:any[] = new Array();
 
-  mandateHomeMedia:any;
+  mandateHomeMedia:any = null;
   homeMedia:any[] = new Array();
   homeBanner:any[] = new Array();
   homeMediaLength:number = 0;

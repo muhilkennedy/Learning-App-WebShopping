@@ -13,13 +13,16 @@ import { UserStoreService } from 'src/app/service/shared/user-store/user-store.s
 })
 export class HeaderComponent implements OnInit {
 
+  isHomeClicked = true;
+  isShowNowClicked = false;
+  isContactClicked = false;
+
   constructor(public tenantStore: TenantStoreService, private router: Router,
-              public userStore: UserStoreService, private cartService: CartService) { }
+              public userStore: UserStoreService, private cartService: CartService,
+              public cookieService: CookieService) { }
 
   ngOnInit(): void {
-    if(this.isLoggedIn()){
 
-    }
   }
 
   isLoggedIn(){
@@ -30,11 +33,21 @@ export class HeaderComponent implements OnInit {
     return false;
   }
 
+  logout(){
+    this.userStore = undefined;
+    // this.userStore = null;
+    this.cookieService.deleteAll();
+    this.openHome();
+    window.location.reload();
+  }
+
   openHome(){
+    this.setActiveMenu(true, false, false);
     this.router.navigate(['/home']);
   }
 
   openContact(){
+    this.setActiveMenu(false, false, true);
     this.router.navigate(['/contact']);
   }
 
@@ -43,11 +56,34 @@ export class HeaderComponent implements OnInit {
   }
 
   openProductList(){
+    this.setActiveMenu(false, true, false);
     this.router.navigate(['/productList']);
   }
 
   openCart(){
     this.router.navigate(['/cart']);
+  }
+
+  openOrders(){
+    this.router.navigate(['/orders']);
+  }
+
+  openPOSOrders(){
+    if(this.userStore.mobile === undefined || this.userStore.mobile === null){
+      alert("Please Update Mobile Number to View POS Details");
+      return;
+    }
+    this.router.navigate(['/posOrders']);
+  }
+
+  openProfie(){
+    this.router.navigate(['/profile']);
+  }
+
+  setActiveMenu(home, shop, contact){
+    this.isHomeClicked = home;
+    this.isShowNowClicked = shop;
+    this.isContactClicked = contact;
   }
 
 }

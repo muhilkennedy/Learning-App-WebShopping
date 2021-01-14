@@ -143,6 +143,19 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	@Override
+	public List<ProductPOJO> getProductsWithSearchTerm(List<Integer> cIds, String SearchTerm, String limit, String offset,
+			String sortByField, String sortByType) throws Exception {
+		// considering always only one category will be sent from client
+		if (cIds != null && cIds.size() > 0) {
+			cIds = getProductRecursiveByCategoryId(cIds.get(0));
+		}
+		if (CommonUtil.isValidStringParam(sortByField) && CommonUtil.isValidStringParam(sortByType)) {
+			return productDao.getProductsBasedOnSearchTerm(cIds, SearchTerm, limit, offset, sortByField, sortByType);
+		}
+		return productDao.getProductsBasedOnSearchTerm(cIds, SearchTerm, limit, offset, null, null);
+	}
+	
+	@Override
 	public int getProductsCount(List<Integer> cIds, boolean includeInactive) throws Exception {
 		return productDao.getProductsCount(cIds, includeInactive);
 	}
@@ -228,6 +241,7 @@ public class ProductServiceImpl implements ProductService {
 			newProduct.setActive(product.isActive());
 			newProduct.setBrandName(product.getBrandName());
 			newProduct.setCost(product.getCost());
+			newProduct.setSellingCost(product.getSellingCost());
 			newProduct.setOffer(product.getOffer());
 			newProduct.setProductDescription(product.getProductDescription());
 			newProduct.setProductCode(product.getProductCode());

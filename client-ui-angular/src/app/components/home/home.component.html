@@ -1,4 +1,4 @@
-<section id="slider"><!--slider-->
+<section id="slider" *ngIf="mandateHomeMedia !== null">
   <div class="container">
     <ngx-loading [show]="loading"></ngx-loading>
     <div class="row">
@@ -50,7 +50,7 @@
   </div>
 </section><!--/slider-->
 
-<section id="featured">
+<section id="featured" *ngIf="featuresProducts.length > 0">
   <div class="container">
     <div class="row">
       <div class="col-sm-12 padding-right">
@@ -89,20 +89,25 @@
   </div>
 </section>
 
-<hr/>
 
-<section id="banner">
+<section id="banner"  *ngIf=" homeBannerLength != undefined  && homeBannerLength > 0">
   <div class="container">
-    <div class="row" *ngIf="homeBannerLength != undefined && homeBannerLength > 0">
-    <ngb-carousel>
-      <ng-template ngbSlide *ngFor="let slide of homeBanner">
-          <img class="bannerstyle" src={{slide.image}} alt="slides">
-          <!-- <div class="carousel-caption">
-              <p>{{slide.title}}</p>
-          </div> -->
-      </ng-template>
-    </ngb-carousel>
-  </div>
+    <div class="row">
+      <div class="col-sm-12 padding-right">
+        <div class="features_items">
+          <h2 class="title text-center">Offer Zone</h2>
+            <ngb-carousel>
+              <ng-template ngbSlide *ngFor="let slide of homeBanner">
+                <img class="bannerstyle" src={{slide.image}} alt="slides">
+                <!-- <div class="carousel-caption">
+                    <p>{{slide.title}}</p>
+                </div> -->
+              </ng-template>
+            </ngb-carousel>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
+
 <br/>
