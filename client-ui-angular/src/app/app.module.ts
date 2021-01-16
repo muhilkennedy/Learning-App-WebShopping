@@ -63,13 +63,16 @@ import { OrdersDialogComponent } from './components/order-history/orders-dialog/
 import { PosHistoryComponent } from './components/pos-history/pos-history.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { PosDialogComponent } from './components/pos-history/pos-dialog/pos-dialog.component';
+import { CommonsService } from './service/shared/commons/commons.service';
 
 @Injectable()
 export class TenantInitializer {
 
-  constructor(private http: HttpClient, private tenantStore: TenantStoreService) { }
+  constructor(private http: HttpClient, private tenantStore: TenantStoreService,
+              private commonService: CommonsService) { }
 
   initializeApp(): Promise<any> {
+    this.commonService.globalLoading = true;
     return new Promise((resolve, reject) => {
           console.log(`initializeApp:: Setting up Tenant`);
           this.http.get(environment.backendBaseUrl + '/base/ping')
@@ -100,6 +103,7 @@ export class TenantInitializer {
                   this.tenantStore.tenantLogo = resp.dataList[1];
                   //load app only if tenant is active.
                   if(this.tenantStore.tenantActive){
+                    this.commonService.globalLoading = false;
                      resolve(true);
                   }
                   else{

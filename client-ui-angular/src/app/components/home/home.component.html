@@ -1,6 +1,7 @@
+<div style="position: relative;">
+<ngx-loading [show]="loading"></ngx-loading>
 <section id="slider" *ngIf="mandateHomeMedia !== null">
   <div class="container">
-    <ngx-loading [show]="loading"></ngx-loading>
     <div class="row">
       <div class="col-sm-12">
         <div id="slider-carousel" class="carousel slide" data-ride="carousel">
@@ -57,7 +58,7 @@
         <div class="features_items"><!--features_items-->
           <h2 class="title text-center">Features Products</h2>
           <div class="col-sm-4" *ngFor="let prod of featuresProducts">
-            <div class="product-image-wrapper" style="border-color: antiquewhit">
+            <div class="product-image-wrapper" style="border-color: antiquewhit" *ngIf="prod.productContent.active">
               <div class="single-products">
                 <div class="productinfo text-center">
                   <div class="productinfo text-center">
@@ -111,3 +112,4 @@
 </section>
 
 <br/>
+</div>
