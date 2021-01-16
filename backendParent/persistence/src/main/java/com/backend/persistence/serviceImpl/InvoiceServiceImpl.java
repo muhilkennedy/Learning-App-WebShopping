@@ -37,6 +37,7 @@ import com.backend.core.entity.Tenant;
 import com.backend.core.repository.InvoiceRepository;
 import com.backend.core.service.BaseService;
 import com.backend.core.util.TenantUtil;
+import com.backend.persistence.entity.CustomerAddress;
 import com.backend.persistence.entity.CustomerInfo;
 import com.backend.persistence.entity.OrderDetails;
 import com.backend.persistence.entity.OrderInvoice;
@@ -56,12 +57,12 @@ import com.backend.persistence.service.InvoiceService;
 @Transactional
 public class InvoiceServiceImpl implements InvoiceService{
 	
-	private static final String Key_CustomerName = "#CustomerName";
-	private static final String Key_CustomerStreet = "#CustomerStreet";
-	private static final String Key_CustomerCity = "#CustomerCity";
-	private static final String Key_CustomerPin = "#CustomerPin";
-	private static final String Key_CustomerMobile = "#CustomerMobile";
-	private static final String Key_CustomerEmail = "#CustomerEmail";
+	private static final String Key_CustomerName = "CustomerName";
+	private static final String Key_CustomerStreet = "CustomerStreet";
+	private static final String Key_CustomerCity = "CustomerCity";
+	private static final String Key_CustomerPin = "CustomerPin";
+	private static final String Key_CustomerMobile = "CustomerMobile";
+	private static final String Key_CustomerEmail = "CustomerEmail";
 	private static final String Key_OrderId = "#InvoiceNum";
 	private static final String Key_OrderDate = "#InvoiceDate";
 	
@@ -274,15 +275,20 @@ public class InvoiceServiceImpl implements InvoiceService{
 		user = customerService.getCustomerByEmail(user.getEmailId());
 		Map<String, String> map = new HashMap<>();
 		map.put(Key_CustomerName, user.getFirstName().toUpperCase() + " " + user.getLastName().toUpperCase());
-		map.put(Key_CustomerStreet, user.getCustomerAddress().get(0).getStreet());
-		map.put(Key_CustomerCity, user.getCustomerAddress().get(0).getCity());
-		map.put(Key_CustomerPin, user.getCustomerAddress().get(0).getPincode());
-		try {
-			map.put(Key_CustomerMobile, "Contact : " + user.getMobile());
-		} catch (Exception e) {
-			e.printStackTrace();
+		List<CustomerAddress> addresses = user.getCustomerAddress();
+		CustomerAddress deliveryAddress = null;
+		for(CustomerAddress address : addresses) {
+			if(order.getCustomerAddressId() == address.getAddressId()) {
+				deliveryAddress = address;
+			}
 		}
-		map.put(Key_CustomerEmail, "Email-Id : " + user.getEmailId());
+		if(deliveryAddress != null) {
+			map.put(Key_CustomerStreet, deliveryAddress.getStreet());
+			map.put(Key_CustomerCity, deliveryAddress.getCity());
+			map.put(Key_CustomerPin, deliveryAddress.getPincode());
+			map.put(Key_CustomerMobile, deliveryAddress.getMobileContact());
+		}
+		map.put(Key_CustomerEmail, user.getEmailId());
 		map.put(Key_OrderId, "Order-" + order.getOrderId());
 		String pattern = "dd-MM-yyyy HH:mm";
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);

@@ -242,11 +242,6 @@ public class ProductDao {
 			while (rs.next()) {
 				Product product = new Product();
 				product.setProductId(rs.getInt(3));
-				product.setProductName(rs.getString(4));
-				product.setBrandName(rs.getString(5));
-				product.setCost(rs.getBigDecimal(6));
-				product.setOffer(rs.getBigDecimal(7));
-				product.setProductDescription(rs.getString(8));
 				productList.add(product);
 			}
 			return productList;
@@ -284,7 +279,8 @@ public class ProductDao {
 		List<ProductPOJO> productList = new ArrayList<ProductPOJO>();
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
-															.setQuery("select  pi.productid, pi.productname, pi.brand, pi.cost, pi.offer, pi.description, pi.unitsinstock from product as pi where pi.productid in (select productid from homepagefeatured where tenantid = ?)")
+															.setQuery("select  pi.productid, pi.productname, pi.brand, pi.cost, pi.offer, pi.description, pi.unitsinstock, pi.active,"
+																	+ " pi.productrating, pi.sellingcost from product as pi where pi.productid in (select productid from homepagefeatured where tenantid = ?)")
 															.setAndCondition("pi.tenantid", baseService.getTenantInfo().getTenantID(), true)
 															.build();
 															
@@ -302,9 +298,9 @@ public class ProductDao {
 				product.setOffer(rs.getBigDecimal(5));
 				product.setProductDescription(rs.getString(6));
 				product.setQuantityInStock(rs.getInt(7));
-				
-//				ProductImages image = new ProductImages();
-//				image.setImage(pImageRepo.);
+				product.setActive(rs.getBoolean(8));
+				product.setProductRating(rs.getInt(9));
+				product.setSellingCost(rs.getBigDecimal(10));
 				
 				pojo.setProductContent(product);
 				pojo.setProductImage(pImageRepo.findAllImagesForProduct(baseService.getTenantInfo().getTenantID(), product.getProductId()));

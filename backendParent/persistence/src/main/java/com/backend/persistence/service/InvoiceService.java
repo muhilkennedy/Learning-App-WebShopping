@@ -26,8 +26,6 @@ public interface InvoiceService {
 
 	File getActiveTemplateDocument() throws IOException, SQLException;
 
-	OrderInvoice createOrderInvoice(Orders order) throws Exception;
-
 	OrderInvoice getInvoiceByOrder(Orders order);
 
 	File generatePOSInvoice(POSData posData) throws Exception;
@@ -39,5 +37,7 @@ public interface InvoiceService {
 	File getActivePosTemplateAsPDF() throws Exception;
 
 	InvoiceTemplate createTemplate(byte[] bytes, byte[] posBytes) throws SerialException, SQLException;
+
+	OrderInvoice createOrderInvoice(Orders order) throws Exception;
 
 }
