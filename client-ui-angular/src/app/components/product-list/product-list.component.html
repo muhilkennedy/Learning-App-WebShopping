@@ -92,7 +92,7 @@
         </div>
       </div>
 
-      <div class="col-sm-9 padding-right">
+      <div class="col-sm-9 padding-right" *ngIf="!isMobileView()">
         <div class="features_items">
           <ngx-loading [show]="productLoading"></ngx-loading>
           <h2 class="title text-center">PRODUCTS</h2>
@@ -104,6 +104,33 @@
                     {{prod.productContent.offer}}% Off
                   </span>
                   <img style="object-fit: cover;" width="250px" height="300px" src={{getProductImage(prod)}} alt="product Image" />
+                  <h3>{{prod.productContent.productName}}</h3>
+                  <p>{{prod.productContent.brandName}}</p>
+                  <span *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0" style="text-decoration: line-through;">₹ {{prod.productContent.cost}} </span>
+                  <span class="regular-price"> ₹{{prod.productContent.sellingCost}}</span>
+                  <br/>
+                  <br/>
+                  <a *ngIf="prod.productContent.quantityInStock > 0" (click)="addToCart(prod.productContent)" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                  <a *ngIf="prod.productContent.quantityInStock <= 0" disabled class="btn btn-default add-to-cart"><i class="fa fa-frown-o"></i>Out of Stock</a>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- mobile view -->
+      <div class="col-sm-9 padding-right" *ngIf="isMobileView()">
+        <div class="features_items">
+          <ngx-loading [show]="productLoading"></ngx-loading>
+          <h2 class="title text-center">PRODUCTS</h2>
+          <div class="col-xs-6" *ngFor="let prod of products">
+            <div class="product-image-wrapper" style="height: 400px;">
+              <div class="single-products">
+                <div class="productinfo text-center">
+                  <span class="offer-overlay" *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0">
+                    {{prod.productContent.offer}}% Off
+                  </span>
+                  <img style="object-fit: cover;" width="150px" height="200px" src={{getProductImage(prod)}} alt="product Image" />
                   <h3>{{prod.productContent.productName}}</h3>
                   <p>{{prod.productContent.brandName}}</p>
                   <span *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0" style="text-decoration: line-through;">₹ {{prod.productContent.cost}} </span>

@@ -65,6 +65,18 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { PosDialogComponent } from './components/pos-history/pos-dialog/pos-dialog.component';
 import { CommonsService } from './service/shared/commons/commons.service';
 
+import {SocialAuthServiceConfig, SocialLoginModule} from 'angularx-social-login';
+import {GoogleLoginProvider, FacebookLoginProvider} from 'angularx-social-login';
+const fbLoginOptions = {
+  scope: 'pages_messaging,pages_messaging_subscriptions,email,pages_show_list,manage_pages',
+  return_scopes: true,
+  enable_profile_selector: true
+};
+
+const googleLoginOptions = {
+  scope: 'profile email'
+};
+
 @Injectable()
 export class TenantInitializer {
 
@@ -192,7 +204,8 @@ export function init_tenant(initializer: TenantInitializer) {
       secondaryColour: 'chocolate',
       tertiaryColour: 'darkred'
     }),
-    NgbModule
+    NgbModule,
+    SocialLoginModule
   ],
   providers: [
     Title,
@@ -208,6 +221,24 @@ export function init_tenant(initializer: TenantInitializer) {
       useClass: InterceptorService,
       multi: true
     },
+    {
+      provide: 'SocialAuthServiceConfig',
+      useValue: {
+        autoLogin: false,
+        providers: [
+          {
+            id: GoogleLoginProvider.PROVIDER_ID,
+            provider: new GoogleLoginProvider(
+              'clientId', googleLoginOptions
+            )
+          },
+          {
+            id: FacebookLoginProvider.PROVIDER_ID,
+            provider: new FacebookLoginProvider('clientId')
+          }
+        ]
+      } as SocialAuthServiceConfig,
+    }
   ],
   bootstrap: [AppComponent]
 })

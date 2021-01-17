@@ -83,15 +83,15 @@ export class HomeComponent implements OnInit {
     this.homeBannerLength = this.homeBanner.length;
   }
 
-  isShopNow():boolean{
-    if(this.mandateHomeMedia !== undefined && this.mandateHomeMedia.shopNow){
+  isShopNow(media):boolean{
+    if(media !== undefined && media.shopNow){
       return true
     }
     return false;
   }
 
-  isContactNow():boolean{
-    if(this.mandateHomeMedia !== undefined && this.mandateHomeMedia.contact){
+  isContactNow(media):boolean{
+    if(media !== undefined && media.contact){
       return true
     }
     return false;
@@ -127,5 +127,22 @@ export class HomeComponent implements OnInit {
                       })
     }
   }
+
+  openShopNow(){
+    this.setActiveMenu(false, true, false);
+    this.router.navigate(['/productList']);
+  }
+
+  openContact(){
+    this.setActiveMenu(false, false, true);
+    this.router.navigate(['/contact']);
+  }
+
+  setActiveMenu(home, shop, contact){
+    this.commonService.isHomeClicked = home;
+    this.commonService.isShowNowClicked = shop;
+    this.commonService.isContactClicked = contact;
+  }
+
 
 }

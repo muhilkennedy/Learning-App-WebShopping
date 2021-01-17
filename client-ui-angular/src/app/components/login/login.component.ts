@@ -1,3 +1,4 @@
+import {SocialUser, FacebookLoginProvider,  GoogleLoginProvider,  SocialAuthService} from 'angularx-social-login';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
@@ -30,14 +31,65 @@ export class LoginComponent implements OnInit {
   mobile:string;
   rememberMe:boolean = false;
 
+  socialUser: SocialUser;
+  loggedIn: boolean;
+
   constructor(private loginService: LoginService, private tenantStore: TenantStoreService,
               private route: Router, private cookieService: CookieService,
-              private userStore: UserStoreService, private cartService: CartService) { }
+              private userStore: UserStoreService, private cartService: CartService,
+              private authService: SocialAuthService) { }
 
   ngOnInit(): void {
     if(this.userStore.emailId !== undefined && this.userStore.emailId !== null){
       this.route.navigate(["/home"]);
     }
+    this.authService.authState.subscribe((user) => {
+      this.socialUser = user;
+      this.loginService.googleSocialLogin(this.socialUser)
+                        .subscribe((resp:any) => {
+                          if(resp.statusCode === 200){
+                            this.userStore.JwtToken = resp.data;
+                            this.userStore.active=resp.dataList[0].active;
+                            this.userStore.emailId=resp.dataList[0].emailId;
+                            this.userStore.customerAddress=resp.dataList[0].customerAddress;
+                            this.userStore.userId=resp.dataList[0].customerId;
+                            this.userStore.firstName=resp.dataList[0].firstName;
+                            this.userStore.lastName=resp.dataList[0].lastName;
+                            this.userStore.mobile=resp.dataList[0].mobile;
+                            this.userStore.loyalityPoints=resp.dataList[0].loyalitypoint;
+                            this.userStore.lastLogin=resp.dataList[0].lastLogin;
+                            this.userStore.profilePic=resp.dataList[0].profilePic;
+                            this.userStore.profilePicUrl=resp.dataList[0].profilePicUrl;
+                            this.userStore.loginMode=resp.dataList[0].loginMode;
+
+                            this.cookieService.deleteAll();
+                            this.cookieService.set('CLIENTJWT', this.userStore.JwtToken, 90);
+
+                            this.setCartItems();
+
+                            this.route.navigate(["/home"]);
+                          }
+                          else{
+                            alert('Failed : ' + resp.errorMessages);
+                          }
+                          this.signInLoading = false;
+                          },
+                          (error:any) => {
+                            alert('Something went wrong!');
+                          });
+                      });
+  }
+
+  signInWithGoogle(): void {
+    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
+  }
+
+  signInWithFB(): void {
+    this.authService.signIn(FacebookLoginProvider.PROVIDER_ID);
+  }
+
+  signOut(): void {
+    this.authService.signOut();
   }
 
   googleLogin(){

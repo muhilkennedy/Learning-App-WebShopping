@@ -73,7 +73,7 @@ public class POSServiceImpl implements POSService {
 			if(customer != null) {
 				customerService.updateLoyalityPointByCustomerMobile(data.getMobile(), data.getSubTotal());
 				emailService.sendPOSEmail(json.getString(DBUtil.Key_PrimaryKey), data.getSubTotal(), data.getTimeCreated(), data.getPaymentMode(), 
-										customer.getEmailId(), customer.getFirstName(), customer.getLastName(), baseService.getOrigin());
+										customer.getEmailId(), customer.getFirstName(), customer.getLastName(), baseService.getOrigin(), getPOSInvoice(json.getString(DBUtil.Key_PrimaryKey)));
 			}
 		}
 		return posKey;

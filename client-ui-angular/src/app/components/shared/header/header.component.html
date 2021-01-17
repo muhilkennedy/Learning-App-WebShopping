@@ -86,9 +86,9 @@
           </div>
           <div class="mainmenu pull-left">
             <ul class="nav navbar-nav collapse navbar-collapse">
-              <li><a style="cursor: pointer;" (click)="openHome()" [ngClass]="{'active' : isHomeClicked}"><i class="fa fa-home"></i> Home</a></li>
-              <li><a style="cursor: pointer;" (click)="openProductList()" [ngClass]="{'active' : isShowNowClicked}"><i class="fa fa-shopping-cart"></i> Shop Now</a></li>
-              <li><a style="cursor: pointer;" (click)="openContact()" [ngClass]="{'active' : isContactClicked}"><i class="fa fa-phone"></i> Contact</a></li>
+              <li><a style="cursor: pointer;" (click)="openHome()" [ngClass]="{'active' : commonsService.isHomeClicked}"><i class="fa fa-home"></i> Home</a></li>
+              <li><a style="cursor: pointer;" (click)="openProductList()" [ngClass]="{'active' : commonsService.isShowNowClicked}"><i class="fa fa-shopping-cart"></i> Shop Now</a></li>
+              <li><a style="cursor: pointer;" (click)="openContact()" [ngClass]="{'active' : commonsService.isContactClicked}"><i class="fa fa-phone"></i> Contact</a></li>
               <!-- <li>
                 <div class="search_box">
                 <input type="text" placeholder="Search"/>

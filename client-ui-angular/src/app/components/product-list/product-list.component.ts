@@ -1,5 +1,5 @@
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
@@ -91,12 +91,30 @@ export class ProductListComponent implements OnInit {
     }
   }
 
+  public innerWidth: any;
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.innerWidth = window.innerWidth;
+    console.log("width ",this.innerWidth);
+  }
+
   constructor(private productService: ProductService, private userStore: UserStoreService,
               private cartService: CartService) {
 
-   }
+  }
+
+  isMobileView(){
+    if(this.innerWidth < 600){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
 
   ngOnInit(): void {
+    this.innerWidth = window.innerWidth;
     this.setProducts(new Array(), null, null);
     this.productService.getAllCategories()
                         .subscribe((resp:any) => {
@@ -209,6 +227,7 @@ export class ProductListComponent implements OnInit {
   }
 
   getProductFromMatchingText(searchTerm, sortField, sortType){
+      this.loading = true;
       this.productService.getProductsBySearchTerm(this.selectedCategoryId , searchTerm, this.pageSize, this.offset, sortField, sortType)
                           .subscribe((resp:any) => {
                             if(resp.statusCode  === 200){
