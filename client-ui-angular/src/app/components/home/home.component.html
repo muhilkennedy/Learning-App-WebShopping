@@ -18,8 +18,8 @@
                 <h1><span>{{mandateHomeMedia.title}}</span></h1>
                 <h2>{{mandateHomeMedia.message}}</h2>
                 <p>{{mandateHomeMedia.description}}</p>
-                <button *ngIf="isShopNow()" type="button" class="btn btn-default get">Shop Now</button>
-                <button *ngIf="isContactNow()" type="button" class="btn btn-default get">Click Here For ContactInfo</button>
+                <button *ngIf="isShopNow(mandateHomeMedia)" type="button" class="btn btn-default get" (click)="openShopNow()">Shop Now</button>
+                <button *ngIf="isContactNow(mandateHomeMedia)" type="button" class="btn btn-default get" (click)="openContact()">Click Here For ContactInfo</button>
               </div>
               <div class="col-sm-6" *ngIf="mandateHomeMedia !== undefined">
                 <img src="{{mandateHomeMedia.image}}" class="girl img-responsive" alt="" />
@@ -30,7 +30,8 @@
                 <h1><span>{{media.title}}</span></h1>
                 <h2>{{media.message}}</h2>
                 <p>{{media.description}}</p>
-                <!-- <button type="button" class="btn btn-default get">Get it now</button> -->
+                <button *ngIf="isShopNow(media)" type="button" class="btn btn-default get" (click)="openShopNow()">Shop Now</button>
+                <button *ngIf="isContactNow(media)" type="button" class="btn btn-default get" (click)="openContact()">Click Here For ContactInfo</button>
               </div>
               <div class="col-sm-6">
                 <img src={{media.image}} class="girl img-responsive" alt="" />

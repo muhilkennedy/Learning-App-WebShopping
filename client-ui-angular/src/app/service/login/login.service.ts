@@ -9,6 +9,7 @@ import { environment } from 'src/environments/environment';
 export class LoginService {
 
   getGoogleConsentPageUrlEndpoint = "/social/getConsentPageUrl";
+  socialGoogleLoginEndpoint = "/social/socialGoogleLogin";
   verifyGoogleKeyEndpoint = "/login/googleCustomerKeyAuth";
   autheticateCustomerTokenEndpoint = "/secure/customer/customerTokenAuthentication";
   registerCustomerEndpoint = "/login/registerCustomer";
@@ -92,6 +93,15 @@ export class LoginService {
       }),
     };
     return this.http.post(environment.backendBaseUrl+this.forgotPasswordEndPoint, body, httpOptions);
+  }
+
+  googleSocialLogin(body){
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        }),
+      };
+      return this.http.post(environment.backendBaseUrl+this.socialGoogleLoginEndpoint, body, httpOptions);
   }
 
 }

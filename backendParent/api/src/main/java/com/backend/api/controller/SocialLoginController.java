@@ -2,6 +2,7 @@ package com.backend.api.controller;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,14 +11,19 @@ import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.social.google.api.userinfo.GoogleUserInfo;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.Response;
+import com.backend.api.messages.SocialPOJO;
 import com.backend.api.messages.SocialResponse;
 import com.backend.api.service.SocialLoginService;
 import com.backend.api.util.SocialUtil;
@@ -25,6 +31,7 @@ import com.backend.commons.service.TokenStorage;
 import com.backend.commons.util.CommonUtil;
 import com.backend.commons.util.JWTUtil;
 import com.backend.core.service.BaseService;
+import com.backend.persistence.entity.CustomerInfo;
 
 
 /**
@@ -125,4 +132,27 @@ public class SocialLoginController {
 		}
 		return response;
 	}
+	
+	@RequestMapping(value = "/socialGoogleLogin", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> changeOrderStatus(HttpServletRequest request, @RequestBody SocialPOJO customerData) {
+		GenericResponse<String> response = new GenericResponse<String>();
+		try {
+			CustomerInfo customer = googleService.createCustomerIfrequired(customerData);
+			if(customer != null) {
+				response.setData(JWTUtil.generateToken(customer.getEmailId(), CommonUtil.Key_googleUser, true));
+				response.setDataList(Arrays.asList(customer));
+				response.setStatus(Response.Status.OK);
+			}
+			else {
+				response.setErrorMessages(Arrays.asList("Error Logging in Social User!"));
+				response.setStatus(Response.Status.ERROR);
+			}
+		} catch (Exception ex) {
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
 }

@@ -6,6 +6,7 @@
   "author": "Muhil Kennedy",
   "scripts": {
     "ng": "ng",
+    "postinstall": "ngcc",
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
@@ -26,6 +27,7 @@
     "@angular/platform-browser-dynamic": "~9.1.11",
     "@angular/router": "~9.1.11",
     "@ng-bootstrap/ng-bootstrap": "^6.2.0",
+    "angularx-social-login": "^3.5.4",
     "bootstrap": "^4.5.3",
     "jquery": "^3.5.1",
     "ngx-cookie-service": "^3.0.4",
