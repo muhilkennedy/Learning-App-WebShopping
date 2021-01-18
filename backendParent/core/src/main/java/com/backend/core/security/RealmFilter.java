@@ -45,7 +45,7 @@ public class RealmFilter implements Filter {
 			HttpServletRequest req = (HttpServletRequest) request;
 			HttpServletResponse res = (HttpServletResponse) response;
 			String tenantId = req.getHeader(Constants.Header_TenantId);
-			logger.info("doFilter :: Realm Filter");
+			logger.info("doFilter :: Realm Filter :: URI - " + req.getRequestURI());
 			String requestIP = getIPFromRequest(req);
 			//verify for DOS attack
 			//Allow access for cross site request due to multiple deployments.

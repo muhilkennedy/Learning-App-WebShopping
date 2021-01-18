@@ -42,10 +42,10 @@ public class HomeMediaController {
 		GenericResponse<String> response = new GenericResponse<String>();
 		try {
 			if(isSlider) {
-				mediaService.updateMedia(id, CommonUtil.getBannerImage(file.getBytes()), title, description, isShopNow, isContact, isSlider, message);
+				mediaService.updateMedia(id, CommonUtil.getBannerImage(file.getOriginalFilename(), file.getBytes()), title, description, isShopNow, isContact, isSlider, message);
 			}
 			else {
-				mediaService.updateMedia(id, CommonUtil.getHomeImage(file.getBytes()), title, description, isShopNow, isContact, isSlider, message);
+				mediaService.updateMedia(id, CommonUtil.getHomeImage(file.getOriginalFilename(), file.getBytes()), title, description, isShopNow, isContact, isSlider, message);
 			}
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
@@ -66,10 +66,10 @@ public class HomeMediaController {
 		GenericResponse<String> response = new GenericResponse<String>();
 		try {
 			if(isSlider) {
-				mediaService.addMedia(CommonUtil.getBannerImage(file.getBytes()), title, description, isShopNow, isContact, isSlider, message);
+				mediaService.addMedia(CommonUtil.getBannerImage(file.getOriginalFilename(), file.getBytes()), title, description, isShopNow, isContact, isSlider, message);
 			}
 			else {
-				mediaService.addMedia(CommonUtil.getHomeImage(file.getBytes()), title, description, isShopNow, isContact, isSlider, message);
+				mediaService.addMedia(CommonUtil.getHomeImage(file.getOriginalFilename(), file.getBytes()), title, description, isShopNow, isContact, isSlider, message);
 			}
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
