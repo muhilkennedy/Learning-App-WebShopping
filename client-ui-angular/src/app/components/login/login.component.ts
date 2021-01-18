@@ -44,6 +44,7 @@ export class LoginComponent implements OnInit {
       this.route.navigate(["/home"]);
     }
     this.authService.authState.subscribe((user) => {
+      this.loading = true;
       this.socialUser = user;
       this.loginService.googleSocialLogin(this.socialUser)
                         .subscribe((resp:any) => {
@@ -81,6 +82,7 @@ export class LoginComponent implements OnInit {
   }
 
   signInWithGoogle(): void {
+    this.loading = true;
     this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
   }
 
