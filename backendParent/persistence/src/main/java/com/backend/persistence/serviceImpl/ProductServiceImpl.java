@@ -255,7 +255,7 @@ public class ProductServiceImpl implements ProductService {
 				List<ProductImages> productImages = new ArrayList<>();
 				// later implement resize based on ui rendering quality.
 				ProductImages prodImages = new ProductImages();
-				prodImages.setImage(new SerialBlob(CommonUtil.getProductImage(productPic)));
+				prodImages.setImage(new SerialBlob(productPic));
 				prodImages.setProductId(newProduct);
 				prodImages.setTenant(baseService.getTenantInfo());
 				prodImages.setPrimaryImage(true);
@@ -319,7 +319,7 @@ public class ProductServiceImpl implements ProductService {
 			throw new Exception("Product Not Found!");
 		}
 		ProductImages images = new ProductImages();
-		images.setImage(new SerialBlob(CommonUtil.getProductImage(productPic)));
+		images.setImage(new SerialBlob(productPic));
 		images.setProductId(product);
 		if(imageRepo.getProductCount(baseService.getTenantInfo(), product) <= 0) {
 			images.setPrimaryImage(true);
@@ -339,7 +339,7 @@ public class ProductServiceImpl implements ProductService {
 		if(image == null) {
 			throw new Exception("Product Image Not Found!");
 		}
-		image.setImage(new SerialBlob(CommonUtil.getProductImage(productPic)));
+		image.setImage(new SerialBlob(productPic));
 		imageRepo.save(image);
 	}
 	

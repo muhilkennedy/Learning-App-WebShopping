@@ -1,7 +1,6 @@
 package com.backend.api.admin.controller;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -72,7 +71,7 @@ public class ProductAdminController {
 			productPojo.setQuantityInStock(CommonUtil.isValidStringParam(offer) ? Integer.parseInt(unitsInStock) : -1);
 			Product product = productService.createOrUpdateProduct(productPojo,
 					CommonUtil.isValidStringParam(offer) ? Integer.parseInt(catId) : 0,
-					file != null ? file.getBytes() : null);
+					file != null ? CommonUtil.getProductImage(file.getOriginalFilename(), file.getBytes()) : null);
 			if (product != null) {
 				response.setDataList(Arrays.asList(product));
 				response.setStatus(Response.Status.OK);
@@ -119,7 +118,7 @@ public class ProductAdminController {
 		GenericResponse<Product> response = new GenericResponse<>();
 		try {
 			productService.addProductImage(CommonUtil.isValidStringParam(pId) ? Integer.parseInt(pId) : -1,
-					file != null ? file.getBytes() : null);
+					file != null ? CommonUtil.getProductImage(file.getOriginalFilename(), file.getBytes()) : null);
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("uploadProductImage : " + ex);
@@ -153,7 +152,7 @@ public class ProductAdminController {
 		GenericResponse<Product> response = new GenericResponse<>();
 		try {
 			productService.replaceImage(CommonUtil.isValidStringParam(piId) ? Integer.parseInt(piId) : -1,
-					file != null ? file.getBytes() : null);
+					file != null ? CommonUtil.getProductImage(file.getOriginalFilename(), file.getBytes()) : null);
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("replaceProductImage : " + ex);
