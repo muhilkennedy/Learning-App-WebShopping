@@ -113,7 +113,7 @@ public class OrdersServiceImpl implements OrdersService {
 	}
 
 	@Override
-	public void createCustomerOrder(int couponId, int paymentMode, int addressId) throws Exception {
+	public void createCustomerOrder(int couponId, int paymentMode, int addressId, int deliveryCharge) throws Exception {
 		Coupons coupon = couponService.findCouponById(couponId);
 		CustomerInfo customer = (CustomerInfo) baseService.getUserInfo();
 		// create initial order object
@@ -123,6 +123,7 @@ public class OrdersServiceImpl implements OrdersService {
 		order.setPaymentModeId(paymentMode);
 		order.setCustomerId(customer.getCustomerId());
 		order.setCustomerAddressId(addressId);
+		order.setDeliveryCharge(deliveryCharge);
 		order.setTenant(baseService.getTenantInfo());
 		if (coupon != null) {
 			order.setCouponId(coupon.getCouponId());

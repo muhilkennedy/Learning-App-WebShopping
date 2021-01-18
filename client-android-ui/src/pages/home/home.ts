@@ -10,7 +10,7 @@ import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 export class HomePage {
 
   constructor(public navCtrl: NavController, private iab: InAppBrowser) {
-    const browser = this.iab.create('https://riagroceriesdev.web.app/', 'defaults', { location : 'no', zoom : 'no'});
+    const browser = this.iab.create('https://riagroceriesdev.web.app/', '_system', { location : 'no', zoom : 'no'});
 
     browser.on('loadstop').subscribe(event => {
       browser.insertCSS({ code: "body{color: red;" });

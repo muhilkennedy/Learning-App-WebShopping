@@ -14,11 +14,12 @@ export class OrderService {
 
   constructor(private http: HttpClient) { }
 
-  placeOrder(coupon, payment, addressId): Observable<any>{
+  placeOrder(coupon, payment, addressId, deliveryCharge): Observable<any>{
     const uploadData = new FormData();
     uploadData.append('couponId', coupon);
     uploadData.append('paymentMode', payment);
-    uploadData.append('addressId', addressId)
+    uploadData.append('addressId', addressId);
+    uploadData.append('deliveryCharge', deliveryCharge);
     return this.http.post(environment.backendBaseUrl+this.placeOrderEndpoint, uploadData);
   }
 

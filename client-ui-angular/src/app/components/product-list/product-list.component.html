@@ -5,7 +5,11 @@
     <div class="row">
       <div class="col-sm-3">
         <div class="left-sidebar">
-          <h2>Category</h2>
+          <h2>Category
+            <i *ngIf="!isCatCollapsed" class="fa fa-toggle-up toggleIcon" (click)="isCatCollapsed = !isCatCollapsed"></i>
+            <i *ngIf="isCatCollapsed" class="fa fa-toggle-down toggleIcon" (click)="isCatCollapsed = !isCatCollapsed"></i>
+          </h2>
+          <div [collapse]="isCatCollapsed">
           <div class="panel-group category-products" id="accordian"><!--category-products-->
             <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
               <!-- This is the tree node template for leaf nodes -->
@@ -27,7 +31,7 @@
             </mat-tree>
 
           </div><!--/category-productsr-->
-
+          </div>
           <!--brands_products-->
           <!-- <div class="brands_products">
             <h2>Brands</h2>
@@ -41,7 +45,11 @@
 
           <!-- FILTERS -->
           <div class="price-range">
-            <h2>Filters</h2>
+            <h2>Filters
+              <i *ngIf="!isFilterCollapsed" class="fa fa-toggle-up toggleIcon" (click)="isFilterCollapsed = !isFilterCollapsed"></i>
+            <i *ngIf="isFilterCollapsed" class="fa fa-toggle-down toggleIcon" (click)="isFilterCollapsed = !isFilterCollapsed"></i>
+            </h2>
+            <div [collapse]="isFilterCollapsed">
             <div class="well" style="width: 100%;">
               <mat-form-field class="matitem" style="width: 200px;">
                 <input type="text"
@@ -87,6 +95,7 @@
                   </td>
                 </tr>
               </table>
+            </div>
             </div>
           </div>
         </div>

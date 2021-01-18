@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { CartService } from 'src/app/service/cart/cart.service';
 import { CommonsService } from 'src/app/service/shared/commons/commons.service';
@@ -12,7 +13,8 @@ import { UserStoreService } from 'src/app/service/shared/user-store/user-store.s
 export class CartComponent implements OnInit {
 
   constructor(private cartService: CartService, private commonService: CommonsService,
-              private userStore: UserStoreService, private router: Router) { }
+              private userStore: UserStoreService, private router: Router,
+              private _snackBar: MatSnackBar) { }
 
   cartItems:any[] = new Array();
   loading = false;
@@ -38,7 +40,7 @@ export class CartComponent implements OnInit {
                       this.loading = false;
                     },
                     (error: any) => {
-                      alert("Something went wrong!");
+                      this._snackBar.open('Something Went Wrong!', '', this.commonService.alertoptionsError);
                     })
       this.setPinAndCouonDetails(this.pincode, null);
     }
@@ -63,10 +65,10 @@ export class CartComponent implements OnInit {
                           this.commonService.couponDetails = this.couponDetails;
                         }
                         if(pincode !== null && (this.pincodeDetails === undefined || this.pincodeDetails === null)){
-                          alert('not deiverable to this pincode');
+                          this._snackBar.open('Not Deliverable to this Pincode!', 'OK', this.commonService.alertoptionsWarn);
                         }
                         if(coupon !== null && (this.couponDetails === null || this.couponDetails === undefined)){
-                          alert('Coupon Not Applicable! pls try a valid code');
+                          this._snackBar.open('Coupon Not Applicable! pls try a valid code', 'OK', this.commonService.alertoptionsWarn);
                         }
                       }
                       this.couponLoading = false;

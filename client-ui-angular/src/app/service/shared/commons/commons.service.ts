@@ -13,6 +13,55 @@ export class CommonsService {
   private _isHomeClicked = true;
   private _isShowNowClicked = false;
   private _isContactClicked = false;
+  private _alertoptionsError = {
+    duration: 2000,
+    panelClass: ['error-snackbar']
+  };
+  private _alertoptionsWarn = {
+    duration: 3000,
+    panelClass: ['warn-snackbar']
+  };
+  private _alertoptionsSuccess = {
+    duration: 2000,
+    panelClass: ['success-snackbar']
+  };
+  private _alertoptionsDefault = {
+    duration: 3000
+  };
+
+  public get alertoptionsDefault() {
+    return this._alertoptionsDefault;
+  }
+
+  public set alertoptionsDefault(value) {
+    this._alertoptionsDefault = value;
+  }
+
+  public get alertoptionsSuccess() {
+    return this._alertoptionsSuccess;
+  }
+
+  public set alertoptionsSuccess(value) {
+    this._alertoptionsSuccess = value;
+  }
+
+  public get alertoptionsWarn() {
+    return this._alertoptionsWarn;
+  }
+
+  public set alertoptionsWarn(value) {
+    this._alertoptionsWarn = value;
+  }
+
+
+  public get alertoptionsError() {
+    return this._alertoptionsError;
+  }
+
+  public set alertoptionsError(value) {
+    this._alertoptionsError = value;
+  }
+
 
   public get isContactClicked() {
     return this._isContactClicked;
