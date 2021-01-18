@@ -137,7 +137,7 @@ export class CheckoutComponent implements OnInit {
     if(this.couponDetails !== undefined && this.couponDetails !== null && this.couponDetails.couponId !== undefined){
       coupon = this.couponDetails.coupon;
     }
-    this.orderService.placeOrder(coupon, paymentMode, addressId)
+    this.orderService.placeOrder(coupon, paymentMode, addressId, this.getDeliveryCharge())
                       .subscribe((resp:any) => {
                         if(resp.statusCode === 200){
                           this.userStore.cartCount = 0;

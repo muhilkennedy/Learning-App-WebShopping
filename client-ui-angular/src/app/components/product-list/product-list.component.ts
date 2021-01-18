@@ -34,6 +34,9 @@ const TREE_DATA: ItemNode[] = []
 })
 export class ProductListComponent implements OnInit {
 
+  isCatCollapsed: boolean = false;
+  isFilterCollapsed: boolean = false;
+
   private _transformer = (node: ItemNode, level: number) => {
     return {
       expandable: !!node.children && node.children.length > 0,
@@ -96,7 +99,14 @@ export class ProductListComponent implements OnInit {
   @HostListener('window:resize', ['$event'])
   onResize(event) {
     this.innerWidth = window.innerWidth;
-    console.log("width ",this.innerWidth);
+    if(this.isMobileView()){
+      this.isCatCollapsed = true;
+      this.isFilterCollapsed = true;
+    }
+    else{
+      this.isCatCollapsed = false;
+      this.isFilterCollapsed = false;
+    }
   }
 
   constructor(private productService: ProductService, private userStore: UserStoreService,
@@ -114,7 +124,7 @@ export class ProductListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.innerWidth = window.innerWidth;
+    this.onResize("event");
     this.setProducts(new Array(), null, null);
     this.productService.getAllCategories()
                         .subscribe((resp:any) => {
@@ -128,7 +138,7 @@ export class ProductListComponent implements OnInit {
                           },
                           (error:any) => {
                             alert('Something went wrong!');
-                          });
+                        });
   }
 
   setProducts(cIds, sortField, SortType){

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CartService } from 'src/app/service/cart/cart.service';
 import { HomeService } from 'src/app/service/home/home.service';
@@ -26,12 +26,28 @@ export class HomeComponent implements OnInit {
 
   featuresProducts:any[] = new Array();
 
+  public innerWidth: any;
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.innerWidth = window.innerWidth;
+  }
+
+  isMobileView(){
+    if(this.innerWidth < 600){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
   constructor(private homeService:HomeService, private tenantStore: TenantStoreService,
               private productService: ProductService, private userStore: UserStoreService,
               private router: Router, private cartService:CartService,
               private commonService:CommonsService) { }
 
   ngOnInit(): void {
+    this.onResize("event");
     this.commonService.globalLoading = false;
     this.homeService.getAllHomeMedia()
                     .subscribe((resp:any) => {

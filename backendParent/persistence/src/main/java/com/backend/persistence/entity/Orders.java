@@ -78,6 +78,9 @@ public class Orders implements Serializable {
 	
 	@Column(name = "CUSTOMERADDRESSID")
 	private int customerAddressId;
+	
+	@Column(name = "DELIVERYCHARGE")
+	private int deliveryCharge;
 
 	public Tenant getTenant() {
 		return tenant;
@@ -193,6 +196,14 @@ public class Orders implements Serializable {
 
 	public void setOrderPlacedTime(long orderPlacedTime) {
 		this.orderPlacedTime = orderPlacedTime;
+	}
+
+	public int getDeliveryCharge() {
+		return deliveryCharge;
+	}
+
+	public void setDeliveryCharge(int deliveryCharge) {
+		this.deliveryCharge = deliveryCharge;
 	}
 
 }

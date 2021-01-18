@@ -64,9 +64,11 @@ import { PosHistoryComponent } from './components/pos-history/pos-history.compon
 import { ProfileComponent } from './components/profile/profile.component';
 import { PosDialogComponent } from './components/pos-history/pos-dialog/pos-dialog.component';
 import { CommonsService } from './service/shared/commons/commons.service';
-
+import { CollapseModule } from '../app/service/shared/collapse';
+import { AlertModule } from './service/shared/_alert';
 import {SocialAuthServiceConfig, SocialLoginModule} from 'angularx-social-login';
 import {GoogleLoginProvider, FacebookLoginProvider} from 'angularx-social-login';
+
 const fbLoginOptions = {
   scope: 'pages_messaging,pages_messaging_subscriptions,email,pages_show_list,manage_pages',
   return_scopes: true,
@@ -205,7 +207,9 @@ export function init_tenant(initializer: TenantInitializer) {
       tertiaryColour: 'darkred'
     }),
     NgbModule,
-    SocialLoginModule
+    SocialLoginModule,
+    CollapseModule,
+    AlertModule
   ],
   providers: [
     Title,

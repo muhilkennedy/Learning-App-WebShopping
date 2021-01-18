@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.Response;
 import com.backend.commons.util.CommonUtil;
-import com.backend.core.util.Constants;
-import com.backend.persistence.entity.CustomerInfo;
 import com.backend.persistence.entity.DeliveryConfiguration;
 import com.backend.persistence.entity.Orders;
 import com.backend.persistence.service.CouponsService;
@@ -52,13 +50,21 @@ public class OrdersController {
 	public GenericResponse<Orders> customerTokenAuthentication(HttpServletRequest request,
 			@RequestParam(value = "couponId", required = false) String couponId,
 			@RequestParam(value = "paymentMode", required = false) String paymentMode,
-			@RequestParam(value = "addressId", required = true) String addressId) {
+			@RequestParam(value = "addressId", required = true) String addressId,
+			@RequestParam(value = "deliveryCharge", required = false) String deliveryCharge) {
 		GenericResponse<Orders> response = new GenericResponse<Orders>();
 		try {
+			int delivery = 0;
+			try {
+				delivery = CommonUtil.isValidStringParam(deliveryCharge) ? Integer.parseInt(deliveryCharge) : 0;
+			} catch (NumberFormatException ex) {
+				delivery = 0;
+			}
 			if (CommonUtil.isValidStringParam(addressId)) {
 				orderService.createCustomerOrder(CommonUtil.isValidStringParam(couponId) ? Integer.parseInt(couponId) : -1,
 						CommonUtil.isValidStringParam(paymentMode) ? Integer.parseInt(paymentMode) : 1,
-						Integer.parseInt(addressId));
+						Integer.parseInt(addressId),
+						delivery);
 				response.setStatus(Response.Status.OK);
 			} else {
 				response.setStatus(Response.Status.BAD_REQUEST);

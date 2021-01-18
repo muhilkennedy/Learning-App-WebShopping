@@ -1,3 +1,4 @@
+<div style="position: relative;">
 <section id="cart_items">
   <div class="container">
     <div *ngIf="cartPage" class="breadcrumbs">
@@ -37,9 +38,9 @@
             </td>
             <td class="cart_quantity">
               <div class="cart_quantity_button">
-                <a class="cart_quantity_down" (click)="decrementItem(item)"> - </a>
+                <a *ngIf="cartPage" class="cart_quantity_down" (click)="decrementItem(item)"> - </a>
                 <input disabled class="cart_quantity_input" type="text" name="quantity" [(ngModel)]="item.quantity" autocomplete="off" size="2">
-                <a class="cart_quantity_up" (click)="incrementItem(item)"> + </a>
+                <a *ngIf="cartPage" class="cart_quantity_up" (click)="incrementItem(item)"> + </a>
               </div>
             </td>
             <td class="cart_total">
@@ -102,3 +103,4 @@
     </div>
   </div>
 </section>
+</div>

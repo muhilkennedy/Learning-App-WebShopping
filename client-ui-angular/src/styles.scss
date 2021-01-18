@@ -65,3 +65,15 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
       border-top-color: #000000;
       animation: spinner .8s linear infinite;
     }
+
+    .error-snackbar {
+      background: orangered;
+    }
+
+    .success-snackbar {
+      background: green;
+    }
+
+    .warn-snackbar {
+      background: orange;
+    }
