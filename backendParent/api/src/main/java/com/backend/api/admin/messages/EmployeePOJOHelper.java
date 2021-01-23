@@ -7,17 +7,17 @@ public class EmployeePOJOHelper implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private int employeeId;
+	private Long employeeId;
 	private String emailId;
 	private String otp;
 	private List<Integer> permissions;
 	private boolean active;
 
-	public int getEmployeeId() {
+	public Long getEmployeeId() {
 		return employeeId;
 	}
 
-	public void setEmployeeId(int employeeId) {
+	public void setEmployeeId(Long employeeId) {
 		this.employeeId = employeeId;
 	}
 

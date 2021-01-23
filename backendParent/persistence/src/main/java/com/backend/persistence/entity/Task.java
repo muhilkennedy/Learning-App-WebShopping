@@ -33,7 +33,7 @@ public class Task implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "TASKID")
-	private int taskId;
+	private Long taskId;
 	
 	@JsonIgnore
 	@ManyToOne
@@ -76,11 +76,11 @@ public class Task implements Serializable {
 		this.tenant = tenant;
 	}
 
-	public int getTaskId() {
+	public Long getTaskId() {
 		return taskId;
 	}
 
-	public void setTaskId(int taskId) {
+	public void setTaskId(Long taskId) {
 		this.taskId = taskId;
 	}
 

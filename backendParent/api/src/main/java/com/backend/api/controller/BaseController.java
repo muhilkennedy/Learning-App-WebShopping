@@ -55,7 +55,9 @@ public class BaseController {
 		info.setPublicKey(baseService.getTenantInfo().fetchPublicKey());
 		response.setStatus(Response.Status.OK);
 		response.setData(info);
-		response.setDataList(Arrays.asList(baseService.getTenantInfo().getTenantDetail(), baseService.getTenantInfo().getTenantDetail().fetchTenantLogo()));
+		if(baseService.getTenantInfo().getTenantDetail() != null) {
+			response.setDataList(Arrays.asList(baseService.getTenantInfo().getTenantDetail(), baseService.getTenantInfo().getTenantDetail().fetchTenantLogo()));
+		}
 		return response;
 	}
 	

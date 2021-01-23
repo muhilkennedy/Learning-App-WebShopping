@@ -56,7 +56,7 @@ public class EmailServiceImpl implements EmailService {
 	/**
 	 * @return - html string with substituted model values.
 	 */
-	public String constructOnboardEmailBody(String fname, String lname, int empId, String password, String origin, File logo) {
+	public String constructOnboardEmailBody(String fname, String lname, Long empId, String password, String origin, File logo) {
 		try {
 			Template template = freeMarkerConfig.getTemplate(EmailConstants.employeeOnboardingTemplate);
 			Map<String, Object> model = new HashMap<>();
@@ -78,7 +78,7 @@ public class EmailServiceImpl implements EmailService {
 	}
 
 	@Override
-	public void sendOnboardingEmail(String recipientEmail, String fname, String lname, int empId, String password,
+	public void sendOnboardingEmail(String recipientEmail, String fname, String lname, Long empId, String password,
 			String origin) {
 		File tempFile = null;
 		try {
@@ -139,7 +139,7 @@ public class EmailServiceImpl implements EmailService {
 	
 	@Override
 	public void sendPOSEmail(String posId, String subtotal, long createdTime, String paymentMode, String recipientEmail, String fname, String lname,
-			String origin) {
+			String origin, File invoiceDoc) {
 		File tempFile = null;
 		try {
 			String subject = " Purchase Information ";
@@ -156,7 +156,7 @@ public class EmailServiceImpl implements EmailService {
 					baseService.getTenantInfo().getTenantID(),
 					baseService.getTenantInfo().getTenantDetail().getBusinessEmail(),
 					baseService.getTenantInfo().getTenantDetail().getBusinessEmailPassword(),
-					Arrays.asList(recipientEmail), subject, body, inlineImages, null);
+					Arrays.asList(recipientEmail), subject, body, inlineImages, invoiceDoc != null ? Arrays.asList(invoiceDoc) : null);
 			new Thread(emailRunnable).start();
 		}
 		catch (Exception e) {

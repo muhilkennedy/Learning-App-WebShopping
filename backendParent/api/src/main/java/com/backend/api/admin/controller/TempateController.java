@@ -38,14 +38,14 @@ public class TempateController {
 	private InvoiceService invoiceService;
 
 	@RequestMapping(value = "/createTemplate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<InvoiceTemplate> createTask(HttpServletRequest request,
+	public GenericResponse<InvoiceTemplate> createTemplate(HttpServletRequest request,
 			@RequestParam(value = "myFile", required = true) MultipartFile file) {
 		GenericResponse<InvoiceTemplate> response = new GenericResponse<InvoiceTemplate>();
 		try {
 			String fileName = file.getOriginalFilename();
 			String extension = fileName.substring(fileName.lastIndexOf("."));
 			if (CommonUtil.template_Supported_Extentions.contains(extension)) {
-				invoiceService.createTemplate(file.getBytes());
+				invoiceService.createTemplate(file.getBytes(), null);
 				response.setStatus(Response.Status.OK);
 			} else {
 				response.setErrorMessages(Arrays.asList("Document Format Not Supported!"));
@@ -70,7 +70,7 @@ public class TempateController {
 				response.setStatus(Response.Status.NO_CONTENT);
 				return response;
 			}
-			logger.info("Template PDF file : " + file.getAbsolutePath());
+			logger.info("getActiveTemplate : " + file.getAbsolutePath());
 			FileInputStream fileInputStream = new FileInputStream(file);
 			return IOUtils.toByteArray(fileInputStream);
 		} catch (Exception e) {
@@ -92,7 +92,74 @@ public class TempateController {
 				response.setStatus(Response.Status.NO_CONTENT);
 				return response;
 			}
-			logger.info("Template DOCX file : " + file.getAbsolutePath());
+			logger.info("downloadActiveTemplate : " + file.getAbsolutePath());
+			FileInputStream fileInputStream = new FileInputStream(file);
+			return IOUtils.toByteArray(fileInputStream);
+		} catch (Exception e) {
+			logger.error("Exception in fetching active template : " + e.getMessage());
+			e.printStackTrace();
+		} finally {
+			CommonUtil.deleteDirectoryOrFile(file);
+		}
+		return file;
+	}
+	
+	@RequestMapping(value = "/createPosTemplate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<InvoiceTemplate> createPosTemplate(HttpServletRequest request,
+			@RequestParam(value = "myFile", required = true) MultipartFile file) {
+		GenericResponse<InvoiceTemplate> response = new GenericResponse<InvoiceTemplate>();
+		try {
+			String fileName = file.getOriginalFilename();
+			String extension = fileName.substring(fileName.lastIndexOf("."));
+			if (CommonUtil.template_Supported_Extentions.contains(extension)) {
+				invoiceService.createTemplate(null, file.getBytes());
+				response.setStatus(Response.Status.OK);
+			} else {
+				response.setErrorMessages(Arrays.asList("Document Format Not Supported!"));
+				response.setStatus(Response.Status.ERROR);
+			}
+		} catch (Exception ex) {
+			logger.error("createPosTemplate : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/getActivePOSTemplate", method = RequestMethod.GET)
+	public Object getActivePOSTemplate(HttpServletRequest request) {
+		File file = null;
+		try {
+			file = invoiceService.getActivePosTemplateAsPDF();
+			if (file == null) {
+				GenericResponse response = new GenericResponse<>();
+				response.setStatus(Response.Status.NO_CONTENT);
+				return response;
+			}
+			logger.info("getActivePOSTemplate : " + file.getAbsolutePath());
+			FileInputStream fileInputStream = new FileInputStream(file);
+			return IOUtils.toByteArray(fileInputStream);
+		} catch (Exception e) {
+			logger.error("Exception in fetching active template : " + e.getMessage());
+			e.printStackTrace();
+		} finally {
+			CommonUtil.deleteDirectoryOrFile(file);
+		}
+		return file;
+	}
+	
+	@RequestMapping(value = "/downloadPosActiveTemplate", method = RequestMethod.GET)
+	public Object downloadPosActiveTemplate(HttpServletRequest request) {
+		File file = null;
+		try {
+			file = invoiceService.getActivePosTemplateDocument();
+			if (file == null) {
+				GenericResponse response = new GenericResponse<>();
+				response.setStatus(Response.Status.NO_CONTENT);
+				return response;
+			}
+			logger.info("downloadPosActiveTemplate : " + file.getAbsolutePath());
 			FileInputStream fileInputStream = new FileInputStream(file);
 			return IOUtils.toByteArray(fileInputStream);
 		} catch (Exception e) {

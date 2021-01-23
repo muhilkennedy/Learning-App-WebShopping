@@ -27,6 +27,7 @@ export class ManageProductComponent implements OnInit {
   searchCategory: string;
   pCode: string;
   unitsInStock : number;
+  sellingCost: number;
 
   defaultAvatar = "assets/img/avatars/Blank-Profile.png";
 
@@ -89,7 +90,7 @@ export class ManageProductComponent implements OnInit {
       this.fileToUpdate = files.item(0);
     }
     else{
-      alert('Format not supported! Please upload jpeg/jpg/png file');
+      this.alertService.warn('Format not supported! Please upload jpeg/jpg/png file');
     }
   }
 
@@ -121,7 +122,7 @@ export class ManageProductComponent implements OnInit {
     this.loading = true;
     this.productService.createOrUpdateProduct(this.fileToUpdate, this.searchCategory, null, this.pName,
                         this.brand, this.cost, this.offer, this.pDescription, this.productActive, this.pCode,
-                        this.unitsInStock)
+                        this.unitsInStock, this.sellingCost)
                         .subscribe((resp:any) => {
                           if(resp.statusCode  === 200){
                             this.alertService.success('Product created succesfully', this.alertOptions);
@@ -146,6 +147,12 @@ export class ManageProductComponent implements OnInit {
       return true;
     }
     return false;
+  }
+
+  onSellingCostKeyUp(event){
+    let cost = this.cost - this.sellingCost;
+    let percentageDecrease = (cost/this.cost)*100;
+    this.offer = Math.round(percentageDecrease);
   }
 
 }

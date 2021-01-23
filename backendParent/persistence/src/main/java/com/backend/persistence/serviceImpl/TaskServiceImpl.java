@@ -58,7 +58,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 	
 	@Override
-	public void createTask(Task task, int assigneeId) {
+	public void createTask(Task task, Long assigneeId) {
 		task.setEmployeeId((EmployeeInfo) baseService.getUserInfo());
 		EmployeeInfo assignee = employeeService.findEmployeeById(assigneeId);
 		task.setAssignee(assignee);
@@ -69,7 +69,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 	
 	@Override
-	public void createTask(String content, long endDate, int assigneeId) {
+	public void createTask(String content, long endDate, Long assigneeId) {
 		Task task = new Task();
 		task.setEmployeeId((EmployeeInfo) baseService.getUserInfo());
 		task.setTenant(baseService.getTenantInfo());
@@ -84,12 +84,12 @@ public class TaskServiceImpl implements TaskService {
 	}
 	
 	@Override
-	public void deleteTask(int id) {
+	public void deleteTask(Long id) {
 		taskRepo.deleteTask(baseService.getTenantInfo(), (EmployeeInfo) baseService.getUserInfo(), id);
 	}
 	
 	@Override
-	public void updateTask(int id, String status) {
+	public void updateTask(Long id, String status) {
 		Task task = taskRepo.findTaskAssignedById(baseService.getTenantInfo(), (EmployeeInfo) baseService.getUserInfo(), id);
 		if(status.equalsIgnoreCase(Key_Status_Completed)) {
 			task.setStatus(Key_Status_Completed);

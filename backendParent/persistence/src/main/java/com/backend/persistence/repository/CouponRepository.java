@@ -15,12 +15,13 @@ import com.backend.persistence.entity.Coupons;
  *
  */
 @Repository
-public interface CouponRepository extends JpaRepository<Coupons, Integer> {
+public interface CouponRepository extends JpaRepository<Coupons, Long> {
 	
 	String findAllActiveCouponsQuery = "select coup from Coupons coup where coup.active = true and coup.tenant = :tenant and coup.deleted=false";
 	String findExpiredCouponsQuery = "select coup from Coupons coup where coup.active = true and coup.tenant = :tenant and coup.endDate < :endDate and coup.deleted=false";
 	String findAllCouponsQuery = "select coup from Coupons coup where coup.tenant = :tenant and coup.deleted=false";
 	String findCouponByIdQuery = "select coup from Coupons coup where coup.tenant = :tenant and coup.deleted=false and coup.couponId = :couponId";
+	String findCouponByCodeQuery = "select coup from Coupons coup where coup.tenant = :tenant and coup.deleted=false and coup.code = :code";
 	
 	@Query(findAllActiveCouponsQuery)
 	List<Coupons> findAllActiveCoupons(@Param("tenant") Tenant realm);
@@ -32,5 +33,8 @@ public interface CouponRepository extends JpaRepository<Coupons, Integer> {
 	List<Coupons> findExpiredCoupons(@Param("tenant") Tenant realm, @Param("endDate") long endDate);
 	
 	@Query(findCouponByIdQuery)
-	Coupons findCouponById(@Param("tenant") Tenant realm, @Param("couponId") int couponId);
+	Coupons findCouponById(@Param("tenant") Tenant realm, @Param("couponId") Long couponId);
+	
+	@Query(findCouponByCodeQuery)
+	Coupons findCouponByCode(@Param("tenant") Tenant realm, @Param("code") String couponCode);
 }

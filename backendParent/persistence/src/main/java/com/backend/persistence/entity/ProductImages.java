@@ -36,7 +36,7 @@ public class ProductImages implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "PRODUCTIMAGESID")
-	private int pImagesId;
+	private Long pImagesId;
 	
 	@JsonIgnore
 	@ManyToOne
@@ -68,11 +68,11 @@ public class ProductImages implements Serializable{
 		this.tenant = tenant;
 	}
 
-	public int getpImagesId() {
+	public Long getpImagesId() {
 		return pImagesId;
 	}
 
-	public void setpImagesId(int pImagesId) {
+	public void setpImagesId(Long pImagesId) {
 		this.pImagesId = pImagesId;
 	}
 

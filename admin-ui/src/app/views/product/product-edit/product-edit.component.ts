@@ -25,6 +25,7 @@ export class ProductEditComponent implements OnInit {
   brand: string;
   cost: number;
   offer: number = 0;
+  sellingCost: number ;
   pDescription: string;
   productActive: boolean = true;
   fileToUpdate: File;
@@ -72,6 +73,7 @@ export class ProductEditComponent implements OnInit {
     this.unitsInStock = resp.dataList[0].quantityInStock;
     this.pCode = resp.dataList[0].productCode;
     this.productId = resp.dataList[0].productId;
+    this.sellingCost = resp.dataList[0].sellingCost;
   }
 
   toggleFeaturedProduct(){
@@ -160,7 +162,7 @@ export class ProductEditComponent implements OnInit {
     this.loading = true;
     this.productService.createOrUpdateProduct(null, this.categoryId, this.productId, this.pName,
                         this.brand, this.cost, this.offer, this.pDescription, this.productActive, this.pCode,
-                        this.unitsInStock)
+                        this.unitsInStock, this.sellingCost)
                         .subscribe((resp:any) => {
                           if(resp.statusCode  === 200){
                             this.alertService.success('Product updated succesfully');
@@ -244,6 +246,12 @@ export class ProductEditComponent implements OnInit {
                           this.alertService.error("something went wrong!");
                           this.loading = false;
                         });
+  }
+
+  onSellingCostKeyUp(event){
+    let cost = this.cost - this.sellingCost;
+    let percentageDecrease = (cost/this.cost)*100;
+    this.offer = Math.round(percentageDecrease);
   }
 
 }

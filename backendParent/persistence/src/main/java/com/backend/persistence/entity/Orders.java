@@ -38,10 +38,10 @@ public class Orders implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "ORDERID")
-	private int orderId;
+	private Long orderId;
 	
 	@Column(name = "CUSTOMERID", nullable = false)
-	private int customerId;
+	private Long customerId;
 	
 	@Column(name = "STATUS")
 	private String status;
@@ -59,19 +59,28 @@ public class Orders implements Serializable {
 	private boolean couponapplied;
 	
 	@Column(name = "COUPONID")
-	private int couponId;
+	private Long couponId;
 	
 	@Column(name = "PAYMENTMODEID")
 	private int paymentModeId;
 	
+	@Column(name = "ORDERPLACEDTIME")
+	private long orderPlacedTime;
+	
 	@Column(name = "EMPLOYEEID", nullable = true)
-	private int employeeId;
+	private Long employeeId;
 	
 	@OneToOne(mappedBy = "orderId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private OrderInvoice invoice;
 	
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
 	private List<OrderDetails> orderDetails;
+	
+	@Column(name = "CUSTOMERADDRESSID")
+	private Long customerAddressId;
+	
+	@Column(name = "DELIVERYCHARGE")
+	private int deliveryCharge;
 
 	public Tenant getTenant() {
 		return tenant;
@@ -81,19 +90,19 @@ public class Orders implements Serializable {
 		this.tenant = tenant;
 	}
 
-	public int getOrderId() {
+	public Long getOrderId() {
 		return orderId;
 	}
 
-	public void setOrderId(int orderId) {
+	public void setOrderId(Long orderId) {
 		this.orderId = orderId;
 	}
 
-	public int getCustomerId() {
+	public Long getCustomerId() {
 		return customerId;
 	}
 
-	public void setCustomerId(int customerId) {
+	public void setCustomerId(Long customerId) {
 		this.customerId = customerId;
 	}
 
@@ -137,19 +146,19 @@ public class Orders implements Serializable {
 		this.couponapplied = couponapplied;
 	}
 
-	public int getCouponId() {
+	public Long getCouponId() {
 		return couponId;
 	}
 
-	public void setCouponId(int couponId) {
+	public void setCouponId(Long couponId) {
 		this.couponId = couponId;
 	}
 
-	public int getEmployeeId() {
+	public Long getEmployeeId() {
 		return employeeId;
 	}
 
-	public void setEmployeeId(int employeeId) {
+	public void setEmployeeId(Long employeeId) {
 		this.employeeId = employeeId;
 	}
 
@@ -171,6 +180,30 @@ public class Orders implements Serializable {
 
 	public void setPaymentModeId(int paymentModeId) {
 		this.paymentModeId = paymentModeId;
+	}
+
+	public Long getCustomerAddressId() {
+		return customerAddressId;
+	}
+
+	public void setCustomerAddressId(Long customerAddressId) {
+		this.customerAddressId = customerAddressId;
+	}
+
+	public long getOrderPlacedTime() {
+		return orderPlacedTime;
+	}
+
+	public void setOrderPlacedTime(long orderPlacedTime) {
+		this.orderPlacedTime = orderPlacedTime;
+	}
+
+	public int getDeliveryCharge() {
+		return deliveryCharge;
+	}
+
+	public void setDeliveryCharge(int deliveryCharge) {
+		this.deliveryCharge = deliveryCharge;
 	}
 
 }

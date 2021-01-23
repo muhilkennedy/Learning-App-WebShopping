@@ -77,6 +77,16 @@ $my-app-theme: mat-light-theme($my-app-primary, $my-app-accent, $my-app-warn);
   height: 50px !important;
 }
 
+.trashicon{
+  color: red;
+  cursor: pointer;
+  transition: transform .2s;
+}
+
+.trashicon:hover  {
+  transform: scale(1.5);
+}
+
 
 // // Custom Theming for Angular Material
 // // For more information: https://material.angular.io/guide/theming

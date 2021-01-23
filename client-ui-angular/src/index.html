@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>ClientUi</title>
+  <base href="./">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico" id="appIcon">
+
+  <link href="/src/assets/css/bootstrap.min.css">
+  <link href="/src/assets/css/font-awesome.min.css" >
+  <link href="/src/assets/css/prettyPhoto.css" >
+  <link href="/src/assets/css/price-range.css" >
+  <link href="/src/assets/css/animate.css">
+	<link href="/src/assets/css/main.css">
+	<link href="/src/assets/css/responsive.css">
+
+    <!-- <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png"> -->
+    <!-- <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png"> -->
+
+    <script>
+      //RSA encryption
+      function rsaencrypt(password, publicKey) {
+          let RSAEncrypt = new JSEncrypt();
+          RSAEncrypt.setPublicKey(publicKey);
+          let encryptedPass = RSAEncrypt.encrypt(password);
+          return encryptedPass;
+      }
+    </script>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body class="mat-typography">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/2.3.1/jsencrypt.min.js" async></script>
+
+  <script src="assets/js/jquery.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/jquery.scrollUp.min.js"></script>
+  <script src="assets/js/price-range.js"></script>
+  <script src="assets/js/jquery.prettyPhoto.js"></script>
+  <script src="assets/js/main.js"></script>
+
+  <app-root></app-root>
+
+</body>
+</html>

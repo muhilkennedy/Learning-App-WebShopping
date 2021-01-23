@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.backend.core.service.BaseService;
 import com.backend.persistence.dao.CartDao;
+import com.backend.persistence.entity.CustomerAddress;
 import com.backend.persistence.entity.CustomerCart;
 import com.backend.persistence.entity.CustomerInfo;
 import com.backend.persistence.repository.CustomerInfoRepository;
@@ -44,7 +45,7 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 	}
 	
 	@Override
-	public CustomerInfo getCustomerById(int id) {
+	public CustomerInfo getCustomerById(Long id) {
 		return customerRepo.findEmployeeById(id, baseService.getTenantInfo());
 	}
 	
@@ -59,13 +60,22 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 	}
 	
 	@Override
-	public void addProductToCart(int productId) throws Exception {
+	public void addProductToCart(Long productId) throws Exception {
 		CustomerInfo customer = (CustomerInfo) baseService.getUserInfo();
-		cartDao.insertIntoCart(productId, customer.getCustomerId(), 1);
+		List<CustomerCart> cartItems = cartDao.userCartItems(customer.getCustomerId());
+		int quantity = 1;
+		for(CustomerCart cartItem: cartItems) {
+			if(cartItem.getProduct().getProductId() == productId) {
+				quantity = cartItem.getQuantity() + 1;
+				updateProductQuantity(productId, quantity);
+				return;
+			}
+		}
+		cartDao.insertIntoCart(productId, customer.getCustomerId(), quantity);
 	}
 	
 	@Override
-	public void removeFromCart(int productId) throws Exception {
+	public void removeFromCart(Long productId) throws Exception {
 		CustomerInfo customer = (CustomerInfo) baseService.getUserInfo();
 		cartDao.removeProductFromCart(productId, customer.getCustomerId());
 	}
@@ -77,9 +87,14 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 	}
 	
 	@Override
-	public void updateProductQuantity(int productId, int quantity) throws Exception {
+	public void updateProductQuantity(Long productId, int quantity) throws Exception {
 		CustomerInfo customer = (CustomerInfo) baseService.getUserInfo();
-		cartDao.updateProductQuantity(productId, customer.getCustomerId(), quantity);
+		if(quantity <= 0) {
+			removeFromCart(productId);
+		}
+		else {
+			cartDao.updateProductQuantity(productId, customer.getCustomerId(), quantity);
+		}
 	}
 	
 	@Override
@@ -95,7 +110,8 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 	}
 	
 	public void updateLoyalityPoint(CustomerInfo customer, String total) {
-		BigDecimal loyalityEarned = new BigDecimal(total).divide(new BigDecimal(100));
+		//1 inr for every 200 spent 
+		BigDecimal loyalityEarned = new BigDecimal(total).divide(new BigDecimal(200));
 		customer.setLoyalitypoint(customer.getLoyalitypoint() != null
 				? customer.getLoyalitypoint().add(loyalityEarned.setScale(2, RoundingMode.CEILING))
 				: loyalityEarned.setScale(2, RoundingMode.CEILING));
@@ -107,6 +123,23 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 		if (customer != null) {
 			updateLoyalityPoint(customer, subTotal);
 		}
+	}
+	
+	@Override
+	public void addCustomerAddress(CustomerAddress address) {
+		CustomerInfo customer = (CustomerInfo)baseService.getUserInfo();
+		customer = getCustomerByEmail(customer.getEmailId());
+		address.setTenant(baseService.getTenantInfo());
+		address.setCustomer(customer);
+		customer.getCustomerAddress().add(address);
+		save(customer);
+	}
+	
+	@Override
+	public void updateCustomerMobile(String mobile) {
+		CustomerInfo customer = (CustomerInfo)baseService.getUserInfo();
+		customer.setMobile(mobile);
+		save(customer);
 	}
 
 }

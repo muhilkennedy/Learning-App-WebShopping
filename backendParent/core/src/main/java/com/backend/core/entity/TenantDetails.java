@@ -80,6 +80,12 @@ public class TenantDetails implements Serializable{
 	@Column(name = "FSSAI")
 	private String fssai;
 	
+	@Column(name = "TAGLINE")
+	private String tagLine;
+	
+	@Column(name = "GMAPLOCATION")
+	private String gmapLocation;
+	
 	@JsonIgnore
 	@Column(name = "BUSINESSEMAILPASSWORD")
 	private String businessEmailPassword;
@@ -220,6 +226,22 @@ public class TenantDetails implements Serializable{
 
 	public void setFssai(String fssai) {
 		this.fssai = fssai;
+	}
+
+	public String getTagLine() {
+		return tagLine;
+	}
+
+	public void setTagLine(String tagLine) {
+		this.tagLine = tagLine;
+	}
+
+	public String getGmapLocation() {
+		return gmapLocation;
+	}
+
+	public void setGmapLocation(String gmapLocation) {
+		this.gmapLocation = gmapLocation;
 	}
 
 }

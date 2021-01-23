@@ -18,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.Response;
-import com.backend.commons.util.CommonUtil;
 import com.backend.core.entity.TenantDetails;
 import com.backend.core.service.BaseService;
 import com.backend.core.service.TenantService;
@@ -64,9 +63,10 @@ public class TenantController {
 			tenantDetail.setTenantTwitter(tenantTwitter);
 			tenantDetail.setTenantInsta(tenantInsta);
 			tenantDetail.setTenantStreet(tenantStreet);
+			tenantDetail.setTenantPin(tenantPin);
 			tenantDetail.setGstIn(gst);
 			tenantDetail.setFssai(fssai);
-			tenantService.updateTenantDetails(tenantDetail, file != null ? CommonUtil.getThumbnailImage(file.getBytes()) : null);
+			tenantService.updateTenantDetails(tenantDetail, file != null ? file.getBytes() : null);
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("updateTenant : " + ex);
@@ -78,7 +78,7 @@ public class TenantController {
 	}
 	
 	@RequestMapping(value = "/updateTenantFssai", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<String> updateTenant(HttpServletRequest request, @RequestParam(value = "fssai", required = false) String fssai){
+	public GenericResponse<String> updateTenant(HttpServletRequest request, @RequestParam(value = "fssai", required = true) String fssai){
 		GenericResponse<String> response = new GenericResponse<>();
 		try {
 			TenantDetails tenantDetail = new TenantDetails();
@@ -87,6 +87,40 @@ public class TenantController {
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("updateTenant : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/updateTagLine", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> updateTagLine(HttpServletRequest request, @RequestParam(value = "tagLine", required = true) String tagLine){
+		GenericResponse<String> response = new GenericResponse<>();
+		try {
+			TenantDetails tenantDetail = new TenantDetails();
+			tenantDetail.setTagLine(tagLine);
+			tenantService.updateTenantDetails(tenantDetail, null);
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("updateTenant : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/updateMapLocation", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> updateMapLocation(HttpServletRequest request, @RequestParam(value = "location", required = true) String location){
+		GenericResponse<String> response = new GenericResponse<>();
+		try {
+			TenantDetails tenantDetail = new TenantDetails();
+			tenantDetail.setGmapLocation(location);
+			tenantService.updateTenantDetails(tenantDetail, null);
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("updateMapLocation : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);

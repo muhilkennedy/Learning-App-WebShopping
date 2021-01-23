@@ -23,7 +23,7 @@ public class ScheduledTaskAudit {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "AUDITID")
-	private int auditId;
+	private Long auditId;
 	
 	@Column(name = "TASKNAME")
 	private String taskName;
@@ -109,11 +109,11 @@ public class ScheduledTaskAudit {
 		this.failureInfo = failureInfo;
 	}
 
-	public int getAuditId() {
+	public Long getAuditId() {
 		return auditId;
 	}
 
-	public void setAuditId(int auditId) {
+	public void setAuditId(Long auditId) {
 		this.auditId = auditId;
 	}
 	

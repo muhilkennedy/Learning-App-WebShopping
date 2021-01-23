@@ -1,0 +1,7 @@
+{
+  "name": "client-android-ui",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "ionic-angular"
+}

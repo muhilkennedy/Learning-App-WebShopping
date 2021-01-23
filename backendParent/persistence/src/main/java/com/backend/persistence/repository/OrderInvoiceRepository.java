@@ -14,7 +14,7 @@ import com.backend.persistence.entity.Orders;
  *
  */
 @Repository
-public interface OrderInvoiceRepository extends JpaRepository<OrderInvoice, Integer> {
+public interface OrderInvoiceRepository extends JpaRepository<OrderInvoice, Long> {
 	
 	String findOrdersByOrderIdQuery = "select order from OrderInvoice order where order.tenant = :tenant and order.orderId = :orderId";
 	

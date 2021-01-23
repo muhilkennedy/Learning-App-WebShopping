@@ -8,15 +8,15 @@ public interface EmailService {
 	void sendEmail(String recipientEmail, String subject, String body, Map<String, File> inlineImages,
 			File attachments) throws Exception;
 
-	void sendOnboardingEmail(String recipientEmail, String fname, String lname, int empId, String password,
+	void sendOnboardingEmail(String recipientEmail, String fname, String lname, Long empId, String password,
 			String origin);
 
 	void sendOtpEmail(String recipientEmail, String otp);
 
-	void sendPOSEmail(String posId, String subtotal, long createdTime, String paymentMode, String recipientEmail,
-			String fname, String lname, String origin);
-
 	void sendOrderStatusEmail(String orderId, String orderStatus, String subtotal, long createdTime, String paymentMode,
 			String recipientEmail, String fname, String lname, String origin, java.sql.Blob recieptAttachment);
+
+	void sendPOSEmail(String posId, String subtotal, long createdTime, String paymentMode, String recipientEmail,
+			String fname, String lname, String origin, File invoice);
 
 }

@@ -1,0 +1,55 @@
+
+	<footer id="footer"><!--Footer-->
+		<div class="footer-top">
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-2">
+						<div class="companyinfo">
+							<h2><span>{{orgName1}}</span>-{{orgName2}}</h2>
+							<p>{{tenantStore.tenantTagLine}}</p>
+						</div>
+          </div>
+          <div class="col-sm-7"></div>
+					<div class="col-sm-3" style="float: right">
+						<div class="address">
+              <img src="../../../../assets/images/home/map.png" alt="" style="height: auto;
+              width: 80px;"/>
+              <p>{{tenantStore.tenantStreet}} <br/> {{tenantStore.tenantCity}}</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="footer-widget">
+			<div class="container">
+				<div class="row">
+          <div class="col-sm-2" *ngIf="tenantStore.tenantFssai !== undefined &&
+                                        tenantStore.tenantFssai !== null && tenantStore.tenantFssai !== ''">
+						<div class="single-widget">
+							<ul class="nav nav-pills nav-stacked">
+								<li><label>FSSAI : </label> {{tenantStore.tenantFssai}} </li>
+							</ul>
+						</div>
+          </div>
+          <div class="col-sm-2" *ngIf="tenantStore.tenantGstIn !== undefined &&
+                                        tenantStore.tenantGstIn !== null && tenantStore.tenantGstIn !== ''">
+						<div class="single-widget">
+							<ul class="nav nav-pills nav-stacked">
+								<li><label>GSTIN : </label> {{tenantStore.tenantGstIn}} </li>
+							</ul>
+            </div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="footer-bottom">
+			<div class="container">
+				<div class="row">
+					<p class="pull-right">Designed by <span><a target="_blank" href="https://www.linkedin.com/in/muhilkennedy">Muhil Kennedy</a></span></p>
+				</div>
+			</div>
+		</div>
+
+	</footer><!--/Footer-->

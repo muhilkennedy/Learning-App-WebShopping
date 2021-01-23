@@ -15,7 +15,6 @@ import javax.sql.rowset.serial.SerialBlob;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.xmlgraphics.util.uri.CommonURIResolver;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +31,7 @@ import com.backend.core.entity.TenantDetails;
 import com.backend.core.security.RSAKeyPairGenerator;
 import com.backend.core.service.HomeMediaService;
 import com.backend.core.service.TenantService;
+import com.backend.core.util.ConfigUtil;
 
 /**
  * @author muhil
@@ -57,6 +57,9 @@ public class TenantInfoLoading {
 	@Autowired
 	private InvoiceDao invoiceDao;
 	
+	@Autowired
+	private ConfigUtil  configUtil;
+	
 	/**
 	 * This method is for dev purposes only. 
 	 * In future ER can be done to implement default data to onboarded tenant.(has to be merged as single method)
@@ -64,47 +67,48 @@ public class TenantInfoLoading {
 	@PostConstruct
 	private void loadTenantDetail() {
 		try {
-			//load Logo
-			File file = ResourceUtils.getFile(
-				      "classpath:devAssets/Brand-Icon.png");
-			Tenant devTenant = tenantService.findTenantByID("devTenant");
-			TenantDetails devTenantDetail = devTenant.getTenantDetail();
-			byte[] test = FileUtils.readFileToByteArray(file);
-			devTenantDetail.setTenantLogo(new SerialBlob(test));
-			
-			//load Home Media
-			file = ResourceUtils.getFile(
-				      "classpath:devAssets/slider1.jpg");
-			// home slider images
-			HomePageMedia media = mediaService.getMediaById(devTenant, 1);
-			media.setImage(new SerialBlob(getBannerImage(FileUtils.readFileToByteArray(file))));
-			mediaService.save(media);
-			
-			file = ResourceUtils.getFile(
-				      "classpath:devAssets/slider2.jpg");
-			media = mediaService.getMediaById(devTenant, 2);
-			media.setImage(new SerialBlob(getBannerImage(FileUtils.readFileToByteArray(file))));
-			mediaService.save(media);
-			
-			file = ResourceUtils.getFile(
-				      "classpath:devAssets/Media1.jpg");
-			media = mediaService.getMediaById(devTenant, 3);
-			media.setImage(new SerialBlob(getHomeImage(FileUtils.readFileToByteArray(file))));
-			mediaService.save(media);
-			
-			file = ResourceUtils.getFile(
-				      "classpath:devAssets/Mediator2.jpg");
-			media = mediaService.getMediaById(devTenant, 4);
-			media.setImage(new SerialBlob(getHomeImage(FileUtils.readFileToByteArray(file))));
-			mediaService.save(media);
-			
-			tenantService.save(devTenant);
-			
+			if(!configUtil.isProdMode()) {
+				//load Logo
+				File file = ResourceUtils.getFile(
+					      "classpath:devAssets/Brand-Icon.jpg");
+				Tenant devTenant = tenantService.findTenantByID("devTenant");
+				TenantDetails devTenantDetail = devTenant.getTenantDetail();
+				byte[] test = FileUtils.readFileToByteArray(file);
+				devTenantDetail.setTenantLogo(new SerialBlob(test));
+				
+				//load Home Media
+				file = ResourceUtils.getFile(
+					      "classpath:devAssets/slider1.jpg");
+				// home slider images
+				HomePageMedia media = mediaService.getMediaById(devTenant, 1L);
+				media.setImage(new SerialBlob(getBannerImage(FileUtils.readFileToByteArray(file))));
+				mediaService.save(media);
+				
+				file = ResourceUtils.getFile(
+					      "classpath:devAssets/slider2.jpg");
+				media = mediaService.getMediaById(devTenant, 2L);
+				media.setImage(new SerialBlob(getBannerImage(FileUtils.readFileToByteArray(file))));
+				mediaService.save(media);
+				
+				file = ResourceUtils.getFile(
+					      "classpath:devAssets/Media1.jpg");
+				media = mediaService.getMediaById(devTenant, 3L);
+				media.setImage(new SerialBlob(getHomeImage(FileUtils.readFileToByteArray(file))));
+				mediaService.save(media);
+				
+				file = ResourceUtils.getFile(
+					      "classpath:devAssets/Mediator2.jpg");
+				media = mediaService.getMediaById(devTenant, 4L);
+				media.setImage(new SerialBlob(getHomeImage(FileUtils.readFileToByteArray(file))));
+				mediaService.save(media);
+				
+				tenantService.save(devTenant);
+			}
 		} catch (Exception e) { 
 			logger.error("Exception in loading dev images - " + e.getMessage());
 		}		
 	}
-	//convertion to reduce image size and load faster
+	//conversion to reduce image size and load faster
 	private byte[] getBannerImage(byte[] image) throws Exception {
 		InputStream in = new ByteArrayInputStream(image);
 		BufferedImage bImage = Scalr.resize(ImageIO.read(in), Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, 1900,
@@ -143,19 +147,25 @@ public class TenantInfoLoading {
 						Boolean.parseBoolean(tenantDetails[2].trim()), Boolean.parseBoolean(tenantDetails[4].trim()));
 			}
 			String originsList = tenantDetails[3].trim().replace("[", "").replace("]", "");
-			resetOriginList(realm, originsList);
 			RSAKeyPairGenerator rsa = new RSAKeyPairGenerator();
 			realm.setPublicKey(rsa.getPublicKey());
 			realm.setPrivateKey(rsa.getPrivateKey());
 			tenantService.saveAndFlush(realm);
+			resetOriginList(realm, originsList);
 			tenantMap.remove(tenantDetails[1].trim());
+			realm = tenantService.findTenantByID(realm.getTenantID());
+			TenantDetails additionalTenantDetails = realm.getTenantDetail();
+			if(additionalTenantDetails == null) {
+				TenantDetails newTenantDetail = new TenantDetails();
+				newTenantDetail.setTenantID(realm);
+				tenantService.saveTenantDetail(newTenantDetail);
+			}
 			logger.info("loaded tenant -> " + realm.getUniqueName());
 			if(!employeeDao.isCustomerSupportAdminPresent(realm.getTenantID())) {
 				employeeDao.createAdminUserForTenant(realm.getTenantID());
 			}
 			if (!invoiceDao.containsInvoiceTemplate(realm.getTenantID())) {
 				ClassPathResource classPathResource = new ClassPathResource("invoiceTemplate/Invoice-Template.docx");
-
 				InputStream inputStream = classPathResource.getInputStream();
 				File file = File.createTempFile("invoice", ".docx");
 				try {
@@ -163,14 +173,24 @@ public class TenantInfoLoading {
 				} finally {
 					IOUtils.closeQuietly(inputStream);
 				}
+				
+				ClassPathResource classPathResourcePos = new ClassPathResource("invoiceTemplate/POS-Template.docx");
+				InputStream is = classPathResourcePos.getInputStream();
+				File posFile = File.createTempFile("invoice", ".docx");
+				try {
+					FileUtils.copyInputStreamToFile(is, posFile);
+				} finally {
+					IOUtils.closeQuietly(is);
+				}
 
 				invoiceDao.createInvoiceTemplate(realm.getTenantID(),
-						new SerialBlob(FileUtils.readFileToByteArray(file)));
+						new SerialBlob(FileUtils.readFileToByteArray(file)), new SerialBlob(FileUtils.readFileToByteArray(posFile)));
 				
 				deleteDirectoryOrFile(file);
+				deleteDirectoryOrFile(posFile);
 			}
 		}
-		// remaing tenants are considered removed.
+		// remaining tenants are considered removed.
 		if (!tenantMap.isEmpty()) {
 			tenantMap.entrySet().parallelStream().forEach(tenant -> {
 				tenant.getValue().setPurge(false);
@@ -196,19 +216,6 @@ public class TenantInfoLoading {
 		}
 		return false;
 	}
-	
-//	@PostConstruct
-//	private void loadEmailTemplates() throws Exception {
-//		ClassPathResource classPathResource = new ClassPathResource("emailTemplates/emailOTP.ftl");
-//
-//		InputStream inputStream = classPathResource.getInputStream();
-//		File file = File.createTempFile("emailTemplate", ".ftl");
-//		try {
-//			FileUtils.copyInputStreamToFile(inputStream, file);
-//		} finally {
-//			IOUtils.closeQuietly(inputStream);
-//		}
-//	}
 	
 	private Map<String, Tenant> getTenantMap() {
 		List<Tenant> tenantList = tenantService.getAllTenants();

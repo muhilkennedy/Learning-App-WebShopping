@@ -39,7 +39,7 @@ public class CouponsServiceImpl implements CouponsService {
 	}
 	
 	@Override
-	public Coupons findCouponById(int id) {
+	public Coupons findCouponById(Long id) {
 		return coupRepo.findCouponById(baseService.getTenantInfo(), id);
 	}
 	
@@ -60,7 +60,7 @@ public class CouponsServiceImpl implements CouponsService {
 	}
 	
 	@Override
-	public void toggleCoupon(int id) {
+	public void toggleCoupon(Long id) {
 		Coupons coupon = findCouponById(id);
 		if(coupon != null) {
 			coupon.setActive(!coupon.isActive());
@@ -69,11 +69,25 @@ public class CouponsServiceImpl implements CouponsService {
 	}
 	
 	@Override
-	public void deleteCoupon(int id) {
+	public void deleteCoupon(Long id) {
 		Coupons coupon = findCouponById(id);
 		if(coupon != null) {
 			coupRepo.delete(coupon);
 		}
+	}
+	
+	@Override
+	public Coupons getCouponByCode(String code) {
+		return coupRepo.findCouponByCode(baseService.getTenantInfo(), code);
+	}
+	
+	@Override
+	public Coupons verifyIfCouponApplicableById(String code) {
+		Coupons coupon = getCouponByCode(code);
+		if(coupon != null && coupon.isActive()) {
+			return coupon;
+		}
+		return null;
 	}
 	
 }

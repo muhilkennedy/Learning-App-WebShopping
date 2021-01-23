@@ -24,7 +24,7 @@ public interface EmployeeService {
 
 	EmployeeInfo findEmployeeByEmailOrId(String emailOrId);
 
-	EmployeeInfo findEmployeeById(int id);
+	EmployeeInfo findEmployeeById(Long id);
 
 	void overrirdePermissions(EmployeeInfo empInfo, List<Integer> permissionIds);
 

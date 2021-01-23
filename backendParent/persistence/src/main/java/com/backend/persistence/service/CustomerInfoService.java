@@ -8,6 +8,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import com.backend.persistence.entity.CustomerAddress;
 import com.backend.persistence.entity.CustomerCart;
 import com.backend.persistence.entity.CustomerInfo;
 
@@ -17,15 +18,15 @@ public interface CustomerInfoService {
 
 	void saveAndFlush(CustomerInfo info);
 
-	CustomerInfo getCustomerById(int id);
+	CustomerInfo getCustomerById(Long id);
 
 	CustomerInfo getCustomerByEmail(String email);
 
-	void addProductToCart(int productId) throws Exception;
+	void addProductToCart(Long productId) throws Exception;
 
-	void removeFromCart(int productId) throws Exception;
+	void removeFromCart(Long productId) throws Exception;
 
-	void updateProductQuantity(int productId, int quantity) throws Exception;
+	void updateProductQuantity(Long productId, int quantity) throws Exception;
 
 	int getUserCartCount() throws Exception;
 
@@ -36,5 +37,9 @@ public interface CustomerInfoService {
 	CustomerInfo getCustomerByMobile(String mobile) throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException, NoSuchPaddingException, NoSuchAlgorithmException;
 
 	void updateLoyalityPointByCustomerMobile(String mobile, String subTotal);
+
+	void addCustomerAddress(CustomerAddress address);
+
+	void updateCustomerMobile(String mobile);
 
 }

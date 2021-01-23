@@ -2,7 +2,7 @@
 <app-header
   [navbarBrandRouterLink]="['/dashboard']"
   [fixed]="true"
-  [navbarBrandFull]="{src: tenantStore.tenantLogo, width: 30, height: 30, alt: 'CoreUI Logo'}"
+  [navbarBrandFull]="{src: tenantStore.tenantLogo, height: 30, alt: 'Company Logo'}"
   [sidebarToggler]="'lg'"
   [asideMenuToggler]="'lg'">
   <ul class="nav navbar-nav d-md-down-none">
@@ -10,7 +10,7 @@
       <i class="flag-icon flag-icon-in"></i>
     </li>
     <li class="nav-item px-3">
-      <label>{{realmName}}</label>
+      <label style="color: darkred;">{{realmName}}</label>
     </li>
   </ul>
   <ul class="nav navbar-nav ml-auto">
@@ -23,9 +23,10 @@
       </a>
       <div class="dropdown-menu dropdown-menu-right" *dropdownMenu aria-labelledby="simple-dropdown">
         <div class="dropdown-header text-center"><strong>Account</strong></div>
+        <a class="dropdown-item" (click)="profile()" style="cursor: pointer;"><i class="fa fa-user"></i> Profile</a>
         <a class="dropdown-item" (click)="tasks()" style="cursor: pointer;"><i class="fa fa-tasks"></i> Tasks<span class="badge badge-danger">{{taskCount}}</span></a>
         <div class="dropdown-header text-center"><strong>Settings</strong></div>
-        <a class="dropdown-item" (click)="profile()" style="cursor: pointer;"><i class="fa fa-user"></i> Profile</a>
+        <a *ngIf="showDeliveryConfig" class="dropdown-item" (click)="delivery()" style="cursor: pointer;"><i class="fa fa-truck"></i> Delivery</a>
         <a class="dropdown-item" (click)="primaryModal.show()" style="cursor: pointer;"><i class="fa fa-lock"></i> Lock account</a>
         <a class="dropdown-item" (click)="logout()" style="cursor: pointer;"><i class="fa fa-sign-out"></i> Logout</a>
       </div>
@@ -67,6 +68,7 @@
     <app-sidebar-minimizer></app-sidebar-minimizer>
   </app-sidebar>
   <!-- Main content -->
+  <!-- style="margin-right: 250px;" -->
   <main class="main">
     <!-- Breadcrumb to be implemented later -->
     <cui-breadcrumb>
@@ -98,7 +100,8 @@
   </main>
 
   <!-- Right side nav(need to implement messaging service later here) -->
-  <app-aside [fixed]="true" [display]="false" [ngClass]="'test'">
+  <!-- style="margin-right: 0px;" -->
+  <app-aside [fixed]="true" [display]="false" [ngClass]="'test'" >
     <tabset>
       <tab>
         <app-push-notification [notificationCount]="noticationCount" [taskCount]="taskCount"
@@ -108,7 +111,7 @@
       <tab>
         <app-chat-messenger></app-chat-messenger>
       </tab>
-      <tab>
+      <tab *ngIf="showScheduledTasks">
         <app-scheduled-tasks></app-scheduled-tasks>
       </tab>
     </tabset>

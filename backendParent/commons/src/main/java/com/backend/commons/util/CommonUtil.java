@@ -145,6 +145,9 @@ public class CommonUtil {
 		return false;
 	}
 	
+	public static String getFileExtensionFromName(String fileName) {
+		return fileName != null ? fileName.substring(fileName.lastIndexOf(".")+1) : null;
+	}
 
 	/**
 	 * @param originalImage
@@ -162,31 +165,31 @@ public class CommonUtil {
 		return baos.toByteArray();
 	}
 	
-	public static byte[] getBannerImage(byte[] image) throws Exception {
+	public static byte[] getBannerImage(String fileName, byte[] image) throws Exception {
 		InputStream in = new ByteArrayInputStream(image);
 		BufferedImage bImage = Scalr.resize(ImageIO.read(in), Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, Banner_AspectWidth,
 				Banner_AspectHeight, Scalr.OP_ANTIALIAS);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ImageIO.write(bImage, Thumbnail_Exension, baos);
+		ImageIO.write(bImage, getFileExtensionFromName(fileName), baos);
 		return baos.toByteArray();
 	}
 	
-	public static byte[] getHomeImage(byte[] image) throws Exception {
+	public static byte[] getHomeImage(String fileName, byte[] image) throws Exception {
 		InputStream in = new ByteArrayInputStream(image);
 		BufferedImage bImage = Scalr.resize(ImageIO.read(in), Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, HomeImage_AspectWidth,
 				HomeImage_AspectHeight, Scalr.OP_ANTIALIAS);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ImageIO.write(bImage, Thumbnail_Exension, baos);
+		ImageIO.write(bImage, getFileExtensionFromName(fileName), baos);
 		return baos.toByteArray();
 	}
 	
 	// need to update aspect ratio later after ui dev for best fit.
-	public static byte[] getProductImage(byte[] image) throws Exception {
+	public static byte[] getProductImage(String fileName, byte[] image) throws Exception {
 		InputStream in = new ByteArrayInputStream(image);
 		BufferedImage bImage = Scalr.resize(ImageIO.read(in), Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, HomeImage_AspectWidth,
 				HomeImage_AspectHeight, Scalr.OP_ANTIALIAS);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ImageIO.write(bImage, Thumbnail_Exension, baos);
+		ImageIO.write(bImage, getFileExtensionFromName(fileName), baos);
 		return baos.toByteArray();
 	}
 	

@@ -3,6 +3,8 @@ package com.backend.commons.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.common.base.Functions;
 import com.google.common.collect.Lists;
 
@@ -42,6 +44,7 @@ public class SQLQueryHandler {
 		public static final String Key_GroupBy = " group by ";
 		public static final String Key_Ascending = " asc ";
 		public static final String Key_Descending = " desc ";
+		public static final String Key_Like = " like ";
 
 		public SQLQueryHandler build() {
 			return new SQLQueryHandler(this);
@@ -81,11 +84,17 @@ public class SQLQueryHandler {
 		}
 		
 		public SQLQueryBuilder setGroupby(String fieldName) {
+			if(StringUtils.isBlank(fieldName)) {
+				return this;
+			}
 			this.query = query.concat(Key_GroupBy).concat(fieldName);
 			return this;
 		}
 		
 		public SQLQueryBuilder setOrderBy(String fieldName) {
+			if(StringUtils.isBlank(fieldName)) {
+				return this;
+			}
 			this.query = query.concat(Key_OrderBy).concat(fieldName);
 			return this;
 		}
@@ -101,6 +110,9 @@ public class SQLQueryHandler {
 		}
 		
 		public SQLQueryBuilder setSortOrder(String sortOrder) {
+			if(StringUtils.isBlank(sortOrder)) {
+				return this;
+			}
 			return setSortOrder(sortOrder.equals(Key_Descending.trim()) ? true : false);
 		}
 		
@@ -201,7 +213,7 @@ public class SQLQueryHandler {
 			return setOrCondition(fieldName, values != null ? Lists.transform(values, Functions.toStringFunction()) : null);
 		}
 		
-		public SQLQueryBuilder andSetOrConditions(String fieldName, List<Integer> values) {
+		public SQLQueryBuilder andSetOrConditions(String fieldName, List values) {
 			return andSetOrCondition(fieldName, values != null ? Lists.transform(values, Functions.toStringFunction()) : null);
 		}
 		
@@ -320,6 +332,28 @@ public class SQLQueryHandler {
 				}
 				this.query = query.concat(Key_OffsetCondition.concat(value));
 			}
+			return this;
+		}
+		
+		public SQLQueryBuilder andSetLikeCondition (String fieldName, String value) {
+			if(value == null) {
+				return this;
+			}
+			setAndCondition();
+			setStartBrace();
+			this.query = this.query.concat(fieldName.concat(Key_Like).concat(value));
+			setEndBrace();
+			return this;
+		}
+		
+		public SQLQueryBuilder orSetLikeCondition (String fieldName, String value) {
+			if(value == null) {
+				return this;
+			}
+			setOrCondition();
+			setStartBrace();
+			this.query = this.query.concat(fieldName.concat(Key_Like).concat(value));
+			setEndBrace();
 			return this;
 		}
  

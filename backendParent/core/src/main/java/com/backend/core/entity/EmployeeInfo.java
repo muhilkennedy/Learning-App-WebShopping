@@ -44,7 +44,7 @@ public class EmployeeInfo implements Serializable, User{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "EMPLOYEEID")
-	private int employeeId;
+	private Long employeeId;
 	
 	@Column(name = "FNAME")
 	private String firstName;
@@ -122,11 +122,11 @@ public class EmployeeInfo implements Serializable, User{
 		this.tenant = tenant;
 	}
 
-	public int getEmployeeId() {
+	public Long getEmployeeId() {
 		return employeeId;
 	}
 
-	public void setEmployeeId(int employeeId) {
+	public void setEmployeeId(Long employeeId) {
 		this.employeeId = employeeId;
 	}
 

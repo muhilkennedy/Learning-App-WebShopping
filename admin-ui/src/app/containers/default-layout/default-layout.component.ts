@@ -10,6 +10,7 @@ import { EmployeeService } from '../../shared/employee/employee.service';
 import { OrdersService } from '../../shared/orders/orders.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TenantStoreService } from '../../service/tenantStore/tenant-store.service';
+import { PushNotificationsService } from 'ng-push';
 
 @Component({
   selector: 'app-dashboard',
@@ -29,6 +30,8 @@ export class DefaultLayoutComponent implements OnInit{
   public taskCount: number;
   now:number;
   orderCountInterval:any;
+  showDeliveryConfig: boolean = false;
+  showScheduledTasks: boolean = false;
 
   constructor(public tenantStore: TenantStoreService,
               public userStore: UserStoreService,
@@ -37,7 +40,8 @@ export class DefaultLayoutComponent implements OnInit{
               private cookieService: CookieService,
               private empService: EmployeeService,
               private orderService: OrdersService,
-              private _snackBar: MatSnackBar){
+              private _snackBar: MatSnackBar,
+              private _pushNotifications: PushNotificationsService ){
 
     this.userPermissions = this.userStore.employeePermissions;
     this.setViewsBasedOnPermisssions();
@@ -45,6 +49,8 @@ export class DefaultLayoutComponent implements OnInit{
     setInterval(() => {
       this.now = Date.now();
     }, 1);
+
+    _pushNotifications.requestPermission();
 
   }
 
@@ -108,12 +114,14 @@ export class DefaultLayoutComponent implements OnInit{
           //allow all access
           this.addNavItem("/employee");
           this.addNavItem("/report");
+          this.showScheduledTasks = true;
         }
         //manager permission
         if(permissionIds.includes(2)){
           // remove employee functionality
           this.addNavItem("/sales");
           this.addNavItem("/invoice-template");
+          this.showDeliveryConfig = true;
         }
         //marketing permission
         if(permissionIds.includes(3)){
@@ -212,6 +220,10 @@ export class DefaultLayoutComponent implements OnInit{
     this.router.navigate(['/profile']);
   }
 
+  delivery(){
+    this.router.navigate(['/delivery']);
+  }
+
   tasks(){
     this.router.navigate(['/task',true]);
   }
@@ -222,6 +234,7 @@ export class DefaultLayoutComponent implements OnInit{
                     .subscribe((resp : any) => {
                       if(resp.statusCode === 200){
                         this.userStore.pickUpOrders = !this.userStore.pickUpOrders;
+                        this.newOrdersCount = 0;
                         this.checkOrderCount();
                       }
                       this.loading = false;
@@ -240,22 +253,36 @@ export class DefaultLayoutComponent implements OnInit{
     }
   }
 
-  newOrdersCount:number ;
+  newOrdersCount:number = 0;
   getNewOrdersCount(){
     this.orderService.getUnassignedOrdersCount()
                      .subscribe((resp:any)=>{
                         if(resp.statusCode === 200){
-                          if(this.newOrdersCount !== resp.data && this.newOrdersCount < resp.data){
+                          if(this.newOrdersCount === undefined || (this.newOrdersCount !== resp.data && this.newOrdersCount < resp.data)){
                             let snackBarRef = this._snackBar.open('New Order(s) recieved...!', 'OPEN', {
-                              duration: 600000,
+                              duration: 60000,
                               panelClass: ['warn-snackbar'],
-                              horizontalPosition: 'right',
+                              horizontalPosition: 'left',
                               verticalPosition: 'bottom'
                             });
                             snackBarRef.onAction().subscribe(()=> this.navigateToOrders());
+                            let options = {
+                              body: "New Order(s) recieved...!",
+                              icon: this.tenantStore.tenantLogo,
+                              sound: '../../../assets/sounds/notify.mp3'
+                            }
+                            this._pushNotifications.create(this.tenantStore.tenantName, options)
+                                .subscribe(
+                                res => console.log(res),
+                                err => console.log(err)
+                                );
+                            let audio = new Audio();
+                            audio.src = "../../../assets/sounds/notify.mp3";
+                            audio.load();
+                            audio.play();
                           }
                           if(resp.data === 0){
-                            this.newOrdersCount = undefined;
+                            this.newOrdersCount = 0;
                           }
                           else{
                             this.newOrdersCount = resp.data;

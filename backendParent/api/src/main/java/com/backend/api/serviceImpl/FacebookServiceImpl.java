@@ -10,8 +10,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.backend.api.messages.SocialPOJO;
 import com.backend.api.service.SocialLoginService;
 import com.backend.commons.configuration.SpringSocialProperties;
+import com.backend.persistence.entity.CustomerInfo;
 
 @Service
 @Transactional
@@ -53,6 +55,12 @@ public class FacebookServiceImpl implements SocialLoginService {
 	public void createCustomerIfrequired(JSONObject json) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public CustomerInfo createCustomerIfrequired(SocialPOJO customerData) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

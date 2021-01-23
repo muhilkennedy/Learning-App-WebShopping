@@ -16,7 +16,7 @@ import com.backend.persistence.entity.Product;
  *
  */
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Integer>{
+public interface ProductRepository extends JpaRepository<Product, Long>{
 	
 	String findProductByIdQuery = "select p from Product p where p.tenant = :tenant and p.productId = :pId";
 	String findProductsForCategoryQuery = "select p from Product p where p.tenant = :tenant and p.categoryId = :category";
@@ -27,8 +27,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer>{
 	String findLimitedProductsForCategoryQuery = "select * from product where tenantid = ?1 and categoryid = ?4 limit ?2 offset ?3";
 	String findProductByCodeQuery = "select p from Product p where p.tenant = :tenant and p.productCode = :pCode";
 	String findProductByIdsQuery = "select p from Product p where p.tenant = :tenant and p.productId in :pIds";
-	String findProductByNameQuery = "select p from Product p where p.tenant = :tenant and p.active = true and p.productName like :searchTerm%";
-	String findProductByNameOrCodeQuery = "select p from Product p where p.tenant = :tenant and p.active = true and p.productName like :searchTerm% or p.productCode like :searchTerm%";
+	String findProductByNameQuery = "select p from Product p where p.tenant = :tenant and p.active = true and p.searchText like :searchTerm%";
+	String findProductByNameOrCodeQuery = "select p from Product p where p.tenant = :tenant and p.active = true and p.searchText like :searchTerm% or p.productCode like :searchTerm%";
 	
 	@Query(findAllProductsQuery)
 	List<Product> findAllProducts(@Param("tenant") Tenant realm);
@@ -37,7 +37,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer>{
 	List<Product> findLimitedProducts(String tenant, int limit, int offset);
 	
 	@Query(value = findLimitedProductsForCategoryQuery, nativeQuery = true)
-	List<Product> findLimitedProductsForCategory(String tenant, int limit, int offset, int categoryId);
+	List<Product> findLimitedProductsForCategory(String tenant, int limit, int offset, Long categoryId);
 	
 	@Query(findAllProductsCountQuery)
 	int findAllProductsCount(@Param("tenant") Tenant realm);
@@ -46,7 +46,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer>{
 	List<Product> findProductsForCategory(@Param("tenant") Tenant realm, @Param("category") Category category);
 	
 	@Query(findProductByIdQuery)
-	Product findProductById(@Param("tenant") Tenant realm, @Param("pId") int id);
+	Product findProductById(@Param("tenant") Tenant realm, @Param("pId") Long id);
 	
 	@Query(findProductCountForCategory)
 	int findProductCountForCategory(@Param("tenant") Tenant realm, @Param("category") Category category);
@@ -55,7 +55,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer>{
 	Product findProductByCode(@Param("tenant") Tenant realm, @Param("pCode") String productCode);
 	
 	@Query(findProductByIdsQuery)
-	List<Product> findProductByIds(@Param("tenant") Tenant realm, @Param("pIds") List<Integer> pIds);
+	List<Product> findProductByIds(@Param("tenant") Tenant realm, @Param("pIds") List<Long> pIds);
 	
 	@Query(findProductByNameQuery)
 	List<Product> findProductByNameMatching(@Param("tenant") Tenant realm, @Param("searchTerm") String searchTerm);

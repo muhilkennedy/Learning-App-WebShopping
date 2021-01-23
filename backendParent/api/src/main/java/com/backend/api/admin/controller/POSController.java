@@ -1,5 +1,9 @@
 package com.backend.api.admin.controller;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -8,7 +12,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -40,8 +48,14 @@ public class POSController {
 			@RequestBody POSData posData) {
 		GenericResponse<String> response = new GenericResponse<String>();
 		try {
-			posService.createPOS(posData);
-			response.setStatus(Response.Status.OK);
+			String posKey = posService.createPOS(posData);
+			if(posKey != null) {
+				response.setData(posKey);
+				response.setStatus(Response.Status.OK);
+			}
+			else {
+				response.setStatus(Response.Status.ERROR);
+			}
 		} catch (Exception ex) {
 			logger.error("createPOS : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
@@ -50,6 +64,23 @@ public class POSController {
 		}
 		return response;
 	}
+	
+	@RequestMapping("/viewPdf")
+	public ResponseEntity<Resource> viewPdf( @RequestParam(value = "id", required = true) String id)throws Exception 
+	{
+		File file = posService.getPOSInvoice(id);
+        HttpHeaders header = new HttpHeaders();
+        header.add(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=Dummy.pdf");
+    	Path path = Paths.get(file.getAbsolutePath());
+        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
+        long fileLength = file.length();
+        CommonUtil.deleteDirectoryOrFile(file);
+        return ResponseEntity.ok()
+                .headers(header)
+                .contentLength(fileLength)
+                .contentType(MediaType.parseMediaType("application/pdf"))
+                .body(resource);
+    }
 	
 	@RequestMapping(value = "/getPOS", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<String> getPOS(HttpServletRequest request,

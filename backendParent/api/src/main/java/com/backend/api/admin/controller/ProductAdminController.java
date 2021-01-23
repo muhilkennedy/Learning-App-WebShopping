@@ -1,7 +1,6 @@
 package com.backend.api.admin.controller;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -48,7 +47,8 @@ public class ProductAdminController {
 			@RequestParam(value = "description", required = false) String description,
 			@RequestParam(value = "active", required = false) String active,
 			@RequestParam(value = "code", required = false) String pcode,
-			@RequestParam(value = "units", required = false) String unitsInStock) {
+			@RequestParam(value = "units", required = false) String unitsInStock,
+			@RequestParam(value = "sellingCost", required = false) String sellingCost) {
 		GenericResponse<Product> response = new GenericResponse<>();
 		try {
 			// Initial checks
@@ -64,13 +64,14 @@ public class ProductAdminController {
 			productPojo.setBrandName(productBrand);
 			productPojo.setCost(CommonUtil.isValidStringParam(cost) ? new BigDecimal(cost) : new BigDecimal(0));
 			productPojo.setOffer(CommonUtil.isValidStringParam(offer) ? new BigDecimal(offer) : new BigDecimal(0));
-			productPojo.setProductId(CommonUtil.isValidStringParam(pId) ? Integer.parseInt(pId) : -1);
+			productPojo.setSellingCost(CommonUtil.isValidStringParam(sellingCost) ? new BigDecimal(sellingCost) : productPojo.getCost());
+			productPojo.setProductId(CommonUtil.isValidStringParam(pId) ? Long.parseLong(pId) : -1);
 			productPojo.setActive(CommonUtil.isValidStringParam(active) ? Boolean.parseBoolean(active) : false);
 			productPojo.setProductCode(pcode);
 			productPojo.setQuantityInStock(CommonUtil.isValidStringParam(offer) ? Integer.parseInt(unitsInStock) : -1);
 			Product product = productService.createOrUpdateProduct(productPojo,
-					CommonUtil.isValidStringParam(offer) ? Integer.parseInt(catId) : 0,
-					file != null ? file.getBytes() : null);
+					CommonUtil.isValidStringParam(offer) ? Long.parseLong(catId) : 0,
+					file != null ? CommonUtil.getProductImage(file.getOriginalFilename(), file.getBytes()) : null);
 			if (product != null) {
 				response.setDataList(Arrays.asList(product));
 				response.setStatus(Response.Status.OK);
@@ -116,8 +117,8 @@ public class ProductAdminController {
 			@RequestParam(value = "productId", required = true) String pId) {
 		GenericResponse<Product> response = new GenericResponse<>();
 		try {
-			productService.addProductImage(CommonUtil.isValidStringParam(pId) ? Integer.parseInt(pId) : -1,
-					file != null ? file.getBytes() : null);
+			productService.addProductImage(CommonUtil.isValidStringParam(pId) ?  Long.parseLong(pId) : -1,
+					file != null ? CommonUtil.getProductImage(file.getOriginalFilename(), file.getBytes()) : null);
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("uploadProductImage : " + ex);
@@ -133,7 +134,7 @@ public class ProductAdminController {
 			@RequestParam(value = "productImageId", required = true) String piId) {
 		GenericResponse<Product> response = new GenericResponse<>();
 		try {
-			productService.removeProductImage(CommonUtil.isValidStringParam(piId) ? Integer.parseInt(piId) : -1);
+			productService.removeProductImage(CommonUtil.isValidStringParam(piId) ? Long.parseLong(piId) : -1);
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("removeProductImage : " + ex);
@@ -150,8 +151,8 @@ public class ProductAdminController {
 			@RequestParam(value = "productImageId", required = true) String piId) {
 		GenericResponse<Product> response = new GenericResponse<>();
 		try {
-			productService.replaceImage(CommonUtil.isValidStringParam(piId) ? Integer.parseInt(piId) : -1,
-					file != null ? file.getBytes() : null);
+			productService.replaceImage(CommonUtil.isValidStringParam(piId) ? Long.parseLong(piId) : -1,
+					file != null ? CommonUtil.getProductImage(file.getOriginalFilename(), file.getBytes()) : null);
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("replaceProductImage : " + ex);
@@ -169,7 +170,7 @@ public class ProductAdminController {
 		GenericResponse<Product> response = new GenericResponse<>();
 		try {
 			if (CommonUtil.isValidStringParam(status) && CommonUtil.isValidStringParam(pId)) {
-				productService.changeProductStatus(CommonUtil.isValidStringParam(pId) ? Integer.parseInt(pId) : -1,
+				productService.changeProductStatus(CommonUtil.isValidStringParam(pId) ?  Long.parseLong(pId) : -1,
 						Boolean.parseBoolean(status));
 				response.setStatus(Response.Status.OK);
 			} else {
@@ -191,7 +192,7 @@ public class ProductAdminController {
 		GenericResponse<Product> response = new GenericResponse<>();
 		try {
 			if (CommonUtil.isValidStringParam(pId)) {
-				productService.addToFeaturedProducts(Integer.parseInt(pId));
+				productService.addToFeaturedProducts(Long.parseLong(pId));
 				response.setStatus(Response.Status.OK);
 			} else {
 				response.setErrorMessages(Arrays.asList("Parameters are not Valid!"));
@@ -208,7 +209,7 @@ public class ProductAdminController {
 	
 	@RequestMapping(value = "/deleteFeaturedProducts", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<Product> deleteFeaturedProducts(HttpServletRequest request,
-														@RequestParam(value = "productId", required = true) int pId) {
+														@RequestParam(value = "productId", required = true) long pId) {
 		GenericResponse<Product> response = new GenericResponse<>();
 		try {
 			productService.deleteFeaturedProduct(pId);
@@ -224,7 +225,7 @@ public class ProductAdminController {
 	
 	@RequestMapping(value = "/isFeaturedProducts", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<Product> isFeaturedProducts(HttpServletRequest request,
-														@RequestParam(value = "productId", required = true) int pId) {
+														@RequestParam(value = "productId", required = true) long pId) {
 		GenericResponse<Product> response = new GenericResponse<>();
 		try {
 			if(productService.isFeaturedProduct(pId)) {

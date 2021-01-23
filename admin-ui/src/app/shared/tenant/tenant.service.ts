@@ -9,6 +9,8 @@ export class TenantService {
 
   updateTenantDetailsEndpoint = "/secure/admin/tenant/updateTenant";
   updateTenantDetailFssaiEndpoint = "/secure/admin/tenant/updateTenantFssai";
+  updateTenantDetailTagLineEndpoint = "/secure/admin/tenant/updateTagLine";
+  updateTenantLocationEndpoint = "/secure/admin/tenant/updateMapLocation";
 
   constructor(private http:HttpClient) { }
 
@@ -34,6 +36,18 @@ export class TenantService {
     const uploadData = new FormData();
     uploadData.append('fssai', fssai);
     return this.http.put(environment.backendBaseUrl+this.updateTenantDetailFssaiEndpoint, uploadData);
+  }
+
+  updateTagLine(tag){
+    const uploadData = new FormData();
+    uploadData.append('tagLine', tag);
+    return this.http.put(environment.backendBaseUrl+this.updateTenantDetailTagLineEndpoint, uploadData);
+  }
+
+  updateTenantLocation(location){
+    const uploadData = new FormData();
+    uploadData.append('location', location);
+    return this.http.put(environment.backendBaseUrl+this.updateTenantLocationEndpoint, uploadData);
   }
 
 }

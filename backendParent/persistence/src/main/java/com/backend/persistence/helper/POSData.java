@@ -19,7 +19,17 @@ public class POSData {
 	private String createdById;
 	private String paymentMode;
 	private String subTotal;
+	private String actualSubTotal;
 	private List<PosProduct> posProduct;
+	private String totalQuantity;
+	
+	public String getActualSubTotal() {
+		return actualSubTotal;
+	}
+
+	public void setActualSubTotal(String actualSubTotal) {
+		this.actualSubTotal = actualSubTotal;
+	}
 
 	public String getTenantId() {
 		return tenantId;
@@ -93,16 +103,24 @@ public class POSData {
 		this.createdById = createdById;
 	}
 
+	public String getTotalQuantity() {
+		return totalQuantity;
+	}
+
+	public void setTotalQuantity(String totalQuantity) {
+		this.totalQuantity = totalQuantity;
+	}
 
 	public static class PosProduct {
 
 		private String itemCode;
-		private int itemID;
+		private Long itemID;
 		private String itemName;
 		private float discount;
 		private float total;
 		private float mrp;
 		private int quantity;
+		private float sellingCost;
 
 		public String getItemCode() {
 			return itemCode;
@@ -112,11 +130,11 @@ public class POSData {
 			this.itemCode = itemCode;
 		}
 
-		public int getItemID() {
+		public Long getItemID() {
 			return itemID;
 		}
 
-		public void setItemID(int itemID) {
+		public void setItemID(Long itemID) {
 			this.itemID = itemID;
 		}
 
@@ -158,6 +176,14 @@ public class POSData {
 
 		public void setItemName(String itemName) {
 			this.itemName = itemName;
+		}
+
+		public float getSellingCost() {
+			return sellingCost;
+		}
+
+		public void setSellingCost(float sellingCost) {
+			this.sellingCost = sellingCost;
 		}
 
 	}

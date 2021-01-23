@@ -42,12 +42,12 @@ public class OrdersDao {
 	/*************************
 	 * unassigned orders table
 	 * ***********************/
-	public void insertUnassignedOrder(int orderId) throws Exception {
+	public void insertUnassignedOrder(Long orderId) throws Exception {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con
 					.prepareStatement("insert into unassignedorders values(?,?)");
 			stmt.setString(1, baseService.getTenantInfo().getTenantID());
-			stmt.setInt(2, orderId);
+			stmt.setLong(2, orderId);
 			stmt.executeUpdate();
 		} catch (Exception ex) {
 			logger.error("Exception inserting into cart- " + ex);
@@ -87,12 +87,12 @@ public class OrdersDao {
 		return count;
 	}
 	
-	public void removeUnassignedOrders(int orderId) throws Exception {
+	public void removeUnassignedOrders(Long orderId) throws Exception {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con
 					.prepareStatement("delete from unassignedorders where tenantid=? and orderid=?");
 			stmt.setString(1, baseService.getTenantInfo().getTenantID());
-			stmt.setInt(2, orderId);
+			stmt.setLong(2, orderId);
 			stmt.executeUpdate();
 		} catch (Exception ex) {
 			logger.error("Exception inserting into cart- " + ex);
@@ -103,8 +103,8 @@ public class OrdersDao {
 	/******************
 	 * Orders Table
 	 * ****************/
-	public List<Integer> getOrders (String tenantId, String limit, String offset, String condition , long date, String status) throws Exception{
-		List<Integer> orderIds = new ArrayList<Integer>();
+	public List<Long> getOrders (String tenantId, String limit, String offset, String condition , long date, String status) throws Exception{
+		List<Long> orderIds = new ArrayList<Long>();
 		Date curdate = new Date(date);
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(curdate);
@@ -165,7 +165,7 @@ public class OrdersDao {
 			PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-				orderIds.add(rs.getInt(1));
+				orderIds.add(rs.getLong(1));
 			}
 			return orderIds;
 		} catch (Exception ex) {

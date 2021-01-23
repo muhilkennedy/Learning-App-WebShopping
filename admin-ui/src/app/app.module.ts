@@ -89,6 +89,7 @@ import { NotFoundComponent } from './component/not-found/not-found.component';
 import { PushNotificationComponent } from './containers/push-notification/push-notification.component';
 import { ChatMessengerComponent } from './containers/chat-messenger/chat-messenger.component';
 import { ScheduledTasksComponent } from './containers/scheduled-tasks/scheduled-tasks.component';
+import { PushNotificationsModule, PushNotificationsService } from 'ng-push';
 
 
 @Injectable()
@@ -107,7 +108,7 @@ export class TenantInitializer {
                   this.tenantStore.tenantActive = resp.data.tenantActive;
                   this.tenantStore.publicKey = resp.data.publicKey;
                   //set tenant details
-                  let tenantDetails = resp.dataList[0];
+                  let tenantDetails = resp.dataList != null ? resp.dataList[0] : null;
                   if(tenantDetails != null && tenantDetails !== undefined){
                     this.tenantStore.tenantDetailId = tenantDetails.tenantDetailId;
                     this.tenantStore.tenantEmail = tenantDetails.tenantEmail;
@@ -121,8 +122,10 @@ export class TenantInitializer {
                     this.tenantStore.businessEmail = tenantDetails.businessEmail;
                     this.tenantStore.tenantGstIn = tenantDetails.gstIn;
                     this.tenantStore.tenantFssai = tenantDetails.fssai;
+                    this.tenantStore.tenantTagLine = tenantDetails.tagLine;
+                    this.tenantStore.tenantGmap = tenantDetails.gmapLocation;
                   }
-                  this.tenantStore.tenantLogo = resp.dataList[1];
+                  this.tenantStore.tenantLogo = resp.dataList != null ? resp.dataList[1] : null;
                   //load app only if tenant is active.
                   if(this.tenantStore.tenantActive){
                      resolve(true);
@@ -210,7 +213,8 @@ export function init_tenant(initializer: TenantInitializer) {
     NgMultiSelectDropDownModule.forRoot(),
     ThermalPrintModule,
     BarecodeScannerLivestreamModule,
-    PdfViewerModule
+    PdfViewerModule,
+    PushNotificationsModule
   ],
   declarations: [
     AppComponent,
@@ -235,7 +239,9 @@ export function init_tenant(initializer: TenantInitializer) {
     {
       provide: HTTP_INTERCEPTORS,
       useClass: InterceptorService,
-      multi: true },
+      multi: true
+    },
+    PushNotificationsService
   ],
   bootstrap: [ AppComponent ]
 })

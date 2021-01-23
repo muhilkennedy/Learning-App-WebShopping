@@ -28,6 +28,9 @@ public class ConfigUtil {
 	@Value("${spring.rsa.publickey}")
 	private String rsaPublic;
 	
+	@Value("${info.app.domain}")
+	private String appDomain;
+	
 	private enum deploymentModes {
 		prod, dev
 	}
@@ -58,6 +61,10 @@ public class ConfigUtil {
 
 	public String getRsaPublic() {
 		return rsaPublic;
+	}
+
+	public String getAppDomain() {
+		return appDomain;
 	}
 
 }

@@ -16,10 +16,14 @@ public interface CouponsService {
 
 	List<Coupons> findAllCouponsForTenant();
 
-	void toggleCoupon(int id);
+	void toggleCoupon(Long id);
 
-	void deleteCoupon(int id);
+	void deleteCoupon(Long id);
 
-	Coupons findCouponById(int id);
+	Coupons findCouponById(Long id);
+
+	Coupons getCouponByCode(String code);
+
+	Coupons verifyIfCouponApplicableById(String code);
 
 }

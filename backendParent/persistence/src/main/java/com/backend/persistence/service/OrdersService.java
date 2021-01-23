@@ -19,7 +19,7 @@ public interface OrdersService {
 
 	List<Orders> getOrders(int limit, int offset);
 
-	void updateOrderStatus(String status, int orderId) throws Exception;
+	void updateOrderStatus(String status, Long orderId) throws Exception;
 
 	int getAllUnassignedOrdersCount() throws Exception;
 
@@ -27,8 +27,10 @@ public interface OrdersService {
 
 	List<Orders> getOrders(String limit, String offset, String condition, long date, String status) throws Exception;
 
-	void createCustomerOrder(int couponId, int paymentMode) throws Exception;
-
 	Map<String, BigDecimal> ordersWeeklyReport() throws Exception;
+
+	List<Orders> getCustomerOrders();
+
+	void createCustomerOrder(Long couponId, int paymentMode, Long addressId, int deliveryCharge) throws Exception;
 
 }

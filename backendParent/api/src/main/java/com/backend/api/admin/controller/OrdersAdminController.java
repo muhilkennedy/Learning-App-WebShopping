@@ -87,7 +87,7 @@ public class OrdersAdminController {
 		GenericResponse<Orders> response = new GenericResponse<Orders>();
 		try {
 			if(CommonUtil.isValidStringParam(status) && CommonUtil.isValidStringParam(orderId)) {
-				orderService.updateOrderStatus(status, (StringUtils.isNotEmpty(orderId) ? Integer.parseInt(orderId) : -1));
+				orderService.updateOrderStatus(status, (StringUtils.isNotEmpty(orderId) ? Long.parseLong(orderId) : -1));
 				response.setStatus(Response.Status.OK);
 			}
 			else {

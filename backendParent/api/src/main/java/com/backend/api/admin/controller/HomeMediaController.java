@@ -35,17 +35,17 @@ public class HomeMediaController {
 	
 	@RequestMapping(value = "/updateMedia", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<String> updateMedia(HttpServletRequest request, @RequestParam("myFile") MultipartFile file,
-			@RequestParam(value = "id", required = true) int id, @RequestParam(value = "isSlider", required = false) boolean isSlider,
+			@RequestParam(value = "id", required = true) Long id, @RequestParam(value = "isSlider", required = false) boolean isSlider,
 			@RequestParam(value = "title", required = false) String title, @RequestParam(value = "desc", required = false) String description,
 			@RequestParam(value = "isShop", required = false) boolean isShopNow, @RequestParam(value = "isContact", required = false) boolean isContact,
 			@RequestParam(value = "message", required = false) String message) {
 		GenericResponse<String> response = new GenericResponse<String>();
 		try {
 			if(isSlider) {
-				mediaService.updateMedia(id, CommonUtil.getBannerImage(file.getBytes()), title, description, isShopNow, isContact, isSlider, message);
+				mediaService.updateMedia(id, CommonUtil.getBannerImage(file.getOriginalFilename(), file.getBytes()), title, description, isShopNow, isContact, isSlider, message);
 			}
 			else {
-				mediaService.updateMedia(id, CommonUtil.getHomeImage(file.getBytes()), title, description, isShopNow, isContact, isSlider, message);
+				mediaService.updateMedia(id, CommonUtil.getHomeImage(file.getOriginalFilename(), file.getBytes()), title, description, isShopNow, isContact, isSlider, message);
 			}
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
@@ -66,10 +66,10 @@ public class HomeMediaController {
 		GenericResponse<String> response = new GenericResponse<String>();
 		try {
 			if(isSlider) {
-				mediaService.addMedia(CommonUtil.getBannerImage(file.getBytes()), title, description, isShopNow, isContact, isSlider, message);
+				mediaService.addMedia(CommonUtil.getBannerImage(file.getOriginalFilename(), file.getBytes()), title, description, isShopNow, isContact, isSlider, message);
 			}
 			else {
-				mediaService.addMedia(CommonUtil.getHomeImage(file.getBytes()), title, description, isShopNow, isContact, isSlider, message);
+				mediaService.addMedia(CommonUtil.getHomeImage(file.getOriginalFilename(), file.getBytes()), title, description, isShopNow, isContact, isSlider, message);
 			}
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
@@ -82,7 +82,7 @@ public class HomeMediaController {
 	}
 	
 	@RequestMapping(value = "/deleteMedia", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<String> deleteMedia(HttpServletRequest request, @RequestParam(value = "id", required = true) int id) {
+	public GenericResponse<String> deleteMedia(HttpServletRequest request, @RequestParam(value = "id", required = true) Long id) {
 		GenericResponse<String> response = new GenericResponse<String>();
 		try {
 			mediaService.delete(id);

@@ -16,13 +16,13 @@ import com.backend.persistence.entity.Todo;
  *
  */
 @Repository
-public interface TodoRepository extends JpaRepository<Todo, Integer>  {
+public interface TodoRepository extends JpaRepository<Todo, Long>  {
 	
 	String findTodoByIdQuery = "select t from Todo t where t.tenant = :tenant and t.employeeId = :employee and t.todoId = :id";
 	String findAllTodoForEmployeeQuery = "select t from Todo t where t.tenant = :tenant and t.employeeId = :employee";
 	
 	@Query(findTodoByIdQuery)
-	Todo findTodoById(@Param("tenant") Tenant tenant, @Param("employee") EmployeeInfo employee,  @Param("id") int id);
+	Todo findTodoById(@Param("tenant") Tenant tenant, @Param("employee") EmployeeInfo employee,  @Param("id") Long id);
 	
 	@Query(findAllTodoForEmployeeQuery)
 	List<Todo> findAllTodoForEmployeeQuery(@Param("tenant") Tenant tenant, @Param("employee") EmployeeInfo employee);

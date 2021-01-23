@@ -9,6 +9,6 @@ export const environment = {
   tenantId: "devTenant",
   backendBaseUrl:"http://localhost:8080",
   contextPath:"",
-  origin:"http://localhost:4200",
-  orgName: "Nutty Shop"
+  origin:"http://localhost:4100",
+  orgName: "Ria Groceries"
 };

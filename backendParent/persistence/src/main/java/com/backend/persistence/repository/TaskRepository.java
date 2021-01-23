@@ -17,7 +17,7 @@ import com.backend.persistence.entity.Task;
  *
  */
 @Repository
-public interface TaskRepository extends JpaRepository<Task, Integer>{
+public interface TaskRepository extends JpaRepository<Task, Long>{
 	
 	String findTaskAssignedByIdQuery = "select t from Task t where t.tenant = :tenant and t.assignee = :employee and t.taskId = :id";
 	String findAllAssignedTaskQuery = "select t from Task t where t.tenant = :tenant and t.assignee = :assignee";
@@ -27,7 +27,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer>{
 	String findPendingOverdueTasksCountQuery = "select count(*) from Task t where t.tenant = :tenant and t.status = 'Pending' or t.status = 'Overdue'";
 	
 	@Query(findTaskAssignedByIdQuery)
-	Task findTaskAssignedById(@Param("tenant") Tenant tenant, @Param("employee") EmployeeInfo employee, @Param("id") int id);
+	Task findTaskAssignedById(@Param("tenant") Tenant tenant, @Param("employee") EmployeeInfo employee, @Param("id") Long id);
 	
 	@Query(findAllTaskCreatedByEmployeeQuery)
 	List<Task> findAllTaskCreatedByEmployee(@Param("tenant") Tenant tenant, @Param("employee") EmployeeInfo employee);
@@ -37,7 +37,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer>{
 
 	@Modifying
 	@Query(deleteTaskQuery)
-	void deleteTask(@Param("tenant") Tenant tenant, @Param("employee") EmployeeInfo employee, @Param("id") int id);
+	void deleteTask(@Param("tenant") Tenant tenant, @Param("employee") EmployeeInfo employee, @Param("id") Long id);
 
 	@Query(findAllOverdueTasksQuery)
 	List<Task> findAllOverdueTasks(@Param("tenant") Tenant tenant, @Param("endDate") long endDate);

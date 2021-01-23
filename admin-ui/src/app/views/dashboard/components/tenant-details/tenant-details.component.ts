@@ -25,6 +25,8 @@ export class TenantDetailsComponent implements OnInit {
   editTenantLogo = false;
   editTenantGst = false;
   editTenantFssai = false;
+  editTenantTag = false;
+  editGmap = false;
 
   loadTenantEmail = false;
   loadTenantBusinessEmail = false;
@@ -39,6 +41,8 @@ export class TenantDetailsComponent implements OnInit {
   loadTenantLogo = false;
   loadTenantGst = false;
   loadTenantFssai = false;
+  loadTenantTag = false;
+  loadGmap = false;
 
   tenantDetailId: number;
   tenantEmail: string;
@@ -54,6 +58,8 @@ export class TenantDetailsComponent implements OnInit {
   tenantLogo: File = null;
   tenantGstIn: string;
   tenantFssai: string;
+  tenantTagLine: string;
+  tenantGmap: string;
 
   constructor(private tenantStore: TenantStoreService,
               private tenantService: TenantService,
@@ -72,6 +78,8 @@ export class TenantDetailsComponent implements OnInit {
     this.tenantInsta = this.tenantStore.tenantInsta;
     this.tenantGstIn = this.tenantStore.tenantGstIn;
     this.tenantFssai = this.tenantStore.tenantFssai;
+    this.tenantTagLine = this.tenantStore.tenantTagLine;
+    this.tenantGmap = this.tenantStore.tenantGmap;
   }
 
   updateTenantEmail(){
@@ -214,6 +222,23 @@ export class TenantDetailsComponent implements OnInit {
                       });
   }
 
+  updateTenantGmap(){
+    this.loadGmap = true;
+    this.tenantService.updateTenantLocation(this.tenantGmap)
+                      .subscribe((resp:any) => {
+                        if(resp.statusCode === 200){
+                          this.editGmap = false;
+                          this.loadGmap = false;
+                        }
+                        else{
+                          alert("error");
+                        }
+                      },
+                      (error:any) => {
+                        alert("error");
+                      });
+  }
+
   updateTenantFacebook(){
     this.loadTenantFacebook = true;
     this.tenantService.updateTenantDetails(this.tenantDetailId, '', '', '', '', '', '', '', '', this.tenantFacebook, '', '', '')
@@ -289,6 +314,23 @@ export class TenantDetailsComponent implements OnInit {
                         if(resp.statusCode === 200){
                           this.editTenantFssai = false;
                           this.loadTenantFssai = false;
+                        }
+                        else{
+                          alert("error");
+                        }
+                      },
+                      (error:any) => {
+                        alert("error");
+                      });
+  }
+
+  updateTenantTagLine(){
+    this.loadTenantTag = true;
+    this.tenantService.updateTagLine(this.tenantTagLine)
+                      .subscribe((resp:any) => {
+                        if(resp.statusCode === 200){
+                          this.editTenantTag = false;
+                          this.loadTenantTag = false;
                         }
                         else{
                           alert("error");

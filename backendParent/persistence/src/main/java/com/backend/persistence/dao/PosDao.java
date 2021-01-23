@@ -59,6 +59,23 @@ public class PosDao {
 		}
 	}
 	
+	public POSData getPOSById (String id, String tenantId) throws Exception{
+		POSData data = new POSData();
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			PreparedStatement stmt = con.prepareStatement("select * from pointofsale where pos->\"$.tenantId\" = ? and pos->\"$.primaryKey\" = ?");
+			stmt.setString(1, tenantId);
+			stmt.setString(2, id);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				data = new ObjectMapper().readValue(rs.getString(1), POSData.class);
+			}
+			return data;
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+	}
+	
 	public List<POSData> getPOS (String mobile, String tenantId) throws Exception{
 		List<POSData> json = new ArrayList<POSData>();
 		try (Connection con = dbUtil.getConnectionInstance()) {
@@ -315,23 +332,23 @@ public class PosDao {
 	public String getPOSKEY() throws Exception {
 		String key = null;
 		try (Connection con = dbUtil.getConnectionInstance()) {
-			int currentValue = 0;
+			double currentValue = 0;
 			int incrementBy = 0; 
 			PreparedStatement stmt = con.prepareStatement("select * from possequence");
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) {
-				currentValue = rs.getInt(1);
+				currentValue = rs.getDouble(1);
 				incrementBy = rs.getInt(2);
 			}
 			if(incrementBy != 0) {
-				key = Key_Prefix + (currentValue + incrementBy);
+				key = Key_Prefix +  String.format("%.0f", (currentValue + incrementBy));
 			}
 			else {
 				throw new Exception("POS SEQUENCE GENERATION ERROR");
 			}
 			stmt = con.prepareStatement("update possequence set currentsequencevalue = ? where currentsequencevalue = ?");
-			stmt.setInt(1, (currentValue + incrementBy));
-			stmt.setInt(2, currentValue);
+			stmt.setDouble(1, (currentValue + incrementBy));
+			stmt.setDouble(2, currentValue);
 			stmt.executeUpdate();
 		} catch (Exception ex) {
 			logger.error("Exception - " + ex);

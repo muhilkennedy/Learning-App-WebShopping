@@ -32,7 +32,7 @@ public class InvoiceTemplate  implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "INVOICEID")
-	private int invoiceId;
+	private Long invoiceId;
 	
 	@Column(name = "ACTIVE")
 	private boolean active;
@@ -40,11 +40,14 @@ public class InvoiceTemplate  implements Serializable {
 	@Column(name = "DOCUMENT")
 	private Blob document;
 	
+	@Column(name = "POSDOCUMENT")
+	private Blob posDocument;
+	
 	public InvoiceTemplate() {
 		super();
 	}
 
-	public InvoiceTemplate(Tenant tenant, int invoiceId, boolean active, Blob document) {
+	public InvoiceTemplate(Tenant tenant, Long invoiceId, boolean active, Blob document) {
 		super();
 		this.tenant = tenant;
 		this.invoiceId = invoiceId;
@@ -60,11 +63,11 @@ public class InvoiceTemplate  implements Serializable {
 		this.tenant = tenant;
 	}
 
-	public int getInvoiceId() {
+	public Long getInvoiceId() {
 		return invoiceId;
 	}
 
-	public void setInvoiceId(int invoiceId) {
+	public void setInvoiceId(Long invoiceId) {
 		this.invoiceId = invoiceId;
 	}
 
@@ -82,6 +85,14 @@ public class InvoiceTemplate  implements Serializable {
 
 	public void setDocument(Blob document) {
 		this.document = document;
+	}
+
+	public Blob getPosDocument() {
+		return posDocument;
+	}
+
+	public void setPosDocument(Blob posDocument) {
+		this.posDocument = posDocument;
 	}
 
 }

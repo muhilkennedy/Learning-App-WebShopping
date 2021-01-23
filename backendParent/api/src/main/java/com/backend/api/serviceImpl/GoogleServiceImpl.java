@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.backend.api.messages.SocialPOJO;
 import com.backend.api.service.SocialLoginService;
 import com.backend.api.util.SocialUtil;
 import com.backend.commons.configuration.SpringSocialProperties;
@@ -75,6 +76,7 @@ public class GoogleServiceImpl implements SocialLoginService {
 			info.setLoginMode(CommonUtil.Key_googleUser);
 			info.setActive(true);
 			info.setTenant(baseService.getTenantInfo());
+			DashboardStatusUtil.incrementCustomerCount(baseService.getTenantInfo());
 		}
 		else {
 			// we do this every time incase of any update done by user in google!
@@ -84,7 +86,31 @@ public class GoogleServiceImpl implements SocialLoginService {
 		}
 		info.setLastLogin(CommonUtil.convertToUTC(new Date().getTime()));
 		custService.save(info);
-		DashboardStatusUtil.incrementCustomerCount(baseService.getTenantInfo());
+	}
+	
+	@Override
+	public CustomerInfo createCustomerIfrequired(SocialPOJO customerData) {
+		CustomerInfo info = custService.getCustomerByEmail(customerData.getEmail());
+		if(info == null) {
+			info = new CustomerInfo();
+			info.setEmailId(customerData.getEmail());
+			info.setFirstName(customerData.getFirstName());
+			info.setLastName(customerData.getLastName());
+			info.setProfilePicUrl(customerData.getPhotoUrl());
+			info.setLoginMode(CommonUtil.Key_googleUser);
+			info.setActive(true);
+			info.setTenant(baseService.getTenantInfo());
+			DashboardStatusUtil.incrementCustomerCount(baseService.getTenantInfo());
+		}
+		else {
+			// we do this every time incase of any update done by user in google!
+			info.setFirstName(customerData.getFirstName());
+			info.setLastName(customerData.getLastName());
+			info.setProfilePicUrl(customerData.getPhotoUrl());
+		}
+		info.setLastLogin(CommonUtil.convertToUTC(new Date().getTime()));
+		custService.saveAndFlush(info);
+		return info;
 	}
 	
 	

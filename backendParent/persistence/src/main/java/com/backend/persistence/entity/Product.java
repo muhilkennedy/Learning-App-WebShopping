@@ -39,7 +39,7 @@ public class Product implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "PRODUCTID")
-	private int productId;
+	private Long productId;
 	
 	@ManyToOne
 	@JoinColumn(name = "CATEGORYID", nullable = false)
@@ -53,6 +53,9 @@ public class Product implements Serializable {
 	
 	@Column(name = "COST")
 	private BigDecimal cost;
+	
+	@Column(name = "SELLINGCOST")
+	private BigDecimal sellingCost;
 	
 	@Column(name = "OFFER")
 	private BigDecimal offer;
@@ -70,7 +73,7 @@ public class Product implements Serializable {
 	private long lastModified;
 	
 	@Column(name = "LASTMODIFIEDEMPLOYEEID")
-	private Integer lastModifiedById;
+	private Long lastModifiedById;
 	
 	@Column(name = "ACTIVE")
 	private boolean active;
@@ -80,6 +83,9 @@ public class Product implements Serializable {
 	
 	@Column(name = "PRODUCTRATING")
 	private int productRating;
+	
+	@Column(name = "SEARCHTEXT")
+	private String searchText;
 
 	@OneToMany(mappedBy = "productId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<ProductImages> productImages;
@@ -100,11 +106,11 @@ public class Product implements Serializable {
 		this.tenant = tenant;
 	}
 
-	public int getProductId() {
+	public Long getProductId() {
 		return productId;
 	}
 
-	public void setProductId(int productId) {
+	public void setProductId(Long productId) {
 		this.productId = productId;
 	}
 
@@ -148,11 +154,11 @@ public class Product implements Serializable {
 		this.lastModified = lastModified;
 	}
 
-	public Integer getLastModifiedById() {
+	public Long getLastModifiedById() {
 		return lastModifiedById;
 	}
 
-	public void setLastModifiedById(Integer lastModifiedById) {
+	public void setLastModifiedById(Long lastModifiedById) {
 		this.lastModifiedById = lastModifiedById;
 	}
 
@@ -218,6 +224,22 @@ public class Product implements Serializable {
 
 	public void setProductRating(int productRating) {
 		this.productRating = productRating;
+	}
+	
+	public BigDecimal getSellingCost() {
+		return sellingCost;
+	}
+
+	public void setSellingCost(BigDecimal sellingCost) {
+		this.sellingCost = sellingCost;
+	}
+
+	public String getSearchText() {
+		return searchText;
+	}
+
+	public void setSearchText(String searchText) {
+		this.searchText = searchText;
 	}
 
 	@PrePersist

@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -61,6 +62,46 @@ public class CustomerController {
 		}
 		return response;
 	}
+	
+	@RequestMapping(value = "/updateMobile", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse updateMobile(HttpServletRequest request,
+												@RequestParam(value = "mobile", required = true) String mobile) {
+		GenericResponse response = new GenericResponse();
+		try {
+			if (CommonUtil.isValidStringParam(mobile)) {
+				customerService.updateCustomerMobile(mobile);
+				response.setStatus(Response.Status.OK);
+			} else {
+				response.setStatus(Response.Status.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			logger.error("updateMobile : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/addCustomerAddress", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> addCustomerAddress(HttpServletRequest request, @RequestBody CustomerInfo customer) {
+		GenericResponse<String> response = new GenericResponse<String>();
+		try {
+			if (customer != null && customer.getCustomerAddress().size() > 0) {
+				customerService.addCustomerAddress(customer.getCustomerAddress().get(0));
+				response.setStatus(Response.Status.OK);
+			} else {
+				response.setErrorMessages(Arrays.asList("Customer Info Not Found!"));
+				response.setStatus(Response.Status.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			logger.error("addCustomerAddress : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
 
 	@RequestMapping(value = "/addProductToCart", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<CustomerCart> addProductToCart(HttpServletRequest request,
@@ -68,7 +109,7 @@ public class CustomerController {
 		GenericResponse<CustomerCart> response = new GenericResponse<CustomerCart>();
 		try {
 			if (CommonUtil.isValidStringParam(pId)) {
-				customerService.addProductToCart(Integer.parseInt(pId));
+				customerService.addProductToCart(Long.parseLong(pId));
 				response.setStatus(Response.Status.OK);
 			} else {
 				response.setStatus(Response.Status.BAD_REQUEST);
@@ -112,20 +153,40 @@ public class CustomerController {
 		return response;
 	}
 
-	@RequestMapping(value = "/updateProductQuantity", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/updateProductQuantity", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse updateProductQuantity(HttpServletRequest request,
 												@RequestParam(value = "productId", required = true) String pId,
 												@RequestParam(value = "quantity", required = true) String quantity) {
 		GenericResponse response = new GenericResponse();
 		try {
 			if (CommonUtil.isValidStringParam(pId) && CommonUtil.isValidStringParam(quantity)) {
-				customerService.updateProductQuantity(Integer.parseInt(pId), Integer.parseInt(quantity));
+				customerService.updateProductQuantity(Long.parseLong(pId), Integer.parseInt(quantity));
 				response.setStatus(Response.Status.OK);
 			} else {
 				response.setStatus(Response.Status.BAD_REQUEST);
 			}
 		} catch (Exception ex) {
 			logger.error("updateProductQuantity : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/removeProductFromCart", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<CustomerCart> removeProductFromCart(HttpServletRequest request,
+			@RequestParam(value = "productId", required = true) String pId) {
+		GenericResponse<CustomerCart> response = new GenericResponse<CustomerCart>();
+		try {
+			if (CommonUtil.isValidStringParam(pId)) {
+				customerService.removeFromCart(Long.parseLong(pId));
+				response.setStatus(Response.Status.OK);
+			} else {
+				response.setStatus(Response.Status.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			logger.error("removeProductFromCart : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);

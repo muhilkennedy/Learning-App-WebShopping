@@ -35,7 +35,7 @@ public class OrderInvoice implements Serializable {
 		@Id
 		@GeneratedValue(strategy = GenerationType.AUTO)
 		@Column(name = "USERINVOICEID")
-		private int invoiceId;
+		private Long invoiceId;
 		
 		@Column(name = "DOCUMENT")
 		private Blob document;
@@ -45,11 +45,11 @@ public class OrderInvoice implements Serializable {
 	    @JoinColumn(name = "ORDERID", nullable = false)
 	    private Orders orderId;
 
-		public int getInvoiceId() {
+		public Long getInvoiceId() {
 			return invoiceId;
 		}
 
-		public void setInvoiceId(int invoiceId) {
+		public void setInvoiceId(Long invoiceId) {
 			this.invoiceId = invoiceId;
 		}
 

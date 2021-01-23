@@ -43,7 +43,7 @@ public class CouponController {
 			response.setData(coupon);
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
-			logger.error("employeeCreation : " + ex);
+			logger.error("createCoupon : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
@@ -58,7 +58,7 @@ public class CouponController {
 			response.setDataList(couponService.findAllCouponsForTenant());
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
-			logger.error("employeeCreation : " + ex);
+			logger.error("createCoupon : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
@@ -71,7 +71,7 @@ public class CouponController {
 													  @RequestParam(value = "couponId", required = true) String couponId) {
 		GenericResponse<String> response = new GenericResponse<String>();
 		try {
-			couponService.toggleCoupon(CommonUtil.isValidStringParam(couponId)? Integer.parseInt(couponId) : 0);
+			couponService.toggleCoupon(CommonUtil.isValidStringParam(couponId)? Long.parseLong(couponId) : 0);
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("toggleCouponStatus : " + ex);
@@ -84,7 +84,7 @@ public class CouponController {
 	
 	@RequestMapping(value = "/deleteCoupon", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<String> deleteCoupon(HttpServletRequest request,
-											    @RequestParam(value = "couponId", required = true) int couponId) {
+											    @RequestParam(value = "couponId", required = true) Long couponId) {
 		GenericResponse<String> response = new GenericResponse<String>();
 		try {
 			couponService.deleteCoupon(couponId);

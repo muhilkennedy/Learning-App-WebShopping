@@ -32,7 +32,7 @@ public class CustomerAddress implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "ADDRESSID")
-	private int addressId;
+	private Long addressId;
 
 	@Column(name = "DOORNUMBER")
 	private String doorNumber;
@@ -48,6 +48,9 @@ public class CustomerAddress implements Serializable {
 
 	@Column(name = "PINCODE")
 	private String pincode;
+	
+	@Column(name = "MOBILECONTACT")
+	private String mobileContact;
 
 	@JsonIgnore
 	@ManyToOne
@@ -62,11 +65,11 @@ public class CustomerAddress implements Serializable {
 		this.tenant = tenant;
 	}
 
-	public int getAddressId() {
+	public Long getAddressId() {
 		return addressId;
 	}
 
-	public void setAddressId(int addressId) {
+	public void setAddressId(Long addressId) {
 		this.addressId = addressId;
 	}
 
@@ -116,6 +119,14 @@ public class CustomerAddress implements Serializable {
 
 	public void setCustomer(CustomerInfo customer) {
 		this.customer = customer;
+	}
+
+	public String getMobileContact() {
+		return mobileContact;
+	}
+
+	public void setMobileContact(String mobileContact) {
+		this.mobileContact = mobileContact;
 	}
 
 }
