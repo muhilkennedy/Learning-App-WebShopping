@@ -112,7 +112,7 @@ public class TaskController {
 	}
 	
 	@RequestMapping(value = "/deleteTask", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<TaskPOJO> deleteTask(HttpServletRequest request, @RequestParam(value = "id", required = true) int id) {
+	public GenericResponse<TaskPOJO> deleteTask(HttpServletRequest request, @RequestParam(value = "id", required = true) Long id) {
 		GenericResponse<TaskPOJO> response = new GenericResponse<TaskPOJO>();
 		try {
 			taskService.deleteTask(id);

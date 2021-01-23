@@ -43,7 +43,7 @@ public class CategoryServiceImpl  implements CategoryService{
 	}
 	
 	@Override
-	public Category getCategoryById(int id) {
+	public Category getCategoryById(Long id) {
 		return categoryRepository.getCategoryById(baseService.getTenantInfo(), id);
 	}
 	
@@ -63,7 +63,7 @@ public class CategoryServiceImpl  implements CategoryService{
 	}
 	
 	@Override
-	public List<Category> getAllChildCategories(int parentId){
+	public List<Category> getAllChildCategories(Long parentId){
 		return categoryRepository.getCategoryChildren(baseService.getTenantInfo(), parentId);
 	}
 	
@@ -86,7 +86,7 @@ public class CategoryServiceImpl  implements CategoryService{
 	 * we will only deactivate the category due to product constraints
 	 */
 	@Override
-	public void deleteCategory(int id) {
+	public void deleteCategory(Long id) {
 		Category category = categoryRepository.getCategoryById(baseService.getTenantInfo(), id);
 		category.setActive(false);
 		category.setMarkedForDelete(true);
@@ -94,14 +94,14 @@ public class CategoryServiceImpl  implements CategoryService{
 	}
 	
 	@Override
-	public void deleteCategory(List<Integer> ids) {
+	public void deleteCategory(List<Long> ids) {
 		CollectionUtils.emptyIfNull(ids).stream().forEach(id -> {
 			deleteCategory(id);
 		});
 	}
 	
 	@Override
-	public void updateCategoryName(int id, String name){
+	public void updateCategoryName(Long id, String name){
 		Category category = categoryRepository.getCategoryById(baseService.getTenantInfo(), id);
 		category.setCategoryName(name);
 		categoryRepository.save(category);

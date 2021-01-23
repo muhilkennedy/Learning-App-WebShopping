@@ -332,23 +332,23 @@ public class PosDao {
 	public String getPOSKEY() throws Exception {
 		String key = null;
 		try (Connection con = dbUtil.getConnectionInstance()) {
-			int currentValue = 0;
+			double currentValue = 0;
 			int incrementBy = 0; 
 			PreparedStatement stmt = con.prepareStatement("select * from possequence");
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) {
-				currentValue = rs.getInt(1);
+				currentValue = rs.getDouble(1);
 				incrementBy = rs.getInt(2);
 			}
 			if(incrementBy != 0) {
-				key = Key_Prefix + (currentValue + incrementBy);
+				key = Key_Prefix +  String.format("%.0f", (currentValue + incrementBy));
 			}
 			else {
 				throw new Exception("POS SEQUENCE GENERATION ERROR");
 			}
 			stmt = con.prepareStatement("update possequence set currentsequencevalue = ? where currentsequencevalue = ?");
-			stmt.setInt(1, (currentValue + incrementBy));
-			stmt.setInt(2, currentValue);
+			stmt.setDouble(1, (currentValue + incrementBy));
+			stmt.setDouble(2, currentValue);
 			stmt.executeUpdate();
 		} catch (Exception ex) {
 			logger.error("Exception - " + ex);

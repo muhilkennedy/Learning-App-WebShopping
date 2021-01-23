@@ -35,7 +35,7 @@ public class EmployeeAddress implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "ADDRESSID")
-	private int addressId;
+	private Long addressId;
 	
 	@Column(name = "DOORNUMBER")
 	private String doorNumber;
@@ -124,7 +124,7 @@ public class EmployeeAddress implements Serializable{
 		this.employee = employeeId;
 	}
 
-	public int getAddressId() {
+	public Long getAddressId() {
 		return addressId;
 	}
 	

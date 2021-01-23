@@ -13,7 +13,7 @@ import com.backend.persistence.entity.CustomerInfo;
  *
  */
 @Repository
-public interface CustomerInfoRepository extends JpaRepository<CustomerInfo, Integer> {
+public interface CustomerInfoRepository extends JpaRepository<CustomerInfo, Long> {
 
 	String findEmployeeByEmailQuery = "select cus from CustomerInfo cus where cus.emailId = :emailId and cus.tenant = :tenant";
 	String findEmployeeByMobileQuery = "select cus from CustomerInfo cus where cus.mobile = :mobile and cus.tenant = :tenant";
@@ -26,5 +26,5 @@ public interface CustomerInfoRepository extends JpaRepository<CustomerInfo, Inte
 	CustomerInfo findEmployeeByMobile(@Param("mobile") String mobile, @Param("tenant") Tenant realm);
 	
 	@Query(findEmployeeByIdQuery)
-	CustomerInfo findEmployeeById(@Param("customerId") int customerId, @Param("tenant") Tenant realm);
+	CustomerInfo findEmployeeById(@Param("customerId") Long customerId, @Param("tenant") Tenant realm);
 }

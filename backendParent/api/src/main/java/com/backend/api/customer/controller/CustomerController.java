@@ -109,7 +109,7 @@ public class CustomerController {
 		GenericResponse<CustomerCart> response = new GenericResponse<CustomerCart>();
 		try {
 			if (CommonUtil.isValidStringParam(pId)) {
-				customerService.addProductToCart(Integer.parseInt(pId));
+				customerService.addProductToCart(Long.parseLong(pId));
 				response.setStatus(Response.Status.OK);
 			} else {
 				response.setStatus(Response.Status.BAD_REQUEST);
@@ -160,7 +160,7 @@ public class CustomerController {
 		GenericResponse response = new GenericResponse();
 		try {
 			if (CommonUtil.isValidStringParam(pId) && CommonUtil.isValidStringParam(quantity)) {
-				customerService.updateProductQuantity(Integer.parseInt(pId), Integer.parseInt(quantity));
+				customerService.updateProductQuantity(Long.parseLong(pId), Integer.parseInt(quantity));
 				response.setStatus(Response.Status.OK);
 			} else {
 				response.setStatus(Response.Status.BAD_REQUEST);
@@ -180,7 +180,7 @@ public class CustomerController {
 		GenericResponse<CustomerCart> response = new GenericResponse<CustomerCart>();
 		try {
 			if (CommonUtil.isValidStringParam(pId)) {
-				customerService.removeFromCart(Integer.parseInt(pId));
+				customerService.removeFromCart(Long.parseLong(pId));
 				response.setStatus(Response.Status.OK);
 			} else {
 				response.setStatus(Response.Status.BAD_REQUEST);

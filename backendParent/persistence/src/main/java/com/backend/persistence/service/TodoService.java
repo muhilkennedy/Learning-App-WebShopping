@@ -12,10 +12,10 @@ public interface TodoService {
 
 	void createTodoForEmployee(Todo todo);
 
-	Todo findTodoById(int id);
+	Todo findTodoById(Long id);
 
-	void toggleTodoStatus(int id);
+	void toggleTodoStatus(Long id);
 
-	void deleteTodo(int id);
+	void deleteTodo(Long id);
 
 }

@@ -33,7 +33,7 @@ public class Todo implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "TODOID")
-	private int todoId;
+	private Long todoId;
 	
 	@JsonIgnore
 	@ManyToOne
@@ -54,11 +54,11 @@ public class Todo implements Serializable {
 		this.tenant = tenant;
 	}
 
-	public int getTodoId() {
+	public Long getTodoId() {
 		return todoId;
 	}
 
-	public void setTodoId(int todoId) {
+	public void setTodoId(Long todoId) {
 		this.todoId = todoId;
 	}
 

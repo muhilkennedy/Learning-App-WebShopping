@@ -44,8 +44,8 @@ public class ProductController {
 	 */
 	@RequestMapping(value = "/getProducts", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<Product> getProducts(HttpServletRequest request,
-			@RequestParam(value = "pIds", required = false) List<Integer> pIds,
-			@RequestParam(value = "cIds", required = false) List<Integer> cIds,
+			@RequestParam(value = "pIds", required = false) List<Long> pIds,
+			@RequestParam(value = "cIds", required = false) List<Long> cIds,
 			@RequestParam(value = "sortField", required = false) String sortByField,
 			@RequestParam(value = "sortType", required = false) String sortByType,
 			@RequestParam(value = "includeInactive", required = false) boolean includeInactive,
@@ -68,8 +68,8 @@ public class ProductController {
 	
 	@RequestMapping(value = "/getProductsWithImages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<Product> getProductsWithImages(HttpServletRequest request,
-			@RequestParam(value = "pIds", required = false) List<Integer> pIds,
-			@RequestParam(value = "cIds", required = false) List<Integer> cIds,
+			@RequestParam(value = "pIds", required = false) List<Long> pIds,
+			@RequestParam(value = "cIds", required = false) List<Long> cIds,
 			@RequestParam(value = "sortField", required = false) String sortByField,
 			@RequestParam(value = "sortType", required = false) String sortByType) {
 		GenericResponse<Product> response = new GenericResponse<>();
@@ -90,7 +90,7 @@ public class ProductController {
 
 	@RequestMapping(value = "/getProductsById", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<Product> getProductsById(HttpServletRequest request,
-			@RequestParam(value = "pIds", required = false) List<Integer> pIds) {
+			@RequestParam(value = "pIds", required = false) List<Long> pIds) {
 		GenericResponse<Product> response = new GenericResponse<>();
 		try {
 			response.setDataList(productService.getProducts(pIds));
@@ -106,7 +106,7 @@ public class ProductController {
 
 	@RequestMapping(value = "/getProductCount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<Map<String, Integer>> getProductCount(HttpServletRequest request,
-			@RequestParam(value = "cIds", required = false) List<Integer> cIds,
+			@RequestParam(value = "cIds", required = false) List<Long> cIds,
 			@RequestParam(value = "includeInactive", required = false) boolean includeInactive) {
 		GenericResponse<Map<String, Integer>> response = new GenericResponse<>();
 		try {
@@ -126,7 +126,7 @@ public class ProductController {
 
 	@RequestMapping(value = "/getProductsImage", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<Product> getProductsImage(HttpServletRequest request,
-			@RequestParam(value = "pIds", required = true) List<Integer> pIds) {
+			@RequestParam(value = "pIds", required = true) List<Long> pIds) {
 		GenericResponse<Product> response = new GenericResponse<>();
 		try {
 			response.setDataList(productService.getProductImages(pIds));
@@ -204,7 +204,7 @@ public class ProductController {
 	
 	@RequestMapping(value = "/getProdctsRecursiveByCategory", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<Product> getProdctsRecursiveByCategory(HttpServletRequest request,@RequestParam(value = "pIds", required = false) List<Integer> pIds,
-			@RequestParam(value = "cIds", required = false) int cId,
+			@RequestParam(value = "cIds", required = false) Long cId,
 			@RequestParam(value = "sortField", required = false) String sortByField,
 			@RequestParam(value = "sortType", required = false) String sortByType,
 			@RequestParam(value = "includeInactive", required = false) boolean includeInactive) {
@@ -234,7 +234,7 @@ public class ProductController {
 		try {
 			String limit = request.getHeader(Constants.Header_Limit);
 			String offset = request.getHeader(Constants.Header_Offset);
-			response.setDataList(productService.getProductsWithSearchTerm(CommonUtil.isValidStringParam(cId)? Arrays.asList(Integer.parseInt(cId)) : null, searchTerm, limit, offset, sortByField, sortByType));
+			response.setDataList(productService.getProductsWithSearchTerm(CommonUtil.isValidStringParam(cId)? Arrays.asList(Long.parseLong(cId)) : null, searchTerm, limit, offset, sortByField, sortByType));
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("getProductsBySearchText : " + ex);

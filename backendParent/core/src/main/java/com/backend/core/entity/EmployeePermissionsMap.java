@@ -31,8 +31,8 @@ public class EmployeePermissionsMap implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "MAPID")
-	private int mapId;
-	
+	private Long mapId;
+
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "EMPLOYEEID", nullable = false)
@@ -69,4 +69,11 @@ public class EmployeePermissionsMap implements Serializable{
 		this.permission = permission;
 	}
 	
+	public Long getMapId() {
+		return mapId;
+	}
+
+	public void setMapId(Long mapId) {
+		this.mapId = mapId;
+	}
 }

@@ -114,7 +114,7 @@ public class POSData {
 	public static class PosProduct {
 
 		private String itemCode;
-		private int itemID;
+		private Long itemID;
 		private String itemName;
 		private float discount;
 		private float total;
@@ -130,11 +130,11 @@ public class POSData {
 			this.itemCode = itemCode;
 		}
 
-		public int getItemID() {
+		public Long getItemID() {
 			return itemID;
 		}
 
-		public void setItemID(int itemID) {
+		public void setItemID(Long itemID) {
 			this.itemID = itemID;
 		}
 

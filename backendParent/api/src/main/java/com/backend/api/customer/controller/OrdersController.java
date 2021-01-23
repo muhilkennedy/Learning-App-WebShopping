@@ -61,9 +61,9 @@ public class OrdersController {
 				delivery = 0;
 			}
 			if (CommonUtil.isValidStringParam(addressId)) {
-				orderService.createCustomerOrder(CommonUtil.isValidStringParam(couponId) ? Integer.parseInt(couponId) : -1,
+				orderService.createCustomerOrder(CommonUtil.isValidStringParam(couponId) ? Long.parseLong(couponId) : -1,
 						CommonUtil.isValidStringParam(paymentMode) ? Integer.parseInt(paymentMode) : 1,
-						Integer.parseInt(addressId),
+						Long.parseLong(addressId),
 						delivery);
 				response.setStatus(Response.Status.OK);
 			} else {

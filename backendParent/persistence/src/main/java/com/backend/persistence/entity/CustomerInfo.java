@@ -38,7 +38,7 @@ public class CustomerInfo implements Serializable, User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "CUSTOMERID")
-	private int customerId;
+	private Long customerId;
 
 	@Column(name = "FNAME")
 	private String firstName;
@@ -106,11 +106,11 @@ public class CustomerInfo implements Serializable, User {
 		this.tenant = tenant;
 	}
 
-	public int getCustomerId() {
+	public Long getCustomerId() {
 		return customerId;
 	}
 
-	public void setCustomerId(int customerId) {
+	public void setCustomerId(Long customerId) {
 		this.customerId = customerId;
 	}
 

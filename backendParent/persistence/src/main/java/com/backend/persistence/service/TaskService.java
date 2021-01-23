@@ -12,13 +12,13 @@ public interface TaskService {
 
 	List<Task> findAllAssignedTasks();
 
-	void createTask(Task task, int assigneeId);
+	void createTask(Task task, Long assigneeId);
 
-	void createTask(String content, long endDate, int assigneeId);
+	void createTask(String content, long endDate, Long assigneeId);
 
-	void deleteTask(int id);
+	void deleteTask(Long id);
 
-	void updateTask(int id, String status);
+	void updateTask(Long id, String status);
 
 	List<Task> findAllOverdueTasks();
 	

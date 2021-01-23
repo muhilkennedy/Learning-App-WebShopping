@@ -27,9 +27,9 @@
     <feature name="CDVIonicKeyboard">
         <param name="android-package" onload="true" value="io.ionic.keyboard.CDVIonicKeyboard" />
     </feature>
-    <name>MyApp</name>
-    <description>An awesome Ionic/Cordova app.</description>
-    <author email="hi@ionicframework.com" href="http://ionicframework.com/">Ionic Framework Team</author>
+    <name>Ria Groceries</name>
+    <description>Essentials For Better Tomorrow</description>
+    <author email="muhilkennedy@gmail.com" href="https://www.linkedin.com/in/muhilkennedy">Muhil Kennedy</author>
     <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />

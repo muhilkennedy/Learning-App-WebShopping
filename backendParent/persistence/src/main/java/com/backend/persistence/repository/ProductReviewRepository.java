@@ -16,7 +16,7 @@ import com.backend.persistence.entity.ProductReview;
  *
  */
 @Repository
-public interface ProductReviewRepository extends JpaRepository<ProductReview, Integer>{
+public interface ProductReviewRepository extends JpaRepository<ProductReview, Long>{
 	
 	String findAllReviwesForProduct = "select pr from ProductReview pr where pr.tenant = :tenant and pr.productId = :pId";
 	

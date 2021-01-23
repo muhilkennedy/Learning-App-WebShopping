@@ -13,7 +13,7 @@ public class CustomerCart implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private String tenantid;
-	private int customerid;
+	private Long customerid;
 	private Product product;
 	private int quantity;
 
@@ -25,11 +25,11 @@ public class CustomerCart implements Serializable {
 		this.tenantid = tenantid;
 	}
 
-	public int getCustomerid() {
+	public Long getCustomerid() {
 		return customerid;
 	}
 
-	public void setCustomerid(int customerid) {
+	public void setCustomerid(Long customerid) {
 		this.customerid = customerid;
 	}
 

@@ -18,15 +18,15 @@ public interface CustomerInfoService {
 
 	void saveAndFlush(CustomerInfo info);
 
-	CustomerInfo getCustomerById(int id);
+	CustomerInfo getCustomerById(Long id);
 
 	CustomerInfo getCustomerByEmail(String email);
 
-	void addProductToCart(int productId) throws Exception;
+	void addProductToCart(Long productId) throws Exception;
 
-	void removeFromCart(int productId) throws Exception;
+	void removeFromCart(Long productId) throws Exception;
 
-	void updateProductQuantity(int productId, int quantity) throws Exception;
+	void updateProductQuantity(Long productId, int quantity) throws Exception;
 
 	int getUserCartCount() throws Exception;
 

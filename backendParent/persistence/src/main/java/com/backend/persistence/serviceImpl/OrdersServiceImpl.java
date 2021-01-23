@@ -94,11 +94,11 @@ public class OrdersServiceImpl implements OrdersService {
 		orderDetailsRepo.saveAndFlush(orderDetail);
 	}
 
-	private void createUnassignedOrder(int orderId) throws Exception {
+	private void createUnassignedOrder(Long orderId) throws Exception {
 		ordersDao.insertUnassignedOrder(orderId);
 	}
 
-	private void removeUnassignedOrder(int orderId) throws Exception {
+	private void removeUnassignedOrder(Long orderId) throws Exception {
 		ordersDao.removeUnassignedOrders(orderId);
 	}
 
@@ -113,7 +113,7 @@ public class OrdersServiceImpl implements OrdersService {
 	}
 
 	@Override
-	public void createCustomerOrder(int couponId, int paymentMode, int addressId, int deliveryCharge) throws Exception {
+	public void createCustomerOrder(Long couponId, int paymentMode, Long addressId, int deliveryCharge) throws Exception {
 		Coupons coupon = couponService.findCouponById(couponId);
 		CustomerInfo customer = (CustomerInfo) baseService.getUserInfo();
 		// create initial order object
@@ -178,7 +178,7 @@ public class OrdersServiceImpl implements OrdersService {
 		if(date == 0L) {
 			condition = "def";
 		}
-		List<Integer> orderIds = ordersDao.getOrders(baseService.getTenantInfo().getTenantID(), limit, offset, condition, date, status);
+		List<Long> orderIds = ordersDao.getOrders(baseService.getTenantInfo().getTenantID(), limit, offset, condition, date, status);
 		List<Orders> orders = new ArrayList<Orders>();
 		orderIds.stream().forEach(orderId -> {
 			orders.add(ordersRepo.findOrdersById(baseService.getTenantInfo(), orderId));
@@ -199,11 +199,11 @@ public class OrdersServiceImpl implements OrdersService {
 	}
 	
 	@Override
-	public void updateOrderStatus(String status, int orderId) throws Exception {
+	public void updateOrderStatus(String status, Long orderId) throws Exception {
 		Orders order = ordersRepo.findOrdersById(baseService.getTenantInfo(), orderId);
 		if (order != null) {
 			// incase of order accepted by a employee assign the task to that employee
-			if (order.getEmployeeId() <= 0) {
+			if (order.getEmployeeId() == null) {
 				EmployeeInfo emp = (EmployeeInfo) baseService.getUserInfo();
 				order.setEmployeeId(emp.getEmployeeId());
 				ordersRepo.saveAndFlush(order);

@@ -86,7 +86,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	@Override
-	public List<Product> getAllProductsForTenant(int limit, int offset, int categoryId){
+	public List<Product> getAllProductsForTenant(int limit, int offset, Long categoryId){
 		return productRepo.findLimitedProductsForCategory(baseService.getTenantInfo().getTenantID(), limit, offset, categoryId);
 	}
 	
@@ -96,12 +96,12 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	@Override
-	public Product getProductById(int id) {
+	public Product getProductById(Long id) {
 		return productRepo.findProductById(baseService.getTenantInfo(), id);
 	}
 	
 	@Override
-	public Product createProduct(Product product, int categoryId) {
+	public Product createProduct(Product product, Long categoryId) {
 		Category cat = catService.getCategoryById(categoryId);
 		if(cat != null) {
 			product.setTenant(baseService.getTenantInfo());
@@ -116,13 +116,13 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	@Override
-	public List<Product> getProducts(List<Integer> cIds, List<Integer> pIds, String limit, String offset,
+	public List<Product> getProducts(List<Long> cIds, List<Long> pIds, String limit, String offset,
 			boolean includeInactive, boolean outOfStock) throws Exception {
 		return productDao.getProducts(cIds, pIds, limit, offset, includeInactive, outOfStock);
 	}
 	
 	@Override
-	public List<Product> getProducts(List<Integer> cIds, List<Integer> pIds, String limit, String offset, String sortByField, String sortByType,
+	public List<Product> getProducts(List<Long> cIds, List<Long> pIds, String limit, String offset, String sortByField, String sortByType,
 			boolean includeInactive, boolean outOfStock) throws Exception {
 		if(CommonUtil.isValidStringParam(sortByField) && CommonUtil.isValidStringParam(sortByType)) {
 			return productDao.getProducts(cIds, pIds, limit, offset, sortByField, sortByType, includeInactive, outOfStock);
@@ -131,7 +131,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	@Override
-	public List<ProductPOJO> getProducts(List<Integer> cIds, List<Integer> pIds, String limit, String offset, String sortByField, String sortByType) throws Exception {
+	public List<ProductPOJO> getProducts(List<Long> cIds, List<Long> pIds, String limit, String offset, String sortByField, String sortByType) throws Exception {
 		//considering always only one category will be sent from client
 		if(cIds != null && cIds.size() > 0) {
 			cIds = getProductRecursiveByCategoryId(cIds.get(0));
@@ -143,7 +143,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	@Override
-	public List<ProductPOJO> getProductsWithSearchTerm(List<Integer> cIds, String SearchTerm, String limit, String offset,
+	public List<ProductPOJO> getProductsWithSearchTerm(List<Long> cIds, String SearchTerm, String limit, String offset,
 			String sortByField, String sortByType) throws Exception {
 		// considering always only one category will be sent from client
 		if (cIds != null && cIds.size() > 0) {
@@ -156,27 +156,27 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	@Override
-	public int getProductsCount(List<Integer> cIds, boolean includeInactive) throws Exception {
+	public int getProductsCount(List<Long> cIds, boolean includeInactive) throws Exception {
 		return productDao.getProductsCount(cIds, includeInactive);
 	}
 	
 	@Override
-	public List<Product> getProducts(List<Integer> ids){
+	public List<Product> getProducts(List<Long> ids){
 		return productRepo.findProductByIds(baseService.getTenantInfo(), ids);
 	}
 	
 	@Override
-	public List<Integer> getProductRecursiveByCategoryId(int cId) throws Exception{
+	public List<Long> getProductRecursiveByCategoryId(Long cId) throws Exception{
 		return productDao.getChildCategoriesIdByCategoryId(cId);
 	}
 	
 	@Override
-	public List<Product> getProductRecursiveByCategoryId(int cId, String limit, String offset, String sortByField, String sortByType, boolean includeInactive) throws Exception{
+	public List<Product> getProductRecursiveByCategoryId(Long cId, String limit, String offset, String sortByField, String sortByType, boolean includeInactive) throws Exception{
 		return getProducts(Arrays.asList(cId), null, limit, offset, sortByField, sortByType, includeInactive, false);
 	}
 
 	@Override
-	public Product createOrUpdateProduct(Product product, int categoryId, byte[] productPic)
+	public Product createOrUpdateProduct(Product product, Long categoryId, byte[] productPic)
 			throws Exception {
 		if (product.getProductId() > -1) {
 			// update existing product
@@ -186,6 +186,7 @@ public class ProductServiceImpl implements ProductService {
 			}
 			actualProduct.setActive(false);
 			actualProduct.setDeleted(true);
+			actualProduct.setSearchText(null);
 			// resetting product code to avoid unique constraint error(product code will be proper for one product entry at any point of time)
 			actualProduct.setProductCode(actualProduct.getProductCode() + ":" + System.currentTimeMillis());
 			actualProduct.setLastModified(CommonUtil.convertToUTC(new Date().getTime()));
@@ -197,6 +198,7 @@ public class ProductServiceImpl implements ProductService {
 			newProduct.setActive(product.isActive());
 			if (!StringUtils.isEmpty(product.getProductName())) {
 				newProduct.setProductName(product.getProductName());
+				newProduct.setSearchText(product.getProductName());
 			}
 			if (!StringUtils.isEmpty(product.getBrandName())) {
 				newProduct.setBrandName(product.getBrandName());
@@ -238,6 +240,7 @@ public class ProductServiceImpl implements ProductService {
 			Product newProduct = new Product();
 			newProduct.setCategoryId(catService.getCategoryById(categoryId));
 			newProduct.setProductName(product.getProductName());
+			newProduct.setSearchText(product.getProductName());
 			newProduct.setActive(product.isActive());
 			newProduct.setBrandName(product.getBrandName());
 			newProduct.setCost(product.getCost());
@@ -277,7 +280,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	@Override
-	public void deleteProductById(int pId) {
+	public void deleteProductById(Long pId) {
 		Product product = getProductById(pId);
 		if(product != null) {
 			markProductDeleted(product);
@@ -299,9 +302,9 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public List<ProductImages> getProductImages(List<Integer> productIds) throws Exception {
+	public List<ProductImages> getProductImages(List<Long> productIds) throws Exception {
 		List<ProductImages> images = new ArrayList<>();
-		for (int productId : productIds) {
+		for (Long productId : productIds) {
 			Product product = getProductById(productId);
 			if (product != null) {
 				images.addAll(getProductImages(product));
@@ -313,7 +316,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	@Override
-	public void addProductImage(int productId, byte[] productPic) throws Exception {
+	public void addProductImage(Long productId, byte[] productPic) throws Exception {
 		Product product = productRepo.findProductById(baseService.getTenantInfo(), productId);
 		if(product == null) {
 			throw new Exception("Product Not Found!");
@@ -329,12 +332,12 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	@Override
-	public void removeProductImage(int imageId) throws Exception{
+	public void removeProductImage(Long imageId) throws Exception{
 		imageRepo.deleteById(baseService.getTenantInfo(), imageId);
 	}
 	
 	@Override
-	public void replaceImage(int imageId, byte[] productPic) throws Exception {
+	public void replaceImage(Long imageId, byte[] productPic) throws Exception {
 		ProductImages image = imageRepo.findImageById(baseService.getTenantInfo(), imageId);
 		if(image == null) {
 			throw new Exception("Product Image Not Found!");
@@ -344,7 +347,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	@Override
-	public void changeProductStatus(int productId, boolean status) throws Exception {
+	public void changeProductStatus(Long productId, boolean status) throws Exception {
 		Product product = productRepo.findProductById(baseService.getTenantInfo(), productId);
 		if(product == null) {
 			throw new Exception("Product Not Found!");
@@ -366,7 +369,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	@Override
-	public void addToFeaturedProducts(int pId) throws Exception {
+	public void addToFeaturedProducts(Long pId) throws Exception {
 		productDao.addFeaturedProduct(pId);
 	}
 	
@@ -376,12 +379,12 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	@Override
-	public void deleteFeaturedProduct(int pId) throws Exception{
+	public void deleteFeaturedProduct(Long pId) throws Exception{
 		productDao.deleteFeaturedProduct(pId);
 	}
 	
 	@Override
-	public boolean isFeaturedProduct(int pId) throws Exception {
+	public boolean isFeaturedProduct(Long pId) throws Exception {
 		return productDao.isFeaturedProduct(pId);
 	}
 

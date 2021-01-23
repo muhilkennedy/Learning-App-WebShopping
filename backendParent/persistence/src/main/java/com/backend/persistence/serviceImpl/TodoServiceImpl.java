@@ -47,20 +47,20 @@ public class TodoServiceImpl implements TodoService{
 	}
 	
 	@Override
-	public Todo findTodoById(int id) {
+	public Todo findTodoById(Long id) {
 		return todoRepo.findTodoById(baseService.getTenantInfo(),
 				(EmployeeInfo) baseService.getUserInfo(), id);
 	}
 	
 	@Override
-	public void toggleTodoStatus(int id) {
+	public void toggleTodoStatus(Long id) {
 		Todo todo = findTodoById(id);
 		todo.setDone(!todo.isDone());
 		save(todo);
 	}
 	
 	@Override
-	public void deleteTodo(int id) {
+	public void deleteTodo(Long id) {
 		todoRepo.delete(findTodoById(id));
 	}
 

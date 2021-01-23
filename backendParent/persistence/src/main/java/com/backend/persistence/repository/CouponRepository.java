@@ -15,7 +15,7 @@ import com.backend.persistence.entity.Coupons;
  *
  */
 @Repository
-public interface CouponRepository extends JpaRepository<Coupons, Integer> {
+public interface CouponRepository extends JpaRepository<Coupons, Long> {
 	
 	String findAllActiveCouponsQuery = "select coup from Coupons coup where coup.active = true and coup.tenant = :tenant and coup.deleted=false";
 	String findExpiredCouponsQuery = "select coup from Coupons coup where coup.active = true and coup.tenant = :tenant and coup.endDate < :endDate and coup.deleted=false";
@@ -33,7 +33,7 @@ public interface CouponRepository extends JpaRepository<Coupons, Integer> {
 	List<Coupons> findExpiredCoupons(@Param("tenant") Tenant realm, @Param("endDate") long endDate);
 	
 	@Query(findCouponByIdQuery)
-	Coupons findCouponById(@Param("tenant") Tenant realm, @Param("couponId") int couponId);
+	Coupons findCouponById(@Param("tenant") Tenant realm, @Param("couponId") Long couponId);
 	
 	@Query(findCouponByCodeQuery)
 	Coupons findCouponByCode(@Param("tenant") Tenant realm, @Param("code") String couponCode);

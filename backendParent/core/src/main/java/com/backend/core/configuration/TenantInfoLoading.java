@@ -80,25 +80,25 @@ public class TenantInfoLoading {
 				file = ResourceUtils.getFile(
 					      "classpath:devAssets/slider1.jpg");
 				// home slider images
-				HomePageMedia media = mediaService.getMediaById(devTenant, 1);
+				HomePageMedia media = mediaService.getMediaById(devTenant, 1L);
 				media.setImage(new SerialBlob(getBannerImage(FileUtils.readFileToByteArray(file))));
 				mediaService.save(media);
 				
 				file = ResourceUtils.getFile(
 					      "classpath:devAssets/slider2.jpg");
-				media = mediaService.getMediaById(devTenant, 2);
+				media = mediaService.getMediaById(devTenant, 2L);
 				media.setImage(new SerialBlob(getBannerImage(FileUtils.readFileToByteArray(file))));
 				mediaService.save(media);
 				
 				file = ResourceUtils.getFile(
 					      "classpath:devAssets/Media1.jpg");
-				media = mediaService.getMediaById(devTenant, 3);
+				media = mediaService.getMediaById(devTenant, 3L);
 				media.setImage(new SerialBlob(getHomeImage(FileUtils.readFileToByteArray(file))));
 				mediaService.save(media);
 				
 				file = ResourceUtils.getFile(
 					      "classpath:devAssets/Mediator2.jpg");
-				media = mediaService.getMediaById(devTenant, 4);
+				media = mediaService.getMediaById(devTenant, 4L);
 				media.setImage(new SerialBlob(getHomeImage(FileUtils.readFileToByteArray(file))));
 				mediaService.save(media);
 				

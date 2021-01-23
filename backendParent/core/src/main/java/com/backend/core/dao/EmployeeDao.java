@@ -29,7 +29,7 @@ public class EmployeeDao {
 	@Autowired
 	private DBUtil dbUtil;
 	
-	public void updateEmployeeLoggedInStatus(int id, boolean status) throws Exception {
+	public void updateEmployeeLoggedInStatus(Long id, boolean status) throws Exception {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con
 					.prepareStatement("update employeeinfo set isloggedin = ?, lastlogin=? where employeeid = ?");
@@ -38,7 +38,7 @@ public class EmployeeDao {
 			ZoneId zoneId = ZoneId.of(Constants.Timezone_UTC);
 			ZonedDateTime zdt = instant.atZone(zoneId);
 			stmt.setLong(2, zdt.toInstant().toEpochMilli());;
-			stmt.setInt(3, id);
+			stmt.setLong(3, id);
 			stmt.executeUpdate();
 		} catch (Exception ex) {
 			logger.error("Error in removing CORS Mapping for EmployeeId -> " + id);

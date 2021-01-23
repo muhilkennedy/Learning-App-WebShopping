@@ -145,7 +145,7 @@ public class TokenFilter implements Filter {
 				// load default user
 				String userType = req.getHeader("USER-TYPE");
 				if(userType != null && userType.equalsIgnoreCase(CommonUtil.Key_customerUser)) {
-					CustomerInfo cusInfo = customerService.getCustomerById(1);
+					CustomerInfo cusInfo = customerService.getCustomerById(1L);
 					if(cusInfo != null) {
 						baseService.setUserInfo(cusInfo);
 					}else {
@@ -155,7 +155,7 @@ public class TokenFilter implements Filter {
 					}
 				}
 				else {
-					EmployeeInfo empInfo = empService.findEmployeeById(1);
+					EmployeeInfo empInfo = empService.findEmployeeById(1L);
 					empInfo.setEmployeePermissions(empService.getEmployeePermissionsForTenant(empInfo));
 					if (empInfo != null) {
 						baseService.setUserInfo(empInfo);

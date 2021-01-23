@@ -18,7 +18,7 @@ public class FeatureToggle {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "FEATUREID")
-	private Integer featureID;
+	private Long featureID;
 	
 	@Column(name = "FEATURENAME")
 	private String featureName;
@@ -36,11 +36,11 @@ public class FeatureToggle {
 		this.active = active;
 	}
 
-	public Integer getFeatureID() {
+	public Long getFeatureID() {
 		return featureID;
 	}
 
-	public void setFeatureID(Integer featureID) {
+	public void setFeatureID(Long featureID) {
 		this.featureID = featureID;
 	}
 

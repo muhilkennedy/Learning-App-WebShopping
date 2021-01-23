@@ -12,7 +12,7 @@ import com.backend.core.entity.FeatureToggle;
  *
  */
 @Repository
-public interface FeatureRepository extends JpaRepository<FeatureToggle, Integer> {
+public interface FeatureRepository extends JpaRepository<FeatureToggle, Long> {
 	
 	String findFeatureByNameQuery = "select ft from FeatureToggle ft where ft.featureName = :featureName";
 	

@@ -65,7 +65,7 @@ public class TodoController {
 	}
 	
 	@RequestMapping(value = "/updateTodo", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<Todo> updateTodo(HttpServletRequest request, @RequestParam(value = "id", required = true) int id) {
+	public GenericResponse<Todo> updateTodo(HttpServletRequest request, @RequestParam(value = "id", required = true) Long id) {
 		GenericResponse<Todo> response = new GenericResponse<Todo>();
 		try {
 			todoService.toggleTodoStatus(id);
@@ -84,7 +84,7 @@ public class TodoController {
 	public GenericResponse<Todo> deleteTodo(HttpServletRequest request, @RequestParam(value = "id", required = true) String id) {
 		GenericResponse<Todo> response = new GenericResponse<Todo>();
 		try {
-			todoService.deleteTodo(Integer.parseInt(id));
+			todoService.deleteTodo(Long.parseLong(id));
 			response.setDataList(todoService.findTodoForEmployee());
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
