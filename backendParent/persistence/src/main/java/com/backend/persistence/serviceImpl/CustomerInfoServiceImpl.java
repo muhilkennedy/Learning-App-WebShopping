@@ -45,7 +45,7 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 	}
 	
 	@Override
-	public CustomerInfo getCustomerById(int id) {
+	public CustomerInfo getCustomerById(Long id) {
 		return customerRepo.findEmployeeById(id, baseService.getTenantInfo());
 	}
 	
@@ -60,7 +60,7 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 	}
 	
 	@Override
-	public void addProductToCart(int productId) throws Exception {
+	public void addProductToCart(Long productId) throws Exception {
 		CustomerInfo customer = (CustomerInfo) baseService.getUserInfo();
 		List<CustomerCart> cartItems = cartDao.userCartItems(customer.getCustomerId());
 		int quantity = 1;
@@ -75,7 +75,7 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 	}
 	
 	@Override
-	public void removeFromCart(int productId) throws Exception {
+	public void removeFromCart(Long productId) throws Exception {
 		CustomerInfo customer = (CustomerInfo) baseService.getUserInfo();
 		cartDao.removeProductFromCart(productId, customer.getCustomerId());
 	}
@@ -87,7 +87,7 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 	}
 	
 	@Override
-	public void updateProductQuantity(int productId, int quantity) throws Exception {
+	public void updateProductQuantity(Long productId, int quantity) throws Exception {
 		CustomerInfo customer = (CustomerInfo) baseService.getUserInfo();
 		if(quantity <= 0) {
 			removeFromCart(productId);

@@ -33,7 +33,7 @@ public class PushNotification implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "NOTIFICATIONID")
-	private int notificationId;
+	private Long notificationId;
 	
 	@JsonIgnore
 	@ManyToOne
@@ -62,11 +62,11 @@ public class PushNotification implements Serializable {
 		this.tenant = tenant;
 	}
 
-	public int getNotificationId() {
+	public Long getNotificationId() {
 		return notificationId;
 	}
 
-	public void setNotificationId(int notificationId) {
+	public void setNotificationId(Long notificationId) {
 		this.notificationId = notificationId;
 	}
 

@@ -32,7 +32,7 @@ public class OrderDetails  implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "ORDERDETAILID")
-	private int orderDetailId;
+	private Long orderDetailId;
 	
 	@JsonIgnore
 	@ManyToOne
@@ -54,11 +54,11 @@ public class OrderDetails  implements Serializable {
 		this.tenant = tenant;
 	}
 
-	public int getOrderDetailId() {
+	public Long getOrderDetailId() {
 		return orderDetailId;
 	}
 
-	public void setOrderDetailId(int orderDetailId) {
+	public void setOrderDetailId(Long orderDetailId) {
 		this.orderDetailId = orderDetailId;
 	}
 

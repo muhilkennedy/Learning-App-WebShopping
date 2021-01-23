@@ -213,7 +213,7 @@ public class SQLQueryHandler {
 			return setOrCondition(fieldName, values != null ? Lists.transform(values, Functions.toStringFunction()) : null);
 		}
 		
-		public SQLQueryBuilder andSetOrConditions(String fieldName, List<Integer> values) {
+		public SQLQueryBuilder andSetOrConditions(String fieldName, List values) {
 			return andSetOrCondition(fieldName, values != null ? Lists.transform(values, Functions.toStringFunction()) : null);
 		}
 		

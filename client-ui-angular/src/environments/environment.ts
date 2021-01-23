@@ -6,7 +6,7 @@ export const environment = {
   production: false,
   BuildOrigin: "web",
   tenantId: "devTenant",
-  backendBaseUrl:"https://muhil.staqlab-tunnel.com",
+  backendBaseUrl:"http://localhost:8080",
   contextPath:"",
   origin:"http://localhost:4200",
   orgName1: "dev",

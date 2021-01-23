@@ -32,13 +32,13 @@ public class Category implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "CATEGORYID")
-	private int categoryId;
+	private Long categoryId;
 	
 	@Column(name = "CATEGORYNAME")
 	private String categoryName;
 
 	@Column(name = "PARENTCATEGORYID")
-	private Integer parentCategoryId;
+	private Long parentCategoryId;
 	
 	@Column(name = "ACTIVE")
 	private boolean active;
@@ -53,7 +53,7 @@ public class Category implements Serializable {
 		super();
 	}
 	
-	public Category(Tenant tenant, String categoryName, Integer parentCategoryId) {
+	public Category(Tenant tenant, String categoryName, Long parentCategoryId) {
 		super();
 		this.tenant = tenant;
 		this.categoryName = categoryName;
@@ -76,19 +76,19 @@ public class Category implements Serializable {
 		this.categoryName = categoryName;
 	}
 
-	public Integer getParentCategoryId() {
+	public Long getParentCategoryId() {
 		return parentCategoryId;
 	}
 
-	public void setParentCategoryId(Integer parentCategoryId) {
+	public void setParentCategoryId(Long parentCategoryId) {
 		this.parentCategoryId = parentCategoryId;
 	}
 
-	public int getCategoryId() {
+	public Long getCategoryId() {
 		return categoryId;
 	}
 
-	public void setCategoryId(int categoryId) {
+	public void setCategoryId(Long categoryId) {
 		this.categoryId = categoryId;
 	}
 	

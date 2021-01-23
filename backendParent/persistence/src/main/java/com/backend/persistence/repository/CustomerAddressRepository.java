@@ -8,6 +8,6 @@ import com.backend.persistence.entity.CustomerAddress;
  * @author Muhil
  *
  */
-public interface CustomerAddressRepository extends JpaRepository<CustomerAddress, Integer> {
+public interface CustomerAddressRepository extends JpaRepository<CustomerAddress, Long> {
 
 }

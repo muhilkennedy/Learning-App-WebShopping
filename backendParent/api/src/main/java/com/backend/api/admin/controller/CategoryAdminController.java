@@ -58,7 +58,7 @@ public class CategoryAdminController {
 	}
 	
 	@RequestMapping(value = "/deleteCategory", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<Map> deleteCategory(HttpServletRequest request, @RequestParam(value = "ids", required = true) List<Integer> ids) {
+	public GenericResponse<Map> deleteCategory(HttpServletRequest request, @RequestParam(value = "ids", required = true) List<Long> ids) {
 		GenericResponse<Map> response = new GenericResponse<>();
 		try {
 			categoryService.deleteCategory(ids);

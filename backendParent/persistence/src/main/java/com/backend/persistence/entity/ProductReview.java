@@ -32,7 +32,7 @@ public class ProductReview implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "PRODUCTREVIEWID")
-	private int pReviewId;
+	private Long pReviewId;
 	
 	@ManyToOne
 	@JoinColumn(name = "PRODUCTID", nullable = false)
@@ -77,11 +77,11 @@ public class ProductReview implements Serializable {
 		this.tenant = tenant;
 	}
 
-	public int getpReviewId() {
+	public Long getpReviewId() {
 		return pReviewId;
 	}
 
-	public void setpReviewId(int pReviewId) {
+	public void setpReviewId(Long pReviewId) {
 		this.pReviewId = pReviewId;
 	}
 

@@ -33,7 +33,7 @@ public class Coupons implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "COUPONID")
-	private int couponId;
+	private Long couponId;
 	
 	@Column(name = "TITLE")
 	private String title;
@@ -148,7 +148,7 @@ public class Coupons implements Serializable{
 		this.code = code;
 	}
 
-	public int getCouponId() {
+	public Long getCouponId() {
 		return couponId;
 	}
 

@@ -12,18 +12,18 @@ public interface HomeMediaService {
 
 	List<HomePageMedia> getHomeMediaContents();
 
-	HomePageMedia getMediaById(int id);
+	HomePageMedia getMediaById(Long id);
 
-	HomePageMedia getMediaById(Tenant tenant, int id);
+	HomePageMedia getMediaById(Tenant tenant, Long id);
 
 	void save(HomePageMedia media);
 
-	void delete(int id);
+	void delete(Long id);
 
 	void addMedia(byte[] image, String title, String description, boolean shopNow, boolean contact, boolean slider,
 			String message) throws SerialException, SQLException;
 
-	void updateMedia(int id, byte[] image, String title, String description, boolean shopNow, boolean contact,
+	void updateMedia(Long id, byte[] image, String title, String description, boolean shopNow, boolean contact,
 			boolean slider, String message) throws SerialException, SQLException;
 
 	int getHomePageMediaCount();

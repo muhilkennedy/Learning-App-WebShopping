@@ -65,7 +65,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 	
 	@Override
-	public EmployeeInfo findEmployeeById(int id) {
+	public EmployeeInfo findEmployeeById(Long id) {
 		return employeeRepo.findEmployeeById(id, baseService.getTenantInfo());
 	}
 	
@@ -168,7 +168,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 		 List<EmployeeInfo> empList = new ArrayList<>();
 		 empObjs.parallelStream().forEach(obj -> {
 			 EmployeeInfo emp = new EmployeeInfo();
-			 emp.setEmployeeId((int) obj[0]);
+			 emp.setEmployeeId(Double.valueOf((double)(obj[0])).longValue());
 			 emp.setEmailId(String.valueOf(obj[1]));
 			 emp.setFirstName(String.valueOf(obj[2]));
 			 emp.setLastName(String.valueOf(obj[3]));

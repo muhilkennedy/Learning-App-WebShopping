@@ -16,7 +16,7 @@ import com.backend.core.entity.Tenant;
  *
  */
 @Repository
-public interface EmployeePermissionsMapRepository extends JpaRepository<EmployeePermissionsMap, Integer> {
+public interface EmployeePermissionsMapRepository extends JpaRepository<EmployeePermissionsMap, Long> {
 	
 	String findAllEmployeePermissionsQuery = "select li from EmployeePermissionsMap as li where tenant = :tenant and employee = :employee";
 	

@@ -31,7 +31,7 @@ public class HomePageMedia implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="MEDIAID")
-	private Integer mediaId;
+	private Long mediaId;
 	
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -75,11 +75,11 @@ public class HomePageMedia implements Serializable {
 		this.sliderShow = sliderShow;
 	}
 
-	public Integer getMediaId() {
+	public Long getMediaId() {
 		return mediaId;
 	}
 
-	public void setMediaId(Integer mediaId) {
+	public void setMediaId(Long mediaId) {
 		this.mediaId = mediaId;
 	}
 

@@ -1,10 +1,8 @@
 package com.backend.api.admin.messages;
 
-import java.util.Date;
-
 public class TaskPOJO {
 
-	private int assigneeId;
+	private Long assigneeId;
 	private String assigneeName;
 	private String assigneeEmail;
 	private long enddate;
@@ -12,22 +10,22 @@ public class TaskPOJO {
 	private String status;
 	private String creatorId;
 	private String creatorName;
-	private int taskId;
+	private Long taskId;
 
-	public int getTaskId() {
-		return taskId;
-	}
-
-	public void setTaskId(int taskId) {
-		this.taskId = taskId;
-	}
-
-	public int getAssigneeId() {
+	public Long getAssigneeId() {
 		return assigneeId;
 	}
 
-	public void setAssigneeId(int assigneeId) {
+	public void setAssigneeId(Long assigneeId) {
 		this.assigneeId = assigneeId;
+	}
+
+	public Long getTaskId() {
+		return taskId;
+	}
+
+	public void setTaskId(Long taskId) {
+		this.taskId = taskId;
 	}
 
 	public long getEnddate() {

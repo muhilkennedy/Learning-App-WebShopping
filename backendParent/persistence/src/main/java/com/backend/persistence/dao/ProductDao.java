@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -16,7 +15,6 @@ import com.backend.commons.util.SQLQueryHandler;
 import com.backend.core.service.BaseService;
 import com.backend.core.util.DBUtil;
 import com.backend.persistence.entity.Product;
-import com.backend.persistence.entity.ProductImages;
 import com.backend.persistence.helper.ProductPOJO;
 import com.backend.persistence.repository.ProductImagesRepository;
 
@@ -38,7 +36,7 @@ public class ProductDao {
 	@Autowired
 	private BaseService baseService;
 	
-	public List<Product> getProducts(List<Integer> cIds, List<Integer> pIds, String limit, String offset, Boolean includeInactive, Boolean outOfStock) throws Exception {
+	public List<Product> getProducts(List<Long> cIds, List<Long> pIds, String limit, String offset, Boolean includeInactive, Boolean outOfStock) throws Exception {
 		List<Product> productList = new ArrayList<Product>();
 		Integer quantity = null;
 		if(outOfStock == true) {
@@ -62,7 +60,7 @@ public class ProductDao {
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
 				Product product = new Product();
-				product.setProductId(rs.getInt(3));
+				product.setProductId(rs.getLong(3));
 				product.setProductName(rs.getString(4));
 				product.setBrandName(rs.getString(5));
 				product.setCost(rs.getBigDecimal(6));
@@ -71,7 +69,7 @@ public class ProductDao {
 				product.setProductCode(rs.getString(9));
 				product.setQuantityInStock(rs.getInt(10));
 				product.setLastModified(rs.getLong(11));
-				product.setLastModifiedById(rs.getInt(12));
+				product.setLastModifiedById(rs.getLong(12));
 				product.setActive(rs.getBoolean(13));
 				product.setProductRating(rs.getInt(15));
 				product.setSellingCost(rs.getBigDecimal(16));
@@ -84,7 +82,7 @@ public class ProductDao {
 		}
 	}
 	
-	public List<ProductPOJO> getProductsWithImages(List<Integer> cIds, List<Integer> pIds, String limit, String offset, String sortByField, String sortBytype) throws Exception {
+	public List<ProductPOJO> getProductsWithImages(List<Long> cIds, List<Long> pIds, String limit, String offset, String sortByField, String sortBytype) throws Exception {
 		List<ProductPOJO> productList = new ArrayList<ProductPOJO>();
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			//.setAndCondition("active", "true", true)
@@ -105,7 +103,7 @@ public class ProductDao {
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
 				Product product = new Product();
-				product.setProductId(rs.getInt(3));
+				product.setProductId(rs.getLong(3));
 				product.setProductName(rs.getString(4));
 				product.setBrandName(rs.getString(5));
 				product.setCost(rs.getBigDecimal(6));
@@ -114,7 +112,7 @@ public class ProductDao {
 				product.setProductCode(rs.getString(9));
 				product.setQuantityInStock(rs.getInt(10));
 				product.setLastModified(rs.getLong(11));
-				product.setLastModifiedById(rs.getInt(12));
+				product.setLastModifiedById(rs.getLong(12));
 				product.setActive(rs.getBoolean(13));
 				product.setProductRating(rs.getInt(15));
 				product.setSellingCost(rs.getBigDecimal(16));
@@ -130,7 +128,7 @@ public class ProductDao {
 		}
 	}
 	
-	public List<ProductPOJO> getProductsBasedOnSearchTerm(List<Integer> cIds, String SearchTerm, String limit, String offset, String sortByField, String sortBytype) throws Exception {
+	public List<ProductPOJO> getProductsBasedOnSearchTerm(List<Long> cIds, String SearchTerm, String limit, String offset, String sortByField, String sortBytype) throws Exception {
 		List<ProductPOJO> productList = new ArrayList<ProductPOJO>();
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			//.setAndCondition("active", "true", true)
@@ -141,7 +139,7 @@ public class ProductDao {
 															.andSetAndCondition("active", true)
 															.andSetAndCondition("isdeleted", false)
 															.andSetOrConditions("categoryid", cIds)
-															.andSetLikeCondition("productname", "\"%" + SearchTerm + "%\"")
+															.andSetLikeCondition("searchtext", "\"%" + SearchTerm + "%\"")
 															.setOrderBy(sortByField)
 															.setSortOrder(sortBytype)
 														  	.setLimit(limit)
@@ -151,7 +149,7 @@ public class ProductDao {
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
 				Product product = new Product();
-				product.setProductId(rs.getInt(3));
+				product.setProductId(rs.getLong(3));
 				product.setProductName(rs.getString(4));
 				product.setBrandName(rs.getString(5));
 				product.setCost(rs.getBigDecimal(6));
@@ -160,7 +158,7 @@ public class ProductDao {
 				product.setProductCode(rs.getString(9));
 				product.setQuantityInStock(rs.getInt(10));
 				product.setLastModified(rs.getLong(11));
-				product.setLastModifiedById(rs.getInt(12));
+				product.setLastModifiedById(rs.getLong(12));
 				product.setActive(rs.getBoolean(13));
 				product.setProductRating(rs.getInt(15));
 				product.setSellingCost(rs.getBigDecimal(16));
@@ -176,7 +174,7 @@ public class ProductDao {
 		}
 	}
 
-	public List<Product> getProducts(List<Integer> cIds, List<Integer> pIds, String limit, String offset,
+	public List<Product> getProducts(List<Long> cIds, List<Long> pIds, String limit, String offset,
 			String sortByField, String sortBytype, Boolean includeInactive, Boolean outOfStock) throws Exception {
 		List<Product> productList = new ArrayList<Product>();
 		Integer quantity = null;
@@ -203,7 +201,7 @@ public class ProductDao {
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
 				Product product = new Product();
-				product.setProductId(rs.getInt(3));
+				product.setProductId(rs.getLong(3));
 				product.setProductName(rs.getString(4));
 				product.setBrandName(rs.getString(5));
 				product.setCost(rs.getBigDecimal(6));
@@ -212,7 +210,7 @@ public class ProductDao {
 				product.setProductCode(rs.getString(9));
 				product.setQuantityInStock(rs.getInt(10));
 				product.setLastModified(rs.getLong(11));
-				product.setLastModifiedById(rs.getInt(12));
+				product.setLastModifiedById(rs.getLong(12));
 				product.setActive(rs.getBoolean(13));
 				product.setProductRating(rs.getInt(15));
 				product.setSellingCost(rs.getBigDecimal(16));
@@ -225,7 +223,7 @@ public class ProductDao {
 		}
 	}
 	
-	public List<Product> getProductsIds(List<Integer> cIds, List<Integer> pIds, String limit, String offset, boolean includeInactive) throws Exception {
+	public List<Product> getProductsIds(List<Long> cIds, List<Long> pIds, String limit, String offset, boolean includeInactive) throws Exception {
 		List<Product> productList = new ArrayList<Product>();
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			//.setAndCondition("active", "true", true)
@@ -241,7 +239,7 @@ public class ProductDao {
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
 				Product product = new Product();
-				product.setProductId(rs.getInt(3));
+				product.setProductId(rs.getLong(3));
 				productList.add(product);
 			}
 			return productList;
@@ -251,7 +249,7 @@ public class ProductDao {
 		}
 	}
 	
-	public int getProductsCount(List<Integer> cIds, boolean includeInactive) throws Exception {
+	public int getProductsCount(List<Long> cIds, boolean includeInactive) throws Exception {
 		int count = 0;
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			//.setAndCondition("active", "true", true)
@@ -291,7 +289,7 @@ public class ProductDao {
 				ProductPOJO pojo = new ProductPOJO();
 				
 				Product product = new Product();
-				product.setProductId(rs.getInt(1));
+				product.setProductId(rs.getLong(1));
 				product.setProductName(rs.getString(2));
 				product.setBrandName(rs.getString(3));
 				product.setCost(rs.getBigDecimal(4));
@@ -313,12 +311,12 @@ public class ProductDao {
 		}
 	}
 	
-	public void addFeaturedProduct (int productId) throws Exception {
+	public void addFeaturedProduct (Long productId) throws Exception {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con
 					.prepareStatement("insert into homepagefeatured values(?,?)");
 			stmt.setString(1, baseService.getTenantInfo().getTenantID());
-			stmt.setInt(2, productId);
+			stmt.setLong(2, productId);
 			stmt.executeUpdate();
 		} catch (Exception ex) {
 			logger.error("Exception - " + ex);
@@ -326,12 +324,12 @@ public class ProductDao {
 		}
 	}
 	
-	public void deleteFeaturedProduct (int productId) throws Exception {
+	public void deleteFeaturedProduct (Long productId) throws Exception {
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con
 					.prepareStatement("delete from homepagefeatured where tenantid = ? and productid = ?");
 			stmt.setString(1, baseService.getTenantInfo().getTenantID());
-			stmt.setInt(2, productId);
+			stmt.setLong(2, productId);
 			stmt.executeUpdate();
 		} catch (Exception ex) {
 			logger.error("Exception - " + ex);
@@ -339,7 +337,7 @@ public class ProductDao {
 		}
 	}
 	
-	public boolean isFeaturedProduct (int productId) throws Exception {
+	public boolean isFeaturedProduct (Long productId) throws Exception {
 		boolean result = false;
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
@@ -377,8 +375,8 @@ public class ProductDao {
 			select *
 			from cat_tree;*/
 	
-	public List<Integer> getChildCategoriesIdByCategoryId(int cId) throws Exception {
-		List<Integer> categoryList = new ArrayList<Integer>();
+	public List<Long> getChildCategoriesIdByCategoryId(Long cId) throws Exception {
+		List<Long> categoryList = new ArrayList<Long>();
 		try (Connection con = dbUtil.getConnectionInstance()) {
 			//.setAndCondition("active", "true", true)
 			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
@@ -390,10 +388,10 @@ public class ProductDao {
 															.build();
 			PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
 			stmt.setString(1, baseService.getTenantInfo().getTenantID());
-			stmt.setInt(2, cId);
+			stmt.setLong(2, cId);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
-				categoryList.add(rs.getInt(1));
+				categoryList.add(rs.getLong(1));
 			}
 			return categoryList;
 		} catch (Exception ex) {

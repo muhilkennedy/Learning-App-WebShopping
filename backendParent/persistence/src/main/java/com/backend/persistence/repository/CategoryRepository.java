@@ -15,7 +15,7 @@ import com.backend.persistence.entity.Category;
  *
  */
 @Repository
-public interface CategoryRepository extends JpaRepository<Category, Integer> {
+public interface CategoryRepository extends JpaRepository<Category, Long> {
 	
 	String getAllCategoryQuery = "select cat from Category cat where cat.tenant = :tenant and cat.active = true";
 	String getAllBaseCategoryQuery = "select cat from Category cat where cat.tenant = :tenant and cat.parentCategoryId is null and cat.active = true";
@@ -30,10 +30,10 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
 	List<Category> getAllBaseCategory(@Param("tenant") Tenant realm);
 	
 	@Query(getCategoryByIdQuery)
-	Category getCategoryById(@Param("tenant") Tenant realm, @Param("catId") int id);
+	Category getCategoryById(@Param("tenant") Tenant realm, @Param("catId") Long id);
 	
 	@Query(getCategoryChildrenQuery)
-	List<Category> getCategoryChildren(@Param("tenant") Tenant realm, @Param("parentCatId") int parentCategoryId);
+	List<Category> getCategoryChildren(@Param("tenant") Tenant realm, @Param("parentCatId") Long parentCategoryId);
 	
 	@Query(getCategoriesForDeleteQuery)
 	List<Category> getCategoriesForDelete(@Param("tenant") Tenant realm);

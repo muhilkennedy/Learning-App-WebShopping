@@ -53,7 +53,7 @@ public class PushNotificationServiceImpl implements PushNotificationService{
 	public void deleteNotifications(List<String> ids) {
 		 ids.parallelStream().forEach(id -> {
 			 notificationRepo.deletePushNotification(baseService.getTenantInfo(),
-				(EmployeeInfo) baseService.getUserInfo(), Integer.parseInt(id));
+				(EmployeeInfo) baseService.getUserInfo(), Long.parseLong(id));
 		 });
 	}
 

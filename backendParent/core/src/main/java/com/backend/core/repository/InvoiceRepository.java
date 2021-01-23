@@ -15,7 +15,7 @@ import com.backend.core.entity.Tenant;
  *
  */
 @Repository
-public interface InvoiceRepository extends JpaRepository<InvoiceTemplate, Integer> {
+public interface InvoiceRepository extends JpaRepository<InvoiceTemplate, Long> {
 	
 	String findInvoiceTemplateForTenantQuery = "select it from InvoiceTemplate it where it.tenant = :tenant and it.active = true";
 	String findAllInvoiceTemplatesQuery = "select it from InvoiceTemplate it where it.tenant = :tenant";
@@ -28,6 +28,6 @@ public interface InvoiceRepository extends JpaRepository<InvoiceTemplate, Intege
 	List<InvoiceTemplate> findAllInvoiceTemplates(@Param("tenant") Tenant realm);
 	
 	@Query(findInvoiceTemplateByIdQuery)
-	InvoiceTemplate findInvoiceTemplateById(@Param("tenant") Tenant realm, @Param("invoiceId") int invoiceId);
+	InvoiceTemplate findInvoiceTemplateById(@Param("tenant") Tenant realm, @Param("invoiceId") Long invoiceId);
 
 }

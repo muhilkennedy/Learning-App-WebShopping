@@ -20,15 +20,15 @@ public class CacheService {
 	
 	private static Logger logger = LoggerFactory.getLogger(CacheService.class);
 	
-	private static LoadingCache<Integer, Date> loggedInStatusCache;
+	private static LoadingCache<Long, Date> loggedInStatusCache;
 	
 	private static LoadingCache<String, Map<String, Integer>> ipCache;
 	
 	static{
 		loggedInStatusCache = CacheBuilder.newBuilder()
-							   .build(new CacheLoader<Integer, Date>() {
+							   .build(new CacheLoader<Long, Date>() {
 									@Override
-									public Date load(Integer key) throws Exception {
+									public Date load(Long key) throws Exception {
 										// TODO Auto-generated method stub
 										return null;
 									}
@@ -44,11 +44,11 @@ public class CacheService {
 					});
 	}
 	
-	public static void setLoggedInSatus(Integer obj, Date date) {
+	public static void setLoggedInSatus(Long obj, Date date) {
 		loggedInStatusCache.put(obj, date);
 	}
 	
-	public static Date getLoggedInSatus(Integer key) {
+	public static Date getLoggedInSatus(Long key) {
 		try {
 			return loggedInStatusCache.get(key);
 		} catch (Exception e) {
@@ -57,7 +57,7 @@ public class CacheService {
 		}
 	}
 	
-	public static Map<Integer, Date> getLoggedInStatusCacheMap() {
+	public static Map<Long, Date> getLoggedInStatusCacheMap() {
 		return loggedInStatusCache.asMap();
 	}
 	

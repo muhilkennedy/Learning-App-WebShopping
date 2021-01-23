@@ -36,7 +36,7 @@ public class HomeMediaServiceImpl implements HomeMediaService{
 	}
 	
 	@Override
-	public void delete(int id) {
+	public void delete(Long id) {
 		mediaRepo.deleteMediaById(baseService.getTenantInfo(), id);
 	}
 	
@@ -51,17 +51,17 @@ public class HomeMediaServiceImpl implements HomeMediaService{
 	}
 	
 	@Override
-	public HomePageMedia getMediaById(int id) {
+	public HomePageMedia getMediaById(Long id) {
 		return mediaRepo.findMediaById(baseService.getTenantInfo(), id);
 	}
 	
 	@Override
-	public HomePageMedia getMediaById(Tenant tenant, int id) {
+	public HomePageMedia getMediaById(Tenant tenant, Long id) {
 		return mediaRepo.findMediaById(tenant, id);
 	}
 	
 	@Override
-	public void updateMedia(int id, byte[] image, String title, String description, boolean shopNow, boolean contact,
+	public void updateMedia(Long id, byte[] image, String title, String description, boolean shopNow, boolean contact,
 			boolean slider, String message) throws SerialException, SQLException {
 		HomePageMedia media = getMediaById(id);
 		media.setContact(contact);

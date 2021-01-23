@@ -56,7 +56,7 @@ public class EmailServiceImpl implements EmailService {
 	/**
 	 * @return - html string with substituted model values.
 	 */
-	public String constructOnboardEmailBody(String fname, String lname, int empId, String password, String origin, File logo) {
+	public String constructOnboardEmailBody(String fname, String lname, Long empId, String password, String origin, File logo) {
 		try {
 			Template template = freeMarkerConfig.getTemplate(EmailConstants.employeeOnboardingTemplate);
 			Map<String, Object> model = new HashMap<>();
@@ -78,7 +78,7 @@ public class EmailServiceImpl implements EmailService {
 	}
 
 	@Override
-	public void sendOnboardingEmail(String recipientEmail, String fname, String lname, int empId, String password,
+	public void sendOnboardingEmail(String recipientEmail, String fname, String lname, Long empId, String password,
 			String origin) {
 		File tempFile = null;
 		try {

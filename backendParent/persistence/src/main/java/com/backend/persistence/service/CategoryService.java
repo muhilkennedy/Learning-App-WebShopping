@@ -13,19 +13,19 @@ public interface CategoryService {
 
 	List<Category> getAllCategoriesForTenant();
 
-	Category getCategoryById(int id);
+	Category getCategoryById(Long id);
 
 	List<Category> getAllBaseCategories();
 
-	List<Category> getAllChildCategories(int parentId);
+	List<Category> getAllChildCategories(Long parentId);
 
 	Map getCategoriesRecursive();
 
-	void deleteCategory(int id);
+	void deleteCategory(Long id);
 
-	void deleteCategory(List<Integer> ids);
+	void deleteCategory(List<Long> ids);
 
-	void updateCategoryName(int id, String name);
+	void updateCategoryName(Long id, String name);
 
 	List<Category> getAllCategoriesForDelete();
 

@@ -309,7 +309,7 @@ public class EmployeeController {
 	
 	@RequestMapping(value = "/updateEmployee", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<EmployeeInfo> updateEmployee(HttpServletRequest request, @RequestParam(value = "myFile", required = false) MultipartFile file,
-														@RequestParam(value = "id", required = true) int id,
+														@RequestParam(value = "id", required = true) Long id,
 														@RequestParam(value = "firstName", required = false) String firstName,
 														@RequestParam(value = "lastName", required = false) String lastName,
 														@RequestParam(value = "emailId", required = false) String emailId,
@@ -379,7 +379,7 @@ public class EmployeeController {
 	}
 	
 	@RequestMapping(value = "/getCustomerById", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<CustomerInfo> getCustomerById(HttpServletRequest request, @RequestParam(value = "id", required = true) int id) {
+	public GenericResponse<CustomerInfo> getCustomerById(HttpServletRequest request, @RequestParam(value = "id", required = true) Long id) {
 		GenericResponse<CustomerInfo> response = new GenericResponse<CustomerInfo>();
 		try {
 			response.setData(customerService.getCustomerById(id));

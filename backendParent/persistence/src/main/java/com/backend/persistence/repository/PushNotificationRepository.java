@@ -17,20 +17,20 @@ import com.backend.persistence.entity.PushNotification;
  *
  */
 @Repository
-public interface PushNotificationRepository extends JpaRepository<PushNotification, Integer> {
+public interface PushNotificationRepository extends JpaRepository<PushNotification, Long> {
 	
 	String findPushNotificationByIdQuery = "select pn from PushNotification pn where pn.tenant = :tenant and pn.employeeId = :employee and pn.notificationId = :id";
 	String findAllPushNotificationQuery = "select pn from PushNotification pn where pn.tenant = :tenant and pn.employeeId = :employee";
 	String deleteNotificationQuery = "delete from PushNotification where tenant = :tenant and employeeId = :employee and notificationId = :id";
 	
 	@Query(findPushNotificationByIdQuery)
-	PushNotification findPushNotificationById(@Param("tenant") Tenant tenant, @Param("employee") EmployeeInfo employee, @Param("id") int id);
+	PushNotification findPushNotificationById(@Param("tenant") Tenant tenant, @Param("employee") EmployeeInfo employee, @Param("id") Long id);
 	
 	@Query(findAllPushNotificationQuery)
 	List<PushNotification> findAllPushNotification(@Param("tenant") Tenant tenant, @Param("employee") EmployeeInfo employee);
 	
 	@Modifying
 	@Query(deleteNotificationQuery)
-	void deletePushNotification(@Param("tenant") Tenant tenant, @Param("employee") EmployeeInfo employee, @Param("id") int id);
+	void deletePushNotification(@Param("tenant") Tenant tenant, @Param("employee") EmployeeInfo employee, @Param("id") Long id);
 
 }

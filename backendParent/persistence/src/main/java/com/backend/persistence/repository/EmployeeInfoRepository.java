@@ -18,7 +18,7 @@ import com.backend.core.entity.Tenant;
  *
  */
 @Repository
-public interface EmployeeInfoRepository extends JpaRepository<EmployeeInfo, Integer> {
+public interface EmployeeInfoRepository extends JpaRepository<EmployeeInfo, Long> {
 
 	String findEmployeeByEmailQuery = "select emp from EmployeeInfo emp where emp.emailId = :emailId and emp.tenant = :tenant";
 	String findEmployeeByIdQuery = "select emp from EmployeeInfo emp where emp.employeeId = :employeeId and emp.tenant = :tenant";
@@ -34,7 +34,7 @@ public interface EmployeeInfoRepository extends JpaRepository<EmployeeInfo, Inte
 	EmployeeInfo findEmployeeByEmail(@Param("emailId") String emailId, @Param("tenant") Tenant realm);
 	
 	@Query(findEmployeeByIdQuery)
-	EmployeeInfo findEmployeeById(@Param("employeeId") int employeeId, @Param("tenant") Tenant realm);
+	EmployeeInfo findEmployeeById(@Param("employeeId") Long employeeId, @Param("tenant") Tenant realm);
 	
 	@Query(value = findLimitedEmployeesQuery, nativeQuery = true)
 	List<EmployeeInfo> findLimitedEmployees(String tenant, int limit, int offset);

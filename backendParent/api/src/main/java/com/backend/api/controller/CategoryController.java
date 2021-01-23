@@ -55,7 +55,7 @@ public class CategoryController {
 	}
 	
 	@RequestMapping(value = "/getCategory", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<Category> getCategory(HttpServletRequest request, @RequestParam int id) {
+	public GenericResponse<Category> getCategory(HttpServletRequest request, @RequestParam Long id) {
 		GenericResponse<Category> response = new GenericResponse<>();
 		try {
 			response.setData(categoryService.getCategoryById(id));

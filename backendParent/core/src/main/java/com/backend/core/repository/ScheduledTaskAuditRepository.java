@@ -10,6 +10,6 @@ import com.backend.core.entity.ScheduledTaskAudit;
  *
  */
 @Repository
-public interface ScheduledTaskAuditRepository extends JpaRepository<ScheduledTaskAudit, Integer> {
+public interface ScheduledTaskAuditRepository extends JpaRepository<ScheduledTaskAudit, Long> {
 
 }
