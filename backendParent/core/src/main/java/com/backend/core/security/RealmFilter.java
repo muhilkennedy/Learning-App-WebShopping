@@ -1,7 +1,6 @@
 package com.backend.core.security;
 
 import java.io.IOException;
-import java.net.InetAddress;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -18,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
 
 import com.backend.core.entity.Tenant;
 import com.backend.core.service.BaseService;

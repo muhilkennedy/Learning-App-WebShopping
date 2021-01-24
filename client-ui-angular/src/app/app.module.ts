@@ -68,6 +68,7 @@ import { CollapseModule } from '../app/service/shared/collapse';
 import { AlertModule } from './service/shared/_alert';
 import {SocialAuthServiceConfig, SocialLoginModule} from 'angularx-social-login';
 import {GoogleLoginProvider, FacebookLoginProvider} from 'angularx-social-login';
+import { PrivacyPolicyComponent } from './components/shared/privacy-policy/privacy-policy.component';
 
 const fbLoginOptions = {
   scope: 'pages_messaging,pages_messaging_subscriptions,email,pages_show_list,manage_pages',
@@ -154,7 +155,8 @@ export function init_tenant(initializer: TenantInitializer) {
     OrdersDialogComponent,
     PosHistoryComponent,
     ProfileComponent,
-    PosDialogComponent
+    PosDialogComponent,
+    PrivacyPolicyComponent
   ],
   imports: [
     HttpClientModule,
@@ -233,7 +235,7 @@ export function init_tenant(initializer: TenantInitializer) {
           {
             id: GoogleLoginProvider.PROVIDER_ID,
             provider: new GoogleLoginProvider(
-              '772727132288-2bv75lhs16rsohc5rg3pscui1ugl9jff.apps.googleusercontent.com', googleLoginOptions
+              '767085402124-vf2aeke5q445n4o6murtj8sh3c4vtqvv.apps.googleusercontent.com', googleLoginOptions
             )
           },
           {

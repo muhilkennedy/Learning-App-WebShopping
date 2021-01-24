@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { TenantStoreService } from 'src/app/service/shared/tenant-store/tenant-store.service';
 import { environment } from 'src/environments/environment';
 
@@ -12,11 +13,15 @@ export class FooterComponent implements OnInit {
   orgName1:string;
   orgName2:string;
 
-  constructor(public tenantStore: TenantStoreService) { }
+  constructor(public tenantStore: TenantStoreService, private router: Router) { }
 
   ngOnInit(): void {
     this.orgName1 = environment.orgName1;
     this.orgName2 = environment.orgName2;
+  }
+
+  openPrivacyPolicy(){
+    this.router.navigate(['/privacy']);
   }
 
 }

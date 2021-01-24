@@ -415,7 +415,7 @@ export class PosComponent implements OnInit {
   processBill(){
     this.loading = true;
     this.cleanseItemList();
-    this.posService.createPOS(this.calculateTotalQuantity(), this.customerMobile, this.paymentMode, this.calculateRoundedSubtotal(), this.subTotal, this.itemList)
+    this.posService.createPOS(this.calculateTotalQuantity(), this.customerMobile, this.paymentMode, this.calculateRoundedSubtotal(), this.subTotal, this.calculateTotalDiscount(), this.itemList)
                     .subscribe((resp: any) => {
                       if(resp.statusCode === 200){
                         this.posId = resp.data;

@@ -14,7 +14,7 @@ export class PosService {
 
   constructor(private http: HttpClient){}
 
-  createPOS(totalQty, mobile, payment, subTotal, actualSubTotal, products): Observable<any>{
+  createPOS(totalQty, mobile, payment, subTotal, actualSubTotal, totalDiscount, products): Observable<any>{
     const body = {
       timeCreated: new Date().getTime(),
       mobile: mobile,
@@ -22,7 +22,8 @@ export class PosService {
       subTotal: subTotal,
       actualSubTotal: actualSubTotal,
       totalQuantity: totalQty,
-      posProduct: products
+      posProduct: products,
+      moneySaved: totalDiscount
      };
     const httpOptions = {
       headers: new HttpHeaders({

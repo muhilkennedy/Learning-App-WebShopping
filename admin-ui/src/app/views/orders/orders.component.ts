@@ -67,7 +67,7 @@ export class OrdersComponent implements OnInit {
   }
 
   rejectOrder(orderId){
-    this.changeStatus(orderId, "Rejected");
+    this.changeStatus(orderId, "Cancelled");
   }
 
   outForDelivery(order: any){

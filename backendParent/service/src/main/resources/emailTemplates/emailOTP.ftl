@@ -152,7 +152,7 @@
 								<td width="200" valign="top" align="center">
 									<div class="contentEditableContainer contentImageEditable">
 					                	<div class="contentEditable" align='center' >
-					                  		<img src=${tenantLogo} width="155" height="155"  alt='Logo'  data-default="placeholder" />
+					                  		<img src=${tenantLogo} height="150"  alt='Logo'  data-default="placeholder" />
 					                	</div>
 					              	</div>
 								</td>
