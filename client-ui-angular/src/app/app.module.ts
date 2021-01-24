@@ -235,7 +235,7 @@ export function init_tenant(initializer: TenantInitializer) {
           {
             id: GoogleLoginProvider.PROVIDER_ID,
             provider: new GoogleLoginProvider(
-              '767085402124-vf2aeke5q445n4o6murtj8sh3c4vtqvv.apps.googleusercontent.com', googleLoginOptions
+              'clientId', googleLoginOptions
             )
           },
           {
