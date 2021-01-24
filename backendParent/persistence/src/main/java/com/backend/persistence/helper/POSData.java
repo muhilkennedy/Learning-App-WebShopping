@@ -20,6 +20,7 @@ public class POSData {
 	private String paymentMode;
 	private String subTotal;
 	private String actualSubTotal;
+	private String moneySaved;
 	private List<PosProduct> posProduct;
 	private String totalQuantity;
 	
@@ -109,6 +110,14 @@ public class POSData {
 
 	public void setTotalQuantity(String totalQuantity) {
 		this.totalQuantity = totalQuantity;
+	}
+
+	public String getMoneySaved() {
+		return moneySaved;
+	}
+
+	public void setMoneySaved(String moneySaved) {
+		this.moneySaved = moneySaved;
 	}
 
 	public static class PosProduct {

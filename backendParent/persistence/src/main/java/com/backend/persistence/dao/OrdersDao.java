@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.backend.commons.util.CommonUtil;
+import com.backend.commons.util.OrdersUtil;
 import com.backend.commons.util.SQLQueryHandler;
 import com.backend.core.service.BaseService;
 import com.backend.core.util.Constants;
@@ -191,6 +192,8 @@ public class OrdersDao {
 						.setQuery("select sum(subtotal) from orders")
 						.setWhereClause()
 						.setAndCondition("tenantid", tenantId)
+						.andSetNotEqualCondition("status", OrdersUtil.orderStatus.Cancelled.toString())
+						.andSetNotEqualCondition("status", OrdersUtil.orderStatus.Pending.toString())
 						.andSetGreaterThanCondition("orderdate", todaysDate)
 						.andSetLessThanCondition("orderdate", nextDate)
 						.build();

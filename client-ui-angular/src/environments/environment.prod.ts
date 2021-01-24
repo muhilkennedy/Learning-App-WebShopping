@@ -4,7 +4,7 @@ export const environment = {
   tenantId: "ria.mpm",
   backendBaseUrl:"https://muhil.staqlab-tunnel.com",
   contextPath:"",
-  origin:"https://riagroceriesdev.web.app",
+  origin:"https://riagroceries-mpm.web.app",
   orgName1: "Ria",
   orgName2: "Groceries"
 };

@@ -29,7 +29,7 @@ import { SalesCountComponent } from './components/sales-count/sales-count.compon
     SharedModule,
     EmployeeModule,
     NgxLoadingModule.forRoot({
-      animationType: ngxLoadingAnimationTypes.rectangleBounce,
+      animationType: ngxLoadingAnimationTypes.circleSwish,
       backdropBackgroundColour: 'rgba(0,0,0,0.3)',
       backdropBorderRadius: '4px',
       primaryColour: 'cornflowerblue',

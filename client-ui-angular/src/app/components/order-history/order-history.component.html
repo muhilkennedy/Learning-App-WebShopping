@@ -14,7 +14,8 @@
             <td class="description">OrderId</td>
             <td class="price">Order Date</td>
             <td class="price">Status</td>
-            <td class="price">Subtotal</td>
+            <td class="price">Subtotal(₹)</td>
+            <td class="price">Delivery Charge(₹)</td>
             <td class="price">Ordered Items</td>
           </tr>
         </thead>
@@ -31,6 +32,9 @@
             </td>
             <td>
               {{order.subTotal}}
+            </td>
+            <td>
+              {{order.deliveryCharge}}
             </td>
             <td>
               <i class="fa fa-shopping-cart carticon" (click)="setOrderItems(order.orderDetails)"></i>

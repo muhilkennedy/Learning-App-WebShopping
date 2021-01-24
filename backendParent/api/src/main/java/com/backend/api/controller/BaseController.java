@@ -1,7 +1,10 @@
 package com.backend.api.controller;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,6 +19,7 @@ import com.backend.api.messages.PingInfo;
 import com.backend.api.messages.Response;
 import com.backend.core.entity.EmployeeInfo;
 import com.backend.core.entity.HomePageMedia;
+import com.backend.core.security.RSAKeyPairGenerator;
 import com.backend.core.service.BaseService;
 import com.backend.core.service.HomeMediaService;
 import com.backend.core.util.Constants;
@@ -80,10 +84,22 @@ public class BaseController {
 		return response;
 	}
 	
-	@RequestMapping("/social/google")
-	public String test(HttpServletRequest request) {
-		return "hello";
+	@RequestMapping("/getkeys")
+	public GenericResponse<?> getRSAkeys(HttpServletRequest request) {
+		GenericResponse response = new GenericResponse();
+		try {
+			RSAKeyPairGenerator rsa = new RSAKeyPairGenerator();
+			Map<String, String> keyMap = new HashMap<String, String>();
+			keyMap.put("privateKey", rsa.getPrivateKey());
+			keyMap.put("publicKey", rsa.getPublicKey());
+			response.setData(keyMap);
+			response.setStatus(Response.Status.OK);
+		}
+		catch (NoSuchAlgorithmException e) {
+			logger.error(e.getMessage());
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return null;
 	}
-	
 
 }

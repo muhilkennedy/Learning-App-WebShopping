@@ -11,6 +11,7 @@ import { ProductListComponent } from './components/product-list/product-list.com
 import { ProfileComponent } from './components/profile/profile.component';
 import { AuthenticateComponent } from './components/shared/authenticate/authenticate.component';
 import { NotFoundComponent } from './components/shared/not-found/not-found.component';
+import { PrivacyPolicyComponent } from './components/shared/privacy-policy/privacy-policy.component';
 
 const routes: Routes = [
   {
@@ -57,6 +58,10 @@ const routes: Routes = [
   {
     path:'profile',
     component: ProfileComponent
+  },
+  {
+    path:'privacy',
+    component: PrivacyPolicyComponent
   },
   {
     path: '**',

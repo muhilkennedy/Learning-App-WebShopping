@@ -28,6 +28,14 @@
                                         tenantStore.tenantFssai !== null && tenantStore.tenantFssai !== ''">
 						<div class="single-widget">
 							<ul class="nav nav-pills nav-stacked">
+								<li><label style="cursor: pointer;" (click)="openPrivacyPolicy()">Privacy-Policy</label> </li>
+							</ul>
+						</div>
+          </div>
+          <div class="col-sm-2" *ngIf="tenantStore.tenantFssai !== undefined &&
+                                        tenantStore.tenantFssai !== null && tenantStore.tenantFssai !== ''">
+						<div class="single-widget">
+							<ul class="nav nav-pills nav-stacked">
 								<li><label>FSSAI : </label> {{tenantStore.tenantFssai}} </li>
 							</ul>
 						</div>
@@ -36,10 +44,10 @@
                                         tenantStore.tenantGstIn !== null && tenantStore.tenantGstIn !== ''">
 						<div class="single-widget">
 							<ul class="nav nav-pills nav-stacked">
-								<li><label>GSTIN : </label> {{tenantStore.tenantGstIn}} </li>
+                <li><label>GSTIN : </label> {{tenantStore.tenantGstIn}} </li>
 							</ul>
             </div>
-					</div>
+          </div>
 				</div>
 			</div>
 		</div>

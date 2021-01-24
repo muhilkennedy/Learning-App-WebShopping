@@ -355,6 +355,9 @@ public class ProductServiceImpl implements ProductService {
 		product.setActive(status);
 		product.setLastModified(CommonUtil.convertToUTC(new Date().getTime()));
 		product.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
+		if(!status && isFeaturedProduct(product.getProductId())) {
+			deleteFeaturedProduct(product.getProductId());
+		}
 		save(product);
 	}
 	

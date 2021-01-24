@@ -191,7 +191,7 @@ export function init_tenant(initializer: TenantInitializer) {
     MatTooltipModule,
     MatTreeModule,
     NgxLoadingModule.forRoot({
-      animationType: ngxLoadingAnimationTypes.rectangleBounce,
+      animationType: ngxLoadingAnimationTypes.circleSwish,
       backdropBackgroundColour: 'rgba(0,0,0,0.3)',
       backdropBorderRadius: '4px',
       primaryColour: 'cornflowerblue',
