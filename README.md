@@ -13,3 +13,11 @@ Learning Angular, React, ionic cordova and Spring-Boot in this project using a e
 6. node
 7. angular cli
 8. postman
+
+
+Deployed for production use in local supermarket!
+Angular UI hosted in firebase:(RIA GROCERIES)
+Admin - https://riagroceriesadmin-mpm.web.app/
+Client - https://riagroceries-mpm.web.app/
+Spring-Boot hosted in local machine as tunnel site using Staq-lab:
+backend - https://muhil.staqlab-tunnel.com
