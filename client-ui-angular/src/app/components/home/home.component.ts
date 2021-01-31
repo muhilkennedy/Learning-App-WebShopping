@@ -19,6 +19,7 @@ export class HomeComponent implements OnInit {
 
   mandateHomeMedia:any = null;
   homeMedia:any[] = new Array();
+  fullHomeMedia:any[] = new Array();
   homeBanner:any[] = new Array();
   homeMediaLength:number = 0;
   mandateBannerImage:any;
@@ -93,6 +94,7 @@ export class HomeComponent implements OnInit {
         else{
           this.homeMedia.push(media);
         }
+        this.fullHomeMedia.push(media);
       }
     });
     this.homeMediaLength = this.homeMedia.length;

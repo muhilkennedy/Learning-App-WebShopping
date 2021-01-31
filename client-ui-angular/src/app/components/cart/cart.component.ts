@@ -1,3 +1,4 @@
+import { HostListener } from '@angular/core';
 import { Component, Input, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -28,7 +29,23 @@ export class CartComponent implements OnInit {
   @Input()
   cartPage: boolean = true;
 
+  public innerWidth: any;
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.innerWidth = window.innerWidth;
+  }
+
+  isMobileView(){
+    if(this.innerWidth < 600){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
   ngOnInit(): void {
+    this.onResize(event);
     if(this.userStore !== undefined && this.userStore.emailId !== undefined){
       this.loading = true;
       this.cartService.getCustomerCart()

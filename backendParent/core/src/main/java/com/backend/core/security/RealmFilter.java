@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import com.backend.core.entity.Tenant;
 import com.backend.core.service.BaseService;
+import com.backend.core.serviceImpl.CacheService;
 import com.backend.core.util.ConfigUtil;
 import com.backend.core.util.Constants;
 import com.backend.core.util.TenantUtil;
@@ -43,9 +44,10 @@ public class RealmFilter implements Filter {
 			HttpServletRequest req = (HttpServletRequest) request;
 			HttpServletResponse res = (HttpServletResponse) response;
 			String tenantId = req.getHeader(Constants.Header_TenantId);
-			logger.info("doFilter :: Realm Filter :: URI - " + req.getRequestURI());
 			String requestIP = getIPFromRequest(req);
-			//verify for DOS attack
+			logger.info("doFilter :: Realm Filter :: URI - " + req.getRequestURI() + " (Requested IP : " + requestIP + ")");
+			//verify for DOS attack (Ideally should be configured as server level config)
+			CacheService.setIpCache(requestIP, req.getRequestURI());
 			//Allow access for cross site request due to multiple deployments.
 			res.setHeader("Access-Control-Allow-Origin", req.getHeader(Constants.Header_Origin));
 			res.setHeader("Access-Control-Allow-Credentials","true");

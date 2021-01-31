@@ -1,3 +1,4 @@
+import { HostListener } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CartService } from 'src/app/service/cart/cart.service';
@@ -32,7 +33,23 @@ export class CheckoutComponent implements OnInit {
   door:string;
   mobile:string;
 
+  public innerWidth: any;
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.innerWidth = window.innerWidth;
+  }
+
+  isMobileView(){
+    if(this.innerWidth < 600){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
   ngOnInit(): void {
+    this.onResize(event);
     this.couponDetails = this.commonService.couponDetails;
     this.pincodeDetails = this.commonService.pincodeDetails;
     this.cartItems = this.userStore.cartItems;

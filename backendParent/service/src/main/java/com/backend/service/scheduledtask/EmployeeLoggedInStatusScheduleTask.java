@@ -32,6 +32,7 @@ public class EmployeeLoggedInStatusScheduleTask extends ScheduledTask {
 	public void execute() {
 		CacheService.getLoggedInStatusCacheMap().entrySet().parallelStream().forEach(item -> {
 			try {
+				CacheService.clearIPCache();
 				if (checkTimeLapsed(item.getValue())) {
 					empDao.updateEmployeeLoggedInStatus(item.getKey(), false);
 					logger.info("Scheduled Task - " + EmployeeLoggedInStatusScheduleTask.class.getCanonicalName()
