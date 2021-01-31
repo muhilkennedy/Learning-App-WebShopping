@@ -165,6 +165,7 @@ public class OrdersServiceImpl implements OrdersService {
 		emailService.sendOrderStatusEmail(String.valueOf(order.getOrderId()), order.getStatus(), order.getSubTotal().toString(),
 				order.getOrderDate(), PaymentModes.paymentModes.get(order.getPaymentModeId()), customer.getEmailId(),
 				customer.getFirstName(), customer.getLastName(), baseService.getOrigin(), invoice.getDocument());
+		emailService.sendOrderAlertMailToAdmin();
 		DashboardStatusUtil.incremenOnlineCount(baseService.getTenantInfo());
 	}
 

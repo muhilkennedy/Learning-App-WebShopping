@@ -119,7 +119,7 @@ export class TenantInitializer {
                   //load app only if tenant is active.
                   if(this.tenantStore.tenantActive){
                     this.commonService.globalLoading = false;
-                     resolve(true);
+                    resolve(true);
                   }
                   else{
                     alert("Tenant not Active! Please contact support!")

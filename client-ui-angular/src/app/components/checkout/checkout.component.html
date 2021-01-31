@@ -30,7 +30,7 @@
             <a class="btn btn-primary" (click)="addAddress()">Add Address to Profile</a>
           </div>
         </div>
-        <div class="col-sm-6">
+        <div *ngIf="!isMobileView()" class="col-sm-6">
           <div class="shopper-info">
             <p><label style="color: white;">-----</label>Cart Summary</p>
             <div class="total_area">
@@ -72,9 +72,41 @@
         <label><i class="fa fa-truck"></i><strong> . Guaranteed Delivery Within {{pincodeDetails.minimumdeliveryhours}} Hrs</strong></label>
       </span>
     </div>
+
     <app-cart [cartPage]=false></app-cart>
 
-    <div class="payment-options" style="position: relative;">
+    <div class="container" *ngIf="isMobileView()">
+      <div class="row">
+        <div class="col-sm-6">
+        </div>
+        <div class="col-sm-6">
+          <div class="total_area">
+            <ul>
+              <li>Cart Sub Total <span><strong>₹ {{cartSubtotal()}}</strong></span></li>
+              <li *ngIf="this.couponDetails !== undefined && this.couponDetails !== null">
+                Coupon Applied - <strong>({{this.couponDetails.discount}}% Off)</strong> <span>₹ {{calculateCouponApplied()}}</span>
+              </li>
+              <li>Delivery Charge <span>{{getDeliveryCharge()}}</span></li>
+              <li>Total <span><strong>₹ {{calculateTotalWithDeliveryCharge()}}</strong></span></li>
+            </ul>
+          </div>
+          <br/>
+          <div class="payment-options" style="position: relative;">
+            <span>
+              <label><i class="fa fa-info"></i><strong> . Payment will be accepted on door step delivery !</strong></label>
+            </span>
+            <div style="float: right;">
+              <button mat-raised-button class="btn btn-default update" (click)="placeOrder()"
+                [ngClass]="{'spinner' : buttonLoading}" [disabled]="buttonLoading">
+                Confirm and Place Order
+              </button>
+            </div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="payment-options" style="position: relative;" *ngIf="!isMobileView()">
         <span>
           <label><i class="fa fa-info"></i><strong> . Payment will be accepted on door step delivery</strong></label>
         </span>

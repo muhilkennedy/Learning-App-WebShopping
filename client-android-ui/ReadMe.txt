@@ -4,10 +4,60 @@ ionic start client-android-ui blank --type=ionic-angular
 
 npm install
 
+ionic cordova platform add android
+
+ionic cordova plugin add cordova-plugin-inappbrowser
+npm install @ionic-native/in-app-browser
+
+ //ionic cordova platform rm android
+ //ionic cordova platform add android@8.0.0 
+
+
+    ionic cordova plugin add cordova-plugin-androidx 
+    ionic cordova plugin add cordova-plugin-androidx-adapter
+    cordova plugin add cordova-android-support-gradle-release --save
+
 ionic cordova build android
 ionic cordova run android
 
+add this to gradle.build:
 
+defaultConfig {
+...
+minSdkVersion 14
+targetSdkVersion 21
+...
+
+// Enabling multidex support.
+multiDexEnabled true
+}
+
+dependencies {
+  compile 'com.android.support:multidex:1.0.0'
+}
+And android:name="android.support.multidex.MultiDexApplication"
+
+to <application /> in AndroidManifest.xml
+
+ionic cordova build android --prod --release
+
+<button (click)="open()">Click Here Open Site in Default Browser</button>
+
+constructor(public navCtrl: NavController, private iab: InAppBrowser) {
+    this.open();
+  }
+
+  open(){
+    const browser = this.iab.create('https://riagroceries-mpm.web.app/', '_system', { location : 'no', zoom : 'no'});
+
+    browser.on('loadstop').subscribe(event => {
+      browser.insertCSS({ code: "body{color: red;" });
+    });
+
+    browser.on('exit').subscribe(event => {
+      browser.close();
+    });
+  }
 
 
 Release APK:

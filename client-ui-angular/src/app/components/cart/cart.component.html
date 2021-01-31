@@ -73,14 +73,17 @@
                 <mat-label>Delivery Pincode</mat-label>
                 <input type="number" matInput placeholder="pincode" [(ngModel)]="pincode">
               </mat-form-field>
-              <a style="cursor: pointer;" class="btn btn-default update" (click)="checkDeliveryCode()">Check Delivery Charge</a>
+              <a *ngIf="!isMobileView()" style="cursor: pointer;" class="btn btn-default update" (click)="checkDeliveryCode()">Check Delivery Charge</a>
+              <a *ngIf="isMobileView()" style="cursor: pointer; margin-left: 0px;" class="btn btn-default update" (click)="checkDeliveryCode()">Check Delivery Charge</a>
             </li>
+            <br/>
             <li>
               <mat-form-field>
                 <mat-label>Copupon Code</mat-label>
                 <input type="text" matInput placeholder="coupon code" [(ngModel)]="coupon">
               </mat-form-field>
-              <a class="btn btn-default update" (click)="applyCoupon()">Apply Coupon</a>
+              <a *ngIf="!isMobileView()" style="cursor: pointer;" class="btn btn-default update" (click)="applyCoupon()">Apply Coupon</a>
+              <a *ngIf="isMobileView()" style="cursor: pointer; margin-left: 0px;" class="btn btn-default update" (click)="applyCoupon()">Apply Coupon</a>
             </li>
           </ul>
           <!-- <a class="btn btn-default check_out" href="">Apply</a> -->

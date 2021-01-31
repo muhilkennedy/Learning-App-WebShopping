@@ -1,6 +1,7 @@
 package com.backend.core.serviceImpl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -65,10 +66,28 @@ public class CacheService {
 		loggedInStatusCache.invalidate(key);
 	}
 	
-//	public static void setIpCache(String ip, String requestURI, Integer count) {
-//		
-//		ipCache.put(ip, value);
-//	}
+	public static void setIpCache(String ip, String requestURI) throws Exception {
+		if(ipCache.getIfPresent(ip) != null) {
+			Map<String, Integer> map = ipCache.get(ip);
+			if(map.containsKey(requestURI)) {
+				int count = map.get(requestURI);
+				map.put(requestURI, ++count);
+				if(count > 100) {
+					logger.error("API throttling limit reached for IP - " + ip);
+					throw new Exception("API throttling limit reached");
+				}
+			}
+			else {
+				map.put(requestURI, 1);
+			}
+			ipCache.put(ip, map);
+		}
+		else {
+			Map<String, Integer> map = new HashMap<String, Integer>();
+			map.put(requestURI, 1);
+			ipCache.put(ip, map);
+		}
+	}
 	
 	public static Integer getIpCacheCount(String ip, String requestURI) {
 		int count = 0;
@@ -85,5 +104,8 @@ public class CacheService {
 		return count;
 	}
 	
+	public static void clearIPCache() {
+		ipCache.invalidateAll();
+	}
 
 }
