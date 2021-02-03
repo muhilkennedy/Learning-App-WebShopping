@@ -36,13 +36,14 @@ public class AdminFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		logger.info("doFilter :: Admin Filter");
+		//logger.info("doFilter :: Admin Filter");
 		if (configUtil.isProdMode()) {
 			if(baseService.getUserInfo()!=null) {
 				if (baseService.getUserInfo() instanceof EmployeeInfo) {
 					EmployeeInfo emp = (EmployeeInfo) baseService.getUserInfo();
 					List<EmployeePermissionsMap> permissions = emp.getEmployeePermissions();
 					if (permissions.isEmpty()) {
+						logger.error("Admin Filter :: Empty permission!");
 						((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
 								"you do not have permission to proceed further!... please contact support");
 						return;
@@ -52,6 +53,7 @@ public class AdminFilter implements Filter {
 					}
 				}
 				else {
+					logger.error("Admin Filter :: Access Restricted!");
 					//its a client user restrict access.
 					((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
 							"You are not authorized to proceed further");

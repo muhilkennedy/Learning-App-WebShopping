@@ -53,6 +53,7 @@ import {MatTreeModule} from '@angular/material/tree';
 import { NgxLoadingModule, ngxLoadingAnimationTypes } from 'ngx-loading';
 import { CookieService } from 'ngx-cookie-service';
 import { ThermalPrintModule } from 'ng-thermal-print';
+import {NgxImageCompressService} from 'ngx-image-compress';
 
 import { SharedModule } from './shared/shared.module';
 import { AlertModule } from './shared/_alert/alert.module';
@@ -241,7 +242,8 @@ export function init_tenant(initializer: TenantInitializer) {
       useClass: InterceptorService,
       multi: true
     },
-    PushNotificationsService
+    PushNotificationsService,
+    NgxImageCompressService
   ],
   bootstrap: [ AppComponent ]
 })

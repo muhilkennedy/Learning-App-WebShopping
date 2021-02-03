@@ -49,7 +49,7 @@ public class TokenFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
-		logger.info("doFilter :: JWT Token Filter");
+		//logger.info("doFilter :: JWT Token Filter");
 		if (configUtil.isProdMode()) {
 			String token = req.getHeader(HttpHeaders.AUTHORIZATION);
 			if (token != null && !StringUtils.isEmpty(JWTUtil.extractToken(token))) {
@@ -78,7 +78,7 @@ public class TokenFilter implements Filter {
 								return;
 							}
 						}
-						logger.info("User - " + (baseService.getUserInfo() instanceof EmployeeInfo
+						logger.info("JWT Token Filter :: user - " + (baseService.getUserInfo() instanceof EmployeeInfo
 								? "Employee Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()
 								: "Client Email : " + ((CustomerInfo) baseService.getUserInfo()).getEmailId()));
 						chain.doFilter(request, response);
@@ -88,7 +88,7 @@ public class TokenFilter implements Filter {
 						return;
 					}
 				} catch (Exception e) {
-					logger.error("doFilter :: Exception - " + e.getMessage());
+					logger.error("JWT Token Filter :: doFilter :: Exception - " + e.getMessage());
 					((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST,
 							"Error in handling the request - " + e.getMessage());
 					return;
@@ -127,7 +127,7 @@ public class TokenFilter implements Filter {
 								return;
 							}
 						}
-						logger.info("User - " + (baseService.getUserInfo() instanceof EmployeeInfo
+						logger.info("JWT Token Filter :: User - " + (baseService.getUserInfo() instanceof EmployeeInfo
 								? "Employee Email : " + ((EmployeeInfo) baseService.getUserInfo()).getEmailId()
 								: "Client Email : " + ((CustomerInfo) baseService.getUserInfo()).getEmailId()));
 					} else {
@@ -136,7 +136,7 @@ public class TokenFilter implements Filter {
 						return;
 					}
 				} catch (Exception e) {
-					logger.error("doFilter :: Exception - " + e.getMessage());
+					logger.error("JWT Token Filter :: doFilter :: Exception - " + e.getMessage());
 					((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST,
 							"Error in handling the request - " + e.getMessage());
 					return;
@@ -159,7 +159,7 @@ public class TokenFilter implements Filter {
 					empInfo.setEmployeePermissions(empService.getEmployeePermissionsForTenant(empInfo));
 					if (empInfo != null) {
 						baseService.setUserInfo(empInfo);
-						logger.info("Default Admin Id Used - " + empInfo.getEmailId());
+						logger.info("JWT Token Filter :: Default Admin Id Used - " + empInfo.getEmailId());
 					} else {
 						((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
 								"Invalid User Request.... cannot set default dev user");

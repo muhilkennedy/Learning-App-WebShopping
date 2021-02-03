@@ -46,7 +46,7 @@
                   {{order.orderId}}
                 </td>
                 <td>{{order.orderDate | date : 'dd-MM-yyyy hh:mm a'}}</td>
-                <td><div class="alink" (click)="getCustomerDetails(order.customerId);secondaryModal.show()">{{order.customerId}}</div></td>
+                <td><div class="alink" (click)="getCustomerDetails(order.customerId, order.customerAddressId);secondaryModal.show()">{{order.customerId}}</div></td>
                 <td><i class="producticon fa fa-shopping-basket" (click)="setProductData(order);primaryModal.show()"></i></td>
                 <td>
                   <i class="float-right fa fa-remove removeStyle" (click)="rejectOrder(order.orderId)"></i>
@@ -95,7 +95,7 @@
                   {{order.orderId}}
                 </td>
                 <td>{{order.orderDate | date : 'dd-MM-yyyy hh:mm a'}}</td>
-                <td><div class="alink" (click)="getCustomerDetails(order.customerId);secondaryModal.show()">{{order.customerId}}</div></td>
+                <td><div class="alink" (click)="getCustomerDetails(order.customerId, order.customerAddressId);secondaryModal.show()">{{order.customerId}}</div></td>
                 <td><i class="producticon fa fa-shopping-basket" (click)="setProductData(order);primaryModal.show()"></i></td>
                 <td>
                   <i class="float-right fa fa-check-circle acceptStyle" (click)="deliveredOrder(order)"></i>
