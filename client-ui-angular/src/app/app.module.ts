@@ -122,7 +122,7 @@ export class TenantInitializer {
                     resolve(true);
                   }
                   else{
-                    alert("Tenant not Active! Please contact support!")
+                    alert("Tenant is not Active at the moment!")
                   }
                 },
                 (error:any) => {
@@ -130,6 +130,8 @@ export class TenantInitializer {
                     alert("Tenant Server not Reachable at the moment! Please try again later!");
                 }
               );
+              //early resolve to show loading page
+              resolve(true);
     });
   }
 }
@@ -240,7 +242,7 @@ export function init_tenant(initializer: TenantInitializer) {
           },
           {
             id: FacebookLoginProvider.PROVIDER_ID,
-            provider: new FacebookLoginProvider('clientId')
+            provider: new FacebookLoginProvider('clientId', fbLoginOptions)
           }
         ]
       } as SocialAuthServiceConfig,

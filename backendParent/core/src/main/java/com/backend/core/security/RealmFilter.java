@@ -72,7 +72,7 @@ public class RealmFilter implements Filter {
 						case "web" : 	// Check for active tenant and allowed origins
 										
 										if (!StringUtils.isEmpty(origin) && TenantUtil.isTenantActive(tenantId)
-												&& TenantUtil.isAllowedOriginForTenant(tenantId, origin)) {
+												&& (requestIP.equals("0:0:0:0:0:0:0:1") || TenantUtil.isAllowedOriginForTenant(tenantId, origin))) {
 											// setSession(tenantId, req);
 											baseService.setTenantInfo(TenantUtil.getTenantInfo(tenantId));
 											chain.doFilter(request, response);

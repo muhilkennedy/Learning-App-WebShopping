@@ -24,8 +24,7 @@
 		<div class="footer-widget">
 			<div class="container">
 				<div class="row">
-          <div class="col-sm-2" *ngIf="tenantStore.tenantFssai !== undefined &&
-                                        tenantStore.tenantFssai !== null && tenantStore.tenantFssai !== ''">
+          <div class="col-sm-2">
 						<div class="single-widget">
 							<ul class="nav nav-pills nav-stacked">
 								<li><label style="cursor: pointer;" (click)="openPrivacyPolicy()">Privacy-Policy</label> </li>
@@ -48,6 +47,15 @@
 							</ul>
             </div>
           </div>
+          <div class="col-sm-2">
+						<div class="single-widget">
+							<ul class="nav nav-pills nav-stacked">
+                <li><label><a class="btn1 draw-border cent" href="https://play.google.com/store/apps/details?id=com.ria.clientui" data-animation="fadeInUp" data-delay="1.5s">
+                  Download Android App From Play Store</a></label></li>
+							</ul>
+            </div>
+          </div>
+
 				</div>
 			</div>
 		</div>
