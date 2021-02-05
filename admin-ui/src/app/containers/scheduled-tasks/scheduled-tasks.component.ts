@@ -79,4 +79,20 @@ export class ScheduledTasksComponent implements OnInit {
                     })
   }
 
+  dbBackupCoupons(){
+    this.loading = true;
+    this.taskService.DbBackupScheduledTask()
+                    .subscribe((resp:any) => {
+                      if(resp.statusCode === 200){
+                        this.loading = false;
+                      }
+                      else{
+                        alert('Scheduled Task Error!');
+                      }
+                    },
+                    (error:any) => {
+                      alert('Scheduled Task Error!');
+                    })
+  }
+
 }

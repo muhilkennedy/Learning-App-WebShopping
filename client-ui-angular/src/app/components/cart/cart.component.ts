@@ -26,6 +26,8 @@ export class CartComponent implements OnInit {
   pincodeDetails:any;
   couponDetails:any;
 
+  maxDiscountlimit:number = 0;
+
   @Input()
   cartPage: boolean = true;
 
@@ -79,12 +81,28 @@ export class CartComponent implements OnInit {
                         if(coupon !== null){
                           this.couponDetails = resp.dataList !== undefined && resp.dataList !== null &&resp.dataList.length>0 ?
                                                resp.dataList[0]: null;
+                          if(coupon !== null && (this.couponDetails === null || this.couponDetails === undefined)){
+                            this._snackBar.open('Coupon Not Applicable! pls try a valid code', 'OK', this.commonService.alertoptionsWarn);
+                            this.couponLoading = false;
+                            return;
+                          }
+                          this.maxDiscountlimit = this.couponDetails.maxDiscountLimit;
                           this.commonService.couponDetails = this.couponDetails;
+                          if(this.cartSubtotal() <= this.couponDetails.minTotalLimit){
+                            alert("Add " + (this.couponDetails.minTotalLimit-this.cartSubtotal())
+                                  + " (inr) more to apply this coupon!");
+                                  this.couponLoading = false;
+                                  this.commonService.couponDetails = null;
+                                  this.maxDiscountlimit = 0;
+                                  return;
+                          }
                         }
                         if(pincode !== null && (this.pincodeDetails === undefined || this.pincodeDetails === null)){
+                          this.couponDetails = undefined;
                           this._snackBar.open('Not Deliverable to this Pincode!', 'OK', this.commonService.alertoptionsWarn);
                         }
                         if(coupon !== null && (this.couponDetails === null || this.couponDetails === undefined)){
+                          this.couponDetails = undefined;
                           this._snackBar.open('Coupon Not Applicable! pls try a valid code', 'OK', this.commonService.alertoptionsWarn);
                         }
                       }
@@ -188,7 +206,13 @@ export class CartComponent implements OnInit {
 
   calculateCouponApplied(){
     if((this.couponDetails !== undefined && this.couponDetails !== null)){
-      return this.cartSubtotal() - (this.cartSubtotal()*this.couponDetails.discount)/100;
+      let couponDiscountValue = (this.cartSubtotal()*this.couponDetails.discount)/100;
+      if(couponDiscountValue >= this.maxDiscountlimit){
+        return this.cartSubtotal() - this.maxDiscountlimit;
+      }
+      else{
+        return this.cartSubtotal() - couponDiscountValue;
+      }
     }
   }
 

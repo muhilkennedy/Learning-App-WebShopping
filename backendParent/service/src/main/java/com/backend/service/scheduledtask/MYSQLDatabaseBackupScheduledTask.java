@@ -2,7 +2,10 @@ package com.backend.service.scheduledtask;
 
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
+import java.util.TimeZone;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +14,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.backend.core.configuration.DataSourceProperties;
+import com.backend.core.service.BaseService;
+import com.backend.core.util.Constants;
 import com.backend.core.util.DBUtil;
 
 /**
@@ -27,6 +32,9 @@ public class MYSQLDatabaseBackupScheduledTask extends ScheduledTask {
 	private DataSourceProperties dbProps;
 
 	private BufferedWriter p_stdin;
+	
+	@Autowired
+	private BaseService baseService;
 
 	// cron = sec min hour day mon dayOfWeek.
 	@Scheduled(cron = " 0 0 3 * * * ", zone = "IST")
@@ -38,6 +46,9 @@ public class MYSQLDatabaseBackupScheduledTask extends ScheduledTask {
 		
 		try {
 
+			SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIMEFORMAT_3);
+	        sdf.setTimeZone(TimeZone.getTimeZone(Constants.Timezone_IST));
+	        
 			// init shell
 			ProcessBuilder builder = new ProcessBuilder("C:/Windows/System32/cmd.exe");
 			Process p = null;
@@ -49,7 +60,7 @@ public class MYSQLDatabaseBackupScheduledTask extends ScheduledTask {
 			executeCommand("@echo -----------------Started_Generating_MYSQL_DUMP------------------");
 			executeCommand("cd " + dbProps.getDatabaseInstallPath());
 			executeCommand("mysqldump -u" + dbProps.getUsername() + " -p" + dbProps.getPassword() + " "
-					+ dbProps.getDatabase() + " > E:\\" + System.currentTimeMillis() + ".sql");
+					+ dbProps.getDatabase() + " > C:\\" + sdf.format(new Date()) + ".sql");
 			executeCommand("@echo -----------------Backup-COMPLETE------------------");
 			executeCommand("exit");
 
@@ -73,6 +84,22 @@ public class MYSQLDatabaseBackupScheduledTask extends ScheduledTask {
 
 		logger.info("Scheduled Task - " + MYSQLDatabaseBackupScheduledTask.class.getCanonicalName() + " Completed");
 	}
+	
+	//All currentTenant() logic has to be changed based on tenantID
+	public void executeForCurrentTenant() {
+		logger.info("Scheduled Task - " + MYSQLDatabaseBackupScheduledTask.class.getCanonicalName() + " Triggered for realm : " + baseService.getTenantInfo().getTenantID());
+		try {
+			execute();
+		} catch (Exception e) {
+			audit.setFailureInfo(e.getMessage());
+			markFailed();
+			logger.error(
+					"Scheduled Task - " + MYSQLDatabaseBackupScheduledTask.class.getCanonicalName() + " Exception ",
+					e.getMessage());
+		}
+		logger.info("Scheduled Task - " + MYSQLDatabaseBackupScheduledTask.class.getCanonicalName() + " Completed");
+	}
+
 
 	private void markFailed(Exception e) {
 		audit.setFailureInfo(e.getMessage());

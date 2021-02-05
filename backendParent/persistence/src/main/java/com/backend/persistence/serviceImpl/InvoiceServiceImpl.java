@@ -37,6 +37,7 @@ import com.backend.core.entity.Tenant;
 import com.backend.core.repository.InvoiceRepository;
 import com.backend.core.service.BaseService;
 import com.backend.core.util.TenantUtil;
+import com.backend.persistence.entity.Coupons;
 import com.backend.persistence.entity.CustomerAddress;
 import com.backend.persistence.entity.CustomerInfo;
 import com.backend.persistence.entity.OrderDetails;
@@ -46,6 +47,7 @@ import com.backend.persistence.entity.Product;
 import com.backend.persistence.helper.POSData;
 import com.backend.persistence.helper.POSData.PosProduct;
 import com.backend.persistence.repository.OrderInvoiceRepository;
+import com.backend.persistence.service.CouponsService;
 import com.backend.persistence.service.CustomerInfoService;
 import com.backend.persistence.service.InvoiceService;
 
@@ -89,6 +91,9 @@ public class InvoiceServiceImpl implements InvoiceService{
 	
 	@Autowired
 	private CustomerInfoService customerService;
+	
+	@Autowired
+	private CouponsService couponService;
 	
 	@Override
 	public void save(InvoiceTemplate template) {
@@ -236,30 +241,45 @@ public class InvoiceServiceImpl implements InvoiceService{
 			newRow.getCell(0).setText(product.getProductName());
 			newRow.getCell(1).setText(String.valueOf(item.getQuantity()));
 			newRow.getCell(2).setText(product.getCost().toString());
-			newRow.getCell(3).setText(product.getOffer().toString());
+			newRow.getCell(3).setText(product.getOffer().setScale(0, RoundingMode.CEILING).toString()+"%");
+			newRow.getCell(4).setText(product.getSellingCost().toString());
 			BigDecimal total = new BigDecimal(0);
-			if (product.getOffer().compareTo(new BigDecimal(0)) > 0) {				
+			if (product.getOffer().compareTo(new BigDecimal(0)) > 0) {
 				BigDecimal singleOffer = product.getCost().subtract(product.getSellingCost());
 				totalDiscount = totalDiscount.add(singleOffer).multiply(new BigDecimal(item.getQuantity()));
 			}
 			total = product.getSellingCost().multiply(new BigDecimal(item.getQuantity())).setScale(2, RoundingMode.CEILING);
 			subTotal = subTotal.add(total);
-			newRow.getCell(4).setText(total.toString());
+			newRow.getCell(5).setText(total.toString());
+		}
+		Coupons coupon = null;
+		if (order.isCouponapplied()) {
+			coupon = couponService.findCouponById(order.getCouponId());
+			BigDecimal couponAmount = subTotal.multiply(new BigDecimal(order.getCouponDiscount()))
+					.divide(new BigDecimal(100));
+			if (couponAmount.compareTo(new BigDecimal(coupon.getMaxDiscountLimit())) > 0) {
+				totalDiscount = totalDiscount.add(new BigDecimal(coupon.getMaxDiscountLimit()));
+			} else {
+				totalDiscount = totalDiscount.add(couponAmount);
+			}
 		}
 		//inserting dummy row for clarity.
 		productTable.createRow();
 		//calculate sub-total and manipulate balance due.
 		XWPFTableRow subTotalRow = productTable.createRow();
-		subTotalRow.getCell(1).setText("Money Saved");
-		subTotalRow.getCell(2).setText(totalDiscount.setScale(2, RoundingMode.CEILING).toString() + CommonUtil.Symbol_INR);
-		subTotalRow.getCell(3).setText("SUB-TOTAL");
-		subTotalRow.getCell(4).setText(subTotal.setScale(2, RoundingMode.CEILING).toString());
+		subTotalRow.getCell(2).setText("Money Saved");
+		subTotalRow.getCell(3).setText(totalDiscount.setScale(2, RoundingMode.CEILING).toString() + CommonUtil.Symbol_INR);
+		subTotalRow.getCell(4).setText("SUB-TOTAL");
+		subTotalRow.getCell(5).setText(subTotal.setScale(2, RoundingMode.CEILING).toString());
 		// final row
 		XWPFTableRow finalRow = productTable.createRow();
-		finalRow.getCell(1).setText("Coupon Applied");
-		finalRow.getCell(2).setText(order.getCouponDiscount() + CommonUtil.Symbol_PERCENT);
-		finalRow.getCell(3).setText("AMOUNT-PAYABLE");
-		finalRow.getCell(4).setText(order.getSubTotal().setScale(2, RoundingMode.CEILING).toString() + CommonUtil.Symbol_INR);
+		finalRow.getCell(2).setText("Coupon Applied");
+		finalRow.getCell(3).setText(order.getCouponDiscount() + CommonUtil.Symbol_PERCENT + getMaxCouponLimit(coupon) );
+		finalRow.getCell(4).setText("Delivery Charge");
+		finalRow.getCell(5).setText((order.getDeliveryCharge() == 0)? "FREE" : (order.getDeliveryCharge() + CommonUtil.Symbol_INR));
+		XWPFTableRow payableRow = productTable.createRow();
+		payableRow.getCell(4).setText("AMOUNT-PAYABLE");
+		payableRow.getCell(5).setText(order.getSubTotal().setScale(2, RoundingMode.CEILING).toString() + CommonUtil.Symbol_INR);
 		//genearte file blob
 		File tempFile = File.createTempFile("Invoice-"+order.getOrderId(), CommonUtil.Document_Extention); 
 		poiDocx.write(new FileOutputStream(tempFile));
@@ -278,7 +298,9 @@ public class InvoiceServiceImpl implements InvoiceService{
 		List<CustomerAddress> addresses = user.getCustomerAddress();
 		CustomerAddress deliveryAddress = null;
 		for(CustomerAddress address : addresses) {
-			if(order.getCustomerAddressId() == address.getAddressId()) {
+			long orderAddressId = order.getCustomerAddressId();
+			long actualAddressId = address.getAddressId();
+			if (orderAddressId == actualAddressId) {
 				deliveryAddress = address;
 			}
 		}
@@ -296,6 +318,13 @@ public class InvoiceServiceImpl implements InvoiceService{
 		String date = simpleDateFormat.format(new Date());
 		map.put(Key_OrderDate, date);
 		return map;
+	}
+	
+	private String getMaxCouponLimit(Coupons coupon) {
+		if (coupon != null) {
+			return " (Max-" + coupon.getMaxDiscountLimit() + CommonUtil.Symbol_INR + ")";
+		}
+		return "";
 	}
 	
 	private static void scanAndReplaceValueInTable(XWPFTable table, Map<String, String> map) {

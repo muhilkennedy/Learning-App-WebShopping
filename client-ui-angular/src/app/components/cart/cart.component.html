@@ -85,6 +85,9 @@
               <a *ngIf="!isMobileView()" style="cursor: pointer;" class="btn btn-default update" (click)="applyCoupon()">Apply Coupon</a>
               <a *ngIf="isMobileView()" style="cursor: pointer; margin-left: 0px;" class="btn btn-default update" (click)="applyCoupon()">Apply Coupon</a>
             </li>
+            <li *ngIf="this.couponDetails !== undefined && this.couponDetails !== null">
+              <p>Maximum Discount Amount = {{this.couponDetails.maxDiscountLimit}} ₹</p>
+            <li>
           </ul>
           <!-- <a class="btn btn-default check_out" href="">Apply</a> -->
         </div>

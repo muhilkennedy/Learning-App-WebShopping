@@ -38,11 +38,31 @@
                 </td>
                 <td>
                   <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>Max Discount Limit(inr)</mat-label>
+                    <input matInput type="number" class="example-right-align" [(ngModel)]="maxDiscount" required>
+                  </mat-form-field>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>Minimum Total Limit(inr)</mat-label>
+                    <input matInput type="number" class="example-right-align" [(ngModel)]="totalLimit">
+                  </mat-form-field>
+                </td>
+                <td>
+                  <mat-form-field appearance="outline" class="matitem">
                     <mat-label>PerUser Usage</mat-label>
-                    <input matInput type="number" class="example-right-align" [(ngModel)]="userUsage" required>
+                    <input matInput type="number" class="example-right-align" [(ngModel)]="userUsage">
                     <mat-hint>Number of times user can apply this code</mat-hint>
                   </mat-form-field>
                 </td>
+                <!-- <td>
+                  <mat-form-field appearance="outline" class="matitem">
+                    <mat-label>Flat OFF(inr)</mat-label>
+                    <input matInput type="number" class="example-right-align" [(ngModel)]="flatOff">
+                  </mat-form-field>
+                </td> -->
               </tr>
               <tr>
                 <td>
