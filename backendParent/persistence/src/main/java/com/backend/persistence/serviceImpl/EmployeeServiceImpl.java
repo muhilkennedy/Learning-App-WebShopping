@@ -145,7 +145,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Override
 	public void updateEmployee(EmployeeInfo actualEmployee, EmployeeInfo updatedEmployee, byte[] profilePic) throws Exception {
 		if (profilePic != null) {
-			actualEmployee.setProfilePic(new SerialBlob(profilePic));
+			actualEmployee.setProfilePic(new SerialBlob(CommonUtil.getThumbnailImage(profilePic)));
 		}
 		if (!StringUtils.isEmpty(updatedEmployee.getEmailId())) {
 			actualEmployee.setEmailId(updatedEmployee.getEmailId());
