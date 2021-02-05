@@ -218,7 +218,6 @@ public class InvoiceServiceImpl implements InvoiceService{
 		InputStream is = currentTemplate.getDocument().getBinaryStream();
 		XWPFDocument poiDocx = new XWPFDocument(is);
 		// generate map for all prop values.
-		// Adress needs to be passed explicitly in future to handle multiple address.
 		Map<String, String> map = generateInvoiceFieldsMap(order);
 		// replace props in table.
 		XWPFTable productTable = null;
