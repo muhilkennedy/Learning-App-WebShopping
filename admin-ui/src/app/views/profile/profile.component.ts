@@ -4,7 +4,7 @@ import { UserStoreService } from '../../service/userStore/user-store.service';
 import { ProfileService } from '../../shared/profile/profile.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TenantStoreService } from '../../service/tenantStore/tenant-store.service';
-import { NgxImageCompressService } from 'ngx-image-compress';
+// import { NgxImageCompressService } from 'ngx-image-compress';
 declare var rsaencrypt: Function;
 
 @Component({
@@ -44,9 +44,8 @@ export class ProfileComponent implements OnInit {
     private tenantStore: TenantStoreService,
     private alertService: AlertService,
     private profileService: ProfileService,
-    private sanitizer: DomSanitizer,
-    private imageCompress: NgxImageCompressService) {
-
+    private sanitizer: DomSanitizer) {
+      //private imageCompress: NgxImageCompressService
   }
 
   ngOnInit(): void {
@@ -154,7 +153,7 @@ export class ProfileComponent implements OnInit {
   //   });
   // }
 
-  file: any;
+  /*file: any;
   localUrl: any;
   localCompressedURl: any;
   sizeOfOriginalImage: number;
@@ -208,6 +207,6 @@ export class ProfileComponent implements OnInit {
     }
     const blob = new Blob([int8Array], { type: 'image/jpeg' });
     return blob;
-  }
+  }*/
 
 }

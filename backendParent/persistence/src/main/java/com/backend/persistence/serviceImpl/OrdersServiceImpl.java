@@ -1,5 +1,9 @@
 package com.backend.persistence.serviceImpl;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Blob;
@@ -10,6 +14,7 @@ import java.util.Map;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import com.backend.commons.service.EmailService;
 import com.backend.commons.util.CommonUtil;
+import com.backend.commons.util.FileUtil;
 import com.backend.commons.util.OrdersUtil;
 import com.backend.core.configuration.PaymentModes;
 import com.backend.core.entity.EmployeeInfo;
@@ -153,8 +159,14 @@ public class OrdersServiceImpl implements OrdersService {
 			productRepo.save(product);
 		}
 		if (coupon != null) {
-			subTotal = subTotal.multiply(new BigDecimal(coupon.getDiscount())).divide(new BigDecimal(100));
+			BigDecimal offerAmout = subTotal.multiply(new BigDecimal(coupon.getDiscount())).divide(new BigDecimal(100));
+			if (offerAmout.compareTo(new BigDecimal(coupon.getMaxDiscountLimit())) > 0) {
+				subTotal = subTotal.subtract(new BigDecimal(coupon.getMaxDiscountLimit()));
+			} else {
+				subTotal = subTotal.subtract(offerAmout);
+			}
 		}
+		subTotal.add(new BigDecimal(deliveryCharge));
 		order.setSubTotal(subTotal.setScale(2, RoundingMode.CEILING));
 		order.setOrderDetails(orderDetails);
 		ordersRepo.saveAndFlush(order);
@@ -172,6 +184,16 @@ public class OrdersServiceImpl implements OrdersService {
 	@Override
 	public List<Orders> getOrders(int limit, int offset) {
 		return ordersRepo.findLimitedOrders(baseService.getTenantInfo().getTenantID(), limit, offset);
+	}
+	
+	@Override
+	public int getOrdersCount(String limit, String offset, String condition, long date, String status)
+			throws Exception {
+		if (date == 0L) {
+			condition = "def";
+		}
+		return ordersDao.getOrdersCount(baseService.getTenantInfo().getTenantID(), limit, offset, condition, date,
+				status);
 	}
 	
 	@Override
@@ -253,5 +275,28 @@ public class OrdersServiceImpl implements OrdersService {
 	public Map<String, BigDecimal> ordersWeeklyReport() throws Exception{
 		return ordersDao.getOrdersWeeklyTotal(baseService.getTenantInfo().getTenantID());
 	}
+	
+	@Override
+	public int couponAppliedCount(long couponId) {
+		CustomerInfo customer = (CustomerInfo)baseService.getUserInfo();
+		return ordersRepo.findCouponAppliedCount(baseService.getTenantInfo(), customer.getCustomerId(), couponId);
+	}
 
+	@Override
+	public File getOrderInvoice(Long id) throws Exception {
+		Orders order = ordersRepo.findOrdersById(baseService.getTenantInfo(), id);
+		if (order != null) {
+			OrderInvoice invoice = invoiceService.getInvoiceByOrder(order);
+			File tempFile = File.createTempFile("Invoice-" + order.getOrderId(), CommonUtil.Document_Extention);
+			InputStream in = invoice.getDocument().getBinaryStream();
+			OutputStream out = new FileOutputStream(tempFile);
+			IOUtils.copy(in, out);
+			File pdfFile = FileUtil.convertDocToPDF(tempFile);
+			//flush
+			CommonUtil.deleteDirectoryOrFile(tempFile);
+			return pdfFile;
+		}
+		return null;
+	}
+	
 }

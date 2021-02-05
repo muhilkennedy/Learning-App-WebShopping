@@ -68,8 +68,9 @@ export class PosComponent implements OnInit {
     }
   }
 
-  //clear all entries shift+delete
+
   @HostListener('keydown', ['$event']) onKeyUp(e) {
+    //clear all entries shift+delete
     if (e.keyCode == 46 && e.shiftKey ) {
       this.clearData();
     }

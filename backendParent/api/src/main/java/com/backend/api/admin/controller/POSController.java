@@ -68,18 +68,24 @@ public class POSController {
 	@RequestMapping("/viewPdf")
 	public ResponseEntity<Resource> viewPdf( @RequestParam(value = "id", required = true) String id)throws Exception 
 	{
-		File file = posService.getPOSInvoice(id);
-        HttpHeaders header = new HttpHeaders();
-        header.add(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=Dummy.pdf");
-    	Path path = Paths.get(file.getAbsolutePath());
-        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
-        long fileLength = file.length();
-        CommonUtil.deleteDirectoryOrFile(file);
-        return ResponseEntity.ok()
-                .headers(header)
-                .contentLength(fileLength)
-                .contentType(MediaType.parseMediaType("application/pdf"))
-                .body(resource);
+		File file = null;
+		try {
+			file = posService.getPOSInvoice(id);
+	        HttpHeaders header = new HttpHeaders();
+	        header.add(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=Dummy.pdf");
+	    	Path path = Paths.get(file.getAbsolutePath());
+	        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
+	        long fileLength = file.length();
+	        CommonUtil.deleteDirectoryOrFile(file);
+	        return ResponseEntity.ok()
+	                .headers(header)
+	                .contentLength(fileLength)
+	                .contentType(MediaType.parseMediaType("application/pdf"))
+	                .body(resource);
+		}
+		finally {
+			CommonUtil.deleteDirectoryOrFile(file);
+		}
     }
 	
 	@RequestMapping(value = "/getPOS", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

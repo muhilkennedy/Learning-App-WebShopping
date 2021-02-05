@@ -1,3 +1,4 @@
+import { HostListener } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
@@ -14,12 +15,27 @@ import { UserStoreService } from 'src/app/service/shared/user-store/user-store.s
 })
 export class HeaderComponent implements OnInit {
 
+  public innerWidth: any;
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.innerWidth = window.innerWidth;
+  }
+
+  isMobileView(){
+    if(this.innerWidth < 600){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
   constructor(public tenantStore: TenantStoreService, private router: Router,
               public userStore: UserStoreService, private cartService: CartService,
               public cookieService: CookieService, public commonsService: CommonsService) { }
 
   ngOnInit(): void {
-
+    this.onResize(event);
   }
 
   isLoggedIn(){

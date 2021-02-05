@@ -23,10 +23,14 @@ export class CreateCouponComponent implements OnInit {
   freeShipping = false;
   title:string;
   code:string;
-  discount:number;
-  userUsage:number
+  discount:number = 0;
+  userUsage:number = 0;
   startDate:Date = new Date();
   endDate:Date = new Date();
+
+  totalLimit:number = 0;
+  flatOff:number = 0;
+  maxDiscount:number = 0;
 
   constructor(private coupService: CouponService, private alertService: AlertService) {
     this.minDateToBegin = new Date();
@@ -53,7 +57,8 @@ export class CreateCouponComponent implements OnInit {
   createCoupon(){
     this.loading = true;
     this.coupService.createCoupon(this.title, this.code, this.startDate.getTime(),
-                    this.endDate.getTime(), this.active, this.discount, this.freeShipping, this.userUsage)
+                    this.endDate.getTime(), this.active, this.discount, this.freeShipping, this.userUsage,
+                    this.maxDiscount, this.totalLimit)
                     .subscribe((resp:any) => {
                       if(resp.statusCode === 200){
                         this.alertService.success('Coupon created successfully');

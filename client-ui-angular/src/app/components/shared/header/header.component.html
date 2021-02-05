@@ -26,16 +26,15 @@
 
   <div class="header-middle"><!--header-middle-->
     <div class="container">
-      <div class="row">
+      <div class="row" *ngIf="!isMobileView()" >
         <div class="col-sm-3">
           <div class="logo pull-left">
             <a (click)="openHome()"><img class="tenantlogo" src="{{tenantStore.tenantLogo}}" alt="TenantLogo" /></a>
           </div>
         </div>
         <div class="col-sm-6">
-          <div class="shop-menu pull-right">
-
-          </div>
+          <!-- <div class="shop-menu pull-right">
+          </div> -->
         </div>
         <div class="col-sm-1">
           <div *ngIf="isLoggedIn()" class="shop-menu pull-right">
@@ -69,15 +68,54 @@
           </div>
         </div>
       </div>
+
+      <div class="row" *ngIf="isMobileView()">
+        <div class="col-sm-3">
+          <div class="logo pull-left">
+            <a (click)="openHome()"><img class="tenantlogo" src="{{tenantStore.tenantLogo}}" alt="TenantLogo" /></a>
+          </div>
+        </div>
+        <table class="table table-condensed">
+          <tr>
+            <td *ngIf="isLoggedIn()" class="shop-menu pull-right">
+              <button mat-button disabled style="color: brown;">
+                <label>Hi {{userStore.firstName}}</label>
+              </button>
+            </td>
+            <td class="shop-menu pull-right">
+              <button mat-button class="notification"  (click)="openCart()">
+                <i class="fa fa-shopping-cart"> Cart</i>
+                <span class="badge">{{userStore.cartCount}}</span>
+              </button>
+            </td>
+            <td *ngIf="!isLoggedIn()" class="col-sm-1">
+              <div class="shop-menu pull-right">
+                <button mat-button (click)="openLogin()"><i class="fa fa-lock"></i> Login</button>
+              </div>
+            </td>
+            <td *ngIf="isLoggedIn()" class="col-sm-1">
+              <div class="shop-menu pull-right">
+                <button mat-button [matMenuTriggerFor]="menu"><i class="fa fa-user"></i> Profile</button>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item (click)="openProfie()">Account</button>
+                  <button mat-menu-item (click)="openOrders()">Online Orders</button>
+                  <button mat-menu-item (click)="openPOSOrders()">POS Orders</button>
+                  <button mat-menu-item (click)="logout()">Logout</button>
+                </mat-menu>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
     </div>
   </div><!--/header-middle-->
 
-  <div class="header-bottom">
+  <div [ngClass]="{'header-bottom': !isMobileView(), 'header-mobile': isMobileView()}">
     <div class="container">
       <div class="row">
         <div class="col-sm-12">
           <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <button type="button" class="navbar-toggle navbar-toggle-color" data-toggle="collapse" data-target=".navbar-collapse">
               <span class="sr-only">Toggle navigation</span>
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>

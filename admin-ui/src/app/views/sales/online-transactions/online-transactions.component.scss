@@ -29,3 +29,13 @@
   color: brown;
   cursor: pointer;
 }
+
+.printicon{
+  color: chocolate;
+  cursor: pointer;
+  transition: transform .2s;
+}
+
+.printicon:hover  {
+  transform: scale(1.5);
+}

@@ -33,6 +33,8 @@ export class CheckoutComponent implements OnInit {
   door:string;
   mobile:string;
 
+  maxDiscountlimit = 0;
+
   public innerWidth: any;
   @HostListener('window:resize', ['$event'])
   onResize(event) {
@@ -108,7 +110,13 @@ export class CheckoutComponent implements OnInit {
 
   calculateCouponApplied(){
     if((this.couponDetails !== undefined && this.couponDetails !== null)){
-      return this.cartSubtotal() - (this.cartSubtotal()*this.couponDetails.discount)/100;
+      let couponDiscountValue = (this.cartSubtotal()*this.couponDetails.discount)/100;
+      if(couponDiscountValue >=  this.commonService.couponDetails.maxDiscountLimit){
+        return this.cartSubtotal() - this.commonService.couponDetails.maxDiscountLimit;
+      }
+      else{
+        return this.cartSubtotal() - couponDiscountValue;
+      }
     }
   }
 
@@ -152,7 +160,7 @@ export class CheckoutComponent implements OnInit {
       addressId = this.addressSelected;
     }
     if(this.couponDetails !== undefined && this.couponDetails !== null && this.couponDetails.couponId !== undefined){
-      coupon = this.couponDetails.coupon;
+      coupon = this.couponDetails.couponId;
     }
     this.orderService.placeOrder(coupon, paymentMode, addressId, this.getDeliveryCharge())
                       .subscribe((resp:any) => {
