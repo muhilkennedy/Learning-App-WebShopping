@@ -3,11 +3,14 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CartService } from 'src/app/service/cart/cart.service';
 import { ProductService } from 'src/app/service/product/product.service';
+import { CommonsService } from 'src/app/service/shared/commons/commons.service';
 import { UserStoreService } from 'src/app/service/shared/user-store/user-store.service';
+
 
 export class ItemNode {
   children: ItemNode[];
@@ -66,8 +69,8 @@ export class ProductListComponent implements OnInit {
 
   // MatPaginator Inputs
   offset = 0;
-  pageSize = 9;
-  pageSizeOptions: number[] = [9, 15, 25];
+  pageSize = 10;
+  pageSizeOptions: number[] = [10, 15, 25];
   // MatPaginator Output
   pageEvent: PageEvent;
 
@@ -110,7 +113,8 @@ export class ProductListComponent implements OnInit {
   }
 
   constructor(private productService: ProductService, private userStore: UserStoreService,
-              private cartService: CartService) {
+              private cartService: CartService, private router: Router,
+              private commonService: CommonsService, private activatedRoute: ActivatedRoute ) {
 
   }
 
@@ -125,10 +129,35 @@ export class ProductListComponent implements OnInit {
 
   ngOnInit(): void {
     this.onResize("event");
-    this.setProducts(new Array(), null, null);
-    this.productService.getAllCategories()
+    if(this.isMobileView()){
+      this.pageSizeOptions.length = 0;
+      this.pageSizeOptions = [10, 20, 50];
+    }
+    else{
+      this.pageSizeOptions.length = 0;
+      this.pageSizeOptions = [9, 18, 36];
+    }
+    this.activatedRoute.queryParams.subscribe(queryParams => {
+      let searchText=queryParams.searchText;
+      if(searchText !== undefined && searchText !== null && searchText !== ''
+        && searchText !== "null" && this.commonService.searchText === searchText){
+          this.pageSize = 100;
+          this.productSearched = searchText;
+          this.searchAction();
+          this.commonService.searchText = null;
+      }
+      else{
+          this.pageSize = this.pageSizeOptions[0];
+        this.setProducts(new Array(), null, null);
+      }
+    });
+    // let searchText=this.activatedRoute.snapshot.paramMap.get("searchText");
+
+    if(this.commonService.categories === undefined || this.commonService.categories === null){
+      this.productService.getAllCategories()
                         .subscribe((resp:any) => {
                           if(resp.statusCode === 200){
+                            this.commonService.categories = resp.data;
                             this.categoryTree = this.buildFileTree(resp.data, 0);
                             this.dataSource.data = this.categoryTree;
                           }
@@ -139,6 +168,11 @@ export class ProductListComponent implements OnInit {
                           (error:any) => {
                             alert('Something went wrong!');
                         });
+    }
+    else{
+      this.categoryTree = this.buildFileTree(this.commonService.categories, 0);
+      this.dataSource.data = this.categoryTree;
+    }
   }
 
   setProducts(cIds, sortField, SortType){
@@ -253,24 +287,6 @@ export class ProductListComponent implements OnInit {
                             alert("something went wrong!");
                             this.loading = false;
                           });
-      // .subscribe((resp:any) => {
-      //   if(resp.statusCode  === 200){
-      //     this.options = resp.dataList;
-      //     this.filteredOptions = this.myControl.valueChanges.pipe(
-      //       startWith(''),
-      //       map(value => this._filter(value))
-      //     );
-      //   }
-      //   else{
-      //     alert('Failed : ' + resp.errorMessages);
-      //   }
-      //   this.previousSearchTerm = searchTerm;
-      //   this.loading = false;
-      // },
-      // (error:any) => {
-      //   alert("something went wrong!");
-      //   this.loading = false;
-      // });
   }
 
   private _filter(value: string): string[] {
@@ -302,5 +318,9 @@ export class ProductListComponent implements OnInit {
 
   clearSort(){
       this.setProducts(this.selectedCategoryId, null, null);
+  }
+
+  viewDetailPage(product){
+    this.router.navigate(['productDetail']);
   }
 }
