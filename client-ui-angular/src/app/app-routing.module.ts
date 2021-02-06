@@ -7,6 +7,7 @@ import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { OrderHistoryComponent } from './components/order-history/order-history.component';
 import { PosHistoryComponent } from './components/pos-history/pos-history.component';
+import { ProductDetailsComponent } from './components/product-details/product-details.component';
 import { ProductListComponent } from './components/product-list/product-list.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { AuthenticateComponent } from './components/shared/authenticate/authenticate.component';
@@ -62,6 +63,10 @@ const routes: Routes = [
   {
     path:'privacy',
     component: PrivacyPolicyComponent
+  },
+  {
+    path:'productDetail',
+    component: ProductDetailsComponent
   },
   {
     path: '**',

@@ -28,6 +28,24 @@ export class CommonsService {
   private _alertoptionsDefault = {
     duration: 3000
   };
+  private _categories: any;
+  private _searchText: string;
+
+  public get searchText(): string {
+    return this._searchText;
+  }
+
+  public set searchText(value: string) {
+    this._searchText = value;
+  }
+
+  public get categories(): any {
+    return this._categories;
+  }
+
+  public set categories(value: any) {
+    this._categories = value;
+  }
 
   public get alertoptionsDefault() {
     return this._alertoptionsDefault;
