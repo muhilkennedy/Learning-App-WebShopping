@@ -25,4 +25,6 @@ public interface POSService {
 
 	List<POSData> getPOSDATAForCustomer() throws Exception;
 
+	File getPOSInvoiceAsOnlinePdf(String id) throws Exception;
+
 }

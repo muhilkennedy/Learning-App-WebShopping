@@ -453,4 +453,17 @@ export class PosComponent implements OnInit {
 
   }
 
+  printAsPdf(){
+    this.loading = true;
+    this.posService.getPDFDocument(this.posId)
+                    .subscribe((resp: any) => {
+                        window.open(window.URL.createObjectURL( new Blob([resp], { type: 'application/pdf' })),"_blank");
+                        this.loading = false;
+                        this.myModal.hide();
+                    },
+                    (error) => {
+                      this.alertService.error("Something went wrong!", error)
+                    });
+  }
+
 }

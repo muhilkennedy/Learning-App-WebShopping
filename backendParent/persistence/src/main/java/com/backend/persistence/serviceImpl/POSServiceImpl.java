@@ -127,5 +127,15 @@ public class POSServiceImpl implements POSService {
 		}
 		return null;
 	}
+	
+	@Override
+	public File getPOSInvoiceAsOnlinePdf(String id) throws Exception {
+		POSData posData = getPOSDATAById(id);
+		if(posData != null ) {
+			return invoiceService.getPOSInvoiceAsOnlinePdf(posData);
+		}
+		return null;
+	}
+
 
 }

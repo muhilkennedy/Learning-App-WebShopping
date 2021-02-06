@@ -231,9 +231,12 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="printModal.hide()">Close</button>
-          <button type="button" class="btn btn-warning" (click)="getPDF()">
+        <button type="button" class="btn btn-warning" (click)="printAsPdf()">
+          <i class="fa fa-print"></i> Print As Online Bill
+        </button>
+        <button type="button" class="btn btn-warning" (click)="getPDF()">
             <i class="fa fa-print"></i> Print
-          </button>
+        </button>
       </div>
     </div>
   </div>
