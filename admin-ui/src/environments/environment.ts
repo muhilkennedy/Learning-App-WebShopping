@@ -5,7 +5,7 @@
 
 export const environment = {
   production: false,
-  BuildOrigin: "web",
+  // BuildOrigin: "web",
   tenantId: "ria.mpm",
   // tenantId: "devTenant",
   // backendBaseUrl:"https://riabackend.staqlab-tunnel.com",

@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -15,6 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.sql.rowset.serial.SerialBlob;
 import javax.sql.rowset.serial.SerialException;
 import javax.transaction.Transactional;
@@ -36,7 +41,9 @@ import com.backend.core.entity.InvoiceTemplate;
 import com.backend.core.entity.Tenant;
 import com.backend.core.repository.InvoiceRepository;
 import com.backend.core.service.BaseService;
+import com.backend.core.util.Constants;
 import com.backend.core.util.TenantUtil;
+import com.backend.persistence.dao.PaymentDao;
 import com.backend.persistence.entity.Coupons;
 import com.backend.persistence.entity.CustomerAddress;
 import com.backend.persistence.entity.CustomerInfo;
@@ -94,6 +101,9 @@ public class InvoiceServiceImpl implements InvoiceService{
 	
 	@Autowired
 	private CouponsService couponService;
+	
+	@Autowired
+	private PaymentDao paymentDao;
 	
 	@Override
 	public void save(InvoiceTemplate template) {
@@ -309,6 +319,11 @@ public class InvoiceServiceImpl implements InvoiceService{
 			map.put(Key_CustomerPin, deliveryAddress.getPincode());
 			map.put(Key_CustomerMobile, deliveryAddress.getMobileContact());
 		}
+		try {
+			map.put(Key_PaymentMode, paymentDao.getPaymentModeById(order.getPaymentModeId()));
+		} catch (Exception e) {
+			map.put(Key_PaymentMode, "NA");
+		}
 		map.put(Key_CustomerEmail, user.getEmailId());
 		map.put(Key_OrderId, "Order-" + order.getOrderId());
 		String pattern = "dd-MM-yyyy HH:mm";
@@ -439,6 +454,112 @@ public class InvoiceServiceImpl implements InvoiceService{
 		map.put(Key_PaymentMode, posData.getPaymentMode());
 		map.put(Key_TotalQty, posData.getTotalQuantity());
 		return map;
+	}
+	
+	private Map<String, String> generatePOSInvoicAsOnlineBilleFieldsMap(POSData posData) throws Exception {
+		CustomerInfo user = customerService.getCustomerByMobile(posData.getMobile());
+		Map<String, String> map = new HashMap<>();
+		if(user != null) {
+			map.put(Key_CustomerEmail, user.getEmailId());
+			map.put(Key_CustomerName, user.getFirstName().toUpperCase() + " " + user.getLastName().toUpperCase());
+			List<CustomerAddress> addresses = user.getCustomerAddress();
+			CustomerAddress deliveryAddress = null;
+			for(CustomerAddress address : addresses) {
+				//select the first address(later need to implement default address logic)
+				deliveryAddress = address;
+				break;
+			}
+			if(deliveryAddress != null) {
+				map.put(Key_CustomerStreet, deliveryAddress.getStreet());
+				map.put(Key_CustomerCity, deliveryAddress.getCity());
+				map.put(Key_CustomerPin, deliveryAddress.getPincode());
+				map.put(Key_CustomerMobile, deliveryAddress.getMobileContact());
+			}
+		}
+		else {
+			//make entries blank
+			map.put(Key_CustomerName, Constants.Key_NotApplicable);
+			map.put(Key_CustomerEmail, "");
+			map.put(Key_CustomerStreet, "");
+			map.put(Key_CustomerCity, "");
+			map.put(Key_CustomerPin, "");
+			map.put(Key_CustomerMobile, "(Register in our app for more information)");
+		}
+		
+		try {
+			map.put(Key_PaymentMode, posData.getPaymentMode());
+		} catch (Exception e) {
+			map.put(Key_PaymentMode, Constants.Key_NotApplicable);
+		}
+		
+		map.put(Key_OrderId, posData.getPrimaryKey());
+		String pattern = "dd-MM-yyyy HH:mm";
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("IST"));
+		String date = simpleDateFormat.format(posData.getTimeCreated());
+		map.put(Key_OrderDate, date);
+		return map;
+	}
+	
+	@Override
+	public File getPOSInvoiceAsOnlinePdf(POSData posData) throws Exception {
+		InvoiceTemplate currentTemplate = invoiceRepository.findInvoiceTemplateForTenant(baseService.getTenantInfo());
+		InputStream is = currentTemplate.getDocument().getBinaryStream();
+		XWPFDocument poiDocx = new XWPFDocument(is);
+		// generate map for all prop values.
+		Map<String, String> map = generatePOSInvoicAsOnlineBilleFieldsMap(posData);
+		// replace props in table.
+		XWPFTable productTable = null;
+		List<XWPFTable> tables = poiDocx.getTables();
+		for (XWPFTable table : tables) {
+			scanAndReplaceValueInTable(table, map);
+			if(table.getText().contains("QTY")) {
+				productTable = table;
+			}
+		}
+		if(productTable == null) {
+			throw new Exception("Cannot able to find Product table!");
+		}
+		float subTotal = 0;
+		float totalDiscount = 0;
+		List<PosProduct> items = posData.getPosProduct();
+		for(PosProduct item: items) {
+			XWPFTableRow newRow = productTable.createRow();
+			newRow.getCell(0).setText(item.getItemName());
+			newRow.getCell(1).setText(String.valueOf(item.getQuantity()));
+			newRow.getCell(2).setText(String.format("%.2f",item.getMrp()));
+			newRow.getCell(3).setText(String.format("%.0f",item.getDiscount())+"%");
+			newRow.getCell(4).setText(String.format("%.2f",item.getSellingCost()));
+			float total = 0;
+			if (item.getSellingCost() != item.getMrp()) {
+				float singleOffer = item.getMrp() - item.getSellingCost();
+				totalDiscount += singleOffer; 
+			}
+			total = item.getSellingCost()*item.getQuantity();
+			subTotal += total;
+			newRow.getCell(5).setText(String.format("%.2f", total));
+		}
+		
+		//inserting dummy row for clarity.
+		productTable.createRow();
+		//calculate sub-total and manipulate balance due.
+		XWPFTableRow subTotalRow = productTable.createRow();
+		subTotalRow.getCell(2).setText("Money Saved");
+		subTotalRow.getCell(3).setText(String.format("%.2f", totalDiscount));
+		subTotalRow.getCell(4).setText("SUB-TOTAL");
+		subTotalRow.getCell(5).setText(String.format("%.2f", subTotal) + CommonUtil.Symbol_INR);
+		// final row
+		XWPFTableRow payableRow = productTable.createRow();
+		payableRow.getCell(4).setText("AMOUNT-PAYABLE");
+		payableRow.getCell(5).setText(posData.getActualSubTotal() + CommonUtil.Symbol_INR);
+		//genearte file blob
+		File tempFile = File.createTempFile("Invoice-"+posData.getPrimaryKey(), CommonUtil.Document_Extention); 
+		poiDocx.write(new FileOutputStream(tempFile));
+		File pdf = FileUtil.convertDocToPDF(tempFile);
+		//flush File
+		CommonUtil.deleteDirectoryOrFile(tempFile);
+		IOUtils.closeQuietly(is);
+		return pdf;
 	}
 
 }
