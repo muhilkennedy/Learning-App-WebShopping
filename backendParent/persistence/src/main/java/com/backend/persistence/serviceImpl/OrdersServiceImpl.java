@@ -166,7 +166,7 @@ public class OrdersServiceImpl implements OrdersService {
 				subTotal = subTotal.subtract(offerAmout);
 			}
 		}
-		subTotal.add(new BigDecimal(deliveryCharge));
+		subTotal = subTotal.add(new BigDecimal(deliveryCharge));
 		order.setSubTotal(subTotal.setScale(2, RoundingMode.CEILING));
 		order.setOrderDetails(orderDetails);
 		ordersRepo.saveAndFlush(order);

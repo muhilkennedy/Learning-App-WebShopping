@@ -262,14 +262,17 @@ public class InvoiceServiceImpl implements InvoiceService{
 			newRow.getCell(5).setText(total.toString());
 		}
 		Coupons coupon = null;
+		BigDecimal couponTotal = new BigDecimal(0);
 		if (order.isCouponapplied()) {
 			coupon = couponService.findCouponById(order.getCouponId());
 			BigDecimal couponAmount = subTotal.multiply(new BigDecimal(order.getCouponDiscount()))
 					.divide(new BigDecimal(100));
 			if (couponAmount.compareTo(new BigDecimal(coupon.getMaxDiscountLimit())) > 0) {
 				totalDiscount = totalDiscount.add(new BigDecimal(coupon.getMaxDiscountLimit()));
+				couponTotal = new BigDecimal(coupon.getMaxDiscountLimit());
 			} else {
 				totalDiscount = totalDiscount.add(couponAmount);
+				couponTotal = couponAmount;
 			}
 		}
 		//inserting dummy row for clarity.
@@ -284,8 +287,11 @@ public class InvoiceServiceImpl implements InvoiceService{
 		XWPFTableRow finalRow = productTable.createRow();
 		finalRow.getCell(2).setText("Coupon Applied");
 		finalRow.getCell(3).setText(order.getCouponDiscount() + CommonUtil.Symbol_PERCENT + getMaxCouponLimit(coupon) );
-		finalRow.getCell(4).setText("Delivery Charge");
-		finalRow.getCell(5).setText((order.getDeliveryCharge() == 0)? "FREE" : (order.getDeliveryCharge() + CommonUtil.Symbol_INR));
+		finalRow.getCell(4).setText("Total With Discount");
+		finalRow.getCell(5).setText(subTotal.subtract(couponTotal).setScale(2, RoundingMode.CEILING).toString() + CommonUtil.Symbol_INR);
+		XWPFTableRow deliveryRow = productTable.createRow();
+		deliveryRow.getCell(4).setText("Delivery Charge");
+		deliveryRow.getCell(5).setText((order.getDeliveryCharge() == 0)? "FREE" : (order.getDeliveryCharge() + CommonUtil.Symbol_INR));
 		XWPFTableRow payableRow = productTable.createRow();
 		payableRow.getCell(4).setText("AMOUNT-PAYABLE");
 		payableRow.getCell(5).setText(order.getSubTotal().setScale(2, RoundingMode.CEILING).toString() + CommonUtil.Symbol_INR);

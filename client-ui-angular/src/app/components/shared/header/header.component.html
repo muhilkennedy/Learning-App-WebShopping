@@ -58,11 +58,11 @@
         </div>
         <div  *ngIf="isLoggedIn()" class="col-sm-1">
           <div class="shop-menu pull-right">
-            <button mat-button [matMenuTriggerFor]="menu"><i class="fa fa-user"></i> Profile</button>
+            <button mat-button [matMenuTriggerFor]="menu"><i class="fa fa-user"></i> Account</button>
             <mat-menu #menu="matMenu">
-              <button mat-menu-item (click)="openProfie()">Account</button>
+              <button mat-menu-item (click)="openProfie()">Profile</button>
               <button mat-menu-item (click)="openOrders()">Online Orders</button>
-              <button mat-menu-item (click)="openPOSOrders()">POS Orders</button>
+              <button mat-menu-item (click)="openPOSOrders()">In-Store Purchase</button>
               <button mat-menu-item (click)="logout()">Logout</button>
             </mat-menu>
           </div>
@@ -70,40 +70,83 @@
       </div>
 
       <div class="row" *ngIf="isMobileView()">
-        <div class="col-sm-3">
+        <!-- <div class="col-sm-3">
           <div class="logo pull-left">
             <a (click)="openHome()"><img class="tenantlogo" src="{{tenantStore.tenantLogo}}" alt="TenantLogo" /></a>
           </div>
-        </div>
-        <table class="table table-condensed">
+        </div> -->
+        <table style="width: 100%;">
           <tr>
-            <td *ngIf="isLoggedIn()" class="shop-menu pull-right">
+            <td>
+              <a (click)="openHome()"><img class="tenantlogo" src="{{tenantStore.tenantLogo}}" alt="TenantLogo" /></a>
+            </td>
+            <td *ngIf="isLoggedIn()">
               <button mat-button disabled style="color: brown;">
                 <label>Hi {{userStore.firstName}}</label>
               </button>
             </td>
+            <td style="float: right;">
+              <button mat-icon-button [matMenuTriggerFor]="menu" style="color: #fe980f;">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <!-- <button mat-mini-fab color="accent" [matMenuTriggerFor]="menu">
+                <mat-icon>menu</mat-icon>
+              </button> -->
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="openHome()">
+                  <mat-icon>home</mat-icon>
+                  <span>Home</span>
+                </button>
+                <button mat-menu-item (click)="openProductList()">
+                  <mat-icon>shopping_bag</mat-icon>
+                  <span>Shop Now</span>
+                </button>
+                <button mat-menu-item (click)="openContact()">
+                  <mat-icon>contact_phone</mat-icon>
+                  <span>Contact Us</span>
+                </button>
+              </mat-menu>
+            </td>
+          </tr>
+        </table>
+        <table>
+          <tr>
+            <td class="shop-menu pull-right">
+              <button mat-button (click)="openProductList()">
+                <mat-icon>shopping_bag</mat-icon>
+                <span> Shop </span>
+              </button>
+            </td>
             <td class="shop-menu pull-right">
               <button mat-button class="notification"  (click)="openCart()">
-                <i class="fa fa-shopping-cart"> Cart</i>
+                <mat-icon>shopping_cart</mat-icon>
+                <span> Cart</span>
                 <span class="badge">{{userStore.cartCount}}</span>
               </button>
             </td>
             <td *ngIf="!isLoggedIn()" class="col-sm-1">
               <div class="shop-menu pull-right">
-                <button mat-button (click)="openLogin()"><i class="fa fa-lock"></i> Login</button>
+                <button mat-button (click)="openLogin()">
+                  <mat-icon>login</mat-icon>
+                  <span> Login</span>
+                </button>
               </div>
             </td>
             <td *ngIf="isLoggedIn()" class="col-sm-1">
               <div class="shop-menu pull-right">
-                <button mat-button [matMenuTriggerFor]="menu"><i class="fa fa-user"></i> Profile</button>
+                <button mat-button [matMenuTriggerFor]="menu">
+                  <mat-icon>person</mat-icon>
+                  <span> Account</span>
+                </button>
                 <mat-menu #menu="matMenu">
-                  <button mat-menu-item (click)="openProfie()">Account</button>
+                  <button mat-menu-item (click)="openProfie()">Profile</button>
                   <button mat-menu-item (click)="openOrders()">Online Orders</button>
-                  <button mat-menu-item (click)="openPOSOrders()">POS Orders</button>
+                  <button mat-menu-item (click)="openPOSOrders()">In-Store Purchase</button>
                   <button mat-menu-item (click)="logout()">Logout</button>
                 </mat-menu>
               </div>
             </td>
+
           </tr>
         </table>
       </div>
@@ -117,7 +160,7 @@
           <!-- <div [ngClass]="{'search_box pull-right': !isMobileView(), 'search_box pull-left searchbar': isMobileView()}">
             <input type="text" placeholder="Search"/>
           </div> -->
-          <mat-form-field class="matitem pull-left" *ngIf="isMobileView()" style="padding-left: 20px;">
+          <mat-form-field class="matitem pull-left" *ngIf="isMobileView()" style="padding-left: 20px; width: 100%;">
             <input type="text"
                    placeholder="Search Product"
                    matInput
@@ -125,7 +168,7 @@
           <button matSuffix type="button" class="btn btn-primary" (click)="searchAction()"><i class="fa fa-search"></i></button>
           </mat-form-field>
 
-          <div class="navbar-header" style="padding-top: 10px;">
+          <div class="navbar-header" style="padding-top: 10px;" *ngIf="!isMobileView()">
             <button type="button" class="navbar-toggle navbar-toggle-color" data-toggle="collapse" data-target=".navbar-collapse">
               <span class="sr-only">Toggle navigation</span>
               <span class="icon-bar"></span>
@@ -141,7 +184,6 @@
             </ul>
           </div>
         </div>
-
       </div>
     </div>
   </div>

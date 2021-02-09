@@ -12,8 +12,8 @@
           <div style="margin:5px 0px; width: 100%;">
             <ul class="list-group">
               <li class="list-group-item" *ngFor="let order of unassignedOrders; let status=false; let failStatus = false;">
+                <i class="float-center fa fa-remove removeStyle" (click)="rejectOrder(order)"></i>
                 <label>ORDER-{{order}}</label>
-                <i class="float-right fa fa-remove removeStyle" (click)="rejectOrder(order)"></i>
                 <i class="float-right fa fa-check-circle acceptStyle" (click)="acceptOrder(order)"></i>
               </li>
             </ul>
