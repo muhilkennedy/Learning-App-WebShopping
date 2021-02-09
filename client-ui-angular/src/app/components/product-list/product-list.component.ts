@@ -10,7 +10,7 @@ import { CartService } from 'src/app/service/cart/cart.service';
 import { ProductService } from 'src/app/service/product/product.service';
 import { CommonsService } from 'src/app/service/shared/commons/commons.service';
 import { UserStoreService } from 'src/app/service/shared/user-store/user-store.service';
-
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export class ItemNode {
   children: ItemNode[];
@@ -114,7 +114,8 @@ export class ProductListComponent implements OnInit {
 
   constructor(private productService: ProductService, private userStore: UserStoreService,
               private cartService: CartService, private router: Router,
-              private commonService: CommonsService, private activatedRoute: ActivatedRoute ) {
+              private commonService: CommonsService, private activatedRoute: ActivatedRoute,
+              private _snackBar: MatSnackBar ) {
 
   }
 
@@ -261,11 +262,12 @@ export class ProductListComponent implements OnInit {
                             this.userStore.cartCount = 0;
                           }
                           this.userStore.cartCount++;
+                          this._snackBar.open('Added To cart Successfully', '', this.commonService.alertoptionsSuccess);
                         }
                         this.productLoading = false;
                       },
                       (error: any) => {
-                        alert("Something went wrong!");
+                        this._snackBar.open('Failed to Add in Cart!', '', this.commonService.alertoptionsError);
                       })
     }
   }

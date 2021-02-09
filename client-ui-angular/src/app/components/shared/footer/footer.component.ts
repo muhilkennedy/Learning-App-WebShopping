@@ -1,3 +1,4 @@
+import { HostListener } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TenantStoreService } from 'src/app/service/shared/tenant-store/tenant-store.service';
@@ -13,9 +14,25 @@ export class FooterComponent implements OnInit {
   orgName1:string;
   orgName2:string;
 
+  public innerWidth: any;
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.innerWidth = window.innerWidth;
+  }
+
+  isMobileView(){
+    if(this.innerWidth < 600){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
   constructor(public tenantStore: TenantStoreService, private router: Router) { }
 
   ngOnInit(): void {
+    this.onResize("event");
     this.orgName1 = environment.orgName1;
     this.orgName2 = environment.orgName2;
   }
