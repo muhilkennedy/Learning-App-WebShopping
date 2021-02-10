@@ -5,6 +5,7 @@ import { CheckoutComponent } from './components/checkout/checkout.component';
 import { ContactComponent } from './components/contact/contact.component';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
+import { OfferPageComponent } from './components/offer-page/offer-page.component';
 import { OrderHistoryComponent } from './components/order-history/order-history.component';
 import { PosHistoryComponent } from './components/pos-history/pos-history.component';
 import { ProductDetailsComponent } from './components/product-details/product-details.component';
@@ -67,6 +68,10 @@ const routes: Routes = [
   {
     path:'productDetail',
     component: ProductDetailsComponent
+  },
+  {
+    path:'offerPage',
+    component: OfferPageComponent
   },
   {
     path: '**',

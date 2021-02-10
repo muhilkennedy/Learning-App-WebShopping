@@ -1,0 +1,26 @@
+.cart_quantity_button_mobile a {
+  background:#F0F0E9;
+  color: #696763;
+  display: inline-block;
+  font-size: 16px;
+  height: 28px;
+  overflow: hidden;
+  text-align: center;
+  width: 100%;
+  float: left;
+}
+
+.cart_quantity_button_mobile a:hover{
+  background: #FE980F;
+  cursor: pointer;
+}
+
+
+.cart_quantity_input_mobile {
+  width: 100%;
+  color: #696763;
+  float: left;
+  font-size: 16px;
+  text-align: center;
+  font-family: 'Roboto',sans-serif;
+}

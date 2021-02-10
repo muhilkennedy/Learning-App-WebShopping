@@ -30,6 +30,24 @@ export class CommonsService {
   };
   private _categories: any;
   private _searchText: string;
+  private _cartTotal: number;
+  private _cartItems: any[];
+
+  public get cartItems(): any[] {
+    return this._cartItems;
+  }
+
+  public set cartItems(value: any[]) {
+    this._cartItems = value;
+  }
+
+  public get cartTotal(): number {
+    return this._cartTotal;
+  }
+
+  public set cartTotal(value: number) {
+    this._cartTotal = value;
+  }
 
   public get searchText(): string {
     return this._searchText;
