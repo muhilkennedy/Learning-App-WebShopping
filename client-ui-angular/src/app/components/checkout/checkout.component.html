@@ -25,9 +25,9 @@
               <input type="text" placeholder="Street Name" [(ngModel)]="street" id="street" name="street">
               <input type="text" placeholder="City" [(ngModel)]="city" id="city" name="city">
               <input type="text" placeholder="State" [(ngModel)]="state" id="state" name="state">
-              <input disabled type="number" placeholder="Pincode" [(ngModel)]="this.pincodeDetails.pincode" id="pincode" name="pincode">
+              <input type="number" placeholder="Pincode" [(ngModel)]="this.pincodeDetails.pincode" id="pincode" name="pincode">
             </form>
-            <a class="btn btn-primary" (click)="addAddress()">Add Address to Profile</a>
+            <a class="btn btn-primary" style="float: right;" (click)="addAddress()">Add Address to Profile</a>
           </div>
         </div>
         <div *ngIf="!isMobileView()" class="col-sm-6">
@@ -56,7 +56,7 @@
       <ul class="nav">
         <li *ngFor="let add of customerAddress">
           <label for="address_{{add.addressId}}">
-            <input id="address_{{add.addressId}}" [value]='add.addressId' type="radio" name="enums" [(ngModel)]="addressSelected">
+            <input id="address_{{add.addressId}}" [value]='add' type="radio" name="enums" [(ngModel)]="addressSelected">
             {{add.doorNumber}},{{add.street}},{{add.city}}
           </label>
         </li>
@@ -96,8 +96,9 @@
               <label><i class="fa fa-info"></i><strong> . Payment will be accepted on door step delivery !</strong></label>
             </span>
             <div style="float: right;">
-              <button mat-raised-button class="btn btn-default update" (click)="placeOrder()"
+              <button mat-raised-button class="btn btn-default update btncolor" (click)="placeOrder()"
                 [ngClass]="{'spinner' : buttonLoading}" [disabled]="buttonLoading">
+                <mat-icon>attach_money</mat-icon>
                 Confirm and Place Order
               </button>
             </div>

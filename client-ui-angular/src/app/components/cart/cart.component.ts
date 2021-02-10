@@ -244,4 +244,30 @@ export class CartComponent implements OnInit {
                     })
   }
 
+  offerPage(){
+    this.commonService.cartTotal = this.cartSubtotal();
+    this.commonService.cartItems = this.cartItems;
+    this.router.navigate(['/offerPage']);
+  }
+
+  clearCart(){
+    this.loading = true;
+    this.cartService.clearCart()
+                    .subscribe((resp:any) => {
+                      if(resp.statusCode !== 200){
+                        alert("failed to clear cart");
+                      }
+                      else{
+                        this.commonService.cartTotal = 0;
+                        this.cartItems.length = 0;
+                        this.userStore.cartCount = 0;
+                      }
+                      this.loading = false;
+                    },
+                    (error: any) => {
+                      alert("Something went wrong!");
+                      this.loading = false;
+                    })
+  }
+
 }

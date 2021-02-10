@@ -7,6 +7,12 @@
         <li class="active">Shopping Cart</li>
       </ol>
     </div>
+    <div>
+      <button style="float: right; color: #b73a3a;" mat-button (click)="clearCart()">
+        <mat-icon>clear_all</mat-icon>
+        Clear Cart
+      </button>
+    </div>
     <div class="table-responsive cart_info">
       <ngx-loading [show]="loading"></ngx-loading>
       <table class="table table-condensed">
@@ -37,9 +43,15 @@
               <p class="cart_total_price" style="font-size: 20px;">{{item.product.sellingCost}}</p>
             </td>
             <td class="cart_quantity">
-              <div class="cart_quantity_button">
+              <div class="cart_quantity_button" *ngIf="!isMobileView()">
                 <a *ngIf="cartPage" class="cart_quantity_down" (click)="decrementItem(item)"> - </a>
                 <input disabled class="cart_quantity_input" type="text" name="quantity" [(ngModel)]="item.quantity" autocomplete="off" size="2">
+                <a *ngIf="cartPage" class="cart_quantity_up" (click)="incrementItem(item)"> + </a>
+              </div>
+              <!-- mobile view -->
+              <div class="cart_quantity_button_mobile" *ngIf="isMobileView()">
+                <a *ngIf="cartPage" class="cart_quantity_down" (click)="decrementItem(item)"> - </a>
+                <input disabled class="cart_quantity_input_mobile" type="text" name="quantity" [(ngModel)]="item.quantity" autocomplete="off" size="2">
                 <a *ngIf="cartPage" class="cart_quantity_up" (click)="incrementItem(item)"> + </a>
               </div>
             </td>
@@ -55,78 +67,16 @@
     </div>
   </div>
 </section> <!--/#cart_items-->
-
 <section *ngIf="cartPage" id="do_action">
   <div class="container">
-    <div class="heading">
-      <h3>What would you like to do next?</h3>
-      <p>Choose if you have a discount code or reward points you want to use or would like to estimate your delivery cost.
-        <span *ngIf="this.pincodeDetails !== undefined && this.pincodeDetails !== null">Free delivery on minimum <strong>₹ {{this.pincodeDetails.minimumamtforfreedelivery}}</strong>.</span></p>
-    </div>
     <div class="row">
       <ngx-loading [show]="couponLoading"></ngx-loading>
-      <div class="col-sm-6">
-        <div class="chose_area">
-          <ul class="user_option">
-            <li>
-              <div *ngIf="!isMobileView()">
-                <mat-form-field>
-                  <mat-label>Delivery Pincode</mat-label>
-                  <input type="number" matInput placeholder="pincode" [(ngModel)]="pincode">
-                </mat-form-field>
-                <a style="cursor: pointer;" class="btn btn-default update" (click)="checkDeliveryCode()">Check Delivery Charge</a>
-              </div>
-              <div *ngIf="isMobileView()">
-                <mat-form-field class="matitem pull-left" *ngIf="isMobileView()" style="padding-left: 20px; width: 100%;">
-                  <input type="text"
-                        placeholder="Pincode"
-                        matInput
-                        [(ngModel)]="pincode">
-                <button matSuffix type="button" class="btn btn-primary" (click)="checkDeliveryCode()"> Check Delivery Charge </button>
-                </mat-form-field>
-              </div>
-            </li>
-            <br/>
-            <li>
-              <div *ngIf="!isMobileView()">
-                <mat-form-field>
-                  <mat-label>Copupon Code</mat-label>
-                  <input type="text" matInput placeholder="coupon code" [(ngModel)]="coupon">
-                </mat-form-field>
-                <a *ngIf="!isMobileView()" style="cursor: pointer;" class="btn btn-default update" (click)="applyCoupon()">Apply Coupon</a>
-              </div>
-              <div *ngIf="isMobileView()">
-                <mat-form-field class="matitem pull-left" *ngIf="isMobileView()" style="padding-left: 20px; width: 100%;">
-                  <input type="text"
-                        placeholder="coupon code"
-                        matInput
-                        [(ngModel)]="coupon">
-                <button matSuffix type="button" class="btn btn-primary" (click)="applyCoupon()"> Apply Coupon</button>
-                </mat-form-field>
-              </div>
-            </li>
-            <li *ngIf="this.couponDetails !== undefined && this.couponDetails !== null">
-              <p>Maximum Discount Amount = {{this.couponDetails.maxDiscountLimit}} ₹</p>
-            <li>
-            <li>
-              <small>T&C applied</small>
-            </li>
-          </ul>
-          <!-- <a class="btn btn-default check_out" href="">Apply</a> -->
-        </div>
-      </div>
-      <div class="col-sm-6">
-        <div class="total_area">
+      <div class="col-sm-12 total_area">
+        <div>
           <ul>
             <li>Cart Sub Total <span><strong>₹ {{cartSubtotal()}}</strong></span></li>
-            <li *ngIf="this.couponDetails !== undefined && this.couponDetails !== null">
-              Coupon Applied - <strong>({{this.couponDetails.discount}}% Off)</strong> <span>₹ {{calculateCouponApplied()}}</span>
-            </li>
-            <li>Delivery Charge <span>{{getDeliveryCharge()}}</span></li>
-            <li>Total <span><strong>₹ {{calculateTotalWithDeliveryCharge()}}</strong></span></li>
           </ul>
-            <a class="btn btn-default update" (click)="gotoCheckout()">Proceed</a>
-            <!-- <a class="btn btn-default check_out" href="">Check Out</a> -->
+          <a class="btn btn-default update" style="float: right;" (click)="offerPage()"> Proceed </a>
         </div>
       </div>
     </div>

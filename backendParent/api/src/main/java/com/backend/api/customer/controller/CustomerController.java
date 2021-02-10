@@ -193,5 +193,20 @@ public class CustomerController {
 		}
 		return response;
 	}
+	
+	@RequestMapping(value = "/clearCustomercart", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse clearCustomercart(HttpServletRequest request) {
+		GenericResponse response = new GenericResponse();
+		try {
+			customerService.clearCustomerCart();
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("updateProductQuantity : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
 
 }

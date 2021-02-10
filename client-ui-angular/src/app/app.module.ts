@@ -70,6 +70,7 @@ import {SocialAuthServiceConfig, SocialLoginModule} from 'angularx-social-login'
 import {GoogleLoginProvider, FacebookLoginProvider} from 'angularx-social-login';
 import { PrivacyPolicyComponent } from './components/shared/privacy-policy/privacy-policy.component';
 import { ProductDetailsComponent } from './components/product-details/product-details.component';
+import { OfferPageComponent } from './components/offer-page/offer-page.component';
 
 const fbLoginOptions = {
   scope: 'pages_messaging,pages_messaging_subscriptions,email,pages_show_list,manage_pages',
@@ -160,7 +161,8 @@ export function init_tenant(initializer: TenantInitializer) {
     ProfileComponent,
     PosDialogComponent,
     PrivacyPolicyComponent,
-    ProductDetailsComponent
+    ProductDetailsComponent,
+    OfferPageComponent
   ],
   imports: [
     HttpClientModule,

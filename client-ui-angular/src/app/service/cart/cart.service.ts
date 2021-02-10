@@ -14,7 +14,7 @@ export class CartService {
   updateQuantityEndpoint = "/secure/customer/updateProductQuantity";
   addAddressEndpoint = "/secure/customer/addCustomerAddress";
   removeFromCartEndpoint = "/secure/customer/removeProductFromCart";
-
+  clearCartEndpoint = "/secure/customer/clearCustomercart"
   getPinCodeDetailsEndpoint = "/secure/orders/getPincodeAndCouponDetails";
 
   constructor(private http: HttpClient) { }
@@ -79,5 +79,8 @@ export class CartService {
     return this.http.post(environment.backendBaseUrl+this.removeFromCartEndpoint, uploadData);
   }
 
+  clearCart(): Observable<any>{
+    return this.http.post(environment.backendBaseUrl+this.clearCartEndpoint, null);
+  }
 
 }
