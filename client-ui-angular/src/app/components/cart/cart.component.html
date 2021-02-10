@@ -69,25 +69,48 @@
         <div class="chose_area">
           <ul class="user_option">
             <li>
-              <mat-form-field>
-                <mat-label>Delivery Pincode</mat-label>
-                <input type="number" matInput placeholder="pincode" [(ngModel)]="pincode">
-              </mat-form-field>
-              <a *ngIf="!isMobileView()" style="cursor: pointer;" class="btn btn-default update" (click)="checkDeliveryCode()">Check Delivery Charge</a>
-              <a *ngIf="isMobileView()" style="cursor: pointer; margin-left: 0px;" class="btn btn-default update" (click)="checkDeliveryCode()">Check Delivery Charge</a>
+              <div *ngIf="!isMobileView()">
+                <mat-form-field>
+                  <mat-label>Delivery Pincode</mat-label>
+                  <input type="number" matInput placeholder="pincode" [(ngModel)]="pincode">
+                </mat-form-field>
+                <a style="cursor: pointer;" class="btn btn-default update" (click)="checkDeliveryCode()">Check Delivery Charge</a>
+              </div>
+              <div *ngIf="isMobileView()">
+                <mat-form-field class="matitem pull-left" *ngIf="isMobileView()" style="padding-left: 20px; width: 100%;">
+                  <input type="text"
+                        placeholder="Pincode"
+                        matInput
+                        [(ngModel)]="pincode">
+                <button matSuffix type="button" class="btn btn-primary" (click)="checkDeliveryCode()"> Check Delivery Charge </button>
+                </mat-form-field>
+              </div>
             </li>
             <br/>
             <li>
-              <mat-form-field>
-                <mat-label>Copupon Code</mat-label>
-                <input type="text" matInput placeholder="coupon code" [(ngModel)]="coupon">
-              </mat-form-field>
-              <a *ngIf="!isMobileView()" style="cursor: pointer;" class="btn btn-default update" (click)="applyCoupon()">Apply Coupon</a>
-              <a *ngIf="isMobileView()" style="cursor: pointer; margin-left: 0px;" class="btn btn-default update" (click)="applyCoupon()">Apply Coupon</a>
+              <div *ngIf="!isMobileView()">
+                <mat-form-field>
+                  <mat-label>Copupon Code</mat-label>
+                  <input type="text" matInput placeholder="coupon code" [(ngModel)]="coupon">
+                </mat-form-field>
+                <a *ngIf="!isMobileView()" style="cursor: pointer;" class="btn btn-default update" (click)="applyCoupon()">Apply Coupon</a>
+              </div>
+              <div *ngIf="isMobileView()">
+                <mat-form-field class="matitem pull-left" *ngIf="isMobileView()" style="padding-left: 20px; width: 100%;">
+                  <input type="text"
+                        placeholder="coupon code"
+                        matInput
+                        [(ngModel)]="coupon">
+                <button matSuffix type="button" class="btn btn-primary" (click)="applyCoupon()"> Apply Coupon</button>
+                </mat-form-field>
+              </div>
             </li>
             <li *ngIf="this.couponDetails !== undefined && this.couponDetails !== null">
               <p>Maximum Discount Amount = {{this.couponDetails.maxDiscountLimit}} ₹</p>
             <li>
+            <li>
+              <small>T&C applied</small>
+            </li>
           </ul>
           <!-- <a class="btn btn-default check_out" href="">Apply</a> -->
         </div>
