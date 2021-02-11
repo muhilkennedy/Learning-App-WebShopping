@@ -1,6 +1,8 @@
 package com.backend.core.util;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.backend.core.entity.Tenant;
+import com.backend.core.entity.TenantDetails;
 import com.backend.core.service.TenantService;
 
 /**
@@ -22,6 +25,8 @@ public class TenantUtil {
 	public static String Key_TenantId = "tenantId";
 
 	private static TenantService tenantService;
+	
+	public static Map<String, Map<Tenant,TenantDetails>> tenantInfoList = new HashMap();
 	
 	@Autowired
 	public void setTenantService(TenantService tenantService) {
@@ -50,4 +55,15 @@ public class TenantUtil {
 	public static List<Tenant> getAllTenants(){
 		return tenantService.getAllTenants();
 	}
+	
+	public static void loadAllTenantsMap() {
+		tenantInfoList.clear();
+		List<Tenant> tenants = tenantService.getAllTenants();
+		for(Tenant tenant: tenants){
+			Map<Tenant, TenantDetails> temp = new HashMap<Tenant, TenantDetails>();
+			temp.put(tenant, tenant.getTenantDetail());
+			tenantInfoList.put(tenant.getTenantID(), temp);
+		}
+	}
+	
 }

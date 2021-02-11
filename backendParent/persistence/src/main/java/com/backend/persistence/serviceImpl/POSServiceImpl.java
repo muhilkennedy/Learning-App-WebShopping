@@ -23,6 +23,7 @@ import com.backend.persistence.helper.POSData;
 import com.backend.persistence.service.CustomerInfoService;
 import com.backend.persistence.service.InvoiceService;
 import com.backend.persistence.service.POSService;
+import com.backend.persistence.service.ProductNotificationService;
 import com.backend.persistence.service.ProductService;
 
 /**
@@ -50,6 +51,9 @@ public class POSServiceImpl implements POSService {
 	@Autowired
 	private InvoiceService invoiceService;
 	
+	@Autowired
+	private ProductNotificationService productNotification;
+	
 	@Override
 	public String createPOS(POSData data) throws Exception {
 		data.setTimeCreated(CommonUtil.convertToUTC(data.getTimeCreated()));
@@ -65,6 +69,14 @@ public class POSServiceImpl implements POSService {
 			if (actualProduct != null) {
 				actualProduct.setQuantityInStock(actualProduct.getQuantityInStock() - product.getQuantity());
 				productService.save(actualProduct);
+				if (actualProduct.getQuantityInStock() < 1) {
+					productNotification.createNotification(actualProduct.getProductName() + " Ran Out of Stock !",
+							actualProduct.getProductId(), 0L, null);
+				}
+				else if (actualProduct.getQuantityInStock() <= 3) {
+					productNotification.createNotification(actualProduct.getProductName() + " Running Out of Stock ! ("
+							+ actualProduct.getQuantityInStock() + ")", actualProduct.getProductId(), 0L, null);
+				}
 			}
 		});
 		DashboardStatusUtil.incrementPosCount(baseService.getTenantInfo());

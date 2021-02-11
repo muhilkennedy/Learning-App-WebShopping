@@ -45,6 +45,10 @@ public class RealmFilter implements Filter {
 			HttpServletResponse res = (HttpServletResponse) response;
 			String tenantId = req.getHeader(Constants.Header_TenantId);
 			String requestIP = getIPFromRequest(req);
+			if(TenantUtil.tenantInfoList.isEmpty()) {
+				//load teants on static variable and use it through the app lifecycle!
+				TenantUtil.loadAllTenantsMap();
+			}
 			logger.info("doFilter :: Realm Filter :: URI - " + req.getRequestURI() + " (Requested IP : " + requestIP + ")");
 			//verify for DOS attack (Ideally should be configured as server level config)
 			CacheService.setIpCache(requestIP, req.getRequestURI());

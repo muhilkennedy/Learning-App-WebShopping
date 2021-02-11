@@ -170,7 +170,7 @@ export class PosComponent implements OnInit {
     if ((this.focusElementReference === undefined || this.focusElementReference instanceof HTMLElement)
           && this.focusElementReference != focusElementReferenceLocal ) {
           this.focusElementReference = focusElementReferenceLocal;
-          this.focusElementReference.focus();
+          this.focusElementReference != null ? this.focusElementReference.focus() : null;
     }
   }
 
@@ -328,12 +328,7 @@ export class PosComponent implements OnInit {
   }
 
   calculateTotal(item: PosProduct): number{
-    if(item.discount > 0){
-      item.total = (item.sellingCost * item.quantity);
-    }
-    else{
-      item.total = item.mrp * item.quantity;
-    }
+    item.total = (item.sellingCost * item.quantity);
     return item.total;
   }
 

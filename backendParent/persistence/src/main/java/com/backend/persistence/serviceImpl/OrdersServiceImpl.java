@@ -44,6 +44,7 @@ import com.backend.persistence.service.CouponsService;
 import com.backend.persistence.service.CustomerInfoService;
 import com.backend.persistence.service.InvoiceService;
 import com.backend.persistence.service.OrdersService;
+import com.backend.persistence.service.ProductNotificationService;
 
 /**
  * @author Muhil
@@ -84,6 +85,9 @@ public class OrdersServiceImpl implements OrdersService {
 	
 	@Autowired
 	private ProductRepository productRepo;
+	
+	@Autowired
+	private ProductNotificationService productNotification;
 
 	@Override
 	public void save(Orders order) {
@@ -157,6 +161,14 @@ public class OrdersServiceImpl implements OrdersService {
 			orderDetails.add(detail);
 			product.setQuantityInStock(product.getQuantityInStock()-item.getQuantity());
 			productRepo.save(product);
+			if (product.getQuantityInStock() < 1) {
+				productNotification.createNotification(product.getProductName() + " Ran Out of Stock !",
+						product.getProductId(), 0L, null);
+			}
+			else if (product.getQuantityInStock() <= 3) {
+				productNotification.createNotification(product.getProductName() + " Running Out of Stock ! ("
+						+ product.getQuantityInStock() + ")", product.getProductId(), 0L, null);
+			}
 		}
 		if (coupon != null) {
 			BigDecimal offerAmout = subTotal.multiply(new BigDecimal(coupon.getDiscount())).divide(new BigDecimal(100));
@@ -174,6 +186,7 @@ public class OrdersServiceImpl implements OrdersService {
 		createUnassignedOrder(order.getOrderId());
 		customerService.clearCustomerCart();
 		OrderInvoice invoice = invoiceService.createOrderInvoice(order);
+		customerService.updateLoyalityPointByCustomerMobile(customer.getMobile(), subTotal.floatValue());
 		emailService.sendOrderStatusEmail(String.valueOf(order.getOrderId()), order.getStatus(), order.getSubTotal().toString(),
 				order.getOrderDate(), PaymentModes.paymentModes.get(order.getPaymentModeId()), customer.getEmailId(),
 				customer.getFirstName(), customer.getLastName(), baseService.getOrigin(), invoice.getDocument());
