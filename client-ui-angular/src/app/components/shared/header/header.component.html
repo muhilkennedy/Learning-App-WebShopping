@@ -56,7 +56,7 @@
             <button mat-button (click)="openLogin()"><i class="fa fa-lock"></i> Login</button>
           </div>
         </div>
-        <div  *ngIf="isLoggedIn()" class="col-sm-1">
+        <div  *ngIf="isLoggedIn() && !isMobileView()" class="col-sm-1">
           <div class="shop-menu pull-right">
             <button mat-button [matMenuTriggerFor]="menu"><i class="fa fa-user"></i> Account</button>
             <mat-menu #menu="matMenu">
@@ -97,13 +97,25 @@
                   <mat-icon>home</mat-icon>
                   <span>Home</span>
                 </button>
-                <button mat-menu-item (click)="openProductList()">
+                <!-- <button mat-menu-item (click)="openProductList()">
                   <mat-icon>shopping_bag</mat-icon>
                   <span>Shop Now</span>
+                </button> -->
+                <button mat-menu-item (click)="openOrders()">
+                  <mat-icon>book_online</mat-icon>
+                  Online Orders
+                </button>
+                <button mat-menu-item (click)="openPOSOrders()">
+                  <mat-icon>point_of_sale</mat-icon>
+                  In-Store Purchase
                 </button>
                 <button mat-menu-item (click)="openContact()">
                   <mat-icon>contact_phone</mat-icon>
                   <span>Contact Us</span>
+                </button>
+                <button mat-menu-item (click)="logout()">
+                  <mat-icon>logout</mat-icon>
+                  <span>Logout</span>
                 </button>
               </mat-menu>
             </td>
@@ -114,7 +126,7 @@
             <td class="shop-menu pull-right">
               <button mat-button (click)="openProductList()">
                 <mat-icon>shopping_bag</mat-icon>
-                <span> Shop </span>
+                <span> Shop Now</span>
               </button>
             </td>
             <td class="shop-menu pull-right">
@@ -132,7 +144,7 @@
                 </button>
               </div>
             </td>
-            <td *ngIf="isLoggedIn()" class="col-sm-1">
+            <td *ngIf="isLoggedIn() && !isMobileView()" class="col-sm-1">
               <div class="shop-menu pull-right">
                 <button mat-button [matMenuTriggerFor]="menu">
                   <mat-icon>person</mat-icon>
@@ -146,7 +158,11 @@
                 </mat-menu>
               </div>
             </td>
-
+            <td  *ngIf="isLoggedIn() && isMobileView()" class="col-sm-1">
+              <div class="shop-menu pull-right">
+                <button mat-button (click)="openProfie()"><i class="fa fa-user"></i> Profile</button>
+              </div>
+            </td>
           </tr>
         </table>
       </div>

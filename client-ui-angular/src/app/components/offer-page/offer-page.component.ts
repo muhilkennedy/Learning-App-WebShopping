@@ -68,6 +68,7 @@ export class OfferPageComponent implements OnInit {
                         if(pincode !== null){
                           this.pincodeDetails = resp.data;
                           this.commonService.pincodeDetails = this.pincodeDetails;
+                          this._snackBar.open('Guranteed Delivery in ' + this.pincodeDetails.minimumdeliveryhours + ' Hour(s)', 'OK', this.commonService.alertoptionsSuccess);
                         }
                         if(coupon !== null){
                           this.couponDetails = resp.dataList !== undefined && resp.dataList !== null &&resp.dataList.length>0 ?
@@ -79,6 +80,7 @@ export class OfferPageComponent implements OnInit {
                           }
                           this.maxDiscountlimit = this.couponDetails.maxDiscountLimit;
                           this.commonService.couponDetails = this.couponDetails;
+                          this._snackBar.open('Coupon Applied Successfully!', 'OK', this.commonService.alertoptionsSuccess);
                           if(this.cartSubtotal() <= this.couponDetails.minTotalLimit){
                             alert("Add " + (this.couponDetails.minTotalLimit-this.cartSubtotal())
                                   + " (inr) more to apply this coupon!");

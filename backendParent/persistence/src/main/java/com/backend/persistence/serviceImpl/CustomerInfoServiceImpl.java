@@ -116,9 +116,25 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 				? customer.getLoyalitypoint().add(loyalityEarned.setScale(2, RoundingMode.CEILING))
 				: loyalityEarned.setScale(2, RoundingMode.CEILING));
 	}
+	
+	public void updateLoyalityPoint(CustomerInfo customer, float total) {
+		//1 inr for every 200 spent 
+		BigDecimal loyalityEarned = new BigDecimal(total).divide(new BigDecimal(200));
+		customer.setLoyalitypoint(customer.getLoyalitypoint() != null
+				? customer.getLoyalitypoint().add(loyalityEarned.setScale(2, RoundingMode.CEILING))
+				: loyalityEarned.setScale(2, RoundingMode.CEILING));
+	}
 
 	@Override
 	public void updateLoyalityPointByCustomerMobile(String mobile, String subTotal) {
+		CustomerInfo customer = getCustomerByMobile(mobile);
+		if (customer != null) {
+			updateLoyalityPoint(customer, subTotal);
+		}
+	}
+	
+	@Override
+	public void updateLoyalityPointByCustomerMobile(String mobile, float subTotal) {
 		CustomerInfo customer = getCustomerByMobile(mobile);
 		if (customer != null) {
 			updateLoyalityPoint(customer, subTotal);

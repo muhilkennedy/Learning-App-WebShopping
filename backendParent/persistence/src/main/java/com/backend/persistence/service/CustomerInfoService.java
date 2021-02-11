@@ -42,4 +42,6 @@ public interface CustomerInfoService {
 
 	void updateCustomerMobile(String mobile);
 
+	void updateLoyalityPointByCustomerMobile(String mobile, float subTotal);
+
 }
