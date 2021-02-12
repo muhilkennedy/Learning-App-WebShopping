@@ -253,7 +253,7 @@ public class InvoiceServiceImpl implements InvoiceService{
 			newRow.getCell(3).setText(product.getOffer().setScale(0, RoundingMode.CEILING).toString()+"%");
 			newRow.getCell(4).setText(product.getSellingCost().toString());
 			BigDecimal total = new BigDecimal(0);
-			if (product.getOffer().compareTo(new BigDecimal(0)) > 0) {
+			if (product.getCost().floatValue() !=  product.getSellingCost().floatValue()) {
 				BigDecimal singleOffer = product.getCost().subtract(product.getSellingCost());
 				totalDiscount = totalDiscount.add(singleOffer).multiply(new BigDecimal(item.getQuantity()));
 			}
@@ -363,7 +363,6 @@ public class InvoiceServiceImpl implements InvoiceService{
 			}
 		}
 	}
-
 	
 	@Override
 	public File generatePOSInvoice(POSData posData) throws Exception {
@@ -391,19 +390,32 @@ public class InvoiceServiceImpl implements InvoiceService{
 			XWPFTableRow newRow = productTable.createRow();
 			Float total = 0F;
 			Float discountedPrice = 0F;
-			if (item.getDiscount() > 0) {
+			if (item.getMrp() != item.getSellingCost()) {
 				discountedPrice = item.getMrp() - item.getSellingCost();
 				totalDiscount += discountedPrice*item.getQuantity();
 			}
 			total = item.getSellingCost() * item.getQuantity();
 			
 			// we have customized this code for 58mm printer(need to introduce a feature toggle for 80mm support).
-			StringBuilder str = new StringBuilder(item.getItemName());
+			/*StringBuilder str = new StringBuilder(item.getItemName());
 			String line = str.toString();
 			if(str.length() > 7) {
 				String part2 = str.subSequence(6, str.length()).toString();
 				line = str.subSequence(0, 6).toString() + "\r\n" + part2.replace(" ", "");
+			}*/
+			String line = null;
+			try {
+				String[] parts = item.getItemName().split(" ");
+				String part1 = parts[0];
+				StringBuilder part2 = new StringBuilder();
+				for(int i=1; i < parts.length ; i ++) {
+					part2.append(parts[i].trim());
+				}
+				line = part1 +  "\r\n" + part2;
 			}
+			catch(Exception e){
+				line = item.getItemName();
+			}	 
 			
 			XWPFRun run = newRow.getCell(0).addParagraph().createRun();
 			run.setFontSize(8);
