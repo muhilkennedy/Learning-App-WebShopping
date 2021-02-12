@@ -88,7 +88,6 @@ export class LoginComponent implements OnInit {
   }
 
   signInWithGoogle(): void {
-    this.loading = true;
     this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
     this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
   }
