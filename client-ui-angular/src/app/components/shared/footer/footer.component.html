@@ -12,16 +12,16 @@
           <!-- render for display greater than ~700px -->
           <div class="col-sm-6" *ngIf="!isMobileView()"></div>
           <div class="col-sm-1" *ngIf="!isMobileView()">
-            <img src="../../../../assets/images/home/One_Alpha.png" alt="" style="height: auto;
-              width: 80px; padding-top: 25px;"/>
+            <img src={{tenantStore.tenantLogo}} alt="" style="height: auto;
+              width: 100px; padding-top: 25px;"/>
           </div>
 					<div class="col-sm-3" style="float: right; padding-top: 50px;" *ngIf="!isMobileView()">
               <p>{{tenantStore.tenantContact}}<br/> {{tenantStore.tenantStreet}} <br/> {{tenantStore.tenantCity}}</p>
 					</div>
           <!-- render for mobile view -->
           <div class="col-xs-2" *ngIf="isMobileView()">
-            <img src="../../../../assets/images/home/One_Alpha.png" alt="" style="height: auto;
-              width: 80px; padding-top: 25px;"/>
+            <img src={{tenantStore.tenantLogo}} alt="" style="height: auto;
+              width: 100px; padding-top: 25px;"/>
           </div>
           <div class="col-xs-5"></div>
           <div class="col-xs-5" *ngIf="isMobileView()" style="padding-top: 50px; float: right;">

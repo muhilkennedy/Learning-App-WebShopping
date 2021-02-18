@@ -202,5 +202,17 @@ public class LoginServiceImpl implements LoginService {
 	public CustomerInfo getCustomerByEmail(String email) {
 		return customerService.getCustomerByEmail(email);
 	}
+	
+	@Override
+	public boolean updateCustomerPassword(String email, String newPassword) {
+		CustomerInfo custInfo = customerService.getCustomerByEmail(email);
+		if(custInfo != null) {
+			String encrptedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt(CommonUtil.saltRounds));
+			custInfo.setPassword(encrptedPassword);
+			customerService.save(custInfo);
+			return true;
+		}
+		return false;
+	}
 
 }

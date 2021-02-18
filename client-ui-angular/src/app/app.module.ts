@@ -71,6 +71,7 @@ import {GoogleLoginProvider, FacebookLoginProvider} from 'angularx-social-login'
 import { PrivacyPolicyComponent } from './components/shared/privacy-policy/privacy-policy.component';
 import { ProductDetailsComponent } from './components/product-details/product-details.component';
 import { OfferPageComponent } from './components/offer-page/offer-page.component';
+import { LoginDialogComponent } from './components/login/login-dialog/login-dialog.component';
 
 const fbLoginOptions = {
   scope: 'pages_messaging,pages_messaging_subscriptions,email,pages_show_list,manage_pages',
@@ -162,7 +163,8 @@ export function init_tenant(initializer: TenantInitializer) {
     PosDialogComponent,
     PrivacyPolicyComponent,
     ProductDetailsComponent,
-    OfferPageComponent
+    OfferPageComponent,
+    LoginDialogComponent
   ],
   imports: [
     HttpClientModule,
@@ -207,7 +209,7 @@ export function init_tenant(initializer: TenantInitializer) {
     MatTooltipModule,
     MatTreeModule,
     NgxLoadingModule.forRoot({
-      animationType: ngxLoadingAnimationTypes.threeBounce,
+      animationType: ngxLoadingAnimationTypes.circleSwish,
       backdropBackgroundColour: 'rgba(0,0,0,0.3)',
       backdropBorderRadius: '4px',
       primaryColour: '#FE980F',
