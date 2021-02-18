@@ -26,4 +26,6 @@ public interface LoginService {
 
 	CustomerInfo getCustomerByEmail(String email);
 
+	boolean updateCustomerPassword(String email, String newPassword);
+
 }

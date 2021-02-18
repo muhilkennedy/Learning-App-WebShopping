@@ -166,7 +166,7 @@ public class LoginController {
 	public GenericResponse<String> employeePasswordUpdate(HttpServletRequest request, @RequestBody EmployeeInfo empObj) {
 		GenericResponse<String> response = new GenericResponse<>();
 		try {
-			if(loginService.updateEmployeePassword(empObj.getEmailId(), empObj.fetchPassword())) {
+			if(loginService.updateEmployeePassword(empObj.getEmailId(),empObj.fetchPassword())) {
 				response.setStatus(Response.Status.OK);
 			}
 			else {
@@ -229,7 +229,7 @@ public class LoginController {
 	public GenericResponse<String> customerForgotPassword(HttpServletRequest request, @RequestBody CustomerPOJOHelper cusObj) {
 		GenericResponse<String> response = new GenericResponse<>();
 		try {
-			if (cusObj.getCustomerInfo() != null && loginService.checkIfUserExists(cusObj.getCustomerInfo().getEmailId())) {
+			if (cusObj.getCustomerInfo() != null && loginService.checkIfCustomerExists(cusObj.getCustomerInfo().getEmailId())) {
 				String otp = otpService.generateOtp(cusObj.getCustomerInfo().getEmailId() + CommonUtil.Key_clientOTP);
 				if(!configUtil.isProdMode()) {
 					logger.info("OTP - " + otp);
@@ -242,6 +242,52 @@ public class LoginController {
 			}
 		} catch (Exception ex) {
 			logger.error("customerForgotPassword : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/customerOtpVerification", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> customerOtpVerification(HttpServletRequest request, @RequestBody CustomerPOJOHelper custObj) {
+		GenericResponse<String> response = new GenericResponse<>();
+		try {
+			if(!StringUtils.isEmpty(custObj.getCustomerInfo().getEmailId()) && !StringUtils.isEmpty(custObj.getOtp())) {
+				if(custObj.getOtp().equals(otpService.getOtp(custObj.getCustomerInfo().getEmailId() + CommonUtil.Key_clientOTP))) {
+					response.setStatus(Response.Status.OK);
+				}
+				else {
+					response.setErrorMessages(Arrays.asList("User Otp Verification Failed"));
+					response.setStatus(Response.Status.FORBIDDEN);
+				}
+			}
+			else {
+				response.setErrorMessages(Arrays.asList("Required Information is Missing"));
+				response.setStatus(Response.Status.ERROR);
+			}
+		} catch (Exception ex) {
+			logger.error("customerOtpVerification : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/customerPasswordUpdate", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> customerPasswordUpdate(HttpServletRequest request, @RequestBody CustomerPOJOHelper custObj) {
+		GenericResponse<String> response = new GenericResponse<>();
+		try {
+			if(loginService.updateCustomerPassword(custObj.getCustomerInfo().getEmailId(), RSAUtil.decrypt(custObj.getCustomerInfo().fetchPassword(), baseService.getTenantInfo().fetchPrivateKey()))) {
+				response.setStatus(Response.Status.OK);
+			}
+			else {
+				response.setErrorMessages(Arrays.asList("Password Update Failed"));
+				response.setStatus(Response.Status.ERROR);
+			}
+		} catch (Exception ex) {
+			logger.error("customerPasswordUpdate : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);

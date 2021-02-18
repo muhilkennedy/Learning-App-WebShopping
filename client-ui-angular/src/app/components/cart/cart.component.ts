@@ -121,6 +121,7 @@ export class CartComponent implements OnInit {
                       if(resp.statusCode !== 200){
                         item.quantity--;
                       }
+                      this.userStore.cartCount++;
                       this.loading = false;
                     },
                     (error: any) => {
@@ -130,6 +131,16 @@ export class CartComponent implements OnInit {
 
   }
 
+  isMinusVisible(item){
+    let quantity = item.quantity-1;
+    if(quantity < 0){
+      return false;
+    }
+    else{
+      return true;
+    }
+  }
+
   decrementItem(item){
     this.loading = true;
     item.quantity--;
@@ -137,6 +148,18 @@ export class CartComponent implements OnInit {
                     .subscribe((resp:any) => {
                       if(resp.statusCode !== 200){
                         item.quantity++;
+                        this.loading = false;
+                        return;
+                      }
+                      this.userStore.cartCount--;
+                      if(item.quantity < 1){
+                        let i = 0;
+                        this.cartItems.forEach(element => {
+                          if(element.product.productId === item.product.productId){
+                            this.cartItems.splice(i,1);
+                          }
+                          i++;
+                        });
                       }
                       this.loading = false;
                     },
@@ -220,8 +243,9 @@ export class CartComponent implements OnInit {
     this.router.navigate(['/checkout']);
   }
 
-  removeFromCart(prod){
+  removeFromCart(item){
     this.loading = true;
+    let prod = item.product;
     this.cartService.removeProductFromCart(prod.productId)
                     .subscribe((resp:any) => {
                       if(resp.statusCode !== 200){
@@ -231,7 +255,7 @@ export class CartComponent implements OnInit {
                       this.cartItems.forEach(item => {
                         if(item.product.productId === prod.productId){
                           this.cartItems.splice(index, 1);
-                          this.userStore.cartCount--;
+                          this.userStore.cartCount = this.userStore.cartCount-item.quantity;
                           this.loading = false;
                           return;
                         }

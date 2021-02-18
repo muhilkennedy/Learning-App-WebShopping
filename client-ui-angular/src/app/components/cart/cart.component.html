@@ -44,13 +44,13 @@
             </td>
             <td class="cart_quantity">
               <div class="cart_quantity_button" *ngIf="!isMobileView()">
-                <a *ngIf="cartPage" class="cart_quantity_down" (click)="decrementItem(item)"> - </a>
+                <a *ngIf="cartPage && isMinusVisible(item)" class="cart_quantity_down" (click)="decrementItem(item)"> - </a>
                 <input disabled class="cart_quantity_input" type="text" name="quantity" [(ngModel)]="item.quantity" autocomplete="off" size="2">
                 <a *ngIf="cartPage" class="cart_quantity_up" (click)="incrementItem(item)"> + </a>
               </div>
               <!-- mobile view -->
               <div class="cart_quantity_button_mobile" *ngIf="isMobileView()">
-                <a *ngIf="cartPage" class="cart_quantity_down" (click)="decrementItem(item)"> - </a>
+                <a *ngIf="cartPage && isMinusVisible(item)" class="cart_quantity_down" (click)="decrementItem(item)"> - </a>
                 <input disabled class="cart_quantity_input_mobile" type="text" name="quantity" [(ngModel)]="item.quantity" autocomplete="off" size="2">
                 <a *ngIf="cartPage" class="cart_quantity_up" (click)="incrementItem(item)"> + </a>
               </div>
@@ -59,7 +59,7 @@
               <p class="cart_total_price">₹ {{calculateTotal(item)}}</p>
             </td>
             <td class="cart_total" *ngIf="cartPage">
-              <a class="cart_quantity_delete" style="cursor: pointer;" (click)="removeFromCart(item.product)"><i class="fa fa-times"></i></a>
+              <a class="cart_quantity_delete" style="cursor: pointer;" (click)="removeFromCart(item)"><i class="fa fa-times"></i></a>
             </td>
           </tr>
         </tbody>

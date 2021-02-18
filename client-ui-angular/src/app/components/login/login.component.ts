@@ -8,6 +8,8 @@ import { LoginService } from 'src/app/service/login/login.service';
 import { TenantStoreService } from 'src/app/service/shared/tenant-store/tenant-store.service';
 import { UserStoreService } from 'src/app/service/shared/user-store/user-store.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { LoginDialogComponent } from './login-dialog/login-dialog.component';
 
 declare var rsaencrypt: Function;
 
@@ -39,7 +41,7 @@ export class LoginComponent implements OnInit {
   constructor(private loginService: LoginService, private tenantStore: TenantStoreService,
               private route: Router, private cookieService: CookieService,
               private userStore: UserStoreService, private cartService: CartService,
-              private authService: SocialAuthService,
+              private authService: SocialAuthService, public dialog: MatDialog,
               public commonService: CommonsService, private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
@@ -52,43 +54,44 @@ export class LoginComponent implements OnInit {
       this.loginService.googleSocialLogin(this.socialUser)
                         .subscribe((resp:any) => {
                           if(resp.statusCode === 200){
-                            this.userStore.JwtToken = resp.data;
-                            this.userStore.active=resp.dataList[0].active;
-                            this.userStore.emailId=resp.dataList[0].emailId;
-                            this.userStore.customerAddress=resp.dataList[0].customerAddress;
-                            this.userStore.userId=resp.dataList[0].customerId;
-                            this.userStore.firstName=resp.dataList[0].firstName;
-                            this.userStore.lastName=resp.dataList[0].lastName;
-                            this.userStore.mobile=resp.dataList[0].mobile;
-                            if(this.userStore.mobile === null || this.userStore.mobile === undefined){
-                              this._snackBar.open('Please Update Mobile Number under Profile to Earn Loyality points!', '', this.commonService.alertoptionsWarn);
+                              this.userStore.JwtToken = resp.data;
+                              this.userStore.active=resp.dataList[0].active;
+                              this.userStore.emailId=resp.dataList[0].emailId;
+                              this.userStore.customerAddress=resp.dataList[0].customerAddress;
+                              this.userStore.userId=resp.dataList[0].customerId;
+                              this.userStore.firstName=resp.dataList[0].firstName;
+                              this.userStore.lastName=resp.dataList[0].lastName;
+                              this.userStore.mobile=resp.dataList[0].mobile;
+                              if(this.userStore.mobile === null || this.userStore.mobile === undefined){
+                                this._snackBar.open('Please Update Mobile Number under Profile to Earn Loyality points!', '', this.commonService.alertoptionsWarn);
+                              }
+                              this.userStore.loyalityPoints=resp.dataList[0].loyalitypoint;
+                              this.userStore.lastLogin=resp.dataList[0].lastLogin;
+                              this.userStore.profilePic=resp.dataList[0].profilePic;
+                              this.userStore.profilePicUrl=resp.dataList[0].profilePicUrl;
+                              this.userStore.loginMode=resp.dataList[0].loginMode;
+
+                              this.cookieService.deleteAll();
+                              this.cookieService.set('CLIENTJWT', this.userStore.JwtToken, 90);
+
+                              this.setCartItems();
+
+                              this.route.navigate(["/home"]);
                             }
-                            this.userStore.loyalityPoints=resp.dataList[0].loyalitypoint;
-                            this.userStore.lastLogin=resp.dataList[0].lastLogin;
-                            this.userStore.profilePic=resp.dataList[0].profilePic;
-                            this.userStore.profilePicUrl=resp.dataList[0].profilePicUrl;
-                            this.userStore.loginMode=resp.dataList[0].loginMode;
-
-                            this.cookieService.deleteAll();
-                            this.cookieService.set('CLIENTJWT', this.userStore.JwtToken, 90);
-
-                            this.setCartItems();
-
-                            this.route.navigate(["/home"]);
-                          }
-                          else{
-                            alert('Failed : ' + resp.errorMessages);
-                          }
-                          this.signInLoading = false;
+                            else{
+                              alert('Failed : ' + resp.errorMessages);
+                            }
+                            this.signInLoading = false;
+                            this.loading = false;
                           },
                           (error:any) => {
                             alert('Something went wrong!');
+                            this.loading = false;
                           });
                       });
   }
 
   signInWithGoogle(): void {
-    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
     this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
   }
 
@@ -210,6 +213,19 @@ export class LoginComponent implements OnInit {
                         alert('Something went wrong!');
                         this.buttonDisable = false;
                       });
+  }
+
+  forgotPassword(){
+    const dialogRef = this.dialog.open(LoginDialogComponent, {
+      width: 'auto',
+      data: {
+
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
   }
 
 }

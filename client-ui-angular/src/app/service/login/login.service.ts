@@ -15,7 +15,9 @@ export class LoginService {
   registerCustomerEndpoint = "/login/registerCustomer";
   customerLoginEndpoint = "/login/customerAuthentication";
   sendRegisterOTPEndpoint = "/login/sendRegisterEmailOtp";
-  forgotPasswordEndPoint = "/login/login/customerForgotPassword";
+  forgotPasswordEndPoint = "/login/customerForgotPassword";
+  verifyOtpEndPoint = "/login/customerOtpVerification";
+  passwordUpdateEndpoint = "/login/customerPasswordUpdate"
 
   constructor(private http: HttpClient) { }
 
@@ -93,6 +95,36 @@ export class LoginService {
       }),
     };
     return this.http.post(environment.backendBaseUrl+this.forgotPasswordEndPoint, body, httpOptions);
+  }
+
+  verifyOTP(emailId, otp) : Observable<any>{
+    const body = {
+      customerInfo : {
+           emailId : emailId
+        },
+      otp: otp
+    };
+    const httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+      }),
+    };
+    return this.http.post(environment.backendBaseUrl+this.verifyOtpEndPoint, body, httpOptions);
+  }
+
+  updatePassword(emailId, password) : Observable<any>{
+    const body = {
+      customerInfo : {
+           emailId : emailId,
+           password: password
+        }
+    };
+    const httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+      }),
+    };
+    return this.http.put(environment.backendBaseUrl+this.passwordUpdateEndpoint, body, httpOptions);
   }
 
   googleSocialLogin(body){
