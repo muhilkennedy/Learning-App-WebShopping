@@ -76,7 +76,7 @@
           <ul>
             <li>Cart Sub Total <span><strong>₹ {{cartSubtotal()}}</strong></span></li>
           </ul>
-          <a class="btn btn-default update" style="float: right;" (click)="offerPage()"> Proceed </a>
+          <a *ngIf="canProceed()" class="btn btn-default update" style="float: right;" (click)="offerPage()"> Proceed </a>
         </div>
       </div>
     </div>

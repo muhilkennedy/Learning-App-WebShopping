@@ -46,17 +46,22 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 	
 	@Override
 	public CustomerInfo getCustomerById(Long id) {
-		return customerRepo.findEmployeeById(id, baseService.getTenantInfo());
+		return customerRepo.findCustomerById(id, baseService.getTenantInfo());
 	}
 	
 	@Override
 	public CustomerInfo getCustomerByEmail(String email) {
-		return customerRepo.findEmployeeByEmail(email, baseService.getTenantInfo());
+		return customerRepo.findCustomerByEmail(email, baseService.getTenantInfo());
 	}
 	
 	@Override
 	public CustomerInfo getCustomerByMobile(String mobile) {
-		return customerRepo.findEmployeeByMobile(mobile, baseService.getTenantInfo());
+		return customerRepo.findCustomerByMobile(mobile, baseService.getTenantInfo());
+	}
+	
+	@Override
+	public CustomerInfo getCustomerByEmailOrMobile(String emailOrMobile) {
+		return customerRepo.findCustomerByEmailOrMobile(emailOrMobile, baseService.getTenantInfo());
 	}
 	
 	@Override
@@ -152,10 +157,16 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 	}
 	
 	@Override
-	public void updateCustomerMobile(String mobile) {
-		CustomerInfo customer = (CustomerInfo)baseService.getUserInfo();
-		customer.setMobile(mobile);
-		save(customer);
+	public void updateCustomerMobile(String mobile) throws Exception {
+		CustomerInfo existingCustomer = getCustomerByMobile(mobile);
+		if(existingCustomer == null) {
+			CustomerInfo customer = (CustomerInfo)baseService.getUserInfo();
+			customer.setMobile(mobile);
+			save(customer);
+		}
+		else {
+			throw new Exception("Another Account with Same Mobile Number Exists!");
+		}
 	}
 
 }

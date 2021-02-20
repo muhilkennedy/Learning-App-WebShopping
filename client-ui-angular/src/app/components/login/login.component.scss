@@ -3,6 +3,16 @@
   cursor: pointer;
 }
 
+.headertext{
+  font: 500 20px/32px Roboto, "Helvetica Neue", sans-serif;
+  color: black;
+}
+
+.rememberme{
+  display: inherit !important;
+  margin-top: -1px;
+}
+
 .social-container a {
 	border: 1px solid #DDDDDD;
 	border-radius: 50%;

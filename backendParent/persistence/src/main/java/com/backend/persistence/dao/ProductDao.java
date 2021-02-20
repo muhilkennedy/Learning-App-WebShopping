@@ -173,6 +173,33 @@ public class ProductDao {
 			throw new Exception(ex.getMessage());
 		}
 	}
+	
+	public int getProductsCountBasedOnSearchTerm(List<Long> cIds, String SearchTerm, String limit, String offset, String sortByField, String sortBytype) throws Exception {
+		int productCount =0;
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			//.setAndCondition("active", "true", true)
+			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+															.setQuery("select count(*) from product")
+															.setWhereClause()
+															.setAndCondition("tenantid", baseService.getTenantInfo().getTenantID())
+															.andSetAndCondition("active", true)
+															.andSetAndCondition("isdeleted", false)
+															.andSetOrConditions("categoryid", cIds)
+															.andSetLikeCondition("searchtext", "\"%" + SearchTerm + "%\"")
+															.setOrderBy(sortByField)
+															.setSortOrder(sortBytype)
+															.build();
+			PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				productCount = rs.getInt(1);
+			}
+			return productCount;
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+	}
 
 	public List<Product> getProducts(List<Long> cIds, List<Long> pIds, String limit, String offset,
 			String sortByField, String sortBytype, Boolean includeInactive, Boolean outOfStock) throws Exception {

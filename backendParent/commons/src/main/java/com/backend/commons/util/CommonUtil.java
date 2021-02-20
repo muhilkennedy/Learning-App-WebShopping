@@ -71,6 +71,9 @@ public class CommonUtil {
 	public static final String Png_Extension = ".png";
 	public static final String Jpeg_Extension = ".jpeg";
 	
+	public static final String Symbol_at = "@";
+	public static final String Dot_Com = ".com";
+	
 	public static final String Invoice_Name = "Invoice";
 	public static final String Icon_name = "icon";
 	
