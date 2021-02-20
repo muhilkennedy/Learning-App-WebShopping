@@ -46,4 +46,14 @@ public interface CustomerInfoService {
 
 	CustomerInfo getCustomerByEmailOrMobile(String emailOrMobile);
 
+	/* Author - Chris */
+
+	List<CustomerInfo> findAllCustomersForTenant(int offset, int limit);
+	
+	List<CustomerInfo> findAllCustomersForTenant();
+	
+	int findAllCustomersCountForTenant();
+
+	void toggleCustomerStatus(CustomerInfo customer);
+
 }

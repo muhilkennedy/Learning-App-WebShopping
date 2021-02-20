@@ -50,6 +50,7 @@
     "ng-thermal-print": "^1.0.3",
     "ng2-charts": "^2.3.0",
     "ng2-pdf-viewer": "^6.3.2",
+    "pdfjs-dist": "2.5.207",
     "ngx-barcode-scanner": "0.0.11",
     "ngx-bootstrap": "^5.6.1",
     "ngx-cookie-service": "^3.0.4",

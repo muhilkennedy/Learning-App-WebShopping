@@ -38,7 +38,7 @@
             <li>
               <div *ngIf="!isMobileView()">
                 <mat-form-field>
-                  <mat-label>Copupon Code</mat-label>
+                  <mat-label>Coupon Code</mat-label>
                   <input type="text" matInput placeholder="coupon code" [(ngModel)]="coupon">
                 </mat-form-field>
                 <a *ngIf="!isMobileView()" style="cursor: pointer;" class="btn btn-default update" (click)="applyCoupon()">Apply Coupon</a>
