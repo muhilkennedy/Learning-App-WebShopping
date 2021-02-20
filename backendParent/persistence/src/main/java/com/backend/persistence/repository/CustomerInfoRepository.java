@@ -34,8 +34,7 @@ public interface CustomerInfoRepository extends JpaRepository<CustomerInfo, Long
 	@Query(findCustomerByEmailOrMobileQuery)
 	CustomerInfo findCustomerByEmailOrMobile(@Param("email") String emailOrMobile, @Param("tenant") Tenant realm);
 	
-	/* Author - Chris */
-
+	
 	String findLimitedCustomersQuery = "select * from  CustomerInfo where tenantid = ?1 limit ?2 offset ?3";
 	String findAllCustomersQuery = "select cus from CustomerInfo cus where cus.tenant = :tenant";
 	String findAllCustomersCountQuery = "select count(*) from CustomerInfo cus where cus.tenant = :tenant";
