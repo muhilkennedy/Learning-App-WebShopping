@@ -32,13 +32,13 @@ import com.backend.persistence.entity.CustomerInfo;
 import com.backend.persistence.service.CustomerInfoService;
 import com.backend.persistence.service.EmployeeService;
 
-/*By Chris
+/*
+ *@author Chris
  * 
  */
 
 @RestController
 
-//when 'manage customer' is clicked from admin UI it goes through the Realm,token and admin filters for original admin validation and only after then the corresponding request mapping is called
 @RequestMapping("secure/admin/customer")
 
 public class CustomerAdminController {
