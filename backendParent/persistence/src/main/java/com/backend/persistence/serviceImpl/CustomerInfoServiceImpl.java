@@ -169,8 +169,6 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 		}
 	}
 
-	/* Author - Chris */
-
 	@Override
 	public List<CustomerInfo> findAllCustomersForTenant(int offset, int limit) {
 		return customerRepo.findLimitedCustomers(baseService.getTenantInfo().getTenantID(),limit,offset);
