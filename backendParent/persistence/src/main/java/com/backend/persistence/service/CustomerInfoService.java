@@ -45,8 +45,7 @@ public interface CustomerInfoService {
 	void updateLoyalityPointByCustomerMobile(String mobile, float subTotal);
 
 	CustomerInfo getCustomerByEmailOrMobile(String emailOrMobile);
-
-	/* Author - Chris */
+	
 
 	List<CustomerInfo> findAllCustomersForTenant(int offset, int limit);
 	
