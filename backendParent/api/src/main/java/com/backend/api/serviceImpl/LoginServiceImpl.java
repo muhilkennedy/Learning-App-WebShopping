@@ -56,8 +56,9 @@ public class LoginServiceImpl implements LoginService {
 			}
 		}
 		else {
+			//Email or mobile comes as email field always!
 			CustomerInfo cusInfo = (CustomerInfo) user;
-			CustomerInfo actualUser = customerService.getCustomerByEmail(cusInfo.getEmailId());
+			CustomerInfo actualUser = customerService.getCustomerByEmailOrMobile(cusInfo.getEmailId());
 			if(actualUser != null && BCrypt.checkpw(cusInfo.fetchPassword(), actualUser.fetchPassword())){
 				actualUser.setLastLogin(CommonUtil.convertToUTC(new Date().getTime()));
 				return actualUser;
@@ -131,6 +132,16 @@ public class LoginServiceImpl implements LoginService {
 			else {
 				CustomerInfo cusInfo = (CustomerInfo) user;
 				cusInfo.setTenant(baseService.getTenantInfo());
+				if (!CommonUtil.isValidStringParam(cusInfo.getEmailId())) {
+					cusInfo.setEmailId(cusInfo.getMobile() + CommonUtil.Symbol_at
+							+ baseService.getTenantInfo().getUniqueName() + CommonUtil.Dot_Com);
+				}
+				if (!CommonUtil.isValidStringParam(cusInfo.getFirstName())) {
+					cusInfo.setFirstName("Guest");
+				}
+				if (!CommonUtil.isValidStringParam(cusInfo.getLastName())) {
+					cusInfo.setLastName("");
+				}
 				cusInfo.setPassword(RSAUtil.decrypt(cusInfo.fetchPassword(), baseService.getTenantInfo().fetchPrivateKey()));
 				String encrptedPassword = BCrypt.hashpw(cusInfo.fetchPassword(), BCrypt.gensalt(CommonUtil.saltRounds));
 				cusInfo.setPassword(encrptedPassword);
@@ -157,7 +168,7 @@ public class LoginServiceImpl implements LoginService {
 	
 	@Override
 	public boolean checkIfCustomerExists(String email) {
-		if(customerService.getCustomerByEmail(email) != null) {
+		if(customerService.getCustomerByEmailOrMobile(email) != null) {
 			return true;
 		}
 		return false;

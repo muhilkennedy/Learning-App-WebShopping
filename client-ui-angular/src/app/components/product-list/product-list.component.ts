@@ -79,7 +79,12 @@ export class ProductListComponent implements OnInit {
     this.pageSize = event.pageSize;
     let pageIndex:number = event.pageIndex;
     this.offset = pageIndex * this.pageSize;
-    this.setProducts(new Array(), null, null);
+    if(this.productSearched !== undefined && this.productSearched !== null && this.productSearched !== ''){
+      this.nextAction();
+    }
+    else{
+      this.setProducts(new Array(), null, null);
+    }
   }
 
   //autoComplete
@@ -142,17 +147,16 @@ export class ProductListComponent implements OnInit {
       let searchText=queryParams.searchText;
       if(searchText !== undefined && searchText !== null && searchText !== ''
         && searchText !== "null" && this.commonService.searchText === searchText){
-          this.pageSize = 100;
+          // this.pageSize = 100;
           this.productSearched = searchText;
           this.searchAction();
           this.commonService.searchText = null;
       }
       else{
-          this.pageSize = this.pageSizeOptions[0];
+        this.pageSize = this.pageSizeOptions[0];
         this.setProducts(new Array(), null, null);
       }
     });
-    // let searchText=this.activatedRoute.snapshot.paramMap.get("searchText");
 
     if(this.commonService.categories === undefined || this.commonService.categories === null){
       this.productService.getAllCategories()
@@ -278,6 +282,7 @@ export class ProductListComponent implements OnInit {
                           .subscribe((resp:any) => {
                             if(resp.statusCode  === 200){
                               this.products.length = 0;
+                              this.productCount = resp.data;
                               this.products = resp.dataList;
                             }
                             else{
@@ -306,12 +311,29 @@ export class ProductListComponent implements OnInit {
   }
 
   searchAction(){
+    this.pageSize = 10;
+    this.offset = 0;
     this.getProductFromMatchingText(this.productSearched, null, null);
   }
 
-  sortBy(sortField:string, sortType: string){
+  nextAction(){
+    this.getProductFromMatchingText(this.productSearched, null, null);
+  }
+
+  searchActionFilter(sortField: string, sortType: string){
+    this.pageSize = 10;
+    this.offset = 0;
+    this.getProductFromMatchingText(this.productSearched, sortField, sortType);
+  }
+
+  sortBy(sortField: string, sortType: string){
     if(this.productSearched !== undefined && this.productSearched !== null && this.productSearched !== ''){
-      this.searchAction();
+      if(sortField != null && sortField !== undefined){
+        this.searchActionFilter(sortField, sortType);
+      }
+      else{
+        this.searchAction();
+      }
     }
     else{
       this.setProducts(this.selectedCategoryId, sortField, sortType);

@@ -26,38 +26,112 @@
     </div>
     <hr/>
     <div class="row">
-      <div class="col-sm-4">
+      <div class="col-sm-3">
         <ngx-loading [show]="signInLoading"></ngx-loading>
-        <div class="login-form"><!--login form-->
+        <div ><!--login form-->
           <h2>Login to your account</h2>
           <form>
-            <input type="email" name="emailid" placeholder="Email Address" [(ngModel)]="emailId"/>
-            <input type="password" name="password"  placeholder="Password" [(ngModel)]="password"/>
+            <mat-form-field appearance="outline" style="width:100%">
+              <mat-label>EmailId/Mobile</mat-label>
+              <input type="email" name="emailid" matInput placeholder="EmailId/Mobile" [(ngModel)]="emailId">
+            </mat-form-field>
+            <mat-form-field appearance="outline" style="width:100%">
+              <mat-label>Password</mat-label>
+              <input matInput type="password" name="password"  placeholder="Password" [(ngModel)]="password"/>
+            </mat-form-field>
             <span>
-              <input type="checkbox" class="checkbox" name="rememberme" [(ngModel)]="rememberMe" />
-              Keep me signed in
+              <input type="checkbox" class="checkbox rememberme" name="rememberme" [(ngModel)]="rememberMe" />
+              Remember Me
             </span>
             <span class="float-right">
               <a style="cursor: pointer;" (click)="forgotPassword()">Forgot Password?</a>
             </span>
-            <button type="submit" class="btn btn-default" (click)="login()">Login</button>
+            <br/>
           </form>
+          <button type="submit" class="btn btn-default update" style="float: right;" (click)="login()">
+            <i class="fa fa-sign-in"></i> Login</button>
         </div><!--/login form-->
       </div>
-      <div class="col-sm-4" style="text-align: -webkit-center; padding-top: 50px;">
+      <div *ngIf="allowMobileRegister" class="col-sm-1" style="text-align: -webkit-center; padding-top: 50px;">
+        <h2 class="or">OR</h2>
+      </div>
+      <div *ngIf="allowMobileRegister" class="col-sm-3">
+        <ngx-loading [show]="registerLoding"></ngx-loading>
+        <div>
+          <h2>Register Using Mobile!</h2>
+          <form>
+            <mat-form-field appearance="outline" style="width:100%">
+              <mat-label>Mobile Number</mat-label>
+              <input matInput type="number" name="mobile" placeholder="Mobile" [(ngModel)]="mobile"/>
+            </mat-form-field>
+            <mat-form-field class="matitem pull-left" style="width: 100%;" appearance="outline">
+              <input matInput type="number" name="mobileotp" placeholder="Mobile OTP" [(ngModel)]="otpnumber">
+              <button style="margin-top: -16px;" matSuffix type="button" class="btn btn-primary" (click)="sendOtp()">Get OTP</button>
+            </mat-form-field>
+            <mat-form-field appearance="outline" style="width:100%">
+              <mat-label>New Password</mat-label>
+              <input matInput type="password" name="password"  placeholder="Password" [(ngModel)]="password"/>
+            </mat-form-field>
+            <button type="submit" class="btn btn-default update" style="float: right; margin-top: -10px;" (click)="signupWithMobile()">
+              <i class="fa fa-plus"></i> Sign Up</button>
+          </form>
+        </div>
+      </div>
+      <div [ngClass]="{'col-sm-1': allowMobileRegister, 'col-sm-5': !allowMobileRegister}" style="text-align: -webkit-center; padding-top: 50px;">
         <h2 class="or">OR</h2>
       </div>
       <div class="col-sm-4">
         <ngx-loading [show]="registerLoding"></ngx-loading>
-        <div class="signup-form"><!--sign up form-->
-          <h2>New User Signup!</h2>
+        <div>
+          <h2>Register Using Email!</h2>
+          <form>
+            <mat-form-field appearance="outline" style="width:100%">
+              <mat-label>First Name</mat-label>
+              <input matInput type="text" name="fname" placeholder="First Name" [(ngModel)]="fName"/>
+            </mat-form-field>
+            <mat-form-field appearance="outline" style="width:100%">
+              <mat-label>Last Name</mat-label>
+              <input matInput type="text" name="lname"  placeholder="Last Name" [(ngModel)]="lName"/>
+            </mat-form-field>
+            <mat-form-field appearance="outline" style="width:100%">
+              <mat-label>Email Id</mat-label>
+              <input matInput type="email" name="email"  placeholder="Email Address" [(ngModel)]="emailId"/>
+            </mat-form-field>
+            <mat-form-field class="matitem pull-left" style="width: 100%;" appearance="outline">
+              <input matInput type="otp" name="otp"  placeholder="Email OTP" [(ngModel)]="otp"/>
+              <button style="margin-top: -16px;" matSuffix type="button" class="btn btn-primary" (click)="sendRegisterOTP()"
+                    [ngClass]="{'spinner' : buttonLoading}" [disabled]="buttonDisable">
+                  Send EMAIL-OTP
+                </button>
+                <mat-hint *ngIf="buttonDisable"><small>OTP Valid For 5 Mins</small></mat-hint>
+            </mat-form-field>
+            <mat-form-field appearance="outline" style="width:100%">
+              <mat-label>New Password</mat-label>
+              <input matInput required type="password" name="pass" minlength="10"  placeholder="New Password" [(ngModel)]="password"/>
+            </mat-form-field>
+            <button style="float:right" type="submit" class="btn btn-default update" (click)="registerCustomer()">
+              <i class="fa fa-plus"></i> Sign Up</button>
+          </form>
+        </div>
+      </div>
+      <!-- <div class="col-sm-4">
+        <ngx-loading [show]="registerLoding"></ngx-loading>
+        <div class="signup-form">
+          <h2 class="headertext">Register Using Email!</h2>
           <form>
           <table>
             <tr>
               <td>
-                <input type="text" name="fname" placeholder="First Name" [(ngModel)]="fName"/>
+                <mat-form-field appearance="outline" style="width:100%">
+                  <mat-label>Mobile Number</mat-label>
+                  <input type="text" name="fname" placeholder="First Name" [(ngModel)]="fName"/>
+                </mat-form-field>
               </td>
               <td>
+                <mat-form-field appearance="outline" style="width:100%">
+                  <mat-label>Mobile Number</mat-label>
+                  <input type="text" name="fname" placeholder="First Name" [(ngModel)]="fName"/>
+                </mat-form-field>
                 <input type="text" name="lname"  placeholder="Last Name" [(ngModel)]="lName"/>
               </td>
             </tr>
@@ -82,14 +156,16 @@
               </td>
             </tr>
             <tr>
+              <td></td>
               <td>
-                <button type="submit" class="btn btn-default" (click)="registerCustomer()">Signup</button>
+                <button style="float:right" type="submit" class="btn btn-default" (click)="registerCustomer()">
+                  <i class="fa fa-plus"></i> Signup</button>
               </td>
             </tr>
           </table>
           </form>
         </div>
-      </div>
+      </div> -->
     </div>
     <hr/>
   </div>

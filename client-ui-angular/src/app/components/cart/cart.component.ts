@@ -294,4 +294,13 @@ export class CartComponent implements OnInit {
                     })
   }
 
+  canProceed(){
+    if(this.cartItems.length > 0){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
 }

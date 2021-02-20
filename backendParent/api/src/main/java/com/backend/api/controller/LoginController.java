@@ -319,6 +319,30 @@ public class LoginController {
 		return response;
 	}
 	
+	@RequestMapping(value = "/sendRegisterMobileOtp", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> sendRegisterMobileOtp(HttpServletRequest request,  @RequestBody CustomerPOJOHelper cusObj) {
+		GenericResponse<String> response = new GenericResponse<>();
+		try {
+			if (cusObj.getCustomerInfo() != null) {
+				String otp = otpService.generateOtp(cusObj.getCustomerInfo().getMobile() + CommonUtil.Key_clientOTP);
+				if(!configUtil.isProdMode()) {
+					logger.info("OTP - " + otp);
+				}
+				// Send OTP via registered service provider
+				response.setStatus(Response.Status.OK);
+			} else {
+				response.setErrorMessages(Arrays.asList("User Object is NULL"));
+				response.setStatus(Response.Status.ERROR);
+			}
+		} catch (Exception ex) {
+			logger.error("sendRegisterMobileOtp : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
 	@RequestMapping(value = "/registerCustomer", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<CustomerInfo> registerCustomer(HttpServletRequest request,
 			@RequestBody CustomerPOJOHelper cusObj) {
@@ -337,6 +361,31 @@ public class LoginController {
 			}
 		} catch (Exception ex) {
 			logger.error("registerCustomer : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/registerCustomerUsingMobile", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<CustomerInfo> registerCustomerUsingMobile(HttpServletRequest request,
+			@RequestBody CustomerPOJOHelper cusObj) {
+		GenericResponse<CustomerInfo> response = new GenericResponse<CustomerInfo>();
+		try {
+			String otp = otpService.getOtp(cusObj.getCustomerInfo().getMobile() + CommonUtil.Key_clientOTP);
+			if (loginService.checkIfCustomerExists(cusObj.getCustomerInfo().getMobile())) {
+				response.setErrorMessages(Arrays.asList("Mobile Number Already Exists"));
+				response.setStatus(Response.Status.ERROR);
+			} else if (cusObj.getOtp() != null && !otp.equals(cusObj.getOtp())) {
+				response.setErrorMessages(Arrays.asList("Invalid/Expired OTP... !"));
+				response.setStatus(Response.Status.ERROR);
+			} else {
+				loginService.createUser(cusObj.getCustomerInfo());
+				response.setStatus(Response.Status.OK);
+			}
+		} catch (Exception ex) {
+			logger.error("registerCustomerUsingMobile : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);

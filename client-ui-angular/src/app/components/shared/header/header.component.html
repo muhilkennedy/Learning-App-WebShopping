@@ -101,11 +101,11 @@
                   <mat-icon>shopping_bag</mat-icon>
                   <span>Shop Now</span>
                 </button> -->
-                <button mat-menu-item (click)="openOrders()">
+                <button *ngIf="isLoggedIn()" mat-menu-item (click)="openOrders()">
                   <mat-icon>book_online</mat-icon>
                   Online Orders
                 </button>
-                <button mat-menu-item (click)="openPOSOrders()">
+                <button *ngIf="isLoggedIn()" mat-menu-item (click)="openPOSOrders()">
                   <mat-icon>point_of_sale</mat-icon>
                   In-Store Purchase
                 </button>
@@ -113,7 +113,7 @@
                   <mat-icon>contact_phone</mat-icon>
                   <span>Contact Us</span>
                 </button>
-                <button mat-menu-item (click)="logout()">
+                <button *ngIf="isLoggedIn()" mat-menu-item (click)="logout()">
                   <mat-icon>logout</mat-icon>
                   <span>Logout</span>
                 </button>

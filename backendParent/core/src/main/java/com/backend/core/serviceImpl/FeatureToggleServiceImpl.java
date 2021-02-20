@@ -40,5 +40,14 @@ public class FeatureToggleServiceImpl implements FeatureToggleService {
 	public void deleteFeature(FeatureToggle feature) {
 		featureRepo.delete(feature);
 	}
+	
+	@Override
+	public boolean getFeatureStatus(String featureName) {
+		FeatureToggle feature = findFeatureByName(featureName);
+		if(feature != null) {
+			return feature.isActive();
+		}
+		return false;
+	}
 
 }

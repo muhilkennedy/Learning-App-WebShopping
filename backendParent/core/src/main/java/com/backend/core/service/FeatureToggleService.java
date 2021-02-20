@@ -14,4 +14,6 @@ public interface FeatureToggleService {
 
 	void deleteFeature(FeatureToggle feature);
 
+	boolean getFeatureStatus(String featureName);
+
 }

@@ -40,8 +40,10 @@ public interface CustomerInfoService {
 
 	void addCustomerAddress(CustomerAddress address);
 
-	void updateCustomerMobile(String mobile);
+	void updateCustomerMobile(String mobile) throws Exception;
 
 	void updateLoyalityPointByCustomerMobile(String mobile, float subTotal);
+
+	CustomerInfo getCustomerByEmailOrMobile(String emailOrMobile);
 
 }

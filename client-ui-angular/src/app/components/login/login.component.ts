@@ -10,6 +10,7 @@ import { UserStoreService } from 'src/app/service/shared/user-store/user-store.s
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { LoginDialogComponent } from './login-dialog/login-dialog.component';
+import { FeatureService } from 'src/app/service/feature/feature.service';
 
 declare var rsaencrypt: Function;
 
@@ -30,6 +31,7 @@ export class LoginComponent implements OnInit {
   emailId:string;
   password:string;
   otp:string;
+  otpnumber: number;
   fName:string;
   lName:string;
   mobile:string;
@@ -38,11 +40,15 @@ export class LoginComponent implements OnInit {
   socialUser: SocialUser;
   loggedIn: boolean;
 
+  allowMobileRegister = false;
+  allowMobileRegisterFeatureName = "RegisterWithMobile";
+
   constructor(private loginService: LoginService, private tenantStore: TenantStoreService,
               private route: Router, private cookieService: CookieService,
               private userStore: UserStoreService, private cartService: CartService,
               private authService: SocialAuthService, public dialog: MatDialog,
-              public commonService: CommonsService, private _snackBar: MatSnackBar) { }
+              public commonService: CommonsService, private _snackBar: MatSnackBar,
+              private featureService: FeatureService) { }
 
   ngOnInit(): void {
     if(this.userStore.emailId !== undefined && this.userStore.emailId !== null){
@@ -89,6 +95,15 @@ export class LoginComponent implements OnInit {
                             this.loading = false;
                           });
                       });
+        this.featureService.getFeatureStatus(this.allowMobileRegisterFeatureName)
+                            .subscribe((resp:any) => {
+                              if(resp.statusCode === 200){
+                                this.allowMobileRegister = resp.data.featureStatus;
+                              }
+                            },
+                            (error:any) => {
+                              alert('Something went wrong!');
+                            });
   }
 
   signInWithGoogle(): void {
@@ -226,6 +241,50 @@ export class LoginComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
     });
+  }
+
+  sendOtp(){
+    if(this.mobile === undefined || this.mobile === null || this.mobile === ''){
+      alert("Mobile Number is mandatory!")
+      return;
+    }
+    this.registerLoding = true;
+    this.loginService.sendRegisterMobileOtp(this.mobile)
+                      .subscribe((resp:any) => {
+                          if(resp.statusCode !== 200){
+                            alert('Failed : ' + resp.errorMessages);
+                          }
+                          this.registerLoding = false;
+                      },
+                      (error:any) => {
+                        alert('Something went wrong!');
+                        this.registerLoding = false;
+                      });
+  }
+
+  signupWithMobile(){
+    if(this.mobile === undefined || this.mobile === null || this.mobile === ''){
+      alert("Mobile Number is mandatory!")
+      return;
+    }
+    if(this.otpnumber === undefined || this.otpnumber === null){
+      alert("OTP Number is mandatory!")
+      return;
+    }
+    this.registerLoding = true;
+    this.loginService.createCustomerWithMobile(this.fName, this.lName, this.mobile, rsaencrypt(this.password, this.tenantStore.publicKey), this.otp)
+                      .subscribe((resp:any) => {
+                        if(resp.statusCode === 200){
+                          alert("sucess!");
+                        }
+                        else{
+                          alert('Failed : ' + resp.errorMessages);
+                        }
+                        this.registerLoding = false;
+                        },
+                        (error:any) => {
+                          alert('Something went wrong!');
+                        });
   }
 
 }
