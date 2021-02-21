@@ -48,6 +48,7 @@ import { EmployeePermissionComponent } from './employee-permission/employee-perm
 import { EmployeeComponent } from './employee.component';
 import { NgxTypeaheadModule } from 'ngx-typeahead';
 import { CustomerComponent } from './customer/customer.component';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 @NgModule({
   declarations: [
@@ -96,6 +97,7 @@ import { CustomerComponent } from './customer/customer.component';
     MatSortModule,
     MatTableModule,
     MatTabsModule,
+    ModalModule,
     MatToolbarModule,
     MatTooltipModule,
     MatTreeModule,

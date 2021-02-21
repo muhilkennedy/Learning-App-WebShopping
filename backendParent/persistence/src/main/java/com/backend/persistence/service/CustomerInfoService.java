@@ -45,5 +45,14 @@ public interface CustomerInfoService {
 	void updateLoyalityPointByCustomerMobile(String mobile, float subTotal);
 
 	CustomerInfo getCustomerByEmailOrMobile(String emailOrMobile);
+	
+
+	List<CustomerInfo> findAllCustomersForTenant(int offset, int limit);
+	
+	List<CustomerInfo> findAllCustomersForTenant();
+	
+	int findAllCustomersCountForTenant();
+
+	void toggleCustomerStatus(CustomerInfo customer);
 
 }

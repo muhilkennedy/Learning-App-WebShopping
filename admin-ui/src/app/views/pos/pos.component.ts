@@ -53,7 +53,7 @@ export class PosComponent implements OnInit {
 
   focusElementReference: any
 
-  paymentTypes: string[] = ['cash', 'card', 'gpay', 'phone pe', 'paytm', 'others'];
+  paymentTypes: string[] = ['Cash', 'Card', 'Gpay', 'Phonepe', 'Paytm', 'Others'];
   paymentMode: string = this.paymentTypes[0];
 
   alertoptions = {

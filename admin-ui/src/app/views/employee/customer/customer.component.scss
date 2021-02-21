@@ -1,0 +1,25 @@
+//Left the CSS commented to change the size of mat-slide-toggle-bar in future
+
+/* ::ng-deep .mat-slide-toggle-bar {
+     height: 16px;
+     width: 35px;
+   }
+  
+   ::ng-deep .mat-slide-toggle-thumb {
+     height: 15px;
+     width: 15px;
+   }
+  
+   ::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb-container {
+       transform: translate3d(20px,1,1) !important;
+   }
+  
+   ::ng-deep .mat-slide-toggle-thumb-container {
+       width: 12px;
+       height: 12px;
+       top: -1px;
+   } */
+
+  .mat-icon:hover  {
+    transform: scale(1.5);
+  }
