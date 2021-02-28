@@ -29,6 +29,13 @@ export class CartService {
     return this.http.post(environment.backendBaseUrl+this.addTocartEndpoint, uploadData);
   }
 
+  addProducToCartQuantity(id, quantity): Observable<any>{
+    const uploadData = new FormData();
+    uploadData.append('productId', id);
+    uploadData.append('quantity', quantity);
+    return this.http.post(environment.backendBaseUrl+this.addTocartEndpoint, uploadData);
+  }
+
   getCustomerCart(){
     return this.http.get(environment.backendBaseUrl+this.getCustomerEndpoint);
   }

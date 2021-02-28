@@ -1218,9 +1218,9 @@ h2.title {
 .product-information {
   border: 1px solid #F7F7F0;
   overflow: hidden;
-  padding-bottom: 60px;
+  /* padding-bottom: 60px; */
   padding-left: 60px;
-  padding-top: 60px;
+  padding-top: 10px;
   position: relative;
 }
 
@@ -1356,7 +1356,7 @@ h2.title {
   width: 48%;
 }
 #reviews form span input:last-child {
-  margin-left: 3%;
+  margin-left: 0%;
 }
 
 #reviews textarea {

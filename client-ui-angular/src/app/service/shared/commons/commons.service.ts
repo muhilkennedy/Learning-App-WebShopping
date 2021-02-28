@@ -32,6 +32,15 @@ export class CommonsService {
   private _searchText: string;
   private _cartTotal: number;
   private _cartItems: any[];
+  private _selectedProduct: any;
+
+  public get selectedProduct(): any {
+    return this._selectedProduct;
+  }
+
+  public set selectedProduct(value: any) {
+    this._selectedProduct = value;
+  }
 
   public get cartItems(): any[] {
     return this._cartItems;

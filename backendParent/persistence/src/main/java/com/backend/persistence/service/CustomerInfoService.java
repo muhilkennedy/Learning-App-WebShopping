@@ -22,8 +22,6 @@ public interface CustomerInfoService {
 
 	CustomerInfo getCustomerByEmail(String email);
 
-	void addProductToCart(Long productId) throws Exception;
-
 	void removeFromCart(Long productId) throws Exception;
 
 	void updateProductQuantity(Long productId, int quantity) throws Exception;
@@ -45,5 +43,9 @@ public interface CustomerInfoService {
 	void updateLoyalityPointByCustomerMobile(String mobile, float subTotal);
 
 	CustomerInfo getCustomerByEmailOrMobile(String emailOrMobile);
+
+	void updateCustomerEmail(String email) throws Exception;
+
+	void addProductToCart(Long productId, int quantity) throws Exception;
 
 }

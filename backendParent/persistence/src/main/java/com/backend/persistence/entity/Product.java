@@ -86,13 +86,16 @@ public class Product implements Serializable {
 	
 	@Column(name = "SEARCHTEXT")
 	private String searchText;
+	
+	@Column(name = "PRODUCTREVIEWID")
+	private long productReviewId;
 
 	@OneToMany(mappedBy = "productId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<ProductImages> productImages;
 	
-	@JsonIgnore
+	/*@JsonIgnore
 	@OneToMany(mappedBy = "productId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<ProductReview> productReviews;
+	private List<ProductReview> productReviews;*/
 	
 	@JsonIgnore
 	@ManyToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -190,10 +193,6 @@ public class Product implements Serializable {
 		this.productImages = productImages;
 	}
 
-	public void setProductReviews(List<ProductReview> productReviews) {
-		this.productReviews = productReviews;
-	}
-
 	public int getQuantityInStock() {
 		return quantityInStock;
 	}
@@ -240,6 +239,14 @@ public class Product implements Serializable {
 
 	public void setSearchText(String searchText) {
 		this.searchText = searchText;
+	}
+
+	public long getProductReviewId() {
+		return productReviewId;
+	}
+
+	public void setProductReviewId(long productReviewId) {
+		this.productReviewId = productReviewId;
 	}
 
 	@PrePersist

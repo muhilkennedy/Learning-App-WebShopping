@@ -31,15 +31,11 @@ public class ProductReview implements Serializable {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "PRODUCTREVIEWID")
-	private Long pReviewId;
-	
-	@ManyToOne
-	@JoinColumn(name = "PRODUCTID", nullable = false)
-	private Product productId;
+	@Column(name = "REVIEWID")
+	private Long reviewId;
 	
 	@Column(name = "CUSTOMERID")
-	private Integer customerId;
+	private Long customerId;
 	
 	@Column(name = "RATING")
 	private int rating;
@@ -52,16 +48,18 @@ public class ProductReview implements Serializable {
 
 	@Column(name = "USEFULLCOUNT")
 	private int usefullCount;
+	
+	@Column(name = "PRODUCTREVIEWID")
+	private long productReviewId;
 
 	public ProductReview() {
 		super();
 	}
 	
-	public ProductReview(Tenant tenant, Product productId, Integer customerId, int rating, String reviewDescription,
+	public ProductReview(Tenant tenant, Long customerId, int rating, String reviewDescription,
 			String reviewHeader, int usefullCount) {
 		super();
 		this.tenant = tenant;
-		this.productId = productId;
 		this.customerId = customerId;
 		this.rating = rating;
 		this.reviewDescription = reviewDescription;
@@ -77,27 +75,19 @@ public class ProductReview implements Serializable {
 		this.tenant = tenant;
 	}
 
-	public Long getpReviewId() {
-		return pReviewId;
+	public Long getReviewId() {
+		return reviewId;
 	}
 
 	public void setpReviewId(Long pReviewId) {
-		this.pReviewId = pReviewId;
+		this.reviewId = pReviewId;
 	}
 
-	public Product getProductId() {
-		return productId;
-	}
-
-	public void setProductId(Product productId) {
-		this.productId = productId;
-	}
-
-	public Integer getCustomerId() {
+	public Long getCustomerId() {
 		return customerId;
 	}
 
-	public void setCustomerId(Integer customerId) {
+	public void setCustomerId(Long customerId) {
 		this.customerId = customerId;
 	}
 
@@ -131,6 +121,14 @@ public class ProductReview implements Serializable {
 
 	public void setUsefullCount(int usefullCount) {
 		this.usefullCount = usefullCount;
+	}
+
+	public long getProductReviewId() {
+		return productReviewId;
+	}
+
+	public void setProductReviewId(long productReviewId) {
+		this.productReviewId = productReviewId;
 	}
 
 }

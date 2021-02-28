@@ -15,6 +15,12 @@ export class ProductService {
 
   getCategoriesEndpoint = "/category/getCategories";
 
+  getProductsByIdEndpoint = "/product/getProductsById";
+  getProductImagesEndpoint = "/product/getProductsImage";
+
+  getProductReviewsEndpoint = "/product/getProductReview";
+  createProductReviewEndpoint = "/secure/product/postReview";
+
   constructor(private http: HttpClient) { }
 
   getAllFeaturedProducts(): Observable<any>{
@@ -74,6 +80,33 @@ export class ProductService {
        }
      };
      return this.http.get(environment.backendBaseUrl+this.getProductsBySearchTermEndpoint, httpOptions);
+  }
+
+  getProductReview(prId): Observable<any>{
+    const httpOptions = {
+      params: {
+        prId: prId
+      }
+    };
+    return this.http.get(environment.backendBaseUrl+this.getProductReviewsEndpoint, httpOptions);
+  }
+
+  postReview(productId, reviewHeader, content, productReviewId, rating) : Observable<any>{
+    const body = {
+      productId : productId,
+      productReview : {
+        productReviewId : productReviewId,
+        reviewHeader : reviewHeader,
+        reviewDescription : content,
+        rating : rating
+      }
+    };
+    const httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+      }),
+    };
+    return this.http.post(environment.backendBaseUrl+this.createProductReviewEndpoint, body, httpOptions);
   }
 
 }

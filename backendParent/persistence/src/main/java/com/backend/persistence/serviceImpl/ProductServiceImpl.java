@@ -209,6 +209,8 @@ public class ProductServiceImpl implements ProductService {
 			Product newProduct = new Product();
 			newProduct.setCategoryId(actualProduct.getCategoryId());
 			newProduct.setActive(product.isActive());
+			// keep review id consistent for all versions
+			newProduct.setProductReviewId(actualProduct.getProductReviewId());
 			if (!StringUtils.isEmpty(product.getProductName())) {
 				newProduct.setProductName(product.getProductName());
 				newProduct.setSearchText(product.getProductName());
@@ -266,6 +268,7 @@ public class ProductServiceImpl implements ProductService {
 			newProduct.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
 			newProduct.setTenant(baseService.getTenantInfo());
 			save(newProduct);
+			newProduct.setProductReviewId(newProduct.getProductId());
 			// create product image objects
 			if (productPic != null) {
 				List<ProductImages> productImages = new ArrayList<>();
