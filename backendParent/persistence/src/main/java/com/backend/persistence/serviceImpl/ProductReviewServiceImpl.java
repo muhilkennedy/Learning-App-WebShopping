@@ -61,8 +61,6 @@ public class ProductReviewServiceImpl implements ProductReviewService {
 		int sumAvg = ratingAvg.stream().mapToInt(Integer::intValue).sum();
 		int avgRating = sumAvg / allReviews.size();
 		
-		
-//		int avgRating = product.getProductRating() == 0 ? review.getRating() : product.getProductRating()+review.getRating() / allReviews.size();
 		product.setProductRating(avgRating);
 		return allReviews;
 	}
