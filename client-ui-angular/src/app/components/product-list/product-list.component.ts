@@ -11,6 +11,7 @@ import { ProductService } from 'src/app/service/product/product.service';
 import { CommonsService } from 'src/app/service/shared/commons/commons.service';
 import { UserStoreService } from 'src/app/service/shared/user-store/user-store.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { FeatureService } from 'src/app/service/feature/feature.service';
 
 export class ItemNode {
   children: ItemNode[];
@@ -67,6 +68,8 @@ export class ProductListComponent implements OnInit {
   categoryTree:any[] = new Array();
   selectedCategoryId: any;
 
+  productDetailsPage = "ProductDetailsPage";
+
   // MatPaginator Inputs
   offset = 0;
   pageSize = 10;
@@ -120,7 +123,7 @@ export class ProductListComponent implements OnInit {
   constructor(private productService: ProductService, private userStore: UserStoreService,
               private cartService: CartService, private router: Router,
               private commonService: CommonsService, private activatedRoute: ActivatedRoute,
-              private _snackBar: MatSnackBar ) {
+              private _snackBar: MatSnackBar, private featureService: FeatureService ) {
 
   }
 
@@ -178,6 +181,16 @@ export class ProductListComponent implements OnInit {
       this.categoryTree = this.buildFileTree(this.commonService.categories, 0);
       this.dataSource.data = this.categoryTree;
     }
+
+    this.featureService.getFeatureStatus(this.productDetailsPage)
+                            .subscribe((resp:any) => {
+                              if(resp.statusCode === 200){
+                                this.productDetailsPage = resp.data.featureStatus;
+                              }
+                            },
+                            (error:any) => {
+                              alert('Something went wrong!');
+                            });
   }
 
   setProducts(cIds, sortField, SortType){
@@ -345,6 +358,9 @@ export class ProductListComponent implements OnInit {
   }
 
   viewDetailPage(product){
-    this.router.navigate(['productDetail']);
+    this.commonService.selectedProduct = product;
+    if(this.productDetailsPage){
+      this.router.navigate(['/productDetail'], { queryParams: { productId: product.productId }});
+    }
   }
 }

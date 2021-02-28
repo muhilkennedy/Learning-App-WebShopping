@@ -22,6 +22,7 @@ import com.backend.commons.util.CommonUtil;
 import com.backend.core.util.Constants;
 import com.backend.persistence.entity.Product;
 import com.backend.persistence.helper.ProductPOJO;
+import com.backend.persistence.service.ProductReviewService;
 import com.backend.persistence.service.ProductService;
 
 /**
@@ -36,6 +37,9 @@ public class ProductController {
 
 	@Autowired
 	private ProductService productService;
+	
+	@Autowired
+	private ProductReviewService reviewService;
 
 	/*
 	 * ############################################
@@ -195,6 +199,21 @@ public class ProductController {
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("getFeaturedProductImages : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/getProductReview", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<ProductPOJO> getProductInfo(HttpServletRequest request, @RequestParam(value = "prId", required = false) long productId) {
+		GenericResponse<ProductPOJO> response = new GenericResponse<>();
+		try {
+			response.setDataList(reviewService.getReviewsForProduct(productId));
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("getProductInfo : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);

@@ -67,6 +67,7 @@ public class ProductAdminController {
 			productPojo.setSellingCost(CommonUtil.isValidStringParam(sellingCost) ? new BigDecimal(sellingCost) : productPojo.getCost());
 			productPojo.setProductId(CommonUtil.isValidStringParam(pId) ? Long.parseLong(pId) : -1);
 			productPojo.setActive(CommonUtil.isValidStringParam(active) ? Boolean.parseBoolean(active) : false);
+			productPojo.setProductDescription(CommonUtil.isValidStringParam(description) ? description : "");
 			productPojo.setProductCode(pcode);
 			productPojo.setQuantityInStock(CommonUtil.isValidStringParam(offer) ? Integer.parseInt(unitsInStock) : -1);
 			Product product = productService.createOrUpdateProduct(productPojo,

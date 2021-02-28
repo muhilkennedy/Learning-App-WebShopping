@@ -8,6 +8,7 @@ import { environment } from 'src/environments/environment';
 })
 export class ProfileService {
   updateMobileEndpoint = "/secure/customer/updateMobile";
+  updateEmailEndpoint = "/secure/customer/updateEmail";
 
   constructor(private http: HttpClient) { }
 
@@ -16,4 +17,11 @@ export class ProfileService {
     uploadData.append('mobile', mobile);
     return this.http.post(environment.backendBaseUrl+this.updateMobileEndpoint, uploadData);
   }
+
+  updateEmail(mobile): Observable<any>{
+    const uploadData = new FormData();
+    uploadData.append('email', mobile);
+    return this.http.post(environment.backendBaseUrl+this.updateEmailEndpoint, uploadData);
+  }
+
 }

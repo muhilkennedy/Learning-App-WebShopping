@@ -14,8 +14,10 @@ import com.backend.persistence.dao.CartDao;
 import com.backend.persistence.entity.CustomerAddress;
 import com.backend.persistence.entity.CustomerCart;
 import com.backend.persistence.entity.CustomerInfo;
+import com.backend.persistence.entity.Product;
 import com.backend.persistence.repository.CustomerInfoRepository;
 import com.backend.persistence.service.CustomerInfoService;
+import com.backend.persistence.service.ProductService;
 
 /**
  * @author Muhil
@@ -30,6 +32,9 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 	
 	@Autowired
 	private CustomerInfoRepository customerRepo;
+	
+	@Autowired
+	private ProductService productService;
 	
 	@Autowired
 	private CartDao cartDao;
@@ -65,10 +70,9 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 	}
 	
 	@Override
-	public void addProductToCart(Long productId) throws Exception {
+	public void addProductToCart(Long productId, int quantity) throws Exception {
 		CustomerInfo customer = (CustomerInfo) baseService.getUserInfo();
 		List<CustomerCart> cartItems = cartDao.userCartItems(customer.getCustomerId());
-		int quantity = 1;
 		for(CustomerCart cartItem: cartItems) {
 			if(cartItem.getProduct().getProductId() == productId) {
 				quantity = cartItem.getQuantity() + 1;
@@ -76,7 +80,13 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 				return;
 			}
 		}
-		cartDao.insertIntoCart(productId, customer.getCustomerId(), quantity);
+		Product product = productService.getProductById(productId);
+		if(product.getQuantityInStock() < quantity) {
+			throw new Exception("Only " + product.getQuantityInStock() + " left !");
+		}
+		else {
+			cartDao.insertIntoCart(productId, customer.getCustomerId(), quantity);
+		}
 	}
 	
 	@Override
@@ -98,7 +108,13 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 			removeFromCart(productId);
 		}
 		else {
-			cartDao.updateProductQuantity(productId, customer.getCustomerId(), quantity);
+			Product product = productService.getProductById(productId);
+			if(product.getQuantityInStock() < quantity) {
+				throw new Exception("Only " + product.getQuantityInStock() + " left in stock !");
+			}
+			else {
+				cartDao.updateProductQuantity(productId, customer.getCustomerId(), quantity);
+			}
 		}
 	}
 	
@@ -162,6 +178,19 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 		if(existingCustomer == null) {
 			CustomerInfo customer = (CustomerInfo)baseService.getUserInfo();
 			customer.setMobile(mobile);
+			save(customer);
+		}
+		else {
+			throw new Exception("Another Account with Same Mobile Number Exists!");
+		}
+	}
+	
+	@Override
+	public void updateCustomerEmail(String email) throws Exception {
+		CustomerInfo existingCustomer = getCustomerByEmail(email);
+		if(existingCustomer == null) {
+			CustomerInfo customer = (CustomerInfo)baseService.getUserInfo();
+			customer.setEmailId(email);
 			save(customer);
 		}
 		else {

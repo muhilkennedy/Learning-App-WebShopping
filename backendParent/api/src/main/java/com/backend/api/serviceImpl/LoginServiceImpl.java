@@ -134,7 +134,7 @@ public class LoginServiceImpl implements LoginService {
 				cusInfo.setTenant(baseService.getTenantInfo());
 				if (!CommonUtil.isValidStringParam(cusInfo.getEmailId())) {
 					cusInfo.setEmailId(cusInfo.getMobile() + CommonUtil.Symbol_at
-							+ baseService.getTenantInfo().getUniqueName() + CommonUtil.Dot_Com);
+							+ baseService.getTenantInfo().getTenantID() + CommonUtil.Dot_Com);
 				}
 				if (!CommonUtil.isValidStringParam(cusInfo.getFirstName())) {
 					cusInfo.setFirstName("Guest");

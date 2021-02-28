@@ -138,8 +138,7 @@
                   <span class="offer-overlay" *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0">
                     {{prod.productContent.offer}}% Off
                   </span>
-                  <!-- (click)="viewDetailPage(prod)"  -->
-                  <img style="object-fit: cover; cursor: pointer;" width="250px" height="300px" src={{getProductImage(prod)}} alt="product Image" />
+                  <img (click)="viewDetailPage(prod)" style="object-fit: cover; cursor: pointer;" width="250px" height="300px" src={{getProductImage(prod)}} alt="product Image" />
                   <h3>{{prod.productContent.productName}}</h3>
                   <p>{{prod.productContent.brandName}}</p>
                   <span *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0" style="text-decoration: line-through;">₹ {{prod.productContent.cost}} </span>
@@ -166,7 +165,7 @@
                   <span class="offer-overlay" *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0">
                     {{prod.productContent.offer}}% Off
                   </span>
-                  <img style="object-fit: cover;" width="150px" height="200px" src={{getProductImage(prod)}} alt="product Image" />
+                  <img (click)="viewDetailPage(prod)" style="object-fit: cover;" width="150px" height="200px" src={{getProductImage(prod)}} alt="product Image" />
                   <h3>{{prod.productContent.productName}}</h3>
                   <p>{{prod.productContent.brandName}}</p>
                   <span *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0" style="text-decoration: line-through;">₹ {{prod.productContent.cost}} </span>

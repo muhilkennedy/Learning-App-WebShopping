@@ -73,6 +73,8 @@ public class ProductDao {
 				product.setActive(rs.getBoolean(13));
 				product.setProductRating(rs.getInt(15));
 				product.setSellingCost(rs.getBigDecimal(16));
+				product.setSearchText(rs.getString(17));
+				product.setProductReviewId(rs.getLong(18));
 				productList.add(product);
 			}
 			return productList;
@@ -116,6 +118,8 @@ public class ProductDao {
 				product.setActive(rs.getBoolean(13));
 				product.setProductRating(rs.getInt(15));
 				product.setSellingCost(rs.getBigDecimal(16));
+				product.setSearchText(rs.getString(17));
+				product.setProductReviewId(rs.getLong(18));
 				ProductPOJO pojo = new ProductPOJO();
 				pojo.setProductContent(product);
 				pojo.setProductImage(pImageRepo.findAllImagesForProduct(baseService.getTenantInfo(), product));
@@ -162,6 +166,8 @@ public class ProductDao {
 				product.setActive(rs.getBoolean(13));
 				product.setProductRating(rs.getInt(15));
 				product.setSellingCost(rs.getBigDecimal(16));
+				product.setSearchText(rs.getString(17));
+				product.setProductReviewId(rs.getLong(18));
 				ProductPOJO pojo = new ProductPOJO();
 				pojo.setProductContent(product);
 				pojo.setProductImage(pImageRepo.findAllImagesForProduct(baseService.getTenantInfo(), product));
@@ -241,6 +247,8 @@ public class ProductDao {
 				product.setActive(rs.getBoolean(13));
 				product.setProductRating(rs.getInt(15));
 				product.setSellingCost(rs.getBigDecimal(16));
+				product.setSearchText(rs.getString(17));
+				product.setProductReviewId(rs.getLong(18));
 				productList.add(product);
 			}
 			return productList;

@@ -120,6 +120,9 @@ export class CartComponent implements OnInit {
                     .subscribe((resp:any) => {
                       if(resp.statusCode !== 200){
                         item.quantity--;
+                        this._snackBar.open('Failed : ' + resp.errorMessages, '', this.commonService.alertoptionsWarn);
+                        this.loading = false;
+                        return;
                       }
                       this.userStore.cartCount++;
                       this.loading = false;
@@ -127,6 +130,7 @@ export class CartComponent implements OnInit {
                     (error: any) => {
                       alert("Something went wrong!");
                       item.quantity--;
+                      this.loading = false;
                     })
 
   }
