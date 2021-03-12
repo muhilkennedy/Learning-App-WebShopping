@@ -3,9 +3,9 @@ package com.backend.persistence.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections4.map.HashedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,17 +41,15 @@ public class PaymentDao {
 		return mode;
 	}
 	
-	public List<String> getPaymentModes(int id) throws Exception {
-		List<String> modes = new ArrayList<String>();
-		try (Connection con = dbUtil.getConnectionInstance()) {
+	public Map<Integer, String> getPaymentModes() throws Exception {
+		Map<Integer, String> modes = new HashedMap<Integer, String>();
+ 		try (Connection con = dbUtil.getConnectionInstance()) {
 			PreparedStatement stmt = con
-					.prepareStatement("select paymenttype from paymentmode");
-			stmt.setInt(1, id);
-			
+					.prepareStatement("select * from paymentmode");
 			ResultSet result = stmt.executeQuery();
 			
-			if(result.next()) {
-				modes.add(result.getString(1));
+			while(result.next()) {
+				modes.put(result.getInt(1), result.getString(2));
 			}
 			
 		} catch (Exception ex) {

@@ -14,10 +14,9 @@
                 <i class="fa fa-google-plus" style="color: red;"></i>
               </button>
               <div class="vertical"></div>
-              <button disabled mat-mini-fab color="accent" (click)="signInWithFB()">
-                <!-- <mat-icon>plus_one</mat-icon> -->
+              <!-- <button disabled mat-mini-fab color="accent" (click)="signInWithFB()">
                 <i class="fa fa-facebook" style="color: blue;"></i>
-              </button>
+              </button> -->
             </div>
             <!-- <a href="#" class="social" disabled><i class="fa fa-facebook" style="color: blue;"></i></a> -->
           </div>
@@ -33,11 +32,23 @@
           <form>
             <mat-form-field appearance="outline" style="width:100%">
               <mat-label>EmailId/Mobile</mat-label>
-              <input type="email" name="emailid" matInput placeholder="EmailId/Mobile" [(ngModel)]="emailId">
+              <input type="email" [formControl]="emailFormControl" name="emailid" matInput placeholder="EmailId/Mobile" [(ngModel)]="emailId">
+              <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+                Please enter a valid email address
+              </mat-error>
+              <mat-error *ngIf="emailFormControl.hasError('required')">
+                Email is <strong>required</strong>
+              </mat-error>
             </mat-form-field>
             <mat-form-field appearance="outline" style="width:100%">
               <mat-label>Password</mat-label>
-              <input matInput type="password" name="password"  placeholder="Password" [(ngModel)]="password"/>
+              <input matInput type="password" [formControl]="passwordFormControl" name="password"  placeholder="Password" [(ngModel)]="password"/>
+              <mat-error *ngIf="passwordFormControl.hasError('required')">
+                Password is <strong>required</strong>
+              </mat-error>
+              <mat-error *ngIf="passwordFormControl.hasError('minlength')">
+                Password should be of minimum 8 Characters
+              </mat-error>
             </mat-form-field>
             <span>
               <input type="checkbox" class="checkbox rememberme" name="rememberme" [(ngModel)]="rememberMe" />
@@ -62,15 +73,33 @@
           <form>
             <mat-form-field appearance="outline" style="width:100%">
               <mat-label>Mobile Number</mat-label>
-              <input matInput type="number" name="mobile" placeholder="Mobile" [(ngModel)]="mobile"/>
+              <input matInput type="number"[formControl]="mobileFormControl" name="mobile" placeholder="Mobile" [(ngModel)]="mobile"/>
+              <mat-error *ngIf="mobileFormControl.hasError('minlength')">
+                Mobile Number Has to be 10 Digits
+              </mat-error>
+              <mat-error *ngIf="mobileFormControl.hasError('required')">
+                Email is <strong>required</strong>
+              </mat-error>
             </mat-form-field>
             <mat-form-field class="matitem pull-left" style="width: 100%;" appearance="outline">
-              <input matInput type="number" name="mobileotp" placeholder="Mobile OTP" [(ngModel)]="otpnumber">
+              <input matInput type="number" [formControl]="mOtpFormControl" name="mobileotp" placeholder="Mobile OTP" [(ngModel)]="otpnumber">
               <button style="margin-top: -16px;" matSuffix type="button" class="btn btn-primary" (click)="sendOtp()">Get OTP</button>
+              <mat-error *ngIf="mOtpFormControl.hasError('minlength')">
+                Please enter a valid email address
+              </mat-error>
+              <mat-error *ngIf="mOtpFormControl.hasError('required')">
+                Email is <strong>required</strong>
+              </mat-error>
             </mat-form-field>
             <mat-form-field appearance="outline" style="width:100%">
               <mat-label>New Password</mat-label>
-              <input matInput type="password" name="password"  placeholder="Password" [(ngModel)]="password"/>
+              <input matInput type="password" [formControl]="mPasswordFormControl" name="password"  placeholder="Password" [(ngModel)]="password"/>
+              <mat-error *ngIf="mPasswordFormControl.hasError('minlength')">
+                Password should be of minimum 8 Characters
+              </mat-error>
+              <mat-error *ngIf="mPasswordFormControl.hasError('required')">
+                Email is <strong>required</strong>
+              </mat-error>
             </mat-form-field>
             <button type="submit" class="btn btn-default update" style="float: right; margin-top: -10px;" (click)="signupWithMobile()">
               <i class="fa fa-plus"></i> Sign Up</button>
@@ -87,27 +116,51 @@
           <form>
             <mat-form-field appearance="outline" style="width:100%">
               <mat-label>First Name</mat-label>
-              <input matInput type="text" name="fname" placeholder="First Name" [(ngModel)]="fName"/>
+              <input matInput type="text" [formControl]="firstNameControl" name="fname" placeholder="First Name" [(ngModel)]="fName"/>
+              <mat-error *ngIf="firstNameControl.hasError('required')">
+                FirstName is <strong>required</strong>
+              </mat-error>
             </mat-form-field>
             <mat-form-field appearance="outline" style="width:100%">
               <mat-label>Last Name</mat-label>
-              <input matInput type="text" name="lname"  placeholder="Last Name" [(ngModel)]="lName"/>
+              <input matInput type="text" [formControl]="lastNameControl" name="lname"  placeholder="Last Name" [(ngModel)]="lName"/>
+              <mat-error *ngIf="lastNameControl.hasError('required')">
+                LastName is <strong>required</strong>
+              </mat-error>
             </mat-form-field>
             <mat-form-field appearance="outline" style="width:100%">
               <mat-label>Email Id</mat-label>
-              <input matInput type="email" name="email"  placeholder="Email Address" [(ngModel)]="emailId"/>
+              <input matInput type="email" [formControl]="regEmailFormControl" name="email"  placeholder="Email Address" [(ngModel)]="emailId"/>
+              <mat-error *ngIf="regEmailFormControl.hasError('email') && !regEmailFormControl.hasError('required')">
+                Please enter a valid email address
+              </mat-error>
+              <mat-error *ngIf="regEmailFormControl.hasError('required')">
+                Email is <strong>required</strong>
+              </mat-error>
             </mat-form-field>
             <mat-form-field class="matitem pull-left" style="width: 100%;" appearance="outline">
-              <input matInput type="otp" name="otp"  placeholder="Email OTP" [(ngModel)]="otp"/>
+              <input matInput type="otp" [formControl]="otpControl" name="otp"  placeholder="Email OTP" [(ngModel)]="otp"/>
               <button style="margin-top: -16px;" matSuffix type="button" class="btn btn-primary" (click)="sendRegisterOTP()"
                     [ngClass]="{'spinner' : buttonLoading}" [disabled]="buttonDisable">
                   Send EMAIL-OTP
                 </button>
                 <mat-hint *ngIf="buttonDisable"><small>OTP Valid For 5 Mins</small></mat-hint>
-            </mat-form-field>
+                <mat-error *ngIf="mOtpFormControl.hasError('minlength')">
+                  OTP should be of 6 Digits
+                </mat-error>
+                <mat-error *ngIf="lastNameControl.hasError('required')">
+                  EMAIL OTP is <strong>required</strong>
+                </mat-error>
+              </mat-form-field>
             <mat-form-field appearance="outline" style="width:100%">
               <mat-label>New Password</mat-label>
-              <input matInput required type="password" name="pass" minlength="10"  placeholder="New Password" [(ngModel)]="password"/>
+              <input matInput required type="password" [formControl]="regPasswordFormControl" name="pass" minlength="8"  placeholder="New Password" [(ngModel)]="password"/>
+              <mat-error *ngIf="regPasswordFormControl.hasError('minlength')">
+                Password should be of minimum 8 Characters
+              </mat-error>
+              <mat-error *ngIf="regPasswordFormControl.hasError('required')">
+                Password is <strong>required</strong>
+              </mat-error>
             </mat-form-field>
             <button style="float:right" type="submit" class="btn btn-default update" (click)="registerCustomer()">
               <i class="fa fa-plus"></i> Sign Up</button>

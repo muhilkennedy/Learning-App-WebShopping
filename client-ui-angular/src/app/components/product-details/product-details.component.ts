@@ -85,7 +85,7 @@ export class ProductDetailsComponent implements OnInit {
                       this.loading = false;
                     },
                     (error:any) => {
-                      alert('Something went wrong!');
+                      this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                       this.loading = false;
                     });
   }
@@ -100,7 +100,7 @@ export class ProductDetailsComponent implements OnInit {
                           this.loading = false;
                         },
                         (error:any) => {
-                          alert("Cannot submit this Review!");
+                          this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                           this.loading = false;
                         });
   }
@@ -114,7 +114,7 @@ export class ProductDetailsComponent implements OnInit {
                           this.loading = false;
                         },
                         (error:any) => {
-                          alert('Something went wrong!');
+                          this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                           this.loading = false;
                         });
   }

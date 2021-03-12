@@ -170,11 +170,11 @@ export class ProductListComponent implements OnInit {
                             this.dataSource.data = this.categoryTree;
                           }
                           else{
-                            alert('Failed : ' + resp.errorMessages);
+                            this._snackBar.open('Failed : ' + resp.errorMessages, 'OK', this.commonService.alertoptionsError);
                           }
                           },
                           (error:any) => {
-                            alert('Something went wrong!');
+                            this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                         });
     }
     else{
@@ -189,7 +189,7 @@ export class ProductListComponent implements OnInit {
                               }
                             },
                             (error:any) => {
-                              alert('Something went wrong!');
+                              this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                             });
   }
 
@@ -202,12 +202,12 @@ export class ProductListComponent implements OnInit {
                             this.products = resp.dataList;
                           }
                           else{
-                            alert('Failed : ' + resp.errorMessages);
+                            this._snackBar.open('Failed : ' + resp.errorMessages, 'OK', this.commonService.alertoptionsError);
                           }
                             this.loading = false;
                           },
                         (error:any) => {
-                          alert('Something went wrong!');
+                          this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                         });
     this.productService.getproductCount(cIds)
                         .subscribe((resp:any) => {
@@ -215,11 +215,11 @@ export class ProductListComponent implements OnInit {
                             this.productCount = resp.data.productCount;
                           }
                           else{
-                            alert('Failed : ' + resp.errorMessages);
+                            this._snackBar.open('Failed : ' + resp.errorMessages, 'OK', this.commonService.alertoptionsError);
                           }
                         },
                         (error:any) => {
-                          alert('Something went wrong!');
+                          this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                         });
 }
 
@@ -267,7 +267,7 @@ export class ProductListComponent implements OnInit {
 
   addToCart(prod){
     if(this.userStore.emailId === undefined || this.userStore.emailId === null){
-      alert("Please Login to Add Items to Cart!");
+      this._snackBar.open('Please login to Add to Cart !', 'OK', this.commonService.alertoptionsError);
       // this.router.navigate(['/login']);
     }
     else{
@@ -304,7 +304,7 @@ export class ProductListComponent implements OnInit {
                             this.loading = false;
                           },
                           (error:any) => {
-                            alert("something went wrong!");
+                            this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                             this.loading = false;
                           });
   }

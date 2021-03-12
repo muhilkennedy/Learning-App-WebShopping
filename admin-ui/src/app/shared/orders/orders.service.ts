@@ -25,10 +25,11 @@ export class OrdersService {
     return this.http.get(environment.backendBaseUrl+this.getUnassignedOrdersEndpoint);
   }
 
-  changeOrderStatus(status, orderId){
+  changeOrderStatus(status, orderId, paymentMode){
     const uploadData = new FormData();
     uploadData.append('status', status);
     uploadData.append('orderId', orderId);
+    uploadData.append('paymentMode', paymentMode);
     return this.http.post(environment.backendBaseUrl+this.changeOrderStatusEndpoint, uploadData);
   }
 

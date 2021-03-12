@@ -40,4 +40,6 @@ public interface OrdersService {
 
 	int getOrdersCount(String limit, String offset, String condition, long date, String status) throws Exception;
 
+	void updateOrderStatus(String status, Long orderId, String paymentType) throws Exception;
+
 }

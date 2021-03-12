@@ -352,7 +352,7 @@ public class LoginController {
 			if (loginService.checkIfCustomerExists(cusObj.getCustomerInfo().getEmailId())) {
 				response.setErrorMessages(Arrays.asList("Email Id Exists"));
 				response.setStatus(Response.Status.ERROR);
-			} else if (cusObj.getOtp() != null && !otp.equals(cusObj.getOtp())) {
+			} else if (cusObj.getOtp() != null && (otp == null || !otp.equals(cusObj.getOtp()))) {
 				response.setErrorMessages(Arrays.asList("Invalid/Expired OTP...Please Refresh to continue !"));
 				response.setStatus(Response.Status.ERROR);
 			} else {

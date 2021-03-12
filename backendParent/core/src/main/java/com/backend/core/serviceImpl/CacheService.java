@@ -72,7 +72,7 @@ public class CacheService {
 			if(map.containsKey(requestURI)) {
 				int count = map.get(requestURI);
 				map.put(requestURI, ++count);
-				if(count > 100) {
+				if(count > 200) {
 					logger.error("API throttling limit reached for IP - " + ip);
 					throw new Exception("API throttling limit reached");
 				}

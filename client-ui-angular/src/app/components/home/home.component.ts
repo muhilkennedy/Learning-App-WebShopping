@@ -60,7 +60,7 @@ export class HomeComponent implements OnInit {
                       this.loading = false;
                     },
                     (error: any) => {
-                      alert("Something went wrong!");
+                      this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                     })
     this.productService.getAllFeaturedProducts()
                        .subscribe((resp:any) => {
@@ -69,7 +69,7 @@ export class HomeComponent implements OnInit {
                           }
                         },
                         (error: any) => {
-                          alert("Something went wrong!");
+                          this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                         })
   }
 

@@ -5,7 +5,7 @@
     <div class="row">
       <div class="col-sm-12">
       <h2 class="title text-center">Visit <strong>Us</strong></h2>
-      <div id="gmap" class="contact-map" *ngIf="view">
+      <div id="gmap" class="contact-map" *ngIf="view && canShowMap()">
         <iframe height=500px
           [src]="gmapUrl"
           frameborder="0" style="border:0; width: -webkit-fill-available;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>

@@ -91,11 +91,12 @@ public class OrdersAdminController {
 	@RequestMapping(value = "/changeOrderStatus", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<Orders> changeOrderStatus(HttpServletRequest request,
 													@RequestParam(value = "status", required = true) String status,
-													@RequestParam(value = "orderId", required = true) String orderId) {
+													@RequestParam(value = "orderId", required = true) String orderId,
+													@RequestParam(value = "paymentMode", required = false) String paymentType) {
 		GenericResponse<Orders> response = new GenericResponse<Orders>();
 		try {
 			if(CommonUtil.isValidStringParam(status) && CommonUtil.isValidStringParam(orderId)) {
-				orderService.updateOrderStatus(status, (StringUtils.isNotEmpty(orderId) ? Long.parseLong(orderId) : -1));
+				orderService.updateOrderStatus(status, (StringUtils.isNotEmpty(orderId) ? Long.parseLong(orderId) : -1), paymentType);
 				response.setStatus(Response.Status.OK);
 			}
 			else {

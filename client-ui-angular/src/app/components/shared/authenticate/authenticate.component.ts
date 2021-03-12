@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { CartService } from 'src/app/service/cart/cart.service';
 import { LoginService } from 'src/app/service/login/login.service';
+import { CommonsService } from 'src/app/service/shared/commons/commons.service';
 import { UserStoreService } from 'src/app/service/shared/user-store/user-store.service';
 
 @Component({
@@ -16,7 +18,8 @@ export class AuthenticateComponent implements OnInit {
   loading = false;
 
   constructor(private route: Router, private loginService: LoginService, private cartService: CartService,
-              private userStore: UserStoreService, private cookieService: CookieService) { }
+              private userStore: UserStoreService, private cookieService: CookieService,
+              private commonService: CommonsService, private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.loading = true;
@@ -48,12 +51,12 @@ export class AuthenticateComponent implements OnInit {
                             this.route.navigate(["/home"]);
                           }
                           else{
-                            alert('Failed : ' + resp.errorMessages);
+                            this._snackBar.open('Failed : ' + resp.errorMessages, 'OK', this.commonService.alertoptionsError);
                           }
                           this.loading = false;
                           },
                           (error:any) => {
-                            alert('Something went wrong!');
+                            this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                           });
     }
     else{
@@ -73,11 +76,11 @@ export class AuthenticateComponent implements OnInit {
         this.userStore.cartCount = resp.data;
       }
       else{
-        alert('Failed : ' + resp.errorMessages);
+        this._snackBar.open('Failed : ' + resp.errorMessages, 'OK', this.commonService.alertoptionsError);
       }
       },
       (error:any) => {
-        alert('Something went wrong!');
+        this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
       });
   }
 
