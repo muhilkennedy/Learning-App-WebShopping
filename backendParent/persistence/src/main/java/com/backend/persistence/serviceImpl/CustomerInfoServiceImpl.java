@@ -194,7 +194,7 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 			save(customer);
 		}
 		else {
-			throw new Exception("Another Account with Same Mobile Number Exists!");
+			throw new Exception("Another Account with Same Email-ID Exists!");
 		}
 	}
 

@@ -89,12 +89,13 @@ export class CartComponent implements OnInit {
                           this.maxDiscountlimit = this.couponDetails.maxDiscountLimit;
                           this.commonService.couponDetails = this.couponDetails;
                           if(this.cartSubtotal() <= this.couponDetails.minTotalLimit){
-                            alert("Add " + (this.couponDetails.minTotalLimit-this.cartSubtotal())
-                                  + " (inr) more to apply this coupon!");
-                                  this.couponLoading = false;
-                                  this.commonService.couponDetails = null;
-                                  this.maxDiscountlimit = 0;
-                                  return;
+                            this._snackBar.open("Add " + (this.couponDetails.minTotalLimit-this.cartSubtotal())
+                                                + " (inr) more to apply this coupon!", 'ok', this.commonService.alertoptionsWarn);
+                            this.couponLoading = false;
+                            this.commonService.couponDetails = null;
+                            this.maxDiscountlimit = 0;
+                            return;
+
                           }
                         }
                         if(pincode !== null && (this.pincodeDetails === undefined || this.pincodeDetails === null)){
@@ -109,7 +110,7 @@ export class CartComponent implements OnInit {
                       this.couponLoading = false;
                     },
                     (error: any) => {
-                      alert("Something went wrong!");
+                      this._snackBar.open('Something went wrong.. try again later!', 'OK', this.commonService.alertoptionsError);
                     })
   }
 
@@ -128,7 +129,7 @@ export class CartComponent implements OnInit {
                       this.loading = false;
                     },
                     (error: any) => {
-                      alert("Something went wrong!");
+                      this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                       item.quantity--;
                       this.loading = false;
                     })
@@ -168,7 +169,7 @@ export class CartComponent implements OnInit {
                       this.loading = false;
                     },
                     (error: any) => {
-                      alert("Something went wrong!");
+                      this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                       item.quantity--;
                     })
   }
@@ -253,7 +254,7 @@ export class CartComponent implements OnInit {
     this.cartService.removeProductFromCart(prod.productId)
                     .subscribe((resp:any) => {
                       if(resp.statusCode !== 200){
-                        alert("failed to remove from cart");
+                        this._snackBar.open('Failed to Remove from Cart!', 'OK', this.commonService.alertoptionsError);
                       }
                       let index = 0;
                       this.cartItems.forEach(item => {
@@ -268,7 +269,7 @@ export class CartComponent implements OnInit {
                       this.loading = false;
                     },
                     (error: any) => {
-                      alert("Something went wrong!");
+                      this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                     })
   }
 
@@ -283,7 +284,7 @@ export class CartComponent implements OnInit {
     this.cartService.clearCart()
                     .subscribe((resp:any) => {
                       if(resp.statusCode !== 200){
-                        alert("failed to clear cart");
+                        this._snackBar.open('Failed to Clear Cart!', 'OK', this.commonService.alertoptionsError);
                       }
                       else{
                         this.commonService.cartTotal = 0;
@@ -293,7 +294,7 @@ export class CartComponent implements OnInit {
                       this.loading = false;
                     },
                     (error: any) => {
-                      alert("Something went wrong!");
+                      this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                       this.loading = false;
                     })
   }

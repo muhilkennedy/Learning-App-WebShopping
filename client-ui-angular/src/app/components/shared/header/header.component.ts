@@ -1,5 +1,6 @@
 import { HostListener } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { CartService } from 'src/app/service/cart/cart.service';
@@ -37,7 +38,7 @@ export class HeaderComponent implements OnInit {
   constructor(public tenantStore: TenantStoreService, private router: Router,
               public userStore: UserStoreService, private cartService: CartService,
               public cookieService: CookieService, public commonsService: CommonsService,
-              private productService: ProductService) { }
+              private productService: ProductService, private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.onResize(event);
@@ -88,7 +89,7 @@ export class HeaderComponent implements OnInit {
 
   openPOSOrders(){
     if(this.userStore.mobile === undefined || this.userStore.mobile === null){
-      alert("Please Update Mobile Number to View POS Details");
+      this._snackBar.open('Please Update Mobile Number to View POS Details', 'OK', this.commonsService.alertoptionsWarn);
       return;
     }
     this.router.navigate(['/posOrders']);

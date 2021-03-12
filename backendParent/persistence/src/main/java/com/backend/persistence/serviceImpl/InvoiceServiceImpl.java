@@ -218,6 +218,17 @@ public class InvoiceServiceImpl implements InvoiceService{
 		return invoice;
 	}
 	
+	@Override
+	public OrderInvoice reassembleOrderInvoice(OrderInvoice invoice, Orders order) {
+		try {
+			invoice.setDocument(generateInvoice(order));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		orderInvoiceRepo.saveAndFlush(invoice);
+		return invoice;
+	}
+	
 	private Blob generateInvoice(Orders order) throws Exception {
 		InvoiceTemplate currentTemplate = invoiceRepository.findInvoiceTemplateForTenant(baseService.getTenantInfo());
 		InputStream is = currentTemplate.getDocument().getBinaryStream();
@@ -301,7 +312,13 @@ public class InvoiceServiceImpl implements InvoiceService{
 	}
 	
 	private Map<String, String> generateInvoiceFieldsMap(Orders order) {
-		CustomerInfo user = (CustomerInfo) baseService.getUserInfo();
+		CustomerInfo user = null;
+		if(order.getCustomerId() != null && order.getCustomerId() > 0) {
+			user = customerService.getCustomerById(order.getCustomerId());
+		}
+		else {
+			user = (CustomerInfo) baseService.getUserInfo();
+		}
 		user = customerService.getCustomerByEmail(user.getEmailId());
 		Map<String, String> map = new HashMap<>();
 		map.put(Key_CustomerName, user.getFirstName().toUpperCase() + " " + user.getLastName().toUpperCase());

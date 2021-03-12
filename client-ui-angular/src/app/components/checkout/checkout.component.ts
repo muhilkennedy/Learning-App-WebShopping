@@ -144,7 +144,7 @@ export class CheckoutComponent implements OnInit {
                       this.loading = false;
                     },
                     (error: any) => {
-                      alert("Something went wrong!");
+                      this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                     })
   }
 
@@ -197,7 +197,7 @@ export class CheckoutComponent implements OnInit {
                       }
                     },
                     (error: any) => {
-                      alert("Something went wrong!");
+                      this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                     })
   }
 

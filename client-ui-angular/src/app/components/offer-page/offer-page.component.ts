@@ -82,12 +82,13 @@ export class OfferPageComponent implements OnInit {
                           this.commonService.couponDetails = this.couponDetails;
                           this._snackBar.open('Coupon Applied Successfully!', 'OK', this.commonService.alertoptionsSuccess);
                           if(this.cartSubtotal() <= this.couponDetails.minTotalLimit){
-                            alert("Add " + (this.couponDetails.minTotalLimit-this.cartSubtotal())
-                                  + " (inr) more to apply this coupon!");
-                                  this.couponLoading = false;
-                                  this.commonService.couponDetails = null;
-                                  this.maxDiscountlimit = 0;
-                                  return;
+                            this._snackBar.open("Add " + (this.couponDetails.minTotalLimit-this.cartSubtotal())
+                                                + " (inr) more to apply this coupon!", 'OK', this.commonService.alertoptionsWarn);
+                            this.couponLoading = false;
+                            this.commonService.couponDetails = null;
+                            this.maxDiscountlimit = 0;
+                            return;
+
                           }
                         }
                         if(pincode !== null && (this.pincodeDetails === undefined || this.pincodeDetails === null)){
@@ -102,7 +103,7 @@ export class OfferPageComponent implements OnInit {
                       this.couponLoading = false;
                     },
                     (error: any) => {
-                      alert("Something went wrong!");
+                      this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                     })
   }
 

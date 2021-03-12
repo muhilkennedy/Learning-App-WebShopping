@@ -30,6 +30,7 @@ import com.backend.core.service.BaseService;
 import com.backend.core.util.DashboardStatusUtil;
 import com.backend.persistence.dao.CartDao;
 import com.backend.persistence.dao.OrdersDao;
+import com.backend.persistence.dao.PaymentDao;
 import com.backend.persistence.entity.Coupons;
 import com.backend.persistence.entity.CustomerCart;
 import com.backend.persistence.entity.CustomerInfo;
@@ -88,6 +89,9 @@ public class OrdersServiceImpl implements OrdersService {
 	
 	@Autowired
 	private ProductNotificationService productNotification;
+	
+	@Autowired
+	private PaymentDao paymentDao;
 
 	@Override
 	public void save(Orders order) {
@@ -186,7 +190,6 @@ public class OrdersServiceImpl implements OrdersService {
 		createUnassignedOrder(order.getOrderId());
 		customerService.clearCustomerCart();
 		OrderInvoice invoice = invoiceService.createOrderInvoice(order);
-		customerService.updateLoyalityPointByCustomerMobile(customer.getMobile(), subTotal.floatValue());
 		emailService.sendOrderStatusEmail(String.valueOf(order.getOrderId()), order.getStatus(), order.getSubTotal().toString(),
 				order.getOrderDate(), PaymentModes.paymentModes.get(order.getPaymentModeId()), customer.getEmailId(),
 				customer.getFirstName(), customer.getLastName(), baseService.getOrigin(), invoice.getDocument());
@@ -236,6 +239,12 @@ public class OrdersServiceImpl implements OrdersService {
 	
 	@Override
 	public void updateOrderStatus(String status, Long orderId) throws Exception {
+		// considering cash as default type
+		updateOrderStatus(status, orderId, "CASH");
+	}
+	
+	@Override
+	public void updateOrderStatus(String status, Long orderId, String paymentType) throws Exception {
 		Orders order = ordersRepo.findOrdersById(baseService.getTenantInfo(), orderId);
 		if (order != null) {
 			// incase of order accepted by a employee assign the task to that employee
@@ -244,6 +253,15 @@ public class OrdersServiceImpl implements OrdersService {
 				order.setEmployeeId(emp.getEmployeeId());
 				ordersRepo.saveAndFlush(order);
 				removeUnassignedOrder(order.getOrderId());
+			}
+			if(CommonUtil.isValidStringParam(paymentType)) {
+				//this way of handling needs to be changed
+				Map<Integer, String> modes = paymentDao.getPaymentModes();
+				modes.entrySet().stream().forEach(mode -> {
+					if(mode.getValue().equalsIgnoreCase(paymentType)) {
+						order.setPaymentModeId(mode.getKey());
+					}
+				});
 			}
 			switch (status.toLowerCase()) {
 			case "accepted":
@@ -274,7 +292,9 @@ public class OrdersServiceImpl implements OrdersService {
 			Blob invoiceBlob= null;
 			//send invoice again incase of delivered status.
 			if (order.getStatus().equals(OrdersUtil.orderStatus.Delivered.toString())) {
+				customerService.updateLoyalityPointByCustomerMobile(customer.getMobile(), order.getSubTotal().floatValue());
 				OrderInvoice invoice = invoiceService.getInvoiceByOrder(order);
+				invoice = invoiceService.reassembleOrderInvoice(invoice, order);
 				invoiceBlob = invoice != null ? invoice.getDocument() : null;
 			}
 			emailService.sendOrderStatusEmail(String.valueOf(order.getOrderId()), order.getStatus(),

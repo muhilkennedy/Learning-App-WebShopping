@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { OrderService } from 'src/app/service/order/order.service';
+import { CommonsService } from 'src/app/service/shared/commons/commons.service';
 import { UserStoreService } from 'src/app/service/shared/user-store/user-store.service';
 import { PosDialogComponent } from './pos-dialog/pos-dialog.component';
 
@@ -18,7 +20,8 @@ export class PosHistoryComponent implements OnInit {
   loading = true;
   orders:any[] = new Array();
 
-  constructor(private orderService: OrderService, public dialog: MatDialog) { }
+  constructor(private orderService: OrderService, public dialog: MatDialog,
+              private commonService: CommonsService, private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.loading = true;
@@ -30,7 +33,7 @@ export class PosHistoryComponent implements OnInit {
                         this.loading = false;
                       },
                       (error: any) => {
-                        alert("Something went wrong!");
+                        this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                       })
   }
 

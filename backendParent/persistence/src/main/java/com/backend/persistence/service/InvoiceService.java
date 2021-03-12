@@ -42,4 +42,6 @@ public interface InvoiceService {
 
 	File getPOSInvoiceAsOnlinePdf(POSData posData) throws Exception;
 
+	OrderInvoice reassembleOrderInvoice(OrderInvoice invoice, Orders order);
+
 }

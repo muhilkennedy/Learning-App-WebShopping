@@ -29,6 +29,10 @@ export class OrdersComponent implements OnInit {
   shippedOrders: any[] = new Array();
   productList: any[] = new Array();
 
+  selectedOrder: any;
+  paymentTypes: string[] = ['Cash', 'Card', 'GooglePay', 'Phonepe', 'Paytm', 'NetBanking', 'Others'];
+  paymentMode: string = this.paymentTypes[0];
+
   constructor(private orderService: OrdersService,
              private alertService: AlertService,
              private employeeService: EmployeeService){}
@@ -45,7 +49,7 @@ export class OrdersComponent implements OnInit {
 
   changeStatus(orderId, status){
     this.loading = true;
-    this.orderService.changeOrderStatus(status, orderId)
+    this.orderService.changeOrderStatus(status, orderId, this.paymentMode)
                       .subscribe((resp:any)=>{
                         if(resp.statusCode === 200){
                           this.alertService.success("Order Status Updated!", this.alertoptions);
@@ -205,6 +209,17 @@ export class OrdersComponent implements OnInit {
     if(this.customerAddress !== undefined){
       return this.customerAddress.mobileContact;
     }
+  }
+
+  confirmPayment(order){
+    this.selectedOrder = order;
+  }
+
+  getSelectedSubtotal(){
+    if(this.selectedOrder !== undefined && this.selectedOrder !== null){
+      return this.selectedOrder.subTotal;
+    }
+    return 0;
   }
 
 }
