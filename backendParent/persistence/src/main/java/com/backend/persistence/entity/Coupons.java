@@ -62,6 +62,12 @@ public class Coupons implements Serializable{
 	@Column(name = "ISDELETED")
 	private boolean deleted;
 	
+	@Column(name = "MAXDISCOUNTLIMIT")
+	private int maxDiscountLimit;
+	
+	@Column(name = "MINTOTALLIMIT")
+	private int minTotalLimit;
+	
 	public Coupons() {
 		super();
 	}
@@ -158,6 +164,22 @@ public class Coupons implements Serializable{
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+
+	public int getMaxDiscountLimit() {
+		return maxDiscountLimit;
+	}
+
+	public void setMaxDiscountLimit(int maxDiscountLimit) {
+		this.maxDiscountLimit = maxDiscountLimit;
+	}
+
+	public int getMinTotalLimit() {
+		return minTotalLimit;
+	}
+
+	public void setMinTotalLimit(int minTotalLimit) {
+		this.minTotalLimit = minTotalLimit;
 	}
 	
 }

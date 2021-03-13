@@ -447,7 +447,7 @@ body{background-color:#ebebec}.logo a:hover,.logo a:focus{color:#1e2e3b !importa
             </div>
           <!--[if (mso)|(IE)]></td><td style="width: 280px" valign="top"><![endif]-->
             <div class="webversion" style="display: table-cell;Float: left;font-size: 12px;line-height: 19px;max-width: 280px;min-width: 139px; width: 139px;width: calc(14100% - 78680px);padding: 10px 0 5px 0;text-align: right;color: #2b343f;font-family: Courier New,Courier,monospace;">
-              <p style="Margin-top: 0;Margin-bottom: 0;"><img src=${tenantLogo} alt='Logo' style="height : 50px; width: 50px;" /></p>
+              <p style="Margin-top: 0;Margin-bottom: 0;"><img src=${tenantLogo} alt='Logo' style="height : 50px;" /></p>
             </div>
           <!--[if (mso)|(IE)]></td></tr></table><![endif]-->
           </div>

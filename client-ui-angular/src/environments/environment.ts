@@ -6,11 +6,13 @@ export const environment = {
   production: false,
   BuildOrigin: "web",
   tenantId: "devTenant",
+  // backendBaseUrl:"https://riabackend.staqlab-tunnel.com",
   backendBaseUrl:"http://localhost:8080",
   contextPath:"",
+  // origin:"https://riagroceries-mpm.web.app",
   origin:"http://localhost:4200",
-  orgName1: "dev",
-  orgName2: "Tenant"
+  orgName1: "Ria",
+  orgName2: "Groceries"
 };
 
 /*

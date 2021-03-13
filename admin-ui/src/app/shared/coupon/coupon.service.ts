@@ -20,7 +20,7 @@ export class CouponService {
   }
 
   createCoupon(title, code, startDate, endDate, active, discount,
-              freeShipping, userUsage): Observable<any>{
+              freeShipping, userUsage, maxDiscountLimit, minTotalLimit): Observable<any>{
     const body = {
       title: title,
       code: code,
@@ -29,7 +29,9 @@ export class CouponService {
       endDate: endDate,
       freeShipping: freeShipping,
       perUserUsage: userUsage,
-      active: active
+      active: active,
+      minTotalLimit : minTotalLimit,
+      maxDiscountLimit : maxDiscountLimit
     }
     const httpOptions = {
       headers: new HttpHeaders({

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Title } from '@angular/platform-browser';
 import { CookieService } from 'ngx-cookie-service';
 import { environment } from 'src/environments/environment';
@@ -19,7 +20,7 @@ export class AppComponent implements OnInit{
   constructor(private tenantStore: TenantStoreService, private titleService: Title,
               private userStore: UserStoreService, private cookieService: CookieService,
               private loginService: LoginService, private cartService: CartService,
-              public commonServie: CommonsService){
+              public commonServie: CommonsService, private _snackBar: MatSnackBar){
     this.title=environment.tenantId;
   }
 
@@ -40,6 +41,9 @@ export class AppComponent implements OnInit{
                             this.userStore.firstName=resp.data.firstName;
                             this.userStore.lastName=resp.data.lastName;
                             this.userStore.mobile=resp.data.mobile;
+                            if(this.userStore.mobile === null || this.userStore.mobile === undefined){
+                              this._snackBar.open('Please Update Mobile Number under Profile to Earn Loyality points!', '', this.commonServie.alertoptionsWarn);
+                            }
                             this.userStore.loyalityPoints=resp.data.loyalitypoint;
                             this.userStore.lastLogin=resp.data.lastLogin;
                             this.userStore.profilePic=resp.data.profilePic;

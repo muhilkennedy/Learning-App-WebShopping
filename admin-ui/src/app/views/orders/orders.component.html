@@ -12,8 +12,8 @@
           <div style="margin:5px 0px; width: 100%;">
             <ul class="list-group">
               <li class="list-group-item" *ngFor="let order of unassignedOrders; let status=false; let failStatus = false;">
+                <i class="float-center fa fa-remove removeStyle" (click)="rejectOrder(order)"></i>
                 <label>ORDER-{{order}}</label>
-                <i class="float-right fa fa-remove removeStyle" (click)="rejectOrder(order)"></i>
                 <i class="float-right fa fa-check-circle acceptStyle" (click)="acceptOrder(order)"></i>
               </li>
             </ul>
@@ -37,6 +37,7 @@
                 <th>OrderDate</th>
                 <th>Customer</th>
                 <th>Items</th>
+                <th>SubTotal</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -46,8 +47,9 @@
                   {{order.orderId}}
                 </td>
                 <td>{{order.orderDate | date : 'dd-MM-yyyy hh:mm a'}}</td>
-                <td><div class="alink" (click)="getCustomerDetails(order.customerId);secondaryModal.show()">{{order.customerId}}</div></td>
+                <td><div class="alink" (click)="getCustomerDetails(order.customerId, order.customerAddressId);secondaryModal.show()">{{order.customerId}}</div></td>
                 <td><i class="producticon fa fa-shopping-basket" (click)="setProductData(order);primaryModal.show()"></i></td>
+                <td>{{order.subTotal}}</td>
                 <td>
                   <i class="float-right fa fa-remove removeStyle" (click)="rejectOrder(order.orderId)"></i>
                   <i class="float-right fa fa-motorcycle acceptStyle" (click)="outForDelivery(order)"></i>
@@ -86,6 +88,7 @@
                 <th>OrderDate</th>
                 <th>Customer</th>
                 <th>Items</th>
+                <th>SubTotal</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -95,10 +98,17 @@
                   {{order.orderId}}
                 </td>
                 <td>{{order.orderDate | date : 'dd-MM-yyyy hh:mm a'}}</td>
-                <td><div class="alink" (click)="getCustomerDetails(order.customerId);secondaryModal.show()">{{order.customerId}}</div></td>
+                <td><div class="alink" (click)="getCustomerDetails(order.customerId, order.customerAddressId);secondaryModal.show()">{{order.customerId}}</div></td>
                 <td><i class="producticon fa fa-shopping-basket" (click)="setProductData(order);primaryModal.show()"></i></td>
+                <td>{{order.subTotal}}</td>
                 <td>
-                  <i class="float-right fa fa-check-circle acceptStyle" (click)="deliveredOrder(order)"></i>
+                  <mat-form-field style="width: 100px;">
+                    <mat-label>Payment Mode</mat-label>
+                    <mat-select [(value)]="paymentMode">
+                      <mat-option [value]="option" *ngFor="let option of paymentTypes">{{ option }}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <i class="float-right fa fa-check-circle acceptStyle" (click)="confirmPayment(order);confirmModal.show()"></i>
                 </td>
               </tr>
             </tbody>
@@ -137,6 +147,7 @@
               <th>Name</th>
               <th>Code</th>
               <th>MRP</th>
+              <th>Selling Cost</th>
               <th>Quantity</th>
             </tr>
           </thead>
@@ -150,6 +161,9 @@
               </td>
               <td>
                 {{product.product.cost}}
+              </td>
+              <td>
+                {{product.product.sellingCost}}
               </td>
               <td>
                 {{product.quantity}}
@@ -209,6 +223,32 @@
       <div class="modal-footer">
         <div>
           <button type="button" class="btn btn-success" (click)="secondaryModal.hide()">
+            <i class="fa fa-check"></i> OK
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #confirmModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-open" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Confirmation</h4>
+        <button type="button" class="close" (click)="confirmModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Confirm Payment of <b>{{getSelectedSubtotal()}}</b> has been Recieved via <b>{{paymentMode}}</b> ?
+      </div>
+      <div class="modal-footer">
+        <div>
+          <button type="button" class="btn" (click)="confirmModal.hide()">
+            <i class="fa fa-check"></i> Cancel
+          </button>
+          <button type="button" class="btn btn-success" (click)="deliveredOrder(selectedOrder);confirmModal.hide()">
             <i class="fa fa-check"></i> OK
           </button>
         </div>

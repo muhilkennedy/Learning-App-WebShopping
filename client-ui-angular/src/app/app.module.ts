@@ -68,6 +68,11 @@ import { CollapseModule } from '../app/service/shared/collapse';
 import { AlertModule } from './service/shared/_alert';
 import {SocialAuthServiceConfig, SocialLoginModule} from 'angularx-social-login';
 import {GoogleLoginProvider, FacebookLoginProvider} from 'angularx-social-login';
+import { PrivacyPolicyComponent } from './components/shared/privacy-policy/privacy-policy.component';
+import { ProductDetailsComponent } from './components/product-details/product-details.component';
+import { OfferPageComponent } from './components/offer-page/offer-page.component';
+import { LoginDialogComponent } from './components/login/login-dialog/login-dialog.component';
+import { SearchbarComponent } from './components/shared/searchbar/searchbar.component';
 
 const fbLoginOptions = {
   scope: 'pages_messaging,pages_messaging_subscriptions,email,pages_show_list,manage_pages',
@@ -118,10 +123,10 @@ export class TenantInitializer {
                   //load app only if tenant is active.
                   if(this.tenantStore.tenantActive){
                     this.commonService.globalLoading = false;
-                     resolve(true);
+                    resolve(true);
                   }
                   else{
-                    alert("Tenant not Active! Please contact support!")
+                    alert("Tenant is not Active at the moment!")
                   }
                 },
                 (error:any) => {
@@ -129,6 +134,8 @@ export class TenantInitializer {
                     alert("Tenant Server not Reachable at the moment! Please try again later!");
                 }
               );
+              //early resolve to show loading page
+              resolve(true);
     });
   }
 }
@@ -154,7 +161,12 @@ export function init_tenant(initializer: TenantInitializer) {
     OrdersDialogComponent,
     PosHistoryComponent,
     ProfileComponent,
-    PosDialogComponent
+    PosDialogComponent,
+    PrivacyPolicyComponent,
+    ProductDetailsComponent,
+    OfferPageComponent,
+    LoginDialogComponent,
+    SearchbarComponent
   ],
   imports: [
     HttpClientModule,
@@ -199,7 +211,7 @@ export function init_tenant(initializer: TenantInitializer) {
     MatTooltipModule,
     MatTreeModule,
     NgxLoadingModule.forRoot({
-      animationType: ngxLoadingAnimationTypes.threeBounce,
+      animationType: ngxLoadingAnimationTypes.circleSwish,
       backdropBackgroundColour: 'rgba(0,0,0,0.3)',
       backdropBorderRadius: '4px',
       primaryColour: '#FE980F',
@@ -233,12 +245,12 @@ export function init_tenant(initializer: TenantInitializer) {
           {
             id: GoogleLoginProvider.PROVIDER_ID,
             provider: new GoogleLoginProvider(
-              '772727132288-2bv75lhs16rsohc5rg3pscui1ugl9jff.apps.googleusercontent.com', googleLoginOptions
+              'clientid.apps.googleusercontent.com', googleLoginOptions
             )
           },
           {
             id: FacebookLoginProvider.PROVIDER_ID,
-            provider: new FacebookLoginProvider('clientId')
+            provider: new FacebookLoginProvider('clientId', fbLoginOptions)
           }
         ]
       } as SocialAuthServiceConfig,

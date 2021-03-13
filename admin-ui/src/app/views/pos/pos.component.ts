@@ -53,7 +53,7 @@ export class PosComponent implements OnInit {
 
   focusElementReference: any
 
-  paymentTypes: string[] = ['cash', 'card', 'gpay', 'phone pe', 'paytm', 'others'];
+  paymentTypes: string[] = ['Cash', 'Card', 'GooglePay', 'Phonepe', 'Paytm', 'NetBanking', 'Others'];
   paymentMode: string = this.paymentTypes[0];
 
   alertoptions = {
@@ -68,8 +68,9 @@ export class PosComponent implements OnInit {
     }
   }
 
-  //clear all entries shift+delete
+
   @HostListener('keydown', ['$event']) onKeyUp(e) {
+    //clear all entries shift+delete
     if (e.keyCode == 46 && e.shiftKey ) {
       this.clearData();
     }
@@ -169,7 +170,7 @@ export class PosComponent implements OnInit {
     if ((this.focusElementReference === undefined || this.focusElementReference instanceof HTMLElement)
           && this.focusElementReference != focusElementReferenceLocal ) {
           this.focusElementReference = focusElementReferenceLocal;
-          this.focusElementReference.focus();
+          this.focusElementReference != null ? this.focusElementReference.focus() : null;
     }
   }
 
@@ -327,12 +328,7 @@ export class PosComponent implements OnInit {
   }
 
   calculateTotal(item: PosProduct): number{
-    if(item.discount > 0){
-      item.total = (item.sellingCost * item.quantity);
-    }
-    else{
-      item.total = item.mrp * item.quantity;
-    }
+    item.total = (item.sellingCost * item.quantity);
     return item.total;
   }
 
@@ -415,7 +411,7 @@ export class PosComponent implements OnInit {
   processBill(){
     this.loading = true;
     this.cleanseItemList();
-    this.posService.createPOS(this.calculateTotalQuantity(), this.customerMobile, this.paymentMode, this.calculateRoundedSubtotal(), this.subTotal, this.itemList)
+    this.posService.createPOS(this.calculateTotalQuantity(), this.customerMobile, this.paymentMode, this.calculateRoundedSubtotal(), this.subTotal, this.calculateTotalDiscount(), this.itemList)
                     .subscribe((resp: any) => {
                       if(resp.statusCode === 200){
                         this.posId = resp.data;
@@ -450,6 +446,19 @@ export class PosComponent implements OnInit {
                       this.alertService.error("Something went wrong!", error)
                     });
 
+  }
+
+  printAsPdf(){
+    this.loading = true;
+    this.posService.getPDFDocument(this.posId)
+                    .subscribe((resp: any) => {
+                        window.open(window.URL.createObjectURL( new Blob([resp], { type: 'application/pdf' })),"_blank");
+                        this.loading = false;
+                        this.myModal.hide();
+                    },
+                    (error) => {
+                      this.alertService.error("Something went wrong!", error)
+                    });
   }
 
 }

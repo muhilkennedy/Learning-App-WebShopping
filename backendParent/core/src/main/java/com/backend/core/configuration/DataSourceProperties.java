@@ -15,6 +15,7 @@ public class DataSourceProperties {
 	private String username;
 	private String password;
 	private String database;
+	private String databaseInstallPath;
 
 	public void setUrl(String url) {
 		this.url = url;
@@ -46,5 +47,13 @@ public class DataSourceProperties {
 
 	public void setDatabase(String database) {
 		this.database = database;
+	}
+
+	public String getDatabaseInstallPath() {
+		return databaseInstallPath;
+	}
+
+	public void setDatabaseInstallPath(String databaseInstallPath) {
+		this.databaseInstallPath = databaseInstallPath;
 	}
 }

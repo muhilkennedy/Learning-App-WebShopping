@@ -1,3 +1,4 @@
+import { HostListener } from '@angular/core';
 import { Component, Input, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -25,10 +26,28 @@ export class CartComponent implements OnInit {
   pincodeDetails:any;
   couponDetails:any;
 
+  maxDiscountlimit:number = 0;
+
   @Input()
   cartPage: boolean = true;
 
+  public innerWidth: any;
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.innerWidth = window.innerWidth;
+  }
+
+  isMobileView(){
+    if(this.innerWidth < 600){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
   ngOnInit(): void {
+    this.onResize(event);
     if(this.userStore !== undefined && this.userStore.emailId !== undefined){
       this.loading = true;
       this.cartService.getCustomerCart()
@@ -62,19 +81,36 @@ export class CartComponent implements OnInit {
                         if(coupon !== null){
                           this.couponDetails = resp.dataList !== undefined && resp.dataList !== null &&resp.dataList.length>0 ?
                                                resp.dataList[0]: null;
+                          if(coupon !== null && (this.couponDetails === null || this.couponDetails === undefined)){
+                            this._snackBar.open('Coupon Not Applicable! pls try a valid code', 'OK', this.commonService.alertoptionsWarn);
+                            this.couponLoading = false;
+                            return;
+                          }
+                          this.maxDiscountlimit = this.couponDetails.maxDiscountLimit;
                           this.commonService.couponDetails = this.couponDetails;
+                          if(this.cartSubtotal() <= this.couponDetails.minTotalLimit){
+                            this._snackBar.open("Add " + (this.couponDetails.minTotalLimit-this.cartSubtotal())
+                                                + " (inr) more to apply this coupon!", 'ok', this.commonService.alertoptionsWarn);
+                            this.couponLoading = false;
+                            this.commonService.couponDetails = null;
+                            this.maxDiscountlimit = 0;
+                            return;
+
+                          }
                         }
                         if(pincode !== null && (this.pincodeDetails === undefined || this.pincodeDetails === null)){
+                          this.couponDetails = undefined;
                           this._snackBar.open('Not Deliverable to this Pincode!', 'OK', this.commonService.alertoptionsWarn);
                         }
                         if(coupon !== null && (this.couponDetails === null || this.couponDetails === undefined)){
+                          this.couponDetails = undefined;
                           this._snackBar.open('Coupon Not Applicable! pls try a valid code', 'OK', this.commonService.alertoptionsWarn);
                         }
                       }
                       this.couponLoading = false;
                     },
                     (error: any) => {
-                      alert("Something went wrong!");
+                      this._snackBar.open('Something went wrong.. try again later!', 'OK', this.commonService.alertoptionsError);
                     })
   }
 
@@ -85,14 +121,29 @@ export class CartComponent implements OnInit {
                     .subscribe((resp:any) => {
                       if(resp.statusCode !== 200){
                         item.quantity--;
+                        this._snackBar.open('Failed : ' + resp.errorMessages, '', this.commonService.alertoptionsWarn);
+                        this.loading = false;
+                        return;
                       }
+                      this.userStore.cartCount++;
                       this.loading = false;
                     },
                     (error: any) => {
-                      alert("Something went wrong!");
+                      this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                       item.quantity--;
+                      this.loading = false;
                     })
 
+  }
+
+  isMinusVisible(item){
+    let quantity = item.quantity-1;
+    if(quantity < 0){
+      return false;
+    }
+    else{
+      return true;
+    }
   }
 
   decrementItem(item){
@@ -102,11 +153,23 @@ export class CartComponent implements OnInit {
                     .subscribe((resp:any) => {
                       if(resp.statusCode !== 200){
                         item.quantity++;
+                        this.loading = false;
+                        return;
+                      }
+                      this.userStore.cartCount--;
+                      if(item.quantity < 1){
+                        let i = 0;
+                        this.cartItems.forEach(element => {
+                          if(element.product.productId === item.product.productId){
+                            this.cartItems.splice(i,1);
+                          }
+                          i++;
+                        });
                       }
                       this.loading = false;
                     },
                     (error: any) => {
-                      alert("Something went wrong!");
+                      this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                       item.quantity--;
                     })
   }
@@ -171,7 +234,13 @@ export class CartComponent implements OnInit {
 
   calculateCouponApplied(){
     if((this.couponDetails !== undefined && this.couponDetails !== null)){
-      return this.cartSubtotal() - (this.cartSubtotal()*this.couponDetails.discount)/100;
+      let couponDiscountValue = (this.cartSubtotal()*this.couponDetails.discount)/100;
+      if(couponDiscountValue >= this.maxDiscountlimit){
+        return this.cartSubtotal() - this.maxDiscountlimit;
+      }
+      else{
+        return this.cartSubtotal() - couponDiscountValue;
+      }
     }
   }
 
@@ -179,18 +248,19 @@ export class CartComponent implements OnInit {
     this.router.navigate(['/checkout']);
   }
 
-  removeFromCart(prod){
+  removeFromCart(item){
     this.loading = true;
+    let prod = item.product;
     this.cartService.removeProductFromCart(prod.productId)
                     .subscribe((resp:any) => {
                       if(resp.statusCode !== 200){
-                        alert("failed to remove from cart");
+                        this._snackBar.open('Failed to Remove from Cart!', 'OK', this.commonService.alertoptionsError);
                       }
                       let index = 0;
                       this.cartItems.forEach(item => {
                         if(item.product.productId === prod.productId){
                           this.cartItems.splice(index, 1);
-                          this.userStore.cartCount--;
+                          this.userStore.cartCount = this.userStore.cartCount-item.quantity;
                           this.loading = false;
                           return;
                         }
@@ -199,8 +269,43 @@ export class CartComponent implements OnInit {
                       this.loading = false;
                     },
                     (error: any) => {
-                      alert("Something went wrong!");
+                      this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                     })
+  }
+
+  offerPage(){
+    this.commonService.cartTotal = this.cartSubtotal();
+    this.commonService.cartItems = this.cartItems;
+    this.router.navigate(['/offerPage']);
+  }
+
+  clearCart(){
+    this.loading = true;
+    this.cartService.clearCart()
+                    .subscribe((resp:any) => {
+                      if(resp.statusCode !== 200){
+                        this._snackBar.open('Failed to Clear Cart!', 'OK', this.commonService.alertoptionsError);
+                      }
+                      else{
+                        this.commonService.cartTotal = 0;
+                        this.cartItems.length = 0;
+                        this.userStore.cartCount = 0;
+                      }
+                      this.loading = false;
+                    },
+                    (error: any) => {
+                      this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
+                      this.loading = false;
+                    })
+  }
+
+  canProceed(){
+    if(this.cartItems.length > 0){
+      return true;
+    }
+    else{
+      return false;
+    }
   }
 
 }

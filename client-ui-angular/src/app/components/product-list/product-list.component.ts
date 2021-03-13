@@ -3,11 +3,15 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { CartService } from 'src/app/service/cart/cart.service';
 import { ProductService } from 'src/app/service/product/product.service';
+import { CommonsService } from 'src/app/service/shared/commons/commons.service';
 import { UserStoreService } from 'src/app/service/shared/user-store/user-store.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { FeatureService } from 'src/app/service/feature/feature.service';
 
 export class ItemNode {
   children: ItemNode[];
@@ -64,10 +68,12 @@ export class ProductListComponent implements OnInit {
   categoryTree:any[] = new Array();
   selectedCategoryId: any;
 
+  productDetailsPage = "ProductDetailsPage";
+
   // MatPaginator Inputs
   offset = 0;
-  pageSize = 9;
-  pageSizeOptions: number[] = [9, 15, 25];
+  pageSize = 10;
+  pageSizeOptions: number[] = [10, 15, 25];
   // MatPaginator Output
   pageEvent: PageEvent;
 
@@ -76,7 +82,12 @@ export class ProductListComponent implements OnInit {
     this.pageSize = event.pageSize;
     let pageIndex:number = event.pageIndex;
     this.offset = pageIndex * this.pageSize;
-    this.setProducts(new Array(), null, null);
+    if(this.productSearched !== undefined && this.productSearched !== null && this.productSearched !== ''){
+      this.nextAction();
+    }
+    else{
+      this.setProducts(new Array(), null, null);
+    }
   }
 
   //autoComplete
@@ -110,7 +121,9 @@ export class ProductListComponent implements OnInit {
   }
 
   constructor(private productService: ProductService, private userStore: UserStoreService,
-              private cartService: CartService) {
+              private cartService: CartService, private router: Router,
+              private commonService: CommonsService, private activatedRoute: ActivatedRoute,
+              private _snackBar: MatSnackBar, private featureService: FeatureService ) {
 
   }
 
@@ -125,20 +138,59 @@ export class ProductListComponent implements OnInit {
 
   ngOnInit(): void {
     this.onResize("event");
-    this.setProducts(new Array(), null, null);
-    this.productService.getAllCategories()
+    if(this.isMobileView()){
+      this.pageSizeOptions.length = 0;
+      this.pageSizeOptions = [10, 20, 50];
+    }
+    else{
+      this.pageSizeOptions.length = 0;
+      this.pageSizeOptions = [9, 18, 36];
+    }
+    this.activatedRoute.queryParams.subscribe(queryParams => {
+      let searchText=queryParams.searchText;
+      if(searchText !== undefined && searchText !== null && searchText !== ''
+        && searchText !== "null" && this.commonService.searchText === searchText){
+          // this.pageSize = 100;
+          this.productSearched = searchText;
+          this.searchAction();
+          this.commonService.searchText = null;
+      }
+      else{
+        this.pageSize = this.pageSizeOptions[0];
+        this.setProducts(new Array(), null, null);
+      }
+    });
+
+    if(this.commonService.categories === undefined || this.commonService.categories === null){
+      this.productService.getAllCategories()
                         .subscribe((resp:any) => {
                           if(resp.statusCode === 200){
+                            this.commonService.categories = resp.data;
                             this.categoryTree = this.buildFileTree(resp.data, 0);
                             this.dataSource.data = this.categoryTree;
                           }
                           else{
-                            alert('Failed : ' + resp.errorMessages);
+                            this._snackBar.open('Failed : ' + resp.errorMessages, 'OK', this.commonService.alertoptionsError);
                           }
                           },
                           (error:any) => {
-                            alert('Something went wrong!');
+                            this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                         });
+    }
+    else{
+      this.categoryTree = this.buildFileTree(this.commonService.categories, 0);
+      this.dataSource.data = this.categoryTree;
+    }
+
+    this.featureService.getFeatureStatus(this.productDetailsPage)
+                            .subscribe((resp:any) => {
+                              if(resp.statusCode === 200){
+                                this.productDetailsPage = resp.data.featureStatus;
+                              }
+                            },
+                            (error:any) => {
+                              this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
+                            });
   }
 
   setProducts(cIds, sortField, SortType){
@@ -150,12 +202,12 @@ export class ProductListComponent implements OnInit {
                             this.products = resp.dataList;
                           }
                           else{
-                            alert('Failed : ' + resp.errorMessages);
+                            this._snackBar.open('Failed : ' + resp.errorMessages, 'OK', this.commonService.alertoptionsError);
                           }
                             this.loading = false;
                           },
                         (error:any) => {
-                          alert('Something went wrong!');
+                          this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                         });
     this.productService.getproductCount(cIds)
                         .subscribe((resp:any) => {
@@ -163,11 +215,11 @@ export class ProductListComponent implements OnInit {
                             this.productCount = resp.data.productCount;
                           }
                           else{
-                            alert('Failed : ' + resp.errorMessages);
+                            this._snackBar.open('Failed : ' + resp.errorMessages, 'OK', this.commonService.alertoptionsError);
                           }
                         },
                         (error:any) => {
-                          alert('Something went wrong!');
+                          this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                         });
 }
 
@@ -215,7 +267,7 @@ export class ProductListComponent implements OnInit {
 
   addToCart(prod){
     if(this.userStore.emailId === undefined || this.userStore.emailId === null){
-      alert("Please Login to Add Items to Cart!");
+      this._snackBar.open('Please login to Add to Cart !', 'OK', this.commonService.alertoptionsError);
       // this.router.navigate(['/login']);
     }
     else{
@@ -227,11 +279,12 @@ export class ProductListComponent implements OnInit {
                             this.userStore.cartCount = 0;
                           }
                           this.userStore.cartCount++;
+                          this._snackBar.open('Added To cart Successfully', '', this.commonService.alertoptionsSuccess);
                         }
                         this.productLoading = false;
                       },
                       (error: any) => {
-                        alert("Something went wrong!");
+                        this._snackBar.open('Failed to Add in Cart!', '', this.commonService.alertoptionsError);
                       })
     }
   }
@@ -242,6 +295,7 @@ export class ProductListComponent implements OnInit {
                           .subscribe((resp:any) => {
                             if(resp.statusCode  === 200){
                               this.products.length = 0;
+                              this.productCount = resp.data;
                               this.products = resp.dataList;
                             }
                             else{
@@ -250,27 +304,9 @@ export class ProductListComponent implements OnInit {
                             this.loading = false;
                           },
                           (error:any) => {
-                            alert("something went wrong!");
+                            this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                             this.loading = false;
                           });
-      // .subscribe((resp:any) => {
-      //   if(resp.statusCode  === 200){
-      //     this.options = resp.dataList;
-      //     this.filteredOptions = this.myControl.valueChanges.pipe(
-      //       startWith(''),
-      //       map(value => this._filter(value))
-      //     );
-      //   }
-      //   else{
-      //     alert('Failed : ' + resp.errorMessages);
-      //   }
-      //   this.previousSearchTerm = searchTerm;
-      //   this.loading = false;
-      // },
-      // (error:any) => {
-      //   alert("something went wrong!");
-      //   this.loading = false;
-      // });
   }
 
   private _filter(value: string): string[] {
@@ -288,12 +324,29 @@ export class ProductListComponent implements OnInit {
   }
 
   searchAction(){
+    this.pageSize = 10;
+    this.offset = 0;
     this.getProductFromMatchingText(this.productSearched, null, null);
   }
 
-  sortBy(sortField:string, sortType: string){
+  nextAction(){
+    this.getProductFromMatchingText(this.productSearched, null, null);
+  }
+
+  searchActionFilter(sortField: string, sortType: string){
+    this.pageSize = 10;
+    this.offset = 0;
+    this.getProductFromMatchingText(this.productSearched, sortField, sortType);
+  }
+
+  sortBy(sortField: string, sortType: string){
     if(this.productSearched !== undefined && this.productSearched !== null && this.productSearched !== ''){
-      this.searchAction();
+      if(sortField != null && sortField !== undefined){
+        this.searchActionFilter(sortField, sortType);
+      }
+      else{
+        this.searchAction();
+      }
     }
     else{
       this.setProducts(this.selectedCategoryId, sortField, sortType);
@@ -302,5 +355,12 @@ export class ProductListComponent implements OnInit {
 
   clearSort(){
       this.setProducts(this.selectedCategoryId, null, null);
+  }
+
+  viewDetailPage(product){
+    this.commonService.selectedProduct = product;
+    if(this.productDetailsPage){
+      this.router.navigate(['/productDetail'], { queryParams: { productId: product.productId }});
+    }
   }
 }

@@ -73,6 +73,8 @@ public class ProductDao {
 				product.setActive(rs.getBoolean(13));
 				product.setProductRating(rs.getInt(15));
 				product.setSellingCost(rs.getBigDecimal(16));
+				product.setSearchText(rs.getString(17));
+				product.setProductReviewId(rs.getLong(18));
 				productList.add(product);
 			}
 			return productList;
@@ -116,6 +118,8 @@ public class ProductDao {
 				product.setActive(rs.getBoolean(13));
 				product.setProductRating(rs.getInt(15));
 				product.setSellingCost(rs.getBigDecimal(16));
+				product.setSearchText(rs.getString(17));
+				product.setProductReviewId(rs.getLong(18));
 				ProductPOJO pojo = new ProductPOJO();
 				pojo.setProductContent(product);
 				pojo.setProductImage(pImageRepo.findAllImagesForProduct(baseService.getTenantInfo(), product));
@@ -162,12 +166,41 @@ public class ProductDao {
 				product.setActive(rs.getBoolean(13));
 				product.setProductRating(rs.getInt(15));
 				product.setSellingCost(rs.getBigDecimal(16));
+				product.setSearchText(rs.getString(17));
+				product.setProductReviewId(rs.getLong(18));
 				ProductPOJO pojo = new ProductPOJO();
 				pojo.setProductContent(product);
 				pojo.setProductImage(pImageRepo.findAllImagesForProduct(baseService.getTenantInfo(), product));
 				productList.add(pojo);
 			}
 			return productList;
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+	}
+	
+	public int getProductsCountBasedOnSearchTerm(List<Long> cIds, String SearchTerm, String limit, String offset, String sortByField, String sortBytype) throws Exception {
+		int productCount =0;
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			//.setAndCondition("active", "true", true)
+			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+															.setQuery("select count(*) from product")
+															.setWhereClause()
+															.setAndCondition("tenantid", baseService.getTenantInfo().getTenantID())
+															.andSetAndCondition("active", true)
+															.andSetAndCondition("isdeleted", false)
+															.andSetOrConditions("categoryid", cIds)
+															.andSetLikeCondition("searchtext", "\"%" + SearchTerm + "%\"")
+															.setOrderBy(sortByField)
+															.setSortOrder(sortBytype)
+															.build();
+			PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				productCount = rs.getInt(1);
+			}
+			return productCount;
 		} catch (Exception ex) {
 			logger.error("Exception - " + ex);
 			throw new Exception(ex.getMessage());
@@ -214,6 +247,8 @@ public class ProductDao {
 				product.setActive(rs.getBoolean(13));
 				product.setProductRating(rs.getInt(15));
 				product.setSellingCost(rs.getBigDecimal(16));
+				product.setSearchText(rs.getString(17));
+				product.setProductReviewId(rs.getLong(18));
 				productList.add(product);
 			}
 			return productList;

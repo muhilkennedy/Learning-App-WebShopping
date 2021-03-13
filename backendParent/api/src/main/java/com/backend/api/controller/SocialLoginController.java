@@ -27,6 +27,8 @@ import com.backend.api.messages.SocialPOJO;
 import com.backend.api.messages.SocialResponse;
 import com.backend.api.service.SocialLoginService;
 import com.backend.api.util.SocialUtil;
+import com.backend.commons.messages.EmailPOJO;
+import com.backend.commons.service.EmailService;
 import com.backend.commons.service.TokenStorage;
 import com.backend.commons.util.CommonUtil;
 import com.backend.commons.util.JWTUtil;
@@ -52,6 +54,9 @@ public class SocialLoginController {
 	@Autowired
 	@Qualifier("facebookService")
 	private SocialLoginService facebookService;
+	
+	@Autowired
+	private EmailService emailService;
 	
 	@Autowired
 	private TokenStorage tokenService;
@@ -147,6 +152,20 @@ public class SocialLoginController {
 				response.setErrorMessages(Arrays.asList("Error Logging in Social User!"));
 				response.setStatus(Response.Status.ERROR);
 			}
+		} catch (Exception ex) {
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/sendContactEmail", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> sendContactEmail(HttpServletRequest request, @RequestBody EmailPOJO emailPojo) {
+		GenericResponse<String> response = new GenericResponse<String>();
+		try {
+			emailService.sendContactEmail(emailPojo);
+			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);

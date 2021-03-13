@@ -14,7 +14,7 @@ export class HomePage {
   }
 
   open(){
-    const browser = this.iab.create('https://riagroceriesdev.web.app/', '_system', { location : 'no', zoom : 'no'});
+    const browser = this.iab.create('https://riagroceries-mpm.web.app/', '_system', { location : 'no', zoom : 'no'});
 
     browser.on('loadstop').subscribe(event => {
       browser.insertCSS({ code: "body{color: red;" });

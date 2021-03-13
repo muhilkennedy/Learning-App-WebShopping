@@ -1,3 +1,5 @@
+import {MatSnackBar} from '@angular/material/snack-bar';
+import { HostListener } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CartService } from 'src/app/service/cart/cart.service';
@@ -18,7 +20,8 @@ export class CheckoutComponent implements OnInit {
 
   constructor(private userStore: UserStoreService, private commonService: CommonsService,
               private cartService: CartService, private loginService: LoginService,
-              private orderService: OrderService, private router: Router) { }
+              private orderService: OrderService, private router: Router,
+              private _snackBar: MatSnackBar) { }
 
   couponDetails:any;
   pincodeDetails:any;
@@ -32,7 +35,25 @@ export class CheckoutComponent implements OnInit {
   door:string;
   mobile:string;
 
+  maxDiscountlimit = 0;
+
+  public innerWidth: any;
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.innerWidth = window.innerWidth;
+  }
+
+  isMobileView(){
+    if(this.innerWidth < 600){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
   ngOnInit(): void {
+    this.onResize(event);
     this.couponDetails = this.commonService.couponDetails;
     this.pincodeDetails = this.commonService.pincodeDetails;
     this.cartItems = this.userStore.cartItems;
@@ -91,7 +112,13 @@ export class CheckoutComponent implements OnInit {
 
   calculateCouponApplied(){
     if((this.couponDetails !== undefined && this.couponDetails !== null)){
-      return this.cartSubtotal() - (this.cartSubtotal()*this.couponDetails.discount)/100;
+      let couponDiscountValue = (this.cartSubtotal()*this.couponDetails.discount)/100;
+      if(couponDiscountValue >=  this.commonService.couponDetails.maxDiscountLimit){
+        return this.cartSubtotal() - this.commonService.couponDetails.maxDiscountLimit;
+      }
+      else{
+        return this.cartSubtotal() - couponDiscountValue;
+      }
     }
   }
 
@@ -108,14 +135,16 @@ export class CheckoutComponent implements OnInit {
                                               this.customerAddress = this.userStore.customerAddress;
                                             }
                                             this.loading = false;
+                                            this._snackBar.open('Address added to Profile!', '', this.commonService.alertoptionsSuccess);
                                           },
                                           (error: any) => {
-                                            alert("Something went wrong!");
+                                            this._snackBar.open('Something Went Wrong!', '', this.commonService.alertoptionsError);
                                           })
                       }
+                      this.loading = false;
                     },
                     (error: any) => {
-                      alert("Something went wrong!");
+                      this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                     })
   }
 
@@ -125,34 +154,51 @@ export class CheckoutComponent implements OnInit {
     let coupon = null;
     let paymentMode = null;
     let addressId = null;
-    if(this.addressSelected === undefined || this.addressSelected === undefined){
-      alert("Please select the address!");
+    let pincode = null;
+    if(this.addressSelected === undefined || this.addressSelected === null){
+      this._snackBar.open('Please Select a Address!', 'OK', this.commonService.alertoptionsWarn);
       this.loading = false;
       this.buttonLoading = false;
       return;
     }
     else{
-      addressId = this.addressSelected;
+      addressId = this.addressSelected.addressId;
+      pincode = this.addressSelected.pincode;
     }
     if(this.couponDetails !== undefined && this.couponDetails !== null && this.couponDetails.couponId !== undefined){
-      coupon = this.couponDetails.coupon;
+      coupon = this.couponDetails.couponId;
     }
-    this.orderService.placeOrder(coupon, paymentMode, addressId, this.getDeliveryCharge())
-                      .subscribe((resp:any) => {
-                        if(resp.statusCode === 200){
-                          this.userStore.cartCount = 0;
-                          alert("Order placed!");
-                          this.openOrders();
-                        }
-                        else{
-                          alert("Failed to place order!");
-                        }
+    this.cartService.getPinCodeDetails(pincode, null)
+                    .subscribe((resp:any) => {
+                      if(resp.statusCode === 200 && resp.data != null){
+                        this.orderService.placeOrder(coupon, paymentMode, addressId, this.getDeliveryCharge())
+                                          .subscribe((resp:any) => {
+                                            if(resp.statusCode === 200){
+                                              this.userStore.cartCount = 0;
+                                              // alert("Order Placed Successfully!");
+                                              this._snackBar.open('Order Placed Successfully!', '', this.commonService.alertoptionsSuccess);
+                                              this.openOrders();
+                                            }
+                                            else{
+                                              this._snackBar.open('Failed to Place Order! Contact Admin!', '', this.commonService.alertoptionsWarn);
+                                            }
+                                            this.loading = false;
+                                            this.buttonLoading = false;
+                                          },
+                                          (error: any) => {
+                                            this._snackBar.open('Something Went Wrong!', '', this.commonService.alertoptionsError);
+                                          })
+                      }
+                      else{
+                        this.couponDetails = undefined;
                         this.loading = false;
                         this.buttonLoading = false;
-                      },
-                      (error: any) => {
-                        alert("Something went wrong!");
-                      })
+                        this._snackBar.open('Not Deliverable to this Pincode! Please select Another address!', 'OK', this.commonService.alertoptionsWarn);
+                      }
+                    },
+                    (error: any) => {
+                      this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
+                    })
   }
 
   openCart(){

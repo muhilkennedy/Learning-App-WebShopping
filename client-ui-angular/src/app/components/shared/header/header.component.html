@@ -26,16 +26,15 @@
 
   <div class="header-middle"><!--header-middle-->
     <div class="container">
-      <div class="row">
+      <div class="row" *ngIf="!isMobileView()" >
         <div class="col-sm-3">
           <div class="logo pull-left">
             <a (click)="openHome()"><img class="tenantlogo" src="{{tenantStore.tenantLogo}}" alt="TenantLogo" /></a>
           </div>
         </div>
         <div class="col-sm-6">
-          <div class="shop-menu pull-right">
-
-          </div>
+          <!-- <div class="shop-menu pull-right">
+          </div> -->
         </div>
         <div class="col-sm-1">
           <div *ngIf="isLoggedIn()" class="shop-menu pull-right">
@@ -57,27 +56,141 @@
             <button mat-button (click)="openLogin()"><i class="fa fa-lock"></i> Login</button>
           </div>
         </div>
-        <div  *ngIf="isLoggedIn()" class="col-sm-1">
+        <div  *ngIf="isLoggedIn() && !isMobileView()" class="col-sm-1">
           <div class="shop-menu pull-right">
-            <button mat-button [matMenuTriggerFor]="menu"><i class="fa fa-user"></i> Profile</button>
+            <button mat-button [matMenuTriggerFor]="menu"><i class="fa fa-user"></i> Account</button>
             <mat-menu #menu="matMenu">
-              <button mat-menu-item (click)="openProfie()">Account</button>
+              <button mat-menu-item (click)="openProfie()">Profile</button>
               <button mat-menu-item (click)="openOrders()">Online Orders</button>
-              <button mat-menu-item (click)="openPOSOrders()">POS Orders</button>
+              <button mat-menu-item (click)="openPOSOrders()">In-Store Purchase</button>
               <button mat-menu-item (click)="logout()">Logout</button>
             </mat-menu>
           </div>
         </div>
       </div>
+
+      <div class="row" *ngIf="isMobileView()">
+        <!-- <div class="col-sm-3">
+          <div class="logo pull-left">
+            <a (click)="openHome()"><img class="tenantlogo" src="{{tenantStore.tenantLogo}}" alt="TenantLogo" /></a>
+          </div>
+        </div> -->
+        <table style="width: 100%;">
+          <tr>
+            <td>
+              <a (click)="openHome()"><img class="tenantlogo" src="{{tenantStore.tenantLogo}}" alt="TenantLogo" /></a>
+            </td>
+            <td *ngIf="isLoggedIn()">
+              <button mat-button disabled style="color: brown;">
+                <label>Hi {{userStore.firstName}}</label>
+              </button>
+            </td>
+            <td style="float: right;">
+              <button mat-icon-button [matMenuTriggerFor]="menu" style="color: #fe980f;">
+                <mat-icon>menu</mat-icon>
+              </button>
+              <!-- <button mat-mini-fab color="accent" [matMenuTriggerFor]="menu">
+                <mat-icon>menu</mat-icon>
+              </button> -->
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="openHome()">
+                  <mat-icon>home</mat-icon>
+                  <span>Home</span>
+                </button>
+                <!-- <button mat-menu-item (click)="openProductList()">
+                  <mat-icon>shopping_bag</mat-icon>
+                  <span>Shop Now</span>
+                </button> -->
+                <button *ngIf="isLoggedIn()" mat-menu-item (click)="openOrders()">
+                  <mat-icon>book_online</mat-icon>
+                  Online Orders
+                </button>
+                <button *ngIf="isLoggedIn()" mat-menu-item (click)="openPOSOrders()">
+                  <mat-icon>point_of_sale</mat-icon>
+                  In-Store Purchase
+                </button>
+                <button mat-menu-item (click)="openContact()">
+                  <mat-icon>contact_phone</mat-icon>
+                  <span>Contact Us</span>
+                </button>
+                <button *ngIf="isLoggedIn()" mat-menu-item (click)="logout()">
+                  <mat-icon>logout</mat-icon>
+                  <span>Logout</span>
+                </button>
+              </mat-menu>
+            </td>
+          </tr>
+        </table>
+        <table>
+          <tr>
+            <td class="shop-menu pull-right">
+              <button mat-button (click)="openProductList()">
+                <mat-icon>shopping_bag</mat-icon>
+                <span> Shop Now</span>
+              </button>
+            </td>
+            <td class="shop-menu pull-right">
+              <button mat-button class="notification"  (click)="openCart()">
+                <mat-icon>shopping_cart</mat-icon>
+                <span> Cart</span>
+                <span class="badge">{{userStore.cartCount}}</span>
+              </button>
+            </td>
+            <td *ngIf="!isLoggedIn()" class="col-sm-1">
+              <div class="shop-menu pull-right">
+                <button mat-button (click)="openLogin()">
+                  <mat-icon>login</mat-icon>
+                  <span> Login</span>
+                </button>
+              </div>
+            </td>
+            <td *ngIf="isLoggedIn() && !isMobileView()" class="col-sm-1">
+              <div class="shop-menu pull-right">
+                <button mat-button [matMenuTriggerFor]="menu">
+                  <mat-icon>person</mat-icon>
+                  <span> Account</span>
+                </button>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item (click)="openProfie()">Profile</button>
+                  <button mat-menu-item (click)="openOrders()">Online Orders</button>
+                  <button mat-menu-item (click)="openPOSOrders()">In-Store Purchase</button>
+                  <button mat-menu-item (click)="logout()">Logout</button>
+                </mat-menu>
+              </div>
+            </td>
+            <td  *ngIf="isLoggedIn() && isMobileView()" class="col-sm-1">
+              <div class="shop-menu pull-right">
+                <button mat-button (click)="openProfie()"><i class="fa fa-user"></i> Profile</button>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
     </div>
   </div><!--/header-middle-->
 
-  <div class="header-bottom">
+  <div [ngClass]="{'header-bottom': !isMobileView(), 'header-mobile': isMobileView()}">
     <div class="container">
       <div class="row">
-        <div class="col-sm-12">
-          <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <div [ngClass]="{'col-sm-9': !isMobileView(), 'col-sm-3': isMobileView()}">
+          <!-- <div [ngClass]="{'search_box pull-right': !isMobileView(), 'search_box pull-left searchbar': isMobileView()}">
+            <input type="text" placeholder="Search"/>
+          </div> -->
+          <!-- <mat-form-field class="matitem pull-left" *ngIf="isMobileView()" style="padding-left: 20px; width: 100%;">
+            <input type="text"
+                   placeholder="Search Product"
+                   matInput
+                   [(ngModel)]="searchText">
+          <button matSuffix type="button" class="btn btn-primary" (click)="searchAction()"><i class="fa fa-search"></i></button>
+          </mat-form-field> -->
+          <!-- <div class="input-container">
+            <input type="text" class="input-field" placeholder="Search Product" matInput name="search"
+            [(ngModel)]="searchText"/>
+            <button class="input-button" (click)="searchAction()"><i class="fa fa-search"></i></button>
+          </div> -->
+
+          <div class="navbar-header" style="padding-top: 10px;" *ngIf="!isMobileView()">
+            <button type="button" class="navbar-toggle navbar-toggle-color" data-toggle="collapse" data-target=".navbar-collapse">
               <span class="sr-only">Toggle navigation</span>
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
@@ -89,14 +202,9 @@
               <li><a style="cursor: pointer;" (click)="openHome()" [ngClass]="{'active' : commonsService.isHomeClicked}"><i class="fa fa-home"></i> Home</a></li>
               <li><a style="cursor: pointer;" (click)="openProductList()" [ngClass]="{'active' : commonsService.isShowNowClicked}"><i class="fa fa-shopping-cart"></i> Shop Now</a></li>
               <li><a style="cursor: pointer;" (click)="openContact()" [ngClass]="{'active' : commonsService.isContactClicked}"><i class="fa fa-phone"></i> Contact</a></li>
-              <!-- <li>
-                <div class="search_box">
-                <input type="text" placeholder="Search"/>
-              </div></li> -->
             </ul>
           </div>
         </div>
-
       </div>
     </div>
   </div>

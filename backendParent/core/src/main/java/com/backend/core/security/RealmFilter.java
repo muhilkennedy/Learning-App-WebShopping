@@ -1,7 +1,6 @@
 package com.backend.core.security;
 
 import java.io.IOException;
-import java.net.InetAddress;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -18,10 +17,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
 
 import com.backend.core.entity.Tenant;
 import com.backend.core.service.BaseService;
+import com.backend.core.serviceImpl.CacheService;
 import com.backend.core.util.ConfigUtil;
 import com.backend.core.util.Constants;
 import com.backend.core.util.TenantUtil;
@@ -45,9 +44,14 @@ public class RealmFilter implements Filter {
 			HttpServletRequest req = (HttpServletRequest) request;
 			HttpServletResponse res = (HttpServletResponse) response;
 			String tenantId = req.getHeader(Constants.Header_TenantId);
-			logger.info("doFilter :: Realm Filter :: URI - " + req.getRequestURI());
 			String requestIP = getIPFromRequest(req);
-			//verify for DOS attack
+			if(TenantUtil.tenantInfoList.isEmpty()) {
+				//load teants on static variable and use it through the app lifecycle!
+				TenantUtil.loadAllTenantsMap();
+			}
+			logger.info("doFilter :: Realm Filter :: URI - " + req.getRequestURI() + " (Requested IP : " + requestIP + ")");
+			//verify for DOS attack (Ideally should be configured as server level config)
+			CacheService.setIpCache(requestIP, req.getRequestURI());
 			//Allow access for cross site request due to multiple deployments.
 			res.setHeader("Access-Control-Allow-Origin", req.getHeader(Constants.Header_Origin));
 			res.setHeader("Access-Control-Allow-Credentials","true");
@@ -72,7 +76,7 @@ public class RealmFilter implements Filter {
 						case "web" : 	// Check for active tenant and allowed origins
 										
 										if (!StringUtils.isEmpty(origin) && TenantUtil.isTenantActive(tenantId)
-												&& TenantUtil.isAllowedOriginForTenant(tenantId, origin)) {
+												&& (requestIP.equals("0:0:0:0:0:0:0:1") || TenantUtil.isAllowedOriginForTenant(tenantId, origin))) {
 											// setSession(tenantId, req);
 											baseService.setTenantInfo(TenantUtil.getTenantInfo(tenantId));
 											chain.doFilter(request, response);

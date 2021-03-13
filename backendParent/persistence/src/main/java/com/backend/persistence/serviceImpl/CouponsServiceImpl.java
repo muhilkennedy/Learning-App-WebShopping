@@ -13,6 +13,7 @@ import com.backend.core.service.BaseService;
 import com.backend.persistence.entity.Coupons;
 import com.backend.persistence.repository.CouponRepository;
 import com.backend.persistence.service.CouponsService;
+import com.backend.persistence.service.OrdersService;
 
 /**
  * @author Muhil
@@ -27,6 +28,9 @@ public class CouponsServiceImpl implements CouponsService {
 	
 	@Autowired
 	private BaseService baseService;
+	
+	@Autowired
+	private OrdersService orderService;
 	
 	@Override
 	public void save(Coupons coup) {
@@ -85,7 +89,10 @@ public class CouponsServiceImpl implements CouponsService {
 	public Coupons verifyIfCouponApplicableById(String code) {
 		Coupons coupon = getCouponByCode(code);
 		if(coupon != null && coupon.isActive()) {
-			return coupon;
+			int count = orderService.couponAppliedCount(coupon.getCouponId());
+			if(count < coupon.getPerUserUsage()) {
+				return coupon;
+			}
 		}
 		return null;
 	}

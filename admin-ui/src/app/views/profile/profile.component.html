@@ -7,7 +7,8 @@
       <div class="text-center">
         <img [src]='checkImage(profilePic)' class="avatar img-circle profileImg" alt="avatar">
         <h6>Upload a different photo...</h6>
-        <input type="file" (change)="handleFileUpdate($event.target.files)">
+        <input type="file" (change)="handleFileUpdate($event.currentTarget.files)">
+        <br/>
         <br/>
         <hr/>
         <br/>

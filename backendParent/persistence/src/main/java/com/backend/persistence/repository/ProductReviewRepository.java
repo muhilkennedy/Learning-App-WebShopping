@@ -8,7 +8,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.backend.core.entity.Tenant;
-import com.backend.persistence.entity.Product;
 import com.backend.persistence.entity.ProductReview;
 
 /**
@@ -18,9 +17,13 @@ import com.backend.persistence.entity.ProductReview;
 @Repository
 public interface ProductReviewRepository extends JpaRepository<ProductReview, Long>{
 	
-	String findAllReviwesForProduct = "select pr from ProductReview pr where pr.tenant = :tenant and pr.productId = :pId";
+	String findAllReviwesForProductQuery = "select pr from ProductReview pr where pr.tenant = :tenant and pr.productReviewId = :prId";
+	String findAllReviwesForRatingQuery = "select count(*) from ProductReview pr where pr.tenant = :tenant and pr.productReviewId = :prId and pr.rating = :rating";
+
+	@Query(findAllReviwesForProductQuery)
+	List<ProductReview> findAllReviewForProduct(@Param("tenant") Tenant realm, @Param("prId") long productReviewId);
 	
-	@Query(findAllReviwesForProduct)
-	List<ProductReview> findAllReviewForProduct(@Param("tenant") Tenant realm, @Param("pId") Product product);
+	@Query(findAllReviwesForRatingQuery)
+	int findAllReviwesForRating(@Param("tenant") Tenant realm, @Param("prId") long productReviewId, @Param("rating") int rating);
 
 }

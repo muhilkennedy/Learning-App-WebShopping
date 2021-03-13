@@ -1,5 +1,6 @@
 package com.backend.persistence.service;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -32,5 +33,13 @@ public interface OrdersService {
 	List<Orders> getCustomerOrders();
 
 	void createCustomerOrder(Long couponId, int paymentMode, Long addressId, int deliveryCharge) throws Exception;
+
+	int couponAppliedCount(long couponId);
+
+	File getOrderInvoice(Long id) throws Exception;
+
+	int getOrdersCount(String limit, String offset, String condition, long date, String status) throws Exception;
+
+	void updateOrderStatus(String status, Long orderId, String paymentType) throws Exception;
 
 }

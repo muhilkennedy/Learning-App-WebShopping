@@ -1,3 +1,4 @@
+<app-searchbar *ngIf="isMobileView()"></app-searchbar>
 <div style="position: relative;">
 <section>
   <div class="container">
@@ -5,9 +6,9 @@
     <div class="row">
       <div class="col-sm-3">
         <div class="left-sidebar">
-          <h2>Category
-            <i *ngIf="!isCatCollapsed" class="fa fa-toggle-up toggleIcon" (click)="isCatCollapsed = !isCatCollapsed"></i>
-            <i *ngIf="isCatCollapsed" class="fa fa-toggle-down toggleIcon" (click)="isCatCollapsed = !isCatCollapsed"></i>
+          <h2 (click)="isCatCollapsed = !isCatCollapsed">Category
+            <i *ngIf="!isCatCollapsed" class="fa fa-toggle-up toggleIcon" ></i>
+            <i *ngIf="isCatCollapsed" class="fa fa-toggle-down toggleIcon" ></i>
           </h2>
           <div [collapse]="isCatCollapsed">
           <div class="panel-group category-products" id="accordian"><!--category-products-->
@@ -44,7 +45,7 @@
           </div> -->
 
           <!-- FILTERS -->
-          <div class="price-range">
+          <div class="price-range" *ngIf="!isMobileView()">
             <h2>Filters
               <i *ngIf="!isFilterCollapsed" class="fa fa-toggle-up toggleIcon" (click)="isFilterCollapsed = !isFilterCollapsed"></i>
             <i *ngIf="isFilterCollapsed" class="fa fa-toggle-down toggleIcon" (click)="isFilterCollapsed = !isFilterCollapsed"></i>
@@ -98,9 +99,33 @@
             </div>
             </div>
           </div>
+          <div *ngIf="isMobileView()">
+            <table>
+              <tr>
+                <td style="padding-top: 20px;">
+                  <label>Sort By Cost:</label>
+                </td>
+                <td>
+                  <button matSuffix type="button" class="btn btn-primary btnStyle" (click)="sortBy('sellingCost', 'asc')"><i class="fa fa-sort-amount-asc"></i></button>
+                </td>
+                <td>
+                  <button matSuffix type="button" class="btn btn-primary btnStyle" (click)="sortBy('sellingCost', 'desc')"><i class="fa fa-sort-amount-desc"></i></button>
+                </td>
+                <td style="padding-top: 20px;">
+                  <label> By Offer:</label>
+                </td>
+                <td>
+                  <button matSuffix type="button" class="btn btn-primary btnStyle" (click)="sortBy('offer', 'asc')"><i class="fa fa-sort-amount-asc"></i></button>
+                </td>
+                <td>
+                  <button matSuffix type="button" class="btn btn-primary btnStyle" (click)="sortBy('offer', 'desc')"><i class="fa fa-sort-amount-desc"></i></button>
+                </td>
+              </tr>
+            </table>
+          </div>
         </div>
       </div>
-
+      <!-- PRODUCTS  -->
       <div class="col-sm-9 padding-right" *ngIf="!isMobileView()">
         <div class="features_items">
           <ngx-loading [show]="productLoading"></ngx-loading>
@@ -112,7 +137,7 @@
                   <span class="offer-overlay" *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0">
                     {{prod.productContent.offer}}% Off
                   </span>
-                  <img style="object-fit: cover;" width="250px" height="300px" src={{getProductImage(prod)}} alt="product Image" />
+                  <img (click)="viewDetailPage(prod)" style="object-fit: cover; cursor: pointer;" width="250px" height="300px" src={{getProductImage(prod)}} alt="product Image" />
                   <h3>{{prod.productContent.productName}}</h3>
                   <p>{{prod.productContent.brandName}}</p>
                   <span *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0" style="text-decoration: line-through;">₹ {{prod.productContent.cost}} </span>
@@ -139,7 +164,7 @@
                   <span class="offer-overlay" *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0">
                     {{prod.productContent.offer}}% Off
                   </span>
-                  <img style="object-fit: cover;" width="150px" height="200px" src={{getProductImage(prod)}} alt="product Image" />
+                  <img (click)="viewDetailPage(prod)" style="object-fit: cover;" width="150px" height="200px" src={{getProductImage(prod)}} alt="product Image" />
                   <h3>{{prod.productContent.productName}}</h3>
                   <p>{{prod.productContent.brandName}}</p>
                   <span *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0" style="text-decoration: line-through;">₹ {{prod.productContent.cost}} </span>

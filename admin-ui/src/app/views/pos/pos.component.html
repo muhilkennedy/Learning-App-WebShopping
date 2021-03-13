@@ -57,6 +57,7 @@
       <div class="card">
         <ngx-loading [show]="loading"></ngx-loading>
         <div class="card-body">
+          <mat-hint>Clear-<b>Shift+Del</b> | AddEntry-<b>Shift+Enter</b> | Loyality Points-<b>1₹ for every 200₹ spent</b></mat-hint>
           <alert class="p-4 text-center"></alert>
           <table class="table table-responsive-sm table-hover table-outline mb-0">
             <thead class="thead-light">
@@ -93,10 +94,10 @@
                     </mat-autocomplete>
                 </td>
                 <td *ngIf="!(item.itemCode === null || item.itemCode === undefined)"><input type="text" class="form-control" matInput placeholder="Product Name" id="pname-{{i}}" name="pname-{{i}}" [(ngModel)]="item.itemName"></td>
-                <td><input type="number" class="form-control" style="width: 75%;" matInput placeholder="MRP" id="mrp-{{i}}" name="mrp-{{i}}" [(ngModel)]="item.mrp"></td>
-                <td><input type="number" class="form-control" style="width: 75%;" matInput placeholder="MRP" id="mrp-{{i}}" name="mrp-{{i}}" [(ngModel)]="item.sellingCost"></td>
-                <td><input type="number" class="form-control" style="width: 75%;" matInput placeholder="Quantity" id="q-{{i}}" name="q-{{i}}" [(ngModel)]="item.quantity"></td>
-                <td><input type="number" class="form-control" style="width: 50%;" matInput placeholder="Offer" id="dis-{{i}}" name="dis-{{i}}" [(ngModel)]="item.discount"></td>
+                <td><input type="number" class="form-control" style="width: 75%;" matInput placeholder="MRP" id="mrp-{{i}}" name="mrp-{{i}}" [(ngModel)]="item.mrp" min="0"></td>
+                <td><input type="number" class="form-control" style="width: 75%;" matInput placeholder="MRP" id="mrp-{{i}}" name="mrp-{{i}}" [(ngModel)]="item.sellingCost" min="0"></td>
+                <td><input type="number" class="form-control" style="width: 75%;" matInput placeholder="Quantity" id="q-{{i}}" name="q-{{i}}" [(ngModel)]="item.quantity" min="0"></td>
+                <td><input disabled type="number" class="form-control" style="width: 50%;" matInput placeholder="Offer" id="dis-{{i}}" name="dis-{{i}}" [(ngModel)]="item.discount" min="0"></td>
                 <td>{{calculateTotal(item) | number:'1.2-2'}}</td>
                 <td>
                   <i *ngIf="(itemList.length === i+1)" class="addicon fa fa-plus-circle" (click)="addItem()"></i>
@@ -126,6 +127,7 @@
                 <td></td>
               </tr>
               <tr>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -169,9 +171,12 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="primaryModal.hide()">Close</button>
-          <button type="button" class="btn btn-warning" (click)="getPDF()">
-            <i class="fa fa-print"></i> Print
-          </button>
+        <button type="button" class="btn btn-warning" (click)="printAsPdf()">
+          <i class="fa fa-print"></i> Print As Online Bill
+        </button>
+        <button type="button" class="btn btn-warning" (click)="getPDF()">
+          <i class="fa fa-print"></i> Print
+        </button>
       </div>
     </div>
   </div>

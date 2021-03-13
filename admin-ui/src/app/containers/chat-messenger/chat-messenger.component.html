@@ -78,7 +78,7 @@
         name="newMessage"
         [(ngModel)]="newMessage"
       />
-      <button class="msg_send_btn" type="button">
+      <button class="msg_send_btn" type="button" (click)="sendMessageUsingSocket()">
         <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
       </button>
     </form>

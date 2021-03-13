@@ -1,5 +1,9 @@
 package com.backend.api.admin.controller;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -9,7 +13,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -83,11 +91,12 @@ public class OrdersAdminController {
 	@RequestMapping(value = "/changeOrderStatus", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<Orders> changeOrderStatus(HttpServletRequest request,
 													@RequestParam(value = "status", required = true) String status,
-													@RequestParam(value = "orderId", required = true) String orderId) {
+													@RequestParam(value = "orderId", required = true) String orderId,
+													@RequestParam(value = "paymentMode", required = false) String paymentType) {
 		GenericResponse<Orders> response = new GenericResponse<Orders>();
 		try {
 			if(CommonUtil.isValidStringParam(status) && CommonUtil.isValidStringParam(orderId)) {
-				orderService.updateOrderStatus(status, (StringUtils.isNotEmpty(orderId) ? Long.parseLong(orderId) : -1));
+				orderService.updateOrderStatus(status, (StringUtils.isNotEmpty(orderId) ? Long.parseLong(orderId) : -1), paymentType);
 				response.setStatus(Response.Status.OK);
 			}
 			else {
@@ -103,11 +112,11 @@ public class OrdersAdminController {
 	}
 	
 	@RequestMapping(value = "/getOrders", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<Orders> getOrders(HttpServletRequest request,
+	public GenericResponse getOrders(HttpServletRequest request,
 										  @RequestParam(value = "filterCondition", required = false) String filterCondition,
 										  @RequestParam(value = "filterDate", required = false) long filterDate,
 										  @RequestParam(value = "filterStatus", required = false) String filterStatus) {
-		GenericResponse<Orders> response = new GenericResponse<Orders>();
+		GenericResponse response = new GenericResponse();
 		try {
 			String limit = request.getHeader(Constants.Header_Limit);
 			String offset = request.getHeader(Constants.Header_Offset);
@@ -118,6 +127,7 @@ public class OrdersAdminController {
 				filterStatus = null;
 			}
 			if(CommonUtil.isValidStringParam(limit) && CommonUtil.isValidStringParam(offset)) {
+				response.setData(orderService.getOrdersCount(limit, offset, filterCondition, filterDate, filterStatus));
 				response.setDataList(orderService.getOrders(limit, offset, filterCondition, filterDate, filterStatus));
 				response.setStatus(Response.Status.OK);
 			}
@@ -133,5 +143,26 @@ public class OrdersAdminController {
 		return response;
 	}
 
+	@RequestMapping("/viewPdf")
+	public ResponseEntity<Resource> viewPdf( @RequestParam(value = "id", required = true) String id)throws Exception 
+	{
+		File file = null;
+		try {
+			if (CommonUtil.isValidStringParam(id)) {
+				file = orderService.getOrderInvoice(Long.parseLong(id));
+				HttpHeaders header = new HttpHeaders();
+				header.add(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=Dummy.pdf");
+				Path path = Paths.get(file.getAbsolutePath());
+				ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
+				long fileLength = file.length();
+				CommonUtil.deleteDirectoryOrFile(file);
+				return ResponseEntity.ok().headers(header).contentLength(fileLength)
+						.contentType(MediaType.parseMediaType("application/pdf")).body(resource);
+			}
+			return null;
+		} finally {
+			CommonUtil.deleteDirectoryOrFile(file);
+		}
+	}
 
 }

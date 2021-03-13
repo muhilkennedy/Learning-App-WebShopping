@@ -13,6 +13,7 @@ export class OrdersService {
   changeOrderStatusEndpoint = "/secure/admin/orders/changeOrderStatus";
   getAssignedOrdersEndpoint = "/secure/admin/orders/getAssignedOrders";
   getOrdersEndpoint = "/secure/admin/orders/getOrders";
+  viewPDFEndpoint = "/secure/admin/orders/viewPdf";
 
   constructor(private http: HttpClient){}
 
@@ -24,10 +25,11 @@ export class OrdersService {
     return this.http.get(environment.backendBaseUrl+this.getUnassignedOrdersEndpoint);
   }
 
-  changeOrderStatus(status, orderId){
+  changeOrderStatus(status, orderId, paymentMode){
     const uploadData = new FormData();
     uploadData.append('status', status);
     uploadData.append('orderId', orderId);
+    uploadData.append('paymentMode', paymentMode);
     return this.http.post(environment.backendBaseUrl+this.changeOrderStatusEndpoint, uploadData);
   }
 
@@ -52,5 +54,11 @@ export class OrdersService {
     }
     return this.http.get(environment.backendBaseUrl+this.getOrdersEndpoint, httpOptions);
   }
+
+  getPDF(orderId){
+    const options = { responseType: Blob  };
+    return this.http.get<any>(environment.backendBaseUrl+this.viewPDFEndpoint,
+                { responseType: 'arraybuffer' as 'json', params : {id : orderId} });
+   }
 
 }

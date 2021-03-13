@@ -23,6 +23,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
 	String findOrdersByCustomerQuery = "select order from Orders order where order.tenant = :tenant and order.customerId = :customerId";
 	String findOrdersByStatusForEmployeeQuery = "select order from Orders order where order.tenant = :tenant and order.employeeId = :employeeId and order.status = :status";
 	String findCustomerOrdersQuery = "select * from orders where tenantid = ?1 and customerid= ?2";
+	String findCouponAppliedCountQuery = "select count(*) from Orders order where order.tenant = :tenant and order.customerId = :customerId and order.couponId = :couponId";
 	
 	@Query(findOrdersByIdQuery)
 	Orders findOrdersById(@Param("tenant") Tenant realm, @Param("orderId") Long orderId);
@@ -42,4 +43,6 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
 	@Query(findOrdersByStatusForEmployeeQuery)
 	List<Orders> findOrdersByStatusForEmployee(@Param("tenant") Tenant realm, @Param("employeeId") Long employeeId,  @Param("status") String string);
 
+	@Query(value = findCouponAppliedCountQuery)
+	int findCouponAppliedCount(@Param("tenant") Tenant realm, Long customerId, Long couponId);
 }

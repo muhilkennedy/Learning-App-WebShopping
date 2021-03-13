@@ -166,7 +166,7 @@ public class LoginController {
 	public GenericResponse<String> employeePasswordUpdate(HttpServletRequest request, @RequestBody EmployeeInfo empObj) {
 		GenericResponse<String> response = new GenericResponse<>();
 		try {
-			if(loginService.updateEmployeePassword(empObj.getEmailId(), empObj.fetchPassword())) {
+			if(loginService.updateEmployeePassword(empObj.getEmailId(),empObj.fetchPassword())) {
 				response.setStatus(Response.Status.OK);
 			}
 			else {
@@ -229,7 +229,7 @@ public class LoginController {
 	public GenericResponse<String> customerForgotPassword(HttpServletRequest request, @RequestBody CustomerPOJOHelper cusObj) {
 		GenericResponse<String> response = new GenericResponse<>();
 		try {
-			if (cusObj.getCustomerInfo() != null && loginService.checkIfUserExists(cusObj.getCustomerInfo().getEmailId())) {
+			if (cusObj.getCustomerInfo() != null && loginService.checkIfCustomerExists(cusObj.getCustomerInfo().getEmailId())) {
 				String otp = otpService.generateOtp(cusObj.getCustomerInfo().getEmailId() + CommonUtil.Key_clientOTP);
 				if(!configUtil.isProdMode()) {
 					logger.info("OTP - " + otp);
@@ -242,6 +242,52 @@ public class LoginController {
 			}
 		} catch (Exception ex) {
 			logger.error("customerForgotPassword : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/customerOtpVerification", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> customerOtpVerification(HttpServletRequest request, @RequestBody CustomerPOJOHelper custObj) {
+		GenericResponse<String> response = new GenericResponse<>();
+		try {
+			if(!StringUtils.isEmpty(custObj.getCustomerInfo().getEmailId()) && !StringUtils.isEmpty(custObj.getOtp())) {
+				if(custObj.getOtp().equals(otpService.getOtp(custObj.getCustomerInfo().getEmailId() + CommonUtil.Key_clientOTP))) {
+					response.setStatus(Response.Status.OK);
+				}
+				else {
+					response.setErrorMessages(Arrays.asList("User Otp Verification Failed"));
+					response.setStatus(Response.Status.FORBIDDEN);
+				}
+			}
+			else {
+				response.setErrorMessages(Arrays.asList("Required Information is Missing"));
+				response.setStatus(Response.Status.ERROR);
+			}
+		} catch (Exception ex) {
+			logger.error("customerOtpVerification : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/customerPasswordUpdate", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> customerPasswordUpdate(HttpServletRequest request, @RequestBody CustomerPOJOHelper custObj) {
+		GenericResponse<String> response = new GenericResponse<>();
+		try {
+			if(loginService.updateCustomerPassword(custObj.getCustomerInfo().getEmailId(), RSAUtil.decrypt(custObj.getCustomerInfo().fetchPassword(), baseService.getTenantInfo().fetchPrivateKey()))) {
+				response.setStatus(Response.Status.OK);
+			}
+			else {
+				response.setErrorMessages(Arrays.asList("Password Update Failed"));
+				response.setStatus(Response.Status.ERROR);
+			}
+		} catch (Exception ex) {
+			logger.error("customerPasswordUpdate : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
@@ -273,6 +319,30 @@ public class LoginController {
 		return response;
 	}
 	
+	@RequestMapping(value = "/sendRegisterMobileOtp", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> sendRegisterMobileOtp(HttpServletRequest request,  @RequestBody CustomerPOJOHelper cusObj) {
+		GenericResponse<String> response = new GenericResponse<>();
+		try {
+			if (cusObj.getCustomerInfo() != null) {
+				String otp = otpService.generateOtp(cusObj.getCustomerInfo().getMobile() + CommonUtil.Key_clientOTP);
+				if(!configUtil.isProdMode()) {
+					logger.info("OTP - " + otp);
+				}
+				// Send OTP via registered service provider
+				response.setStatus(Response.Status.OK);
+			} else {
+				response.setErrorMessages(Arrays.asList("User Object is NULL"));
+				response.setStatus(Response.Status.ERROR);
+			}
+		} catch (Exception ex) {
+			logger.error("sendRegisterMobileOtp : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
 	@RequestMapping(value = "/registerCustomer", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<CustomerInfo> registerCustomer(HttpServletRequest request,
 			@RequestBody CustomerPOJOHelper cusObj) {
@@ -282,7 +352,7 @@ public class LoginController {
 			if (loginService.checkIfCustomerExists(cusObj.getCustomerInfo().getEmailId())) {
 				response.setErrorMessages(Arrays.asList("Email Id Exists"));
 				response.setStatus(Response.Status.ERROR);
-			} else if (cusObj.getOtp() != null && !otp.equals(cusObj.getOtp())) {
+			} else if (cusObj.getOtp() != null && (otp == null || !otp.equals(cusObj.getOtp()))) {
 				response.setErrorMessages(Arrays.asList("Invalid/Expired OTP...Please Refresh to continue !"));
 				response.setStatus(Response.Status.ERROR);
 			} else {
@@ -291,6 +361,31 @@ public class LoginController {
 			}
 		} catch (Exception ex) {
 			logger.error("registerCustomer : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/registerCustomerUsingMobile", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<CustomerInfo> registerCustomerUsingMobile(HttpServletRequest request,
+			@RequestBody CustomerPOJOHelper cusObj) {
+		GenericResponse<CustomerInfo> response = new GenericResponse<CustomerInfo>();
+		try {
+			String otp = otpService.getOtp(cusObj.getCustomerInfo().getMobile() + CommonUtil.Key_clientOTP);
+			if (loginService.checkIfCustomerExists(cusObj.getCustomerInfo().getMobile())) {
+				response.setErrorMessages(Arrays.asList("Mobile Number Already Exists"));
+				response.setStatus(Response.Status.ERROR);
+			} else if (cusObj.getOtp() != null && !otp.equals(cusObj.getOtp())) {
+				response.setErrorMessages(Arrays.asList("Invalid/Expired OTP... !"));
+				response.setStatus(Response.Status.ERROR);
+			} else {
+				loginService.createUser(cusObj.getCustomerInfo());
+				response.setStatus(Response.Status.OK);
+			}
+		} catch (Exception ex) {
+			logger.error("registerCustomerUsingMobile : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);

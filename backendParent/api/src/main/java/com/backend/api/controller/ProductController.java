@@ -22,6 +22,7 @@ import com.backend.commons.util.CommonUtil;
 import com.backend.core.util.Constants;
 import com.backend.persistence.entity.Product;
 import com.backend.persistence.helper.ProductPOJO;
+import com.backend.persistence.service.ProductReviewService;
 import com.backend.persistence.service.ProductService;
 
 /**
@@ -36,6 +37,9 @@ public class ProductController {
 
 	@Autowired
 	private ProductService productService;
+	
+	@Autowired
+	private ProductReviewService reviewService;
 
 	/*
 	 * ############################################
@@ -202,6 +206,21 @@ public class ProductController {
 		return response;
 	}
 	
+	@RequestMapping(value = "/getProductReview", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<ProductPOJO> getProductInfo(HttpServletRequest request, @RequestParam(value = "prId", required = false) long productId) {
+		GenericResponse<ProductPOJO> response = new GenericResponse<>();
+		try {
+			response.setDataList(reviewService.getReviewsForProduct(productId));
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("getProductInfo : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
 	@RequestMapping(value = "/getProdctsRecursiveByCategory", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<Product> getProdctsRecursiveByCategory(HttpServletRequest request,@RequestParam(value = "pIds", required = false) List<Integer> pIds,
 			@RequestParam(value = "cIds", required = false) Long cId,
@@ -224,17 +243,22 @@ public class ProductController {
 	}
 	
 	@RequestMapping(value = "/getProductsBySearchText", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public GenericResponse<ProductPOJO> getProductsBySearchText(HttpServletRequest request,
+	public GenericResponse getProductsBySearchText(HttpServletRequest request,
 			@RequestParam(value = "searchTerm", required = true) String searchTerm,
 			@RequestParam(value = "cIds", required = false) String cId,
 			@RequestParam(value = "sortField", required = false) String sortByField,
 			@RequestParam(value = "sortType", required = false) String sortByType,
 			@RequestParam(value = "includeInactive", required = false) boolean includeInactive) {
-		GenericResponse<ProductPOJO> response = new GenericResponse<>();
+		GenericResponse response = new GenericResponse<>();
 		try {
 			String limit = request.getHeader(Constants.Header_Limit);
 			String offset = request.getHeader(Constants.Header_Offset);
-			response.setDataList(productService.getProductsWithSearchTerm(CommonUtil.isValidStringParam(cId)? Arrays.asList(Long.parseLong(cId)) : null, searchTerm, limit, offset, sortByField, sortByType));
+			response.setData(productService.getProductsCountWithSearchTerm(
+					CommonUtil.isValidStringParam(cId) ? Arrays.asList(Long.parseLong(cId)) : null, searchTerm, limit,
+					offset, sortByField, sortByType));
+			response.setDataList(productService.getProductsWithSearchTerm(
+					CommonUtil.isValidStringParam(cId) ? Arrays.asList(Long.parseLong(cId)) : null, searchTerm, limit,
+					offset, sortByField, sortByType));
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("getProductsBySearchText : " + ex);
@@ -244,7 +268,5 @@ public class ProductController {
 		}
 		return response;
 	}
-	
-
 	
 }

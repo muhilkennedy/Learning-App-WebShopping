@@ -1,5 +1,9 @@
 package com.backend.persistence.serviceImpl;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Blob;
@@ -10,6 +14,7 @@ import java.util.Map;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import com.backend.commons.service.EmailService;
 import com.backend.commons.util.CommonUtil;
+import com.backend.commons.util.FileUtil;
 import com.backend.commons.util.OrdersUtil;
 import com.backend.core.configuration.PaymentModes;
 import com.backend.core.entity.EmployeeInfo;
@@ -24,6 +30,7 @@ import com.backend.core.service.BaseService;
 import com.backend.core.util.DashboardStatusUtil;
 import com.backend.persistence.dao.CartDao;
 import com.backend.persistence.dao.OrdersDao;
+import com.backend.persistence.dao.PaymentDao;
 import com.backend.persistence.entity.Coupons;
 import com.backend.persistence.entity.CustomerCart;
 import com.backend.persistence.entity.CustomerInfo;
@@ -38,6 +45,7 @@ import com.backend.persistence.service.CouponsService;
 import com.backend.persistence.service.CustomerInfoService;
 import com.backend.persistence.service.InvoiceService;
 import com.backend.persistence.service.OrdersService;
+import com.backend.persistence.service.ProductNotificationService;
 
 /**
  * @author Muhil
@@ -78,6 +86,12 @@ public class OrdersServiceImpl implements OrdersService {
 	
 	@Autowired
 	private ProductRepository productRepo;
+	
+	@Autowired
+	private ProductNotificationService productNotification;
+	
+	@Autowired
+	private PaymentDao paymentDao;
 
 	@Override
 	public void save(Orders order) {
@@ -151,10 +165,24 @@ public class OrdersServiceImpl implements OrdersService {
 			orderDetails.add(detail);
 			product.setQuantityInStock(product.getQuantityInStock()-item.getQuantity());
 			productRepo.save(product);
+			if (product.getQuantityInStock() < 1) {
+				productNotification.createNotification(product.getProductName() + " Ran Out of Stock !",
+						product.getProductId(), 0L, null);
+			}
+			else if (product.getQuantityInStock() <= 3) {
+				productNotification.createNotification(product.getProductName() + " Running Out of Stock ! ("
+						+ product.getQuantityInStock() + ")", product.getProductId(), 0L, null);
+			}
 		}
 		if (coupon != null) {
-			subTotal = subTotal.multiply(new BigDecimal(coupon.getDiscount())).divide(new BigDecimal(100));
+			BigDecimal offerAmout = subTotal.multiply(new BigDecimal(coupon.getDiscount())).divide(new BigDecimal(100));
+			if (offerAmout.compareTo(new BigDecimal(coupon.getMaxDiscountLimit())) > 0) {
+				subTotal = subTotal.subtract(new BigDecimal(coupon.getMaxDiscountLimit()));
+			} else {
+				subTotal = subTotal.subtract(offerAmout);
+			}
 		}
+		subTotal = subTotal.add(new BigDecimal(deliveryCharge));
 		order.setSubTotal(subTotal.setScale(2, RoundingMode.CEILING));
 		order.setOrderDetails(orderDetails);
 		ordersRepo.saveAndFlush(order);
@@ -165,12 +193,23 @@ public class OrdersServiceImpl implements OrdersService {
 		emailService.sendOrderStatusEmail(String.valueOf(order.getOrderId()), order.getStatus(), order.getSubTotal().toString(),
 				order.getOrderDate(), PaymentModes.paymentModes.get(order.getPaymentModeId()), customer.getEmailId(),
 				customer.getFirstName(), customer.getLastName(), baseService.getOrigin(), invoice.getDocument());
+		emailService.sendOrderAlertMailToAdmin();
 		DashboardStatusUtil.incremenOnlineCount(baseService.getTenantInfo());
 	}
 
 	@Override
 	public List<Orders> getOrders(int limit, int offset) {
 		return ordersRepo.findLimitedOrders(baseService.getTenantInfo().getTenantID(), limit, offset);
+	}
+	
+	@Override
+	public int getOrdersCount(String limit, String offset, String condition, long date, String status)
+			throws Exception {
+		if (date == 0L) {
+			condition = "def";
+		}
+		return ordersDao.getOrdersCount(baseService.getTenantInfo().getTenantID(), limit, offset, condition, date,
+				status);
 	}
 	
 	@Override
@@ -200,6 +239,12 @@ public class OrdersServiceImpl implements OrdersService {
 	
 	@Override
 	public void updateOrderStatus(String status, Long orderId) throws Exception {
+		// considering cash as default type
+		updateOrderStatus(status, orderId, "CASH");
+	}
+	
+	@Override
+	public void updateOrderStatus(String status, Long orderId, String paymentType) throws Exception {
 		Orders order = ordersRepo.findOrdersById(baseService.getTenantInfo(), orderId);
 		if (order != null) {
 			// incase of order accepted by a employee assign the task to that employee
@@ -208,6 +253,15 @@ public class OrdersServiceImpl implements OrdersService {
 				order.setEmployeeId(emp.getEmployeeId());
 				ordersRepo.saveAndFlush(order);
 				removeUnassignedOrder(order.getOrderId());
+			}
+			if(CommonUtil.isValidStringParam(paymentType)) {
+				//this way of handling needs to be changed
+				Map<Integer, String> modes = paymentDao.getPaymentModes();
+				modes.entrySet().stream().forEach(mode -> {
+					if(mode.getValue().equalsIgnoreCase(paymentType)) {
+						order.setPaymentModeId(mode.getKey());
+					}
+				});
 			}
 			switch (status.toLowerCase()) {
 			case "accepted":
@@ -238,7 +292,9 @@ public class OrdersServiceImpl implements OrdersService {
 			Blob invoiceBlob= null;
 			//send invoice again incase of delivered status.
 			if (order.getStatus().equals(OrdersUtil.orderStatus.Delivered.toString())) {
+				customerService.updateLoyalityPointByCustomerMobile(customer.getMobile(), order.getSubTotal().floatValue());
 				OrderInvoice invoice = invoiceService.getInvoiceByOrder(order);
+				invoice = invoiceService.reassembleOrderInvoice(invoice, order);
 				invoiceBlob = invoice != null ? invoice.getDocument() : null;
 			}
 			emailService.sendOrderStatusEmail(String.valueOf(order.getOrderId()), order.getStatus(),
@@ -252,5 +308,28 @@ public class OrdersServiceImpl implements OrdersService {
 	public Map<String, BigDecimal> ordersWeeklyReport() throws Exception{
 		return ordersDao.getOrdersWeeklyTotal(baseService.getTenantInfo().getTenantID());
 	}
+	
+	@Override
+	public int couponAppliedCount(long couponId) {
+		CustomerInfo customer = (CustomerInfo)baseService.getUserInfo();
+		return ordersRepo.findCouponAppliedCount(baseService.getTenantInfo(), customer.getCustomerId(), couponId);
+	}
 
+	@Override
+	public File getOrderInvoice(Long id) throws Exception {
+		Orders order = ordersRepo.findOrdersById(baseService.getTenantInfo(), id);
+		if (order != null) {
+			OrderInvoice invoice = invoiceService.getInvoiceByOrder(order);
+			File tempFile = File.createTempFile("Invoice-" + order.getOrderId(), CommonUtil.Document_Extention);
+			InputStream in = invoice.getDocument().getBinaryStream();
+			OutputStream out = new FileOutputStream(tempFile);
+			IOUtils.copy(in, out);
+			File pdfFile = FileUtil.convertDocToPDF(tempFile);
+			//flush
+			CommonUtil.deleteDirectoryOrFile(tempFile);
+			return pdfFile;
+		}
+		return null;
+	}
+	
 }

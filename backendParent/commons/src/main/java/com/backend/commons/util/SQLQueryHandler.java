@@ -45,6 +45,7 @@ public class SQLQueryHandler {
 		public static final String Key_Ascending = " asc ";
 		public static final String Key_Descending = " desc ";
 		public static final String Key_Like = " like ";
+		public static final String Key_NotEqual = " <> ";
 
 		public SQLQueryHandler build() {
 			return new SQLQueryHandler(this);
@@ -353,6 +354,17 @@ public class SQLQueryHandler {
 			setOrCondition();
 			setStartBrace();
 			this.query = this.query.concat(fieldName.concat(Key_Like).concat(value));
+			setEndBrace();
+			return this;
+		}
+		
+		public SQLQueryBuilder andSetNotEqualCondition (String fieldName, String value) {
+			if(value == null) {
+				return this;
+			}
+			setAndCondition();
+			setStartBrace();
+			this.query = this.query.concat(fieldName.concat(Key_NotEqual).concat("\"").concat(value).concat("\""));
 			setEndBrace();
 			return this;
 		}

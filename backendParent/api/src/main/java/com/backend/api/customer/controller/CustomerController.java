@@ -83,6 +83,26 @@ public class CustomerController {
 		return response;
 	}
 	
+	@RequestMapping(value = "/updateEmail", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse updatEmail(HttpServletRequest request,
+												@RequestParam(value = "email", required = true) String email) {
+		GenericResponse response = new GenericResponse();
+		try {
+			if (CommonUtil.isValidStringParam(email)) {
+				customerService.updateCustomerEmail(email);
+				response.setStatus(Response.Status.OK);
+			} else {
+				response.setStatus(Response.Status.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			logger.error("updatEmail : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
 	@RequestMapping(value = "/addCustomerAddress", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<String> addCustomerAddress(HttpServletRequest request, @RequestBody CustomerInfo customer) {
 		GenericResponse<String> response = new GenericResponse<String>();
@@ -105,11 +125,19 @@ public class CustomerController {
 
 	@RequestMapping(value = "/addProductToCart", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<CustomerCart> addProductToCart(HttpServletRequest request,
-			@RequestParam(value = "productId", required = true) String pId) {
+			@RequestParam(value = "productId", required = true) String pId,
+			@RequestParam(value = "quantity", required = false) String quantity) {
 		GenericResponse<CustomerCart> response = new GenericResponse<CustomerCart>();
 		try {
 			if (CommonUtil.isValidStringParam(pId)) {
-				customerService.addProductToCart(Long.parseLong(pId));
+				int productQuantity = 1;
+				try{
+					productQuantity = Integer.parseInt(quantity);
+				}
+				catch(Exception ex) {
+					logger.error("Quantity Exception : " + ex.getMessage());
+				}
+				customerService.addProductToCart(Long.parseLong(pId), productQuantity);
 				response.setStatus(Response.Status.OK);
 			} else {
 				response.setStatus(Response.Status.BAD_REQUEST);
@@ -187,6 +215,21 @@ public class CustomerController {
 			}
 		} catch (Exception ex) {
 			logger.error("removeProductFromCart : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/clearCustomercart", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse clearCustomercart(HttpServletRequest request) {
+		GenericResponse response = new GenericResponse();
+		try {
+			customerService.clearCustomerCart();
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("updateProductQuantity : " + ex);
 			List<String> msg = Arrays.asList(ex.getMessage());
 			response.setErrorMessages(msg);
 			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);

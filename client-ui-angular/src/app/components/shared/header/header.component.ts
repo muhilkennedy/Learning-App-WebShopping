@@ -1,8 +1,11 @@
+import { HostListener } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { CartService } from 'src/app/service/cart/cart.service';
 import { LoginService } from 'src/app/service/login/login.service';
+import { ProductService } from 'src/app/service/product/product.service';
 import { CommonsService } from 'src/app/service/shared/commons/commons.service';
 import { TenantStoreService } from 'src/app/service/shared/tenant-store/tenant-store.service';
 import { UserStoreService } from 'src/app/service/shared/user-store/user-store.service';
@@ -14,12 +17,31 @@ import { UserStoreService } from 'src/app/service/shared/user-store/user-store.s
 })
 export class HeaderComponent implements OnInit {
 
+  searchText:string;
+  loading = false;
+
+  public innerWidth: any;
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.innerWidth = window.innerWidth;
+  }
+
+  isMobileView(){
+    if(this.innerWidth < 600){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
   constructor(public tenantStore: TenantStoreService, private router: Router,
               public userStore: UserStoreService, private cartService: CartService,
-              public cookieService: CookieService, public commonsService: CommonsService) { }
+              public cookieService: CookieService, public commonsService: CommonsService,
+              private productService: ProductService, private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
-
+    this.onResize(event);
   }
 
   isLoggedIn(){
@@ -67,7 +89,7 @@ export class HeaderComponent implements OnInit {
 
   openPOSOrders(){
     if(this.userStore.mobile === undefined || this.userStore.mobile === null){
-      alert("Please Update Mobile Number to View POS Details");
+      this._snackBar.open('Please Update Mobile Number to View POS Details', 'OK', this.commonsService.alertoptionsWarn);
       return;
     }
     this.router.navigate(['/posOrders']);
@@ -81,6 +103,11 @@ export class HeaderComponent implements OnInit {
     this.commonsService.isHomeClicked = home;
     this.commonsService.isShowNowClicked = shop;
     this.commonsService.isContactClicked = contact;
+  }
+
+  searchAction(){
+    this.commonsService.searchText = this.searchText;
+    this.router.navigate(['/productList'], { queryParams: { searchText: this.searchText } })
   }
 
 }

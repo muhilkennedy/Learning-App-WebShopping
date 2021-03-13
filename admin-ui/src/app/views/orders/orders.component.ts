@@ -23,11 +23,15 @@ export class OrdersComponent implements OnInit {
   };
 
   customerDetails: any;
-  customerAddress: any[] = new Array();
+  customerAddress: any;
   unassignedOrders: any[] = new Array();
   acceptedOrders: any[] = new Array();
   shippedOrders: any[] = new Array();
   productList: any[] = new Array();
+
+  selectedOrder: any;
+  paymentTypes: string[] = ['Cash', 'Card', 'GooglePay', 'Phonepe', 'Paytm', 'NetBanking', 'Others'];
+  paymentMode: string = this.paymentTypes[0];
 
   constructor(private orderService: OrdersService,
              private alertService: AlertService,
@@ -45,7 +49,7 @@ export class OrdersComponent implements OnInit {
 
   changeStatus(orderId, status){
     this.loading = true;
-    this.orderService.changeOrderStatus(status, orderId)
+    this.orderService.changeOrderStatus(status, orderId, this.paymentMode)
                       .subscribe((resp:any)=>{
                         if(resp.statusCode === 200){
                           this.alertService.success("Order Status Updated!", this.alertoptions);
@@ -67,7 +71,7 @@ export class OrdersComponent implements OnInit {
   }
 
   rejectOrder(orderId){
-    this.changeStatus(orderId, "Rejected");
+    this.changeStatus(orderId, "Cancelled");
   }
 
   outForDelivery(order: any){
@@ -137,13 +141,17 @@ export class OrdersComponent implements OnInit {
     })
   }
 
-  getCustomerDetails(id){
+  getCustomerDetails(id, addressId){
     this.acceptedLoading = true;
     this.employeeService.getCustomerById(id)
                         .subscribe((resp:any)=>{
                           if(resp.statusCode === 200){
                             this.customerDetails = resp.data;
-                            this.customerAddress = this.customerDetails.customerAddress;
+                            this.customerDetails.customerAddress.forEach(address => {
+                              if(address.addressId === addressId){
+                                this.customerAddress = address;
+                              }
+                            })
                           }
                           else{
                             this.alertService.error("Failed: "  + resp.errorMessages);
@@ -174,33 +182,44 @@ export class OrdersComponent implements OnInit {
   }
 
   getCustomerDoorNumber(){
-    if(this.customerDetails !== undefined && this.customerDetails.customerAddress !== null){
-      return this.customerDetails.customerAddress[0].doorNumber;
+    if(this.customerAddress !== undefined){
+      return this.customerAddress.doorNumber;
     }
   }
 
   getCustomerStreet(){
-    if(this.customerDetails !== undefined && this.customerDetails.customerAddress !== null){
-      return this.customerDetails.customerAddress[0].street;
+    if(this.customerAddress !== undefined){
+      return this.customerAddress.street;
     }
   }
 
   getCustomerCity(){
-    if(this.customerDetails !== undefined && this.customerDetails.customerAddress !== null){
-      return this.customerDetails.customerAddress[0].city;
+    if(this.customerAddress !== undefined){
+      return this.customerAddress.city;
     }
   }
 
   getCustomerPin(){
-    if(this.customerDetails !== undefined && this.customerDetails.customerAddress !== null){
-      return this.customerDetails.customerAddress[0].pincode;
+    if(this.customerAddress !== undefined){
+      return this.customerAddress.pincode;
     }
   }
 
   getDeliveryContact(){
-    if(this.customerDetails !== undefined && this.customerDetails.customerAddress !== null){
-      return this.customerDetails.customerAddress[0].mobileContact;
+    if(this.customerAddress !== undefined){
+      return this.customerAddress.mobileContact;
     }
+  }
+
+  confirmPayment(order){
+    this.selectedOrder = order;
+  }
+
+  getSelectedSubtotal(){
+    if(this.selectedOrder !== undefined && this.selectedOrder !== null){
+      return this.selectedOrder.subTotal;
+    }
+    return 0;
   }
 
 }

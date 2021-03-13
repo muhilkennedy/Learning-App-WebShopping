@@ -22,8 +22,6 @@ public interface CustomerInfoService {
 
 	CustomerInfo getCustomerByEmail(String email);
 
-	void addProductToCart(Long productId) throws Exception;
-
 	void removeFromCart(Long productId) throws Exception;
 
 	void updateProductQuantity(Long productId, int quantity) throws Exception;
@@ -40,6 +38,23 @@ public interface CustomerInfoService {
 
 	void addCustomerAddress(CustomerAddress address);
 
-	void updateCustomerMobile(String mobile);
+	void updateCustomerMobile(String mobile) throws Exception;
+
+	void updateLoyalityPointByCustomerMobile(String mobile, float subTotal);
+
+	CustomerInfo getCustomerByEmailOrMobile(String emailOrMobile);
+	
+
+	List<CustomerInfo> findAllCustomersForTenant(int offset, int limit);
+	
+	List<CustomerInfo> findAllCustomersForTenant();
+	
+	int findAllCustomersCountForTenant();
+
+	void toggleCustomerStatus(CustomerInfo customer);
+
+	void updateCustomerEmail(String email) throws Exception;
+
+	void addProductToCart(Long productId, int quantity) throws Exception;
 
 }

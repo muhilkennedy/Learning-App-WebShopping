@@ -11,10 +11,11 @@ export class PosService {
   createPOSEndpoint = "/secure/admin/pos/createPOS";
   getPOSdataEndpoint = "/secure/admin/pos/getPOS";
   viewPDFEndpoint = "/secure/admin/pos/viewPdf";
+  viewPDFDocumentEndpoint = "/secure/admin/pos/viewPdfInvoice";
 
   constructor(private http: HttpClient){}
 
-  createPOS(totalQty, mobile, payment, subTotal, actualSubTotal, products): Observable<any>{
+  createPOS(totalQty, mobile, payment, subTotal, actualSubTotal, totalDiscount, products): Observable<any>{
     const body = {
       timeCreated: new Date().getTime(),
       mobile: mobile,
@@ -22,7 +23,8 @@ export class PosService {
       subTotal: subTotal,
       actualSubTotal: actualSubTotal,
       totalQuantity: totalQty,
-      posProduct: products
+      posProduct: products,
+      moneySaved: totalDiscount
      };
     const httpOptions = {
       headers: new HttpHeaders({
@@ -49,6 +51,11 @@ export class PosService {
    getPDF(posId){
     const options = { responseType: Blob  };
     return this.http.get<any>(environment.backendBaseUrl+this.viewPDFEndpoint, { responseType: 'arraybuffer' as 'json', params : {id : posId} });
+   }
+
+   getPDFDocument(posId){
+    const options = { responseType: Blob  };
+    return this.http.get<any>(environment.backendBaseUrl+this.viewPDFDocumentEndpoint, { responseType: 'arraybuffer' as 'json', params : {id : posId} });
    }
 
 }

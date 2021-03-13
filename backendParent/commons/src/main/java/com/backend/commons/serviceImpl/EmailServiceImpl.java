@@ -18,13 +18,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
+import com.backend.commons.messages.EmailPOJO;
 import com.backend.commons.service.EmailService;
 import com.backend.commons.util.CommonUtil;
 import com.backend.commons.util.EmailConstants;
 import com.backend.commons.util.EmailThread;
 import com.backend.commons.util.EmailUtil;
+import com.backend.core.entity.Tenant;
 import com.backend.core.service.BaseService;
 import com.backend.core.util.Constants;
+import com.backend.core.util.TenantUtil;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -56,7 +59,7 @@ public class EmailServiceImpl implements EmailService {
 	/**
 	 * @return - html string with substituted model values.
 	 */
-	public String constructOnboardEmailBody(String fname, String lname, Long empId, String password, String origin, File logo) {
+	private String constructOnboardEmailBody(String fname, String lname, Long empId, String password, String origin, File logo) {
 		try {
 			Template template = freeMarkerConfig.getTemplate(EmailConstants.employeeOnboardingTemplate);
 			Map<String, Object> model = new HashMap<>();
@@ -99,7 +102,7 @@ public class EmailServiceImpl implements EmailService {
 		}
 	}
 
-	public String constructOtpEmailBody(String otp, File logo) {
+	private String constructOtpEmailBody(String otp, File logo) {
 		try {
 			Template template = freeMarkerConfig.getTemplate(EmailConstants.employeeEmailOtpTemplate);
 			Map<String, Object> model = new HashMap<>();
@@ -164,7 +167,7 @@ public class EmailServiceImpl implements EmailService {
 		}
 	}
 	
-	public String constructPOSEmailBody(File logo, String posId, String subtotal, String createdTime, String paymentMode ) {
+	private String constructPOSEmailBody(File logo, String posId, String subtotal, String createdTime, String paymentMode ) {
 		try {
 			Template template = freeMarkerConfig.getTemplate(EmailConstants.orderStatusTemplate);
 			Map<String, Object> model = new HashMap<>();
@@ -219,7 +222,7 @@ public class EmailServiceImpl implements EmailService {
 		}
 	}
 	
-	public String constructOrderStatusEmailBody(File logo, String posId, String subtotal, String createdTime, String paymentMode, String orderStatus ) {
+	private String constructOrderStatusEmailBody(File logo, String posId, String subtotal, String createdTime, String paymentMode, String orderStatus ) {
 		try {
 			Template template = freeMarkerConfig.getTemplate(EmailConstants.orderStatusTemplate);
 			Map<String, Object> model = new HashMap<>();
@@ -241,5 +244,25 @@ public class EmailServiceImpl implements EmailService {
 		return null;
 	}
 	
+	@Override
+	public void sendContactEmail(EmailPOJO email) throws Exception {
+		String subject = email.getName() + " : " + email.getFrom() + " : " + email.getSubject();
+		Tenant tenantDetails = TenantUtil.getTenantInfo(baseService.getTenantInfo().getTenantID());
+		sendEmail(tenantDetails.getTenantDetail().getTenantEmail(), subject, email.getMessage(), null,
+				email.getAttachment());
+	}
+	
+	//need to change this method later to send customized impl
+	@Override
+	public void sendOrderAlertMailToAdmin() throws Exception {
+		String subject = "New Order Recieved. Pls check the website! ";
+		//send email in separate thread
+		Runnable emailRunnable = new EmailThread(baseService.getTenantInfo().getUniqueName(),
+				baseService.getTenantInfo().getTenantID(),
+				baseService.getTenantInfo().getTenantDetail().getBusinessEmail(),
+				baseService.getTenantInfo().getTenantDetail().getBusinessEmailPassword(),
+				Arrays.asList(baseService.getTenantInfo().getTenantDetail().getTenantEmail()), subject, subject, null, null);
+		new Thread(emailRunnable).start();
+	}
 	
 }

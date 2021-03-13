@@ -6,6 +6,7 @@ import { ProductService } from 'src/app/service/product/product.service';
 import { CommonsService } from 'src/app/service/shared/commons/commons.service';
 import { TenantStoreService } from 'src/app/service/shared/tenant-store/tenant-store.service';
 import { UserStoreService } from 'src/app/service/shared/user-store/user-store.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-home',
@@ -19,6 +20,7 @@ export class HomeComponent implements OnInit {
 
   mandateHomeMedia:any = null;
   homeMedia:any[] = new Array();
+  fullHomeMedia:any[] = new Array();
   homeBanner:any[] = new Array();
   homeMediaLength:number = 0;
   mandateBannerImage:any;
@@ -44,7 +46,7 @@ export class HomeComponent implements OnInit {
   constructor(private homeService:HomeService, private tenantStore: TenantStoreService,
               private productService: ProductService, private userStore: UserStoreService,
               private router: Router, private cartService:CartService,
-              private commonService:CommonsService) { }
+              private commonService:CommonsService, private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.onResize("event");
@@ -58,7 +60,7 @@ export class HomeComponent implements OnInit {
                       this.loading = false;
                     },
                     (error: any) => {
-                      alert("Something went wrong!");
+                      this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                     })
     this.productService.getAllFeaturedProducts()
                        .subscribe((resp:any) => {
@@ -67,7 +69,7 @@ export class HomeComponent implements OnInit {
                           }
                         },
                         (error: any) => {
-                          alert("Something went wrong!");
+                          this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                         })
   }
 
@@ -93,6 +95,7 @@ export class HomeComponent implements OnInit {
         else{
           this.homeMedia.push(media);
         }
+        this.fullHomeMedia.push(media);
       }
     });
     this.homeMediaLength = this.homeMedia.length;
@@ -136,10 +139,10 @@ export class HomeComponent implements OnInit {
                           }
                           this.userStore.cartCount++;
                         }
-                        this.loading = false;
-                      },
+                        this._snackBar.open('Added to Cart Successfully', 'OK', this.commonService.alertoptionsSuccess);
+                        this.loading = false;                      },
                       (error: any) => {
-                        alert("Something went wrong!");
+                        this._snackBar.open('Failed to Add in Cart!', '', this.commonService.alertoptionsError);
                       })
     }
   }

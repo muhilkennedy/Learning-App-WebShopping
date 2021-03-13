@@ -1,3 +1,4 @@
+import { ViewChild } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { EmployeeService } from '../../../shared/employee/employee.service';
@@ -53,6 +54,7 @@ export class OnlineTransactionsComponent implements OnInit {
     this.orderService.getOrders(this.pageSize, this.offset, status, dateCondition, filterDate)
                     .subscribe((resp:any) => {
                       if(resp.statusCode === 200){
+                        this.total = resp.data;
                         this.ordersDataList = resp.dataList;
                       }
                       else{
@@ -183,6 +185,26 @@ export class OnlineTransactionsComponent implements OnInit {
     if(this.customerDetails !== undefined && this.customerDetails.customerAddress !== null){
       return this.customerDetails.customerAddress[0].pincode;
     }
+  }
+
+  @ViewChild('printModal') myModal;
+  orderId:string;
+  showPrintBill(id){
+    this.orderId = id;
+    this.myModal.show();
+  }
+
+  getPDF(){
+    this.loading = true;
+    this.orderService.getPDF(this.orderId)
+                    .subscribe((resp: any) => {
+                        window.open(window.URL.createObjectURL( new Blob([resp], { type: 'application/pdf' })),"_blank");
+                        this.loading = false;
+                        this.myModal.hide();
+                    },
+                    (error) => {
+                      this.alertService.error("Something went wrong!", error)
+                    });
   }
 
 }

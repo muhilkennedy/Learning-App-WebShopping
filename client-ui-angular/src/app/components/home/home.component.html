@@ -2,7 +2,29 @@
 <ngx-loading [show]="loading"></ngx-loading>
 <section id="slider" *ngIf="mandateHomeMedia !== null">
   <div class="container">
-    <div class="row">
+    <div class="row" *ngIf="isMobileView()">
+      <div class="col-sm-12">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12 padding-right">
+              <div class="features_items">
+                  <ngb-carousel>
+                    <ng-template ngbSlide *ngFor="let media of fullHomeMedia">
+                      <img class="bannerstyle" src={{media.image}} alt="slides">
+                      <div class="carousel-caption">
+                          <p>{{media.title}}</p>
+                          <button *ngIf="isShopNow(media)" type="button" class="btn btn-default get" (click)="openShopNow()">Shop Now</button>
+                          <button *ngIf="isContactNow(media)" type="button" class="btn btn-default get" (click)="openContact()">Click Here For ContactInfo</button>
+                      </div>
+                    </ng-template>
+                  </ngb-carousel>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" *ngIf="!isMobileView()">
       <div class="col-sm-12">
         <div id="slider-carousel" class="carousel slide" data-ride="carousel">
           <ol class="carousel-indicators">
@@ -52,6 +74,21 @@
   </div>
 </section><!--/slider-->
 
+<!-- <section id="appLink">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12 padding-right">
+        <div class="features_items">
+          <h2 class="title text-center">DOWNLOAD OUR APP ON PLAYSTORE</h2>
+        </div>
+        <div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section> -->
+<br/>
 <section id="featured" *ngIf="featuresProducts.length > 0">
   <div class="container" *ngIf="!isMobileView()">
     <div class="row">

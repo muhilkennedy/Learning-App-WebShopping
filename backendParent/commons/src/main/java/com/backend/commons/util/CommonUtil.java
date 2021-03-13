@@ -58,8 +58,10 @@ public class CommonUtil {
 	public static final int Thumbnail_AspectHeight = 200;
 	public static final int Banner_AspectWidth = 1900;
 	public static final int Banner_AspectHeight = 700;
-	public static final int HomeImage_AspectWidth = 800;
-	public static final int HomeImage_AspectHeight = 800;
+	public static final int HomeImage_AspectHeight = 500;
+	public static final int HomeImage_AspectWidth = 500;
+	public static final int ProductImage_AspectHeight = 400;
+	public static final int ProductImage_AspectWidth = 400;
 	public static final String Thumbnail_Exension = "jpg";
 	
 	public static final String Symbol_INR = " ₹ ";
@@ -68,6 +70,9 @@ public class CommonUtil {
 	public static final String PDF_Extension = ".pdf";
 	public static final String Png_Extension = ".png";
 	public static final String Jpeg_Extension = ".jpeg";
+	
+	public static final String Symbol_at = "@";
+	public static final String Dot_Com = ".com";
 	
 	public static final String Invoice_Name = "Invoice";
 	public static final String Icon_name = "icon";
@@ -167,7 +172,7 @@ public class CommonUtil {
 	
 	public static byte[] getBannerImage(String fileName, byte[] image) throws Exception {
 		InputStream in = new ByteArrayInputStream(image);
-		BufferedImage bImage = Scalr.resize(ImageIO.read(in), Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, Banner_AspectWidth,
+		BufferedImage bImage = Scalr.resize(ImageIO.read(in), Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_EXACT, Banner_AspectWidth,
 				Banner_AspectHeight, Scalr.OP_ANTIALIAS);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ImageIO.write(bImage, getFileExtensionFromName(fileName), baos);
@@ -176,7 +181,7 @@ public class CommonUtil {
 	
 	public static byte[] getHomeImage(String fileName, byte[] image) throws Exception {
 		InputStream in = new ByteArrayInputStream(image);
-		BufferedImage bImage = Scalr.resize(ImageIO.read(in), Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, HomeImage_AspectWidth,
+		BufferedImage bImage = Scalr.resize(ImageIO.read(in), Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_HEIGHT, HomeImage_AspectWidth,
 				HomeImage_AspectHeight, Scalr.OP_ANTIALIAS);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ImageIO.write(bImage, getFileExtensionFromName(fileName), baos);
@@ -186,8 +191,8 @@ public class CommonUtil {
 	// need to update aspect ratio later after ui dev for best fit.
 	public static byte[] getProductImage(String fileName, byte[] image) throws Exception {
 		InputStream in = new ByteArrayInputStream(image);
-		BufferedImage bImage = Scalr.resize(ImageIO.read(in), Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, HomeImage_AspectWidth,
-				HomeImage_AspectHeight, Scalr.OP_ANTIALIAS);
+		BufferedImage bImage = Scalr.resize(ImageIO.read(in), Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, ProductImage_AspectWidth,
+				ProductImage_AspectHeight, Scalr.OP_ANTIALIAS);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ImageIO.write(bImage, getFileExtensionFromName(fileName), baos);
 		return baos.toByteArray();

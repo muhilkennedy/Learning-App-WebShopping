@@ -14,8 +14,10 @@ import com.backend.persistence.dao.CartDao;
 import com.backend.persistence.entity.CustomerAddress;
 import com.backend.persistence.entity.CustomerCart;
 import com.backend.persistence.entity.CustomerInfo;
+import com.backend.persistence.entity.Product;
 import com.backend.persistence.repository.CustomerInfoRepository;
 import com.backend.persistence.service.CustomerInfoService;
+import com.backend.persistence.service.ProductService;
 
 /**
  * @author Muhil
@@ -32,6 +34,9 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 	private CustomerInfoRepository customerRepo;
 	
 	@Autowired
+	private ProductService productService;
+	
+	@Autowired
 	private CartDao cartDao;
 	
 	@Override
@@ -46,32 +51,43 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 	
 	@Override
 	public CustomerInfo getCustomerById(Long id) {
-		return customerRepo.findEmployeeById(id, baseService.getTenantInfo());
+		return customerRepo.findCustomerById(id, baseService.getTenantInfo());
 	}
 	
 	@Override
 	public CustomerInfo getCustomerByEmail(String email) {
-		return customerRepo.findEmployeeByEmail(email, baseService.getTenantInfo());
+		return customerRepo.findCustomerByEmail(email, baseService.getTenantInfo());
 	}
 	
 	@Override
 	public CustomerInfo getCustomerByMobile(String mobile) {
-		return customerRepo.findEmployeeByMobile(mobile, baseService.getTenantInfo());
+		return customerRepo.findCustomerByMobile(mobile, baseService.getTenantInfo());
 	}
 	
 	@Override
-	public void addProductToCart(Long productId) throws Exception {
+	public CustomerInfo getCustomerByEmailOrMobile(String emailOrMobile) {
+		return customerRepo.findCustomerByEmailOrMobile(emailOrMobile, baseService.getTenantInfo());
+	}
+	
+	@Override
+	public void addProductToCart(Long productId, int quantity) throws Exception {
 		CustomerInfo customer = (CustomerInfo) baseService.getUserInfo();
 		List<CustomerCart> cartItems = cartDao.userCartItems(customer.getCustomerId());
-		int quantity = 1;
 		for(CustomerCart cartItem: cartItems) {
-			if(cartItem.getProduct().getProductId() == productId) {
+			System.out.println(cartItem.getProduct().getProductId());
+			if(cartItem.getProduct().getProductId().longValue() == productId.longValue()) {
 				quantity = cartItem.getQuantity() + 1;
 				updateProductQuantity(productId, quantity);
 				return;
 			}
 		}
-		cartDao.insertIntoCart(productId, customer.getCustomerId(), quantity);
+		Product product = productService.getProductById(productId);
+		if(product.getQuantityInStock() < quantity) {
+			throw new Exception("Only " + product.getQuantityInStock() + " left !");
+		}
+		else {
+			cartDao.insertIntoCart(productId, customer.getCustomerId(), quantity);
+		}
 	}
 	
 	@Override
@@ -93,7 +109,13 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 			removeFromCart(productId);
 		}
 		else {
-			cartDao.updateProductQuantity(productId, customer.getCustomerId(), quantity);
+			Product product = productService.getProductById(productId);
+			if(product.getQuantityInStock() < quantity) {
+				throw new Exception("Only " + product.getQuantityInStock() + " left in stock !");
+			}
+			else {
+				cartDao.updateProductQuantity(productId, customer.getCustomerId(), quantity);
+			}
 		}
 	}
 	
@@ -116,9 +138,25 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 				? customer.getLoyalitypoint().add(loyalityEarned.setScale(2, RoundingMode.CEILING))
 				: loyalityEarned.setScale(2, RoundingMode.CEILING));
 	}
+	
+	public void updateLoyalityPoint(CustomerInfo customer, float total) {
+		//1 inr for every 200 spent 
+		BigDecimal loyalityEarned = new BigDecimal(total).divide(new BigDecimal(200));
+		customer.setLoyalitypoint(customer.getLoyalitypoint() != null
+				? customer.getLoyalitypoint().add(loyalityEarned.setScale(2, RoundingMode.CEILING))
+				: loyalityEarned.setScale(2, RoundingMode.CEILING));
+	}
 
 	@Override
 	public void updateLoyalityPointByCustomerMobile(String mobile, String subTotal) {
+		CustomerInfo customer = getCustomerByMobile(mobile);
+		if (customer != null) {
+			updateLoyalityPoint(customer, subTotal);
+		}
+	}
+	
+	@Override
+	public void updateLoyalityPointByCustomerMobile(String mobile, float subTotal) {
 		CustomerInfo customer = getCustomerByMobile(mobile);
 		if (customer != null) {
 			updateLoyalityPoint(customer, subTotal);
@@ -136,9 +174,49 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 	}
 	
 	@Override
-	public void updateCustomerMobile(String mobile) {
-		CustomerInfo customer = (CustomerInfo)baseService.getUserInfo();
-		customer.setMobile(mobile);
+	public void updateCustomerMobile(String mobile) throws Exception {
+		CustomerInfo existingCustomer = getCustomerByMobile(mobile);
+		if(existingCustomer == null) {
+			CustomerInfo customer = (CustomerInfo)baseService.getUserInfo();
+			customer.setMobile(mobile);
+			save(customer);
+		}
+		else {
+			throw new Exception("Another Account with Same Mobile Number Exists!");
+		}
+	}
+	
+	@Override
+	public void updateCustomerEmail(String email) throws Exception {
+		CustomerInfo existingCustomer = getCustomerByEmail(email);
+		if(existingCustomer == null) {
+			CustomerInfo customer = (CustomerInfo)baseService.getUserInfo();
+			customer.setEmailId(email);
+			save(customer);
+		}
+		else {
+			throw new Exception("Another Account with Same Email-ID Exists!");
+		}
+	}
+
+	@Override
+	public List<CustomerInfo> findAllCustomersForTenant(int offset, int limit) {
+		return customerRepo.findLimitedCustomers(baseService.getTenantInfo().getTenantID(),limit,offset);
+	}
+	
+	@Override
+	public List<CustomerInfo> findAllCustomersForTenant() {
+		return customerRepo.findAllCustomers(baseService.getTenantInfo());
+	}
+	
+	@Override
+	public int findAllCustomersCountForTenant(){
+		return customerRepo.findAllCustomersCount(baseService.getTenantInfo());
+	}
+	
+	@Override
+	public void toggleCustomerStatus(CustomerInfo customer) {
+		customer.setActive(!customer.isActive());
 		save(customer);
 	}
 

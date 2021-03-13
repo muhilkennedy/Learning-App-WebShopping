@@ -24,7 +24,17 @@
             <tr>
               <td>Email ID</td>
               <td>:</td>
-              <td><label>{{userStore.emailId}}</label></td>
+              <!-- <td><label>{{userStore.emailId}}</label></td> -->
+              <td>
+                <mat-form-field class="matitem" style="width: 200px;">
+                  <input type="text"
+                        placeholder="Email Id"
+                        matInput
+                        [(ngModel)]="userStore.emailId">
+                  <button matSuffix type="button" class="btn btn-primary" (click)="updateEmail()">
+                    Update</button>
+                </mat-form-field>
+              </td>
             </tr>
             <tr>
               <td>Mobile Number</td>
