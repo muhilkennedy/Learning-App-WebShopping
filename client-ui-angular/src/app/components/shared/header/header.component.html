@@ -176,13 +176,18 @@
           <!-- <div [ngClass]="{'search_box pull-right': !isMobileView(), 'search_box pull-left searchbar': isMobileView()}">
             <input type="text" placeholder="Search"/>
           </div> -->
-          <mat-form-field class="matitem pull-left" *ngIf="isMobileView()" style="padding-left: 20px; width: 100%;">
+          <!-- <mat-form-field class="matitem pull-left" *ngIf="isMobileView()" style="padding-left: 20px; width: 100%;">
             <input type="text"
                    placeholder="Search Product"
                    matInput
                    [(ngModel)]="searchText">
           <button matSuffix type="button" class="btn btn-primary" (click)="searchAction()"><i class="fa fa-search"></i></button>
-          </mat-form-field>
+          </mat-form-field> -->
+          <!-- <div class="input-container">
+            <input type="text" class="input-field" placeholder="Search Product" matInput name="search"
+            [(ngModel)]="searchText"/>
+            <button class="input-button" (click)="searchAction()"><i class="fa fa-search"></i></button>
+          </div> -->
 
           <div class="navbar-header" style="padding-top: 10px;" *ngIf="!isMobileView()">
             <button type="button" class="navbar-toggle navbar-toggle-color" data-toggle="collapse" data-target=".navbar-collapse">

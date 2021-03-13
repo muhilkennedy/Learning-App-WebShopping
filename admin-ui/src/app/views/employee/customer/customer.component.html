@@ -27,9 +27,6 @@
       </td>
       <td>
         <div>{{customer.firstName + " " + customer.lastName}}</div>
-        <div class="small text-muted">
-          <span>DOB : {{customer.dob | date : 'dd-MM-yyyy'}}</span>
-        </div>
       </td>
       <td>
         <div>
@@ -46,7 +43,6 @@
           <mat-icon style="color: lightcoral; cursor: pointer; transition: transform .2s;" (click)="getCustomerAddress(customer.customerAddress);primaryModal.show()">location_on</mat-icon>
         </div>
       </td>
-
       <td>
         <div>
           <span *ngIf='customer.active' class="badge badge-success">Active</span>
@@ -62,7 +58,7 @@
         <div class="small text-muted">Last Active</div>
         <strong>{{customer.lastLogin | date: 'dd/MM/yyyy hh:mm a' }}</strong>
         <div class="small text-muted">
-          <span>Logged in via : {{customer.loginvia}}</span>
+          <span>Logged in via : <b>{{customer.loginMode}}</b></span>
         </div>
       </td>
       <td>
@@ -129,8 +125,8 @@
 
 
 
-<mat-paginator [length]="total"                    
+<mat-paginator [length]="total"
 [pageSize]="pageSize"
 [pageSizeOptions]="pageSizeOptions"
 (page)="action($event)">
-</mat-paginator>                                   
+</mat-paginator>

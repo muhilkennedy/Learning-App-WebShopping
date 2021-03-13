@@ -1,5 +1,8 @@
+<app-searchbar *ngIf="isMobileView()"></app-searchbar>
+<div style="position: relative;">
 <section>
   <div class="container">
+    <ngx-loading [show]="loading"></ngx-loading>
     <div class="row">
       <!-- <div class="col-sm-3">
         <div class="left-sidebar">
@@ -82,11 +85,10 @@
         <div class="category-tab shop-details-tab">
           <div class="col-sm-12">
             <ul class="nav nav-tabs">
-              <li class="active"><a href="#reviews" data-toggle="tab">Reviews ({{reviews.length}})</a></li>
+              <li class="active"><a href="#reviews" data-toggle="tab">Reviews ({{getReviewLength(reviews)}})</a></li>
             </ul>
           </div>
           <div class="tab-content">
-            <ngx-loading [show]="loading"></ngx-loading>
             <div class="tab-pane fade active in" id="reviews" >
               <div class="col-sm-12">
                 <!-- <ul>
@@ -211,3 +213,4 @@
     </div>
   </div>
 </section>
+</div>

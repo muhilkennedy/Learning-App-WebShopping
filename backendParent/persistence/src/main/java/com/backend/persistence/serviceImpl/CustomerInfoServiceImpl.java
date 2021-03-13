@@ -74,7 +74,8 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 		CustomerInfo customer = (CustomerInfo) baseService.getUserInfo();
 		List<CustomerCart> cartItems = cartDao.userCartItems(customer.getCustomerId());
 		for(CustomerCart cartItem: cartItems) {
-			if(cartItem.getProduct().getProductId() == productId) {
+			System.out.println(cartItem.getProduct().getProductId());
+			if(cartItem.getProduct().getProductId().longValue() == productId.longValue()) {
 				quantity = cartItem.getQuantity() + 1;
 				updateProductQuantity(productId, quantity);
 				return;

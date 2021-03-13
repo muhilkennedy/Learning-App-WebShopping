@@ -91,14 +91,17 @@
             </ul>
           </div>
           <br/>
-          <div class="payment-options" style="position: relative;">
+          <div class="payment-options" class="total_area">
             <span>
-              <label><i class="fa fa-info"></i><strong> . Payment will be accepted on door step delivery !</strong></label>
+              <label><i class="fa fa-info"></i><strong> . Payment only on <b>Door Step Delivery</b>!</strong></label>
+            </span>
+            <span>
+              <label><i class="fa fa-money"></i> . (cash, paytm, gpay, phonepe, card)</label>
             </span>
             <div style="float: right;">
               <button mat-raised-button class="btn btn-default update btncolor" (click)="placeOrder()"
                 [ngClass]="{'spinner' : buttonLoading}" [disabled]="buttonLoading">
-                <mat-icon>attach_money</mat-icon>
+                <mat-icon>money</mat-icon>
                 Confirm and Place Order
               </button>
             </div>

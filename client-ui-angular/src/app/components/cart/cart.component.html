@@ -7,7 +7,7 @@
         <li class="active">Shopping Cart</li>
       </ol>
     </div>
-    <div>
+    <div *ngIf="cartPage">
       <button style="float: right; color: #b73a3a;" mat-button (click)="clearCart()">
         <mat-icon>clear_all</mat-icon>
         Clear Cart
@@ -33,8 +33,8 @@
               <a href=""><img src="images/cart/one.png" alt=""></a>
             </td> -->
             <td class="cart_description">
-              <h4><a href="">{{item.product.productName}}</a></h4>
-              <p>Web ID: {{item.product.productCode}}</p>
+              <h4><a>{{item.product.productName}}</a></h4>
+              <p>ID: {{item.product.productId}}</p>
             </td>
             <td class="cart_price">
               <p>{{item.product.cost}}</p>

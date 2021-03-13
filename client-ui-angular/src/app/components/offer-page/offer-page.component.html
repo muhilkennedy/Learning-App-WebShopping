@@ -73,7 +73,7 @@
             <li>Delivery Charge <span>{{getDeliveryCharge()}}</span></li>
             <li>Total <span><strong>₹ {{calculateTotalWithDeliveryCharge()}}</strong></span></li>
           </ul>
-            <a class="btn btn-default update" style="float: right;" (click)="gotoCheckout()"> Proceed </a>
+            <a *ngIf="canProceed" class="btn btn-default update" style="float: right;" (click)="gotoCheckout()"> Proceed </a>
             <!-- <a class="btn btn-default check_out" href="">Check Out</a> -->
         </div>
       </div>
