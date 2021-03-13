@@ -42,4 +42,14 @@ public interface OrdersService {
 
 	void updateOrderStatus(String status, Long orderId, String paymentType) throws Exception;
 
+	void updateProductQuantity(Long orderId, Long productId, int newQuantity) throws Exception;
+
+	Orders getOrderById(Long orderId);
+
+	void removeProductFromOrder(Long orderId, Long productId) throws Exception;
+
+	OrderDetails addProductToOrder(Long orderId, Long productId) throws Exception;
+
+	void reassembleInvoice(Long orderId) throws Exception;
+
 }

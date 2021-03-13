@@ -46,6 +46,7 @@ import com.backend.persistence.service.CustomerInfoService;
 import com.backend.persistence.service.InvoiceService;
 import com.backend.persistence.service.OrdersService;
 import com.backend.persistence.service.ProductNotificationService;
+import com.backend.persistence.service.ProductService;
 
 /**
  * @author Muhil
@@ -93,6 +94,9 @@ public class OrdersServiceImpl implements OrdersService {
 	@Autowired
 	private PaymentDao paymentDao;
 
+	@Autowired
+	private ProductService productService;
+	
 	@Override
 	public void save(Orders order) {
 		ordersRepo.save(order);
@@ -106,6 +110,11 @@ public class OrdersServiceImpl implements OrdersService {
 	@Override
 	public void saveAndFlush(OrderDetails orderDetail) {
 		orderDetailsRepo.saveAndFlush(orderDetail);
+	}
+	
+	@Override
+	public Orders getOrderById(Long orderId) {
+		return ordersRepo.findOrdersById(baseService.getTenantInfo(), orderId);
 	}
 
 	private void createUnassignedOrder(Long orderId) throws Exception {
@@ -330,6 +339,65 @@ public class OrdersServiceImpl implements OrdersService {
 			return pdfFile;
 		}
 		return null;
+	}
+	
+	@Override
+	public void updateProductQuantity(Long orderId, Long productId, int newQuantity) throws Exception {
+		Orders order = getOrderById(orderId);
+		if (order != null) {
+			for (OrderDetails item : order.getOrderDetails()) {
+				if (item.getProduct().getProductId().longValue() == productId.longValue()) {
+					item.setQuantity(newQuantity);
+					orderDetailsRepo.saveAndFlush(item);
+					break;
+				}
+			}
+		} else {
+			throw new Exception("Order not Found");
+		}
+	}
+
+	@Override
+	public void removeProductFromOrder(Long orderId, Long productId) throws Exception {
+		Orders order = getOrderById(orderId);
+		if (order != null) {
+			for (OrderDetails item : order.getOrderDetails()) {
+				if (item.getProduct().getProductId().longValue() == productId.longValue()) {
+					orderDetailsRepo.deleteProduct(baseService.getTenantInfo(), item.getOrderDetailId());
+					break;
+				}
+			}
+			saveAndFlush(order);
+		} else {
+			throw new Exception("Order not Found");
+		}
+	}
+	
+	@Override
+	public OrderDetails addProductToOrder(Long orderId, Long productId) throws Exception {
+		Orders order = getOrderById(orderId);
+		Product product = productService.getProductById(productId);
+		if (order != null && product != null) {
+			OrderDetails orderDetail = new OrderDetails();
+			orderDetail.setTenant(baseService.getTenantInfo());
+			orderDetail.setOrder(order);
+			orderDetail.setProduct(product);
+			orderDetail.setQuantity(1);
+			orderDetailsRepo.saveAndFlush(orderDetail);
+			return orderDetail;
+		} else {
+			throw new Exception("Order/Product Does not Exists!");
+		}
+	}
+	
+	@Override
+	public void reassembleInvoice(Long orderId) throws Exception {
+		Orders order = getOrderById(orderId);
+		if (order != null) {
+			invoiceService.reassembleOrderInvoice(invoiceService.getInvoiceByOrder(order), order);
+		} else {
+			throw new Exception("Order not Found!");
+		}
 	}
 	
 }

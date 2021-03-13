@@ -14,6 +14,8 @@ export class OrdersService {
   getAssignedOrdersEndpoint = "/secure/admin/orders/getAssignedOrders";
   getOrdersEndpoint = "/secure/admin/orders/getOrders";
   viewPDFEndpoint = "/secure/admin/orders/viewPdf";
+  updateProductInOrderEndpoint = "/secure/admin/orders/updateOrderDetail";
+  reassembleInvoiceEndpoint = "/secure/admin/orders/reassembleInvoice";
 
   constructor(private http: HttpClient){}
 
@@ -60,5 +62,36 @@ export class OrdersService {
     return this.http.get<any>(environment.backendBaseUrl+this.viewPDFEndpoint,
                 { responseType: 'arraybuffer' as 'json', params : {id : orderId} });
    }
+
+   productQuantityUpdate(orderId, productId, quantity){
+    const uploadData = new FormData();
+    uploadData.append('productId', productId);
+    uploadData.append('orderId', orderId);
+    uploadData.append('quantity', quantity);
+    return this.http.put(environment.backendBaseUrl+this.updateProductInOrderEndpoint, uploadData);
+  }
+
+  removeProduct(orderId, productId){
+    const httpOptions = {
+      params: {
+        orderId: orderId,
+        productId: productId
+      }
+    }
+    return this.http.delete(environment.backendBaseUrl+this.updateProductInOrderEndpoint, httpOptions);
+  }
+
+  addProductToOrder(orderId, productId){
+    const uploadData = new FormData();
+    uploadData.append('productId', productId);
+    uploadData.append('orderId', orderId);
+    return this.http.post(environment.backendBaseUrl+this.updateProductInOrderEndpoint, uploadData);
+  }
+
+  reassembleInvoice(orderId){
+    const uploadData = new FormData();
+    uploadData.append('orderId', orderId);
+    return this.http.post(environment.backendBaseUrl+this.reassembleInvoiceEndpoint, uploadData);
+  }
 
 }

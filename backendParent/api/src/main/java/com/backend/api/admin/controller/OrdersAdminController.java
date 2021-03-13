@@ -27,6 +27,7 @@ import com.backend.api.messages.GenericResponse;
 import com.backend.api.messages.Response;
 import com.backend.commons.util.CommonUtil;
 import com.backend.core.util.Constants;
+import com.backend.persistence.entity.OrderDetails;
 import com.backend.persistence.entity.Orders;
 import com.backend.persistence.service.OrdersService;
 
@@ -163,6 +164,92 @@ public class OrdersAdminController {
 		} finally {
 			CommonUtil.deleteDirectoryOrFile(file);
 		}
+	}
+
+	@RequestMapping(value = "/updateOrderDetail", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Orders> updateOrderDetail(HttpServletRequest request,
+			@RequestParam(value = "quantity", required = true) String quantity,
+			@RequestParam(value = "productId", required = true) String productId,
+			@RequestParam(value = "orderId", required = true) String orderId) {
+		GenericResponse<Orders> response = new GenericResponse<Orders>();
+		try {
+			if (CommonUtil.isValidStringParam(quantity) && CommonUtil.isValidStringParam(orderId)
+					&& CommonUtil.isValidStringParam(productId)) {
+				orderService.updateProductQuantity(Long.parseLong(orderId), Long.parseLong(productId),
+						Integer.parseInt(quantity));
+				response.setStatus(Response.Status.OK);
+			} else {
+				response.setStatus(Response.Status.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			logger.error("updateOrderDetail : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+
+	@RequestMapping(value = "/updateOrderDetail", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<OrderDetails> addOrderDetail(HttpServletRequest request,
+			@RequestParam(value = "productId", required = true) String productId,
+			@RequestParam(value = "orderId", required = true) String orderId) {
+		GenericResponse<OrderDetails> response = new GenericResponse<OrderDetails>();
+		try {
+			if (CommonUtil.isValidStringParam(orderId) && CommonUtil.isValidStringParam(productId)) {
+				response.setData(orderService.addProductToOrder(Long.parseLong(orderId), Long.parseLong(productId)));
+				response.setStatus(Response.Status.OK);
+			} else {
+				response.setStatus(Response.Status.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			logger.error("addOrderDetail : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+
+	@RequestMapping(value = "/updateOrderDetail", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Orders> deleteOrderDetail(HttpServletRequest request,
+			@RequestParam(value = "productId", required = true) String productId,
+			@RequestParam(value = "orderId", required = true) String orderId) {
+		GenericResponse<Orders> response = new GenericResponse<Orders>();
+		try {
+			if (CommonUtil.isValidStringParam(orderId) && CommonUtil.isValidStringParam(productId)) {
+				orderService.removeProductFromOrder(Long.parseLong(orderId), Long.parseLong(productId));
+				response.setStatus(Response.Status.OK);
+			} else {
+				response.setStatus(Response.Status.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			logger.error("deleteOrderDetail : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/reassembleInvoice", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<OrderDetails> reassembleInvoice(HttpServletRequest request,
+			@RequestParam(value = "orderId", required = true) String orderId) {
+		GenericResponse<OrderDetails> response = new GenericResponse<OrderDetails>();
+		try {
+			if (CommonUtil.isValidStringParam(orderId)) {
+				orderService.reassembleInvoice(Long.parseLong(orderId));
+				response.setStatus(Response.Status.OK);
+			} else {
+				response.setStatus(Response.Status.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			logger.error("reassembleInvoice : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
 	}
 
 }
