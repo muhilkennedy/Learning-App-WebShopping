@@ -47,6 +47,7 @@ export class ProductDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.onResize("event");
     window.scroll(0,0);
+    this.loading = true;
     this.activatedRoute.queryParams.subscribe(queryParams => {
       let productId = queryParams.productId;
       if(productId !== undefined && productId !== null && productId !== ''){
@@ -117,6 +118,13 @@ export class ProductDetailsComponent implements OnInit {
                           this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
                           this.loading = false;
                         });
+  }
+
+  getReviewLength(reviews){
+    if(reviews !== undefined && reviews !== null){
+      return this.reviews.length;
+    }
+    return 0;
   }
 
 }

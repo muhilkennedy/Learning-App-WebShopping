@@ -156,7 +156,7 @@ export class CheckoutComponent implements OnInit {
     let addressId = null;
     let pincode = null;
     if(this.addressSelected === undefined || this.addressSelected === null){
-      alert("Please select the address!");
+      this._snackBar.open('Please Select a Address!', 'OK', this.commonService.alertoptionsWarn);
       this.loading = false;
       this.buttonLoading = false;
       return;
@@ -175,7 +175,7 @@ export class CheckoutComponent implements OnInit {
                                           .subscribe((resp:any) => {
                                             if(resp.statusCode === 200){
                                               this.userStore.cartCount = 0;
-                                              alert("Order Placed Successfully!");
+                                              // alert("Order Placed Successfully!");
                                               this._snackBar.open('Order Placed Successfully!', '', this.commonService.alertoptionsSuccess);
                                               this.openOrders();
                                             }

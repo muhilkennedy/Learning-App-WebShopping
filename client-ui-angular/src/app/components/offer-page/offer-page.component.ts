@@ -25,6 +25,8 @@ export class OfferPageComponent implements OnInit {
 
   maxDiscountlimit:number = 0;
 
+  canProceed = false;
+
   public innerWidth: any;
   @HostListener('window:resize', ['$event'])
   onResize(event) {
@@ -45,6 +47,7 @@ export class OfferPageComponent implements OnInit {
     private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
+    this.setPinAndCouonDetails(this.pincode, null);
     this.onResize(event);
     this.couponDetails = this.commonService.couponDetails;
     this.pincodeDetails = this.commonService.pincodeDetails;
@@ -67,8 +70,15 @@ export class OfferPageComponent implements OnInit {
                       if(resp.statusCode === 200){
                         if(pincode !== null){
                           this.pincodeDetails = resp.data;
+                          if(this.pincodeDetails === null || this.pincodeDetails === undefined){
+                            this._snackBar.open('Not Deliverable to this Pincode!', 'OK', this.commonService.alertoptionsWarn);
+                            this.couponLoading = false;
+                            this.canProceed = false;
+                            return;
+                          }
                           this.commonService.pincodeDetails = this.pincodeDetails;
                           this._snackBar.open('Guranteed Delivery in ' + this.pincodeDetails.minimumdeliveryhours + ' Hour(s)', 'OK', this.commonService.alertoptionsSuccess);
+                          this.canProceed = true;
                         }
                         if(coupon !== null){
                           this.couponDetails = resp.dataList !== undefined && resp.dataList !== null &&resp.dataList.length>0 ?
@@ -94,6 +104,7 @@ export class OfferPageComponent implements OnInit {
                         if(pincode !== null && (this.pincodeDetails === undefined || this.pincodeDetails === null)){
                           this.couponDetails = undefined;
                           this._snackBar.open('Not Deliverable to this Pincode!', 'OK', this.commonService.alertoptionsWarn);
+                          this.canProceed = false;
                         }
                         if(coupon !== null && (this.couponDetails === null || this.couponDetails === undefined)){
                           this.couponDetails = undefined;
@@ -104,6 +115,7 @@ export class OfferPageComponent implements OnInit {
                     },
                     (error: any) => {
                       this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
+                      this.couponLoading = false;
                     })
   }
 

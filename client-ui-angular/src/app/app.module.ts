@@ -72,6 +72,7 @@ import { PrivacyPolicyComponent } from './components/shared/privacy-policy/priva
 import { ProductDetailsComponent } from './components/product-details/product-details.component';
 import { OfferPageComponent } from './components/offer-page/offer-page.component';
 import { LoginDialogComponent } from './components/login/login-dialog/login-dialog.component';
+import { SearchbarComponent } from './components/shared/searchbar/searchbar.component';
 
 const fbLoginOptions = {
   scope: 'pages_messaging,pages_messaging_subscriptions,email,pages_show_list,manage_pages',
@@ -164,7 +165,8 @@ export function init_tenant(initializer: TenantInitializer) {
     PrivacyPolicyComponent,
     ProductDetailsComponent,
     OfferPageComponent,
-    LoginDialogComponent
+    LoginDialogComponent,
+    SearchbarComponent
   ],
   imports: [
     HttpClientModule,
@@ -243,7 +245,7 @@ export function init_tenant(initializer: TenantInitializer) {
           {
             id: GoogleLoginProvider.PROVIDER_ID,
             provider: new GoogleLoginProvider(
-              'clientId', googleLoginOptions
+              'clientid.apps.googleusercontent.com', googleLoginOptions
             )
           },
           {

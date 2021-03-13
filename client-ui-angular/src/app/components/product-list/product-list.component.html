@@ -1,3 +1,4 @@
+<app-searchbar *ngIf="isMobileView()"></app-searchbar>
 <div style="position: relative;">
 <section>
   <div class="container">
@@ -5,9 +6,9 @@
     <div class="row">
       <div class="col-sm-3">
         <div class="left-sidebar">
-          <h2>Category
-            <i *ngIf="!isCatCollapsed" class="fa fa-toggle-up toggleIcon" (click)="isCatCollapsed = !isCatCollapsed"></i>
-            <i *ngIf="isCatCollapsed" class="fa fa-toggle-down toggleIcon" (click)="isCatCollapsed = !isCatCollapsed"></i>
+          <h2 (click)="isCatCollapsed = !isCatCollapsed">Category
+            <i *ngIf="!isCatCollapsed" class="fa fa-toggle-up toggleIcon" ></i>
+            <i *ngIf="isCatCollapsed" class="fa fa-toggle-down toggleIcon" ></i>
           </h2>
           <div [collapse]="isCatCollapsed">
           <div class="panel-group category-products" id="accordian"><!--category-products-->

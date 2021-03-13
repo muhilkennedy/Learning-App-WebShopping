@@ -46,3 +46,19 @@
   padding-top: 10px;
 }
 
+.input-container{
+  width: inherit;
+    border: 1px solid #fe980f;
+    display: inline-block;
+}
+.input-container input:focus, .input-container input:active {
+  outline: none;
+}
+.input-container input {
+  width: 80%;
+  border: none;
+}
+
+.input-container button {
+  float: right;
+}
