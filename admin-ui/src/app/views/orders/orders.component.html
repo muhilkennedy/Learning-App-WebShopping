@@ -140,7 +140,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" style="width: min-content;">
         <table class="table table-responsive-sm table-hover table-outline mb-0">
           <thead class="thead-light">
             <tr>
@@ -149,6 +149,7 @@
               <th>MRP</th>
               <th>Selling Cost</th>
               <th>Quantity</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody style="background: white;">
@@ -166,7 +167,18 @@
                 {{product.product.sellingCost}}
               </td>
               <td>
-                {{product.quantity}}
+                <div class="input-group">
+                  <ngx-loading [show]="loadQuantity"></ngx-loading>
+                  <input [disabled]="!editQuantity" type="number" id="tenantemail" name="tenantemail" class="form-control" placeholder="Tenant Email" [(ngModel)] = "product.quantity">
+                  <span class="input-group-append">
+                    <button *ngIf="!editQuantity" type="button" class="btn btn-outline-primary" (click)="editQuantity = true"><i class="fa fa-edit"></i></button>
+                    <button *ngIf="editQuantity" type="button" class="btn btn-outline-danger" (click)="editQuantity = false"><i class="fa fa-remove"></i></button>
+                    <button *ngIf="editQuantity" type="button" class="btn btn-outline-success" (click)="editQuantity = true ; updateProductQuantity(product, product.quantity)"><i class="fa fa-check"></i></button>
+                  </span>
+                </div>
+              </td>
+              <td>
+                <i class="fa fa-remove removeStyle" (click)="removeProduct(product)"></i>
               </td>
             </tr>
           </tbody>
@@ -174,8 +186,16 @@
       </div>
       <div class="modal-footer">
         <div>
-          <button type="button" class="btn btn-success" (click)="primaryModal.hide()">
-            <i class="fa fa-check"></i> OK
+          <mat-form-field style="width: inherit;" class="matitem">
+            <input type="text"
+                   placeholder="Product Id"
+                   matInput
+                   [(ngModel)]="newProductId">
+            <button matSuffix type="button" class="btn btn-primary" (click)="addProductToOrder()">
+              <i class="fa fa-cart-plus"></i> Add Product </button>
+          </mat-form-field>
+          <button type="button" class="btn btn-success" (click)="reassembleInvoice();primaryModal.hide()">
+            <i class="fa fa-check"></i> Update Invoice
           </button>
         </div>
       </div>

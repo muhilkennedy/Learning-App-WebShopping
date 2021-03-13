@@ -11,7 +11,7 @@ export const environment = {
   // backendBaseUrl:"https://riabackend.staqlab-tunnel.com",
   backendBaseUrl:"http://localhost:8080",
   contextPath:"",
-  origin:"https://riagroceriesadmin-mpm.web.app",
-  // origin:"http://localhost:4100",
+  // origin:"https://riagroceriesadmin-mpm.web.app",
+  origin:"http://localhost:4100",
   orgName: "Ria Groceries"
 };

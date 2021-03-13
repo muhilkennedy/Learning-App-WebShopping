@@ -101,6 +101,9 @@
         <div class="chart-wrapper mx-auto">
           <p>{{prod.brandName}}</p>
         </div>
+        <div>
+          <p>ID : {{prod.productId}}</p>
+        </div>
         <div class="float-left">
           <i *ngIf="!(prod.quantityInStock > 0)" class="expandexclamicon fa fa-exclamation-circle" matTooltip="OUT OF STOCK"></i>
         </div>
