@@ -52,6 +52,7 @@ public class ProductNotificationServiceImpl implements ProductNotificationServic
 	
 	@Override
 	public List<ProductNotification> getAllNotificationsForAdmin() {
+		String tennt = baseService.getTenantInfo().getTenantID();
 		return notificationRepo.findAllProductNotificationAdmin(baseService.getTenantInfo(),
 				((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
 	}

@@ -15,6 +15,7 @@ import java.util.Map;
 import javax.transaction.Transactional;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -174,6 +175,7 @@ public class OrdersServiceImpl implements OrdersService {
 			orderDetails.add(detail);
 			product.setQuantityInStock(product.getQuantityInStock()-item.getQuantity());
 			productRepo.save(product);
+			// can be moved to common method and limit can be read from config
 			if (product.getQuantityInStock() < 1) {
 				productNotification.createNotification(product.getProductName() + " Ran Out of Stock !",
 						product.getProductId(), 0L, null);
@@ -348,7 +350,17 @@ public class OrdersServiceImpl implements OrdersService {
 			for (OrderDetails item : order.getOrderDetails()) {
 				if (item.getProduct().getProductId().longValue() == productId.longValue()) {
 					item.setQuantity(newQuantity);
+					//later can be moved to common method
+					if (item.getProduct().getQuantityInStock() < 1) {
+						productNotification.createNotification(item.getProduct().getProductName() + " Ran Out of Stock !",
+								item.getProduct().getProductId(), 0L, null);
+					}
+					else if (item.getProduct().getQuantityInStock() <= 3) {
+						productNotification.createNotification(item.getProduct().getProductName() + " Running Out of Stock ! ("
+								+ item.getProduct().getQuantityInStock() + ")", item.getProduct().getProductId(), 0L, null);
+					}
 					orderDetailsRepo.saveAndFlush(item);
+					recalculateOrderTotal(order.getOrderId());
 					break;
 				}
 			}
@@ -361,13 +373,16 @@ public class OrdersServiceImpl implements OrdersService {
 	public void removeProductFromOrder(Long orderId, Long productId) throws Exception {
 		Orders order = getOrderById(orderId);
 		if (order != null) {
-			for (OrderDetails item : order.getOrderDetails()) {
+			List<OrderDetails> orderDetails = order.getOrderDetails();
+			for (OrderDetails item : orderDetails) {
 				if (item.getProduct().getProductId().longValue() == productId.longValue()) {
 					orderDetailsRepo.deleteProduct(baseService.getTenantInfo(), item.getOrderDetailId());
+					order.getOrderDetails().remove(item);
 					break;
 				}
 			}
 			saveAndFlush(order);
+			recalculateOrderTotal(order.getOrderId());
 		} else {
 			throw new Exception("Order not Found");
 		}
@@ -384,6 +399,16 @@ public class OrdersServiceImpl implements OrdersService {
 			orderDetail.setProduct(product);
 			orderDetail.setQuantity(1);
 			orderDetailsRepo.saveAndFlush(orderDetail);
+			//later can be moved to common method
+			if (product.getQuantityInStock() < 1) {
+				productNotification.createNotification(product.getProductName() + " Ran Out of Stock !",
+						product.getProductId(), 0L, null);
+			}
+			else if (product.getQuantityInStock() <= 3) {
+				productNotification.createNotification(product.getProductName() + " Running Out of Stock ! ("
+						+ product.getQuantityInStock() + ")", product.getProductId(), 0L, null);
+			}
+			recalculateOrderTotal(order.getOrderId());
 			return orderDetail;
 		} else {
 			throw new Exception("Order/Product Does not Exists!");
@@ -398,6 +423,41 @@ public class OrdersServiceImpl implements OrdersService {
 		} else {
 			throw new Exception("Order not Found!");
 		}
+	}
+	
+	private void recalculateOrderTotal(Long orderId) {
+		Orders order = getOrderById(orderId);
+		BigDecimal subTotal = new BigDecimal(0);
+		BigDecimal totalDiscount = new BigDecimal(0);
+		List<OrderDetails> items = order.getOrderDetails();
+		for(OrderDetails item: items) {
+			Product product = item.getProduct();
+			BigDecimal total = new BigDecimal(0);
+			if (product.getCost().floatValue() !=  product.getSellingCost().floatValue()) {
+				BigDecimal singleOffer = product.getCost().subtract(product.getSellingCost());
+				totalDiscount = totalDiscount.add(singleOffer).multiply(new BigDecimal(item.getQuantity()));
+			}
+			total = product.getSellingCost().multiply(new BigDecimal(item.getQuantity())).setScale(2, RoundingMode.CEILING);
+			subTotal = subTotal.add(total);
+		}
+		Coupons coupon = null;
+		BigDecimal couponTotal = new BigDecimal(0);
+		if (order.isCouponapplied()) {
+			coupon = couponService.findCouponById(order.getCouponId());
+			BigDecimal couponAmount = subTotal.multiply(new BigDecimal(order.getCouponDiscount()))
+					.divide(new BigDecimal(100));
+			if (couponAmount.compareTo(new BigDecimal(coupon.getMaxDiscountLimit())) > 0) {
+				totalDiscount = totalDiscount.add(new BigDecimal(coupon.getMaxDiscountLimit()));
+				couponTotal = new BigDecimal(coupon.getMaxDiscountLimit());
+			} else {
+				totalDiscount = totalDiscount.add(couponAmount);
+				couponTotal = couponAmount;
+			}
+		}
+		subTotal = subTotal.subtract(couponTotal);
+		subTotal = subTotal.add(new BigDecimal(order.getDeliveryCharge()));
+		order.setSubTotal(subTotal.setScale(2, RoundingMode.CEILING));
+		save(order);
 	}
 	
 }
