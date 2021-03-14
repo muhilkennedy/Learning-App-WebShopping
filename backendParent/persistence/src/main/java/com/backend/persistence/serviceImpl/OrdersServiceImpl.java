@@ -15,7 +15,6 @@ import java.util.Map;
 import javax.transaction.Transactional;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,7 +136,7 @@ public class OrdersServiceImpl implements OrdersService {
 	}
 
 	@Override
-	public void createCustomerOrder(Long couponId, int paymentMode, Long addressId, int deliveryCharge) throws Exception {
+	public void createCustomerOrder(Long couponId, int paymentMode, Long addressId, int deliveryCharge, boolean redeemLoyality) throws Exception {
 		Coupons coupon = couponService.findCouponById(couponId);
 		CustomerInfo customer = (CustomerInfo) baseService.getUserInfo();
 		// create initial order object
@@ -192,6 +191,22 @@ public class OrdersServiceImpl implements OrdersService {
 			} else {
 				subTotal = subTotal.subtract(offerAmout);
 			}
+		}
+		if(redeemLoyality) {
+			BigDecimal loyalityPoint = (customer.getLoyalitypoint());
+			if(loyalityPoint != null) {
+				if(subTotal.floatValue()>loyalityPoint.floatValue()) {
+					order.setLoyalityPoints(loyalityPoint);
+					subTotal = subTotal.subtract(loyalityPoint);
+					customer.setLoyalitypoint(new BigDecimal(0));
+				}
+				else {
+					customer.setLoyalitypoint(loyalityPoint.subtract(subTotal));
+					order.setLoyalityPoints(subTotal);
+					subTotal = new BigDecimal(0);
+				}
+			}
+			customerService.save(customer);
 		}
 		subTotal = subTotal.add(new BigDecimal(deliveryCharge));
 		order.setSubTotal(subTotal.setScale(2, RoundingMode.CEILING));
@@ -281,6 +296,7 @@ public class OrdersServiceImpl implements OrdersService {
 			case "cancelled":
 				order.setStatus(OrdersUtil.orderStatus.Cancelled.toString());
 				DashboardStatusUtil.decrementOnlineCount(baseService.getTenantInfo());
+				//restore deducted prouct count
 				break;
 			case "outfordelivery":
 				order.setStatus(OrdersUtil.orderStatus.OutForDelivery.toString());
@@ -303,7 +319,13 @@ public class OrdersServiceImpl implements OrdersService {
 			Blob invoiceBlob= null;
 			//send invoice again incase of delivered status.
 			if (order.getStatus().equals(OrdersUtil.orderStatus.Delivered.toString())) {
-				customerService.updateLoyalityPointByCustomerMobile(customer.getMobile(), order.getSubTotal().floatValue());
+				if (customer.getMobile() != null) {
+					customerService.updateLoyalityPointByCustomerMobile(customer.getMobile(),
+							order.getSubTotal().floatValue());
+				} else {
+					customerService.updateLoyalityPointByCustomerEmail(customer.getEmailId(),
+							order.getSubTotal().floatValue());
+				}
 				OrderInvoice invoice = invoiceService.getInvoiceByOrder(order);
 				invoice = invoiceService.reassembleOrderInvoice(invoice, order);
 				invoiceBlob = invoice != null ? invoice.getDocument() : null;
@@ -453,6 +475,23 @@ public class OrdersServiceImpl implements OrdersService {
 				totalDiscount = totalDiscount.add(couponAmount);
 				couponTotal = couponAmount;
 			}
+		}
+		if(order.getLoyalityPoints().floatValue() > 0) {
+			CustomerInfo customer = customerService.getCustomerById(order.getCustomerId());
+			BigDecimal loyalityPoint = order.getLoyalityPoints();
+			if(loyalityPoint != null) {
+				if(subTotal.floatValue()>loyalityPoint.floatValue()) {
+					order.setLoyalityPoints(loyalityPoint);
+					subTotal = subTotal.subtract(loyalityPoint);
+					customer.setLoyalitypoint(new BigDecimal(0));
+				}
+				else {
+					customer.setLoyalitypoint(loyalityPoint.subtract(subTotal));
+					order.setLoyalityPoints(subTotal);
+					subTotal = new BigDecimal(0);
+				}
+			}
+			customerService.save(customer);
 		}
 		subTotal = subTotal.subtract(couponTotal);
 		subTotal = subTotal.add(new BigDecimal(order.getDeliveryCharge()));

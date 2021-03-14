@@ -57,4 +57,6 @@ public interface CustomerInfoService {
 
 	void addProductToCart(Long productId, int quantity) throws Exception;
 
+	void updateLoyalityPointByCustomerEmail(String email, float subTotal);
+
 }

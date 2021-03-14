@@ -18,7 +18,7 @@ export class CheckoutComponent implements OnInit {
   loading = false;
   buttonLoading = false;
 
-  constructor(private userStore: UserStoreService, private commonService: CommonsService,
+  constructor(public userStore: UserStoreService, private commonService: CommonsService,
               private cartService: CartService, private loginService: LoginService,
               private orderService: OrderService, private router: Router,
               private _snackBar: MatSnackBar) { }
@@ -28,6 +28,7 @@ export class CheckoutComponent implements OnInit {
   cartItems:any[];
   customerAddress:any[];
   addressSelected:any;
+  redeemLoyality = false;
 
   city:string;
   state:string;
@@ -54,6 +55,7 @@ export class CheckoutComponent implements OnInit {
 
   ngOnInit(): void {
     this.onResize(event);
+    this.redeemLoyality = this.commonService.isRedeemLoyality;
     this.couponDetails = this.commonService.couponDetails;
     this.pincodeDetails = this.commonService.pincodeDetails;
     this.cartItems = this.userStore.cartItems;
@@ -104,10 +106,26 @@ export class CheckoutComponent implements OnInit {
   }
 
   calculateTotalWithDeliveryCharge(){
-    if((this.couponDetails !== undefined && this.couponDetails !== null)){
-      return this.calculateCouponApplied() + this.calculateDeliveryCharge();
+    let loyality = 0;
+    if(this.redeemLoyality){
+      this.commonService.isRedeemLoyality = true;
+      //deactivate coupon
+      this.couponDetails = null;
+      this.commonService.couponDetails = null;
+      loyality = this.userStore.loyalityPoints;
     }
-    return this.cartSubtotal() + this.calculateDeliveryCharge();
+    if((this.couponDetails !== undefined && this.couponDetails !== null)){
+      let total = this.calculateCouponApplied() + this.calculateDeliveryCharge();
+      if(loyality > total){
+        return 0;
+      }
+      return total - loyality;
+    }
+    let total = this.cartSubtotal() + this.calculateDeliveryCharge();
+    if(loyality > total){
+      return 0;
+    }
+    return total - loyality;
   }
 
   calculateCouponApplied(){
@@ -171,7 +189,7 @@ export class CheckoutComponent implements OnInit {
     this.cartService.getPinCodeDetails(pincode, null)
                     .subscribe((resp:any) => {
                       if(resp.statusCode === 200 && resp.data != null){
-                        this.orderService.placeOrder(coupon, paymentMode, addressId, this.getDeliveryCharge())
+                        this.orderService.placeOrder(coupon, paymentMode, addressId, this.getDeliveryCharge(), this.redeemLoyality)
                                           .subscribe((resp:any) => {
                                             if(resp.statusCode === 200){
                                               this.userStore.cartCount = 0;

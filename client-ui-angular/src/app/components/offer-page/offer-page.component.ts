@@ -27,6 +27,8 @@ export class OfferPageComponent implements OnInit {
 
   canProceed = false;
 
+  redeemLoyality = false;
+
   public innerWidth: any;
   @HostListener('window:resize', ['$event'])
   onResize(event) {
@@ -43,7 +45,7 @@ export class OfferPageComponent implements OnInit {
   }
 
   constructor(private commonService: CommonsService, private cartService: CartService,
-    private userStore: UserStoreService, private router: Router,
+    public userStore: UserStoreService, private router: Router,
     private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
@@ -56,6 +58,8 @@ export class OfferPageComponent implements OnInit {
   }
 
   applyCoupon(){
+    this.redeemLoyality = false;
+    this.commonService.isRedeemLoyality = false;
     this.setPinAndCouonDetails(null, this.coupon);
   }
 
@@ -175,10 +179,26 @@ export class OfferPageComponent implements OnInit {
   }
 
   calculateTotalWithDeliveryCharge(){
-    if((this.couponDetails !== undefined && this.couponDetails !== null)){
-      return this.calculateCouponApplied() + this.calculateDeliveryCharge();
+    let loyality = 0;
+    if(this.redeemLoyality){
+      this.commonService.isRedeemLoyality = true;
+      //deactivate coupon
+      this.couponDetails = null;
+      this.commonService.couponDetails = null;
+      loyality = this.userStore.loyalityPoints;
     }
-    return this.cartSubtotal() + this.calculateDeliveryCharge();
+    if((this.couponDetails !== undefined && this.couponDetails !== null)){
+      let total = this.calculateCouponApplied() + this.calculateDeliveryCharge();
+      if(loyality > total){
+        return 0;
+      }
+      return total - loyality;
+    }
+    let total = this.cartSubtotal() + this.calculateDeliveryCharge();
+    if(loyality > total){
+      return 0;
+    }
+    return total - loyality;
   }
 
   gotoCheckout(){

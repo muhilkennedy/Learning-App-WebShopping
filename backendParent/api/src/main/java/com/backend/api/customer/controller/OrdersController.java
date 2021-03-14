@@ -51,7 +51,8 @@ public class OrdersController {
 			@RequestParam(value = "couponId", required = false) String couponId,
 			@RequestParam(value = "paymentMode", required = false) String paymentMode,
 			@RequestParam(value = "addressId", required = true) String addressId,
-			@RequestParam(value = "deliveryCharge", required = false) String deliveryCharge) {
+			@RequestParam(value = "deliveryCharge", required = false) String deliveryCharge,
+			@RequestParam(value = "redeemLoyality", required = false) boolean redeemLoyality) {
 		GenericResponse<Orders> response = new GenericResponse<Orders>();
 		try {
 			int delivery = 0;
@@ -64,7 +65,7 @@ public class OrdersController {
 				orderService.createCustomerOrder(CommonUtil.isValidStringParam(couponId) ? Long.parseLong(couponId) : -1,
 						CommonUtil.isValidStringParam(paymentMode) ? Integer.parseInt(paymentMode) : 1,
 						Long.parseLong(addressId),
-						delivery);
+						delivery, redeemLoyality);
 				response.setStatus(Response.Status.OK);
 			} else {
 				response.setStatus(Response.Status.BAD_REQUEST);

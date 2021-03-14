@@ -32,8 +32,6 @@ public interface OrdersService {
 
 	List<Orders> getCustomerOrders();
 
-	void createCustomerOrder(Long couponId, int paymentMode, Long addressId, int deliveryCharge) throws Exception;
-
 	int couponAppliedCount(long couponId);
 
 	File getOrderInvoice(Long id) throws Exception;
@@ -51,5 +49,8 @@ public interface OrdersService {
 	OrderDetails addProductToOrder(Long orderId, Long productId) throws Exception;
 
 	void reassembleInvoice(Long orderId) throws Exception;
+
+	void createCustomerOrder(Long couponId, int paymentMode, Long addressId, int deliveryCharge, boolean redeemLoyality)
+			throws Exception;
 
 }
