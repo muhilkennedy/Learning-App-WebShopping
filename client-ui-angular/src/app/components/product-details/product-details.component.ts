@@ -74,10 +74,14 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   addToCart(){
+    if(this.userStore.active === undefined || this.userStore.active === null){
+      this._snackBar.open('Please Login to Add to Cart', 'OK', this.commonService.alertoptionsWarn);
+      return;
+    }
     this.cartService.addProducToCartQuantity(this.product.productContent.productId, this.quantity)
                     .subscribe((resp:any) => {
                       if(resp.statusCode === 200){
-                        this.userStore.cartCount++;
+                        this.userStore.cartCount+=this.quantity;
                         this._snackBar.open('Added To cart Successfully', '', this.commonService.alertoptionsSuccess);
                       }
                       else{

@@ -37,6 +37,7 @@
                 <th>OrderDate</th>
                 <th>Customer</th>
                 <th>Items</th>
+                <th>Coupon Discount</th>
                 <th>SubTotal</th>
                 <th>Status</th>
               </tr>
@@ -49,21 +50,12 @@
                 <td>{{order.orderDate | date : 'dd-MM-yyyy hh:mm a'}}</td>
                 <td><div class="alink" (click)="getCustomerDetails(order.customerId, order.customerAddressId);secondaryModal.show()">{{order.customerId}}</div></td>
                 <td><i class="producticon fa fa-shopping-basket" (click)="setProductData(order);primaryModal.show()"></i></td>
+                <td>{{order.couponDiscount}}</td>
                 <td>{{order.subTotal}}</td>
                 <td>
                   <i class="float-right fa fa-remove removeStyle" (click)="rejectOrder(order.orderId)"></i>
                   <i class="float-right fa fa-motorcycle acceptStyle" (click)="outForDelivery(order)"></i>
                 </td>
-                <!-- <td>
-                  <select id="select1" name="select1" class="form-control" [(value)]="selectedValue" (change)="changeSlected($event)">
-                    <option disabled value="">Order Status</option>
-                    <option value="OutForDelivery">Out For Delivery</option>
-                    <option value="Cancelled">Cancelled</option>
-                    <option value="Delayed">Delayed</option>
-                    <option value="Delivered">Delivered</option>
-                    <option value="Shipped">Shipped</option>
-                  </select>
-                </td> -->
               </tr>
             </tbody>
           </table>
@@ -140,12 +132,11 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body" style="width: min-content;">
+      <div class="modal-body">
         <table class="table table-responsive-sm table-hover table-outline mb-0">
           <thead class="thead-light">
             <tr>
               <th>Name</th>
-              <th>Code</th>
               <th>MRP</th>
               <th>Selling Cost</th>
               <th>Quantity</th>
@@ -156,9 +147,6 @@
             <tr *ngFor="let product of productList">
               <td>
                 {{product.product.productName}}
-              </td>
-              <td>
-                {{product.product.productCode}}
               </td>
               <td>
                 {{product.product.cost}}
