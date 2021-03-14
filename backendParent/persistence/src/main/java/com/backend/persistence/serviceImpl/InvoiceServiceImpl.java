@@ -298,6 +298,11 @@ public class InvoiceServiceImpl implements InvoiceService{
 		XWPFTableRow deliveryRow = productTable.createRow();
 		deliveryRow.getCell(4).setText("Delivery Charge");
 		deliveryRow.getCell(5).setText((order.getDeliveryCharge() == 0)? "FREE" : (order.getDeliveryCharge() + CommonUtil.Symbol_INR));
+		if(order.getLoyalityPoints() != null && order.getLoyalityPoints().floatValue() > 0) {
+			XWPFTableRow payableRow = productTable.createRow();
+			payableRow.getCell(4).setText("Loyality Points");
+			payableRow.getCell(5).setText(order.getLoyalityPoints().setScale(2, RoundingMode.CEILING).toString() + CommonUtil.Symbol_INR);
+		}
 		XWPFTableRow payableRow = productTable.createRow();
 		payableRow.getCell(4).setText("AMOUNT-PAYABLE");
 		payableRow.getCell(5).setText(order.getSubTotal().setScale(2, RoundingMode.CEILING).toString() + CommonUtil.Symbol_INR);

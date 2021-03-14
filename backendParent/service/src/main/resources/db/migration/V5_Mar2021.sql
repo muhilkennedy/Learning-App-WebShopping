@@ -1,0 +1,1 @@
+ALTER TABLE orders ADD loyalitypoints DECIMAL(10,2);

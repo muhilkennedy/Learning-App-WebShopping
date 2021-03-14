@@ -163,6 +163,14 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 	}
 	
 	@Override
+	public void updateLoyalityPointByCustomerEmail(String email, float subTotal) {
+		CustomerInfo customer = getCustomerByEmail(email);
+		if (customer != null) {
+			updateLoyalityPoint(customer, subTotal);
+		}
+	}
+	
+	@Override
 	public void addCustomerAddress(CustomerAddress address) {
 		CustomerInfo customer = (CustomerInfo)baseService.getUserInfo();
 		customer = getCustomerByEmail(customer.getEmailId());

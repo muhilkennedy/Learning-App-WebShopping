@@ -67,6 +67,9 @@ public class Orders implements Serializable {
 	@Column(name = "ORDERPLACEDTIME")
 	private long orderPlacedTime;
 	
+	@Column(name = "LOYALITYPOINTS")
+	private BigDecimal loyalityPoints;
+	
 	@Column(name = "EMPLOYEEID", nullable = true)
 	private Long employeeId;
 	
@@ -204,6 +207,14 @@ public class Orders implements Serializable {
 
 	public void setDeliveryCharge(int deliveryCharge) {
 		this.deliveryCharge = deliveryCharge;
+	}
+
+	public BigDecimal getLoyalityPoints() {
+		return loyalityPoints;
+	}
+
+	public void setLoyalityPoints(BigDecimal loyalityPoints) {
+		this.loyalityPoints = loyalityPoints;
 	}
 
 }

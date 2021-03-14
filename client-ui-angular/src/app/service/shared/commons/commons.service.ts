@@ -13,6 +13,7 @@ export class CommonsService {
   private _isHomeClicked = true;
   private _isShowNowClicked = false;
   private _isContactClicked = false;
+  private _isRedeemLoyality = false;
   private _alertoptionsError = {
     duration: 2000,
     panelClass: ['error-snackbar']
@@ -33,6 +34,13 @@ export class CommonsService {
   private _cartTotal: number;
   private _cartItems: any[];
   private _selectedProduct: any;
+
+  public get isRedeemLoyality() {
+    return this._isRedeemLoyality;
+  }
+  public set isRedeemLoyality(value) {
+    this._isRedeemLoyality = value;
+  }
 
   public get selectedProduct(): any {
     return this._selectedProduct;

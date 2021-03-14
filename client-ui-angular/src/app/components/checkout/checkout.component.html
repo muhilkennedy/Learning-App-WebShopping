@@ -39,6 +39,11 @@
                 <li *ngIf="this.couponDetails !== undefined && this.couponDetails !== null">
                   Coupon Applied - <strong>({{this.couponDetails.discount}}% Off)</strong> <span>₹ {{calculateCouponApplied()}}</span>
                 </li>
+                <li *ngIf="redeemLoyality">
+                  Loyality Points Applied
+                  <span *ngIf="cartSubtotal() >= userStore.loyalityPoints"><strong>₹ {{userStore.loyalityPoints}}</strong></span>
+                  <span *ngIf="cartSubtotal() < userStore.loyalityPoints"><strong>₹ {{cartSubtotal()}}</strong></span>
+                </li>
                 <li>Delivery Charge <span>{{getDeliveryCharge()}}</span></li>
                 <li>Total <span><strong>₹ {{calculateTotalWithDeliveryCharge()}}</strong></span></li>
               </ul>
