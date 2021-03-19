@@ -87,4 +87,6 @@ public interface ProductService {
 	int getProductsCountWithSearchTerm(List<Long> cIds, String SearchTerm, String limit, String offset,
 			String sortByField, String sortByType) throws Exception;
 
+	Product cloneProduct(long productId) throws Exception;
+
 }

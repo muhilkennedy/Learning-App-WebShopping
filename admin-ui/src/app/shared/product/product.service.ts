@@ -30,6 +30,8 @@ export class ProductService {
   isFeaturedProductEndpoint = "/product/secure/admin/isFeaturedProducts";
   deleteFeaturedProductEndpoint = "/product/secure/admin/deleteFeaturedProducts";
   getProductByMatchingNameOrCodeEndpoint = "/product/getProductsByNameOrCode";
+  deleteProductEndpoint = "/product/secure/admin/deleteProduct";
+  cloneProductEndpoint = "/product/secure/admin/cloneProduct";
 
   constructor(private http: HttpClient) { }
 
@@ -232,6 +234,19 @@ export class ProductService {
       params: {productId: pId}
     };
     return this.http.get(environment.backendBaseUrl+this.isFeaturedProductEndpoint, httpOptions);
+  }
+
+  deleteProduct(pId){
+    const httpOptions = {
+      params: {productId: pId}
+    };
+    return this.http.delete(environment.backendBaseUrl+this.deleteProductEndpoint, httpOptions);
+  }
+
+  cloneProduct(pId){
+    const uploadData = new FormData();
+    uploadData.append('productId', pId);
+    return this.http.post(environment.backendBaseUrl+this.cloneProductEndpoint, uploadData);
   }
 
 }

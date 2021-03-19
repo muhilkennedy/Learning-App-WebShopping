@@ -218,6 +218,7 @@ public class ProductServiceImpl implements ProductService {
 			if (!StringUtils.isEmpty(product.getBrandName())) {
 				newProduct.setBrandName(product.getBrandName());
 			}
+			newProduct.setProductDescription("");
 			if (!StringUtils.isEmpty(product.getProductDescription())) {
 				newProduct.setProductDescription(product.getProductDescription());
 			}
@@ -306,6 +307,7 @@ public class ProductServiceImpl implements ProductService {
 	private void markProductDeleted(Product product) {
 		product.setActive(false);
 		product.setDeleted(true);
+		product.setSearchText(null);
 		product.setProductCode(product.getProductCode() + ":" + System.currentTimeMillis());
 		product.setLastModified(CommonUtil.convertToUTC(new Date().getTime()));
 		product.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
@@ -405,6 +407,44 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public boolean isFeaturedProduct(Long pId) throws Exception {
 		return productDao.isFeaturedProduct(pId);
+	}
+	
+	@Override
+	public Product cloneProduct(long productId) throws Exception {
+		Product product = getProductById(productId);
+		if (product != null) {
+			Product newProduct = new Product();
+			newProduct.setCategoryId(product.getCategoryId());
+			newProduct.setProductName(product.getProductName());
+			newProduct.setSearchText(product.getProductName());
+			newProduct.setActive(product.isActive());
+			newProduct.setBrandName(product.getBrandName());
+			newProduct.setCost(product.getCost());
+			newProduct.setSellingCost(product.getSellingCost());
+			newProduct.setOffer(product.getOffer());
+			newProduct.setProductDescription(product.getProductDescription());
+			newProduct.setQuantityInStock(product.getQuantityInStock());
+			newProduct.setLastModified(CommonUtil.convertToUTC(new Date().getTime()));
+			newProduct.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
+			newProduct.setTenant(baseService.getTenantInfo());
+			newProduct.setProductCode(String.valueOf(product.getProductId()) + System.currentTimeMillis());
+			saveAndFlush(newProduct);
+			// copy product images
+			List<ProductImages> productImages = new ArrayList<>();
+			ProductImages prodImages = new ProductImages();
+			List<ProductImages> images = imageRepo.findAllImagesForProduct(baseService.getTenantInfo(), product);
+			images.parallelStream().forEach(image -> {
+				prodImages.setImage(image.getBlobImage());
+				prodImages.setProductId(newProduct);
+				prodImages.setTenant(baseService.getTenantInfo());
+				prodImages.setPrimaryImage(image.isPrimaryImage());
+				productImages.add(prodImages);
+			});
+			newProduct.setProductImages(productImages);
+			return newProduct;
+		} else {
+			throw new Exception("Product not found !");
+		}
 	}
 
 }

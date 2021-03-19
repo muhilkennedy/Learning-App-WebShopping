@@ -17,6 +17,12 @@
               [checked]="featuredProduct"
               (change)="toggleFeaturedProduct()">
             </mat-slide-toggle>
+            <button mat-button class="btn btn-ghost-warning" style="border: 1px solid; margin-right: 5px;" (click)="cloneProduct()">
+              <i class="fa fa-copy" style="color: rgb(241, 210, 69);"></i> Clone Product
+            </button>
+            <button mat-button class="btn btn-ghost-danger" style="border: 1px solid; margin-right: 5px;" (click)="deleteProduct()">
+              <i class="fa fa-trash" style="color: rgb(196, 63, 30);"></i> Delete Product
+            </button>
             <button mat-button class="btn btn-ghost-primary" style="border: 1px solid; margin-right: 5px;" (click)="updateProduct()">
               <i class="fa fa-product-hunt" style="color: cadetblue;"></i> Update Product
             </button>
@@ -92,7 +98,7 @@
             <tr>
               <td>
                 <button mat-button [disabled]="true" style="text-align: inherit;">
-                  <i class="fa fa-product-hunt"></i>
+                  <i class="fa fa-eye"></i>
                   <span class="icon-text"> Activate product</span><br/>
                 </button>
                 <mat-slide-toggle
