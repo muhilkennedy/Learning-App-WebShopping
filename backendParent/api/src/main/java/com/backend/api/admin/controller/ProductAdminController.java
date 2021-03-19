@@ -89,6 +89,38 @@ public class ProductAdminController {
 		}
 		return response;
 	}
+	
+	@RequestMapping(value = "/deleteProduct", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Product> deleteProduct(HttpServletRequest request,
+			@RequestParam(value = "productId", required = true) long pId) {
+		GenericResponse<Product> response = new GenericResponse<>();
+		try {
+			productService.deleteProductById(pId);
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("deleteProduct : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/cloneProduct", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<Product> cloneProduct(HttpServletRequest request,
+			@RequestParam(value = "productId", required = true) long pId) {
+		GenericResponse<Product> response = new GenericResponse<>();
+		try {
+			response.setDataList(Arrays.asList(productService.cloneProduct(pId)));			
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("cloneProduct : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
 
 	@RequestMapping(value = "/getProductByCode", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<Product> getProductByCode(HttpServletRequest request,

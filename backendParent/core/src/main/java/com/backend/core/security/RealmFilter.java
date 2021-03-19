@@ -144,6 +144,7 @@ public class RealmFilter implements Filter {
 				chain.doFilter(request, response);
 			}
 		} catch (Exception ex) {
+			logger.error("Exception in Request : " + ex.getMessage());
 			((HttpServletResponse) response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
 			return;
 		}

@@ -103,6 +103,11 @@ public class ProductImages implements Serializable{
 	public void setImage(Blob image) {
 		this.image = image;
 	}
+	
+	@JsonIgnore
+	public Blob getBlobImage() {
+		return this.image;
+	}
 
 	public boolean isPrimaryImage() {
 		return primaryImage;
