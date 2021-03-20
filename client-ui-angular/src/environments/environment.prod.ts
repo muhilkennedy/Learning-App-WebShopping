@@ -6,5 +6,7 @@ export const environment = {
   contextPath:"",
   origin:"https://riagroceries-mpm.web.app",
   orgName1: "Ria",
-  orgName2: "Groceries"
+  orgName2: "Groceries",
+  primaryContact: "9962427006",
+  secondaryContact: "9962747005"
 };

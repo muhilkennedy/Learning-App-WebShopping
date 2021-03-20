@@ -10,7 +10,7 @@
             <i *ngIf="!isCatCollapsed" class="fa fa-toggle-up toggleIcon" ></i>
             <i *ngIf="isCatCollapsed" class="fa fa-toggle-down toggleIcon" ></i>
           </h2>
-          <div [collapse]="isCatCollapsed">
+          <div *ngIf="!isCatCollapsed" style="display: contents !important;">
           <div class="panel-group category-products" id="accordian"><!--category-products-->
             <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
               <!-- This is the tree node template for leaf nodes -->
