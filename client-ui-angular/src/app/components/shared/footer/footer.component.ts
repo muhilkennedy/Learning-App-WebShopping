@@ -14,6 +14,9 @@ export class FooterComponent implements OnInit {
   orgName1:string;
   orgName2:string;
 
+  primaryContact: string;
+  secondaryContact: string;
+
   public innerWidth: any;
   @HostListener('window:resize', ['$event'])
   onResize(event) {
@@ -35,6 +38,8 @@ export class FooterComponent implements OnInit {
     this.onResize("event");
     this.orgName1 = environment.orgName1;
     this.orgName2 = environment.orgName2;
+    this.primaryContact = environment.primaryContact;
+    this.secondaryContact = environment.secondaryContact;
   }
 
   openPrivacyPolicy(){
