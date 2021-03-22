@@ -253,14 +253,13 @@ public class ProductController {
 		try {
 			String limit = request.getHeader(Constants.Header_Limit);
 			String offset = request.getHeader(Constants.Header_Offset);
-//			response.setData(productService.getProductsCountWithSearchTerm(
-//					CommonUtil.isValidStringParam(cId) ? Arrays.asList(Long.parseLong(cId)) : null, searchTerm, limit,
-//					offset, sortByField, sortByType));
+			response.setData(productService.getProductsCountWithSearchTerm(
+					CommonUtil.isValidStringParam(cId) ? Arrays.asList(Long.parseLong(cId)) : null, searchTerm, limit,
+					offset, sortByField, sortByType));
 			List<ProductPOJO> products = productService.getProductsWithSearchTerm(
 					CommonUtil.isValidStringParam(cId) ? Arrays.asList(Long.parseLong(cId)) : null, searchTerm, limit,
 					offset, sortByField, sortByType); 
 			response.setDataList(products);
-			response.setData(products.size());	
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("getProductsBySearchText : " + ex);

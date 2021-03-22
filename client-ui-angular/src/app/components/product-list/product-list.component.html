@@ -190,7 +190,8 @@
       <mat-paginator [length]="productCount"
                      [pageSize]="pageSize"
                      [pageSizeOptions]="pageSizeOptions"
-                     (page)="action($event)">
+                     (page)="action($event)"
+                     #paginator>
       </mat-paginator>
       </div>
     </div>

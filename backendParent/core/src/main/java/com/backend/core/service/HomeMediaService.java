@@ -28,4 +28,8 @@ public interface HomeMediaService {
 
 	int getHomePageMediaCount();
 
+	List<HomePageMedia> getHomePageMediaForTenant();
+
+	List<HomePageMedia> getHomePageBannerMedia();
+
 }
