@@ -149,18 +149,26 @@ public class ProductServiceImpl implements ProductService {
 			SearchTerm = "";
 		}
 		// considering always only one category will be sent from client
-		if (cIds != null && cIds.size() > 0) {
-			cIds = getProductRecursiveByCategoryId(cIds.get(0));
+		List<Long> allIds = null;
+		if(cIds != null) {
+			allIds = new ArrayList<Long>();
+			allIds.addAll(cIds);
+			for (Long cId : cIds) {
+				allIds.addAll(getProductRecursiveByCategoryId(cId));
+			}
 		}
 		if (CommonUtil.isValidStringParam(sortByField) && CommonUtil.isValidStringParam(sortByType)) {
-			return productDao.getProductsBasedOnSearchTerm(cIds, SearchTerm, limit, offset, sortByField, sortByType);
+			return productDao.getProductsBasedOnSearchTerm(allIds, SearchTerm, limit, offset, sortByField, sortByType);
 		}
-		return productDao.getProductsBasedOnSearchTerm(cIds, SearchTerm, limit, offset, null, null);
+		return productDao.getProductsBasedOnSearchTerm(allIds, SearchTerm, limit, offset, null, null);
 	}
 	
 	@Override
 	public int getProductsCountWithSearchTerm(List<Long> cIds, String SearchTerm, String limit, String offset,
 			String sortByField, String sortByType) throws Exception {
+		if(!CommonUtil.isValidStringParam(SearchTerm)){
+			SearchTerm = "";
+		}
 		// considering always only one category will be sent from client
 		List<Long> allIds = null;
 		if(cIds != null) {
@@ -170,9 +178,6 @@ public class ProductServiceImpl implements ProductService {
 				allIds.addAll(getProductRecursiveByCategoryId(cId));
 			}
 		}
-//		if (cIds != null && cIds.size() > 0) {
-//			cIds = getProductRecursiveByCategoryId(cIds.get(0));
-//		}
 		if (CommonUtil.isValidStringParam(sortByField) && CommonUtil.isValidStringParam(sortByType)) {
 			return productDao.getProductsCountBasedOnSearchTerm(allIds, SearchTerm, limit, offset, sortByField, sortByType);
 		}
