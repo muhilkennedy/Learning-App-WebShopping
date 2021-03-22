@@ -344,6 +344,21 @@ public class SQLQueryHandler {
 			return this;
 		}
 		
+		public SQLQueryBuilder setMultipleLikeCondition (String fieldName, List<String> value) {
+			if (value == null) {
+				return this;
+			}
+			for(int i=0; i< value.size(); i++){
+				// skip first condition operator as previous line adds a and operator.
+				if(i == 0) {
+					this.setLikeCondition(fieldName, value.get(i));
+					continue;
+				}
+				this.orSetLikeCondition(fieldName, value.get(i));
+			};
+			return this;
+		}
+		
 		public SQLQueryBuilder andSetLikeCondition (String fieldName, String value) {
 			if(value == null) {
 				return this;
