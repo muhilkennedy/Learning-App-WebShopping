@@ -86,7 +86,12 @@ export class ProductListComponent implements OnInit {
       this.nextAction();
     }
     else{
-      this.setProducts(new Array(), null, null);
+      if(this.selectedCategoryId !== undefined && this.selectedCategoryId > -1){
+        this.setProducts(this.selectedCategoryId, null, null);
+      }
+      else{
+        this.setProducts(new Array(), null, null);
+      }
     }
   }
 
