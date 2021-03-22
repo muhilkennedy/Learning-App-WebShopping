@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -132,11 +133,21 @@ public class ProductDao {
 		}
 	}
 	
+	// split search text on spaces to find multipl
+	private List<String> getSplittedSearchText(String searchTerm){
+		String[] terms = searchTerm.split(" ");
+		for(int i=0; i < terms.length; i++) {
+			String term = terms[i];
+			terms[i] = "\"%" + term + "%\"";
+		}
+		return Arrays.asList(terms);
+	}
+	
 	public List<ProductPOJO> getProductsBasedOnSearchTerm(List<Long> cIds, String SearchTerm, String limit, String offset, String sortByField, String sortBytype) throws Exception {
 		List<ProductPOJO> productList = new ArrayList<ProductPOJO>();
 		try (Connection con = dbUtil.getConnectionInstance()) {
-			//.setAndCondition("active", "true", true)
-			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+			List<String> terms = getSplittedSearchText(SearchTerm);
+			/*SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
 															.setQuery("select * from product")
 															.setWhereClause()
 															.setAndCondition("tenantid", baseService.getTenantInfo().getTenantID())
@@ -144,6 +155,25 @@ public class ProductDao {
 															.andSetAndCondition("isdeleted", false)
 															.andSetOrConditions("categoryid", cIds)
 															.andSetLikeCondition("searchtext", "\"%" + SearchTerm + "%\"")
+															.orSetLikeCondition("brand", "\"%" + SearchTerm + "%\"")
+															.setOrderBy(sortByField)
+															.setSortOrder(sortBytype)
+														  	.setLimit(limit)
+														  	.setOffset(offset)
+															.build();*/
+			
+			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+															.setQuery("select * from product")
+															.setWhereClause()
+															.setAndCondition("tenantid", baseService.getTenantInfo().getTenantID())
+															.andSetAndCondition("active", true)
+															.andSetAndCondition("isdeleted", false)
+															.andSetOrConditions("categoryid", cIds)
+															.setAndCondition()
+															.setStartBrace()
+															.setMultipleLikeCondition("searchtext", terms)
+															.orSetLikeCondition("brand", "\"%" + SearchTerm + "%\"")
+															.setEndBrace()
 															.setOrderBy(sortByField)
 															.setSortOrder(sortBytype)
 														  	.setLimit(limit)
