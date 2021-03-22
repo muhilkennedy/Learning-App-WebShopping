@@ -74,6 +74,22 @@ public class BaseController {
 		return response;
 	}
 	
+	@RequestMapping("/homeInfoMedia")
+	public GenericResponse<HomePageMedia> homeInfoMedia(HttpServletRequest request) {
+		GenericResponse<HomePageMedia> response = new GenericResponse<HomePageMedia>();
+		response.setDataList(mediaService.getHomePageMediaForTenant());
+		response.setStatus(Response.Status.OK);
+		return response;
+	}
+	
+	@RequestMapping("/homeBannerMedia")
+	public GenericResponse<HomePageMedia> homeBannerMedia(HttpServletRequest request) {
+		GenericResponse<HomePageMedia> response = new GenericResponse<HomePageMedia>();
+		response.setDataList(mediaService.getHomePageBannerMedia());
+		response.setStatus(Response.Status.OK);
+		return response;
+	}
+	
 	@RequestMapping("/loadTesting")
 	public GenericResponse<EmployeeInfo> loadTesting(HttpServletRequest request) {
 		count++;

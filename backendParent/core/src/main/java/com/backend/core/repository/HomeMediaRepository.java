@@ -21,6 +21,8 @@ import com.backend.core.entity.Tenant;
 public interface HomeMediaRepository extends JpaRepository<HomePageMedia, Long> {
 	
 	String findAllMediaForTenantQuery = "select media from HomePageMedia media where media.tenantID = :tenantId";
+	String findHomeMediaForTenantQuery = "select media from HomePageMedia media where media.tenantID = :tenantId and media.sliderShow = false";
+	String findHomeBannerForTenantQuery = "select media from HomePageMedia media where media.tenantID = :tenantId and media.sliderShow = true";
 	String findMediaByIdQuery = "select media from HomePageMedia media where media.tenantID = :tenantId and media.mediaId = :mediaId";
 	String findHomePageMediaCountQuery = "select count(*) from HomePageMedia media where media.tenantID = :tenantId and media.sliderShow = false";
 	String deleteMediaByIdQuery = "delete from HomePageMedia where tenantID = :tenantId and mediaId = :mediaId";
@@ -38,5 +40,11 @@ public interface HomeMediaRepository extends JpaRepository<HomePageMedia, Long> 
 	@Cascade(CascadeType.DELETE)
 	@Query(deleteMediaByIdQuery)
 	void deleteMediaById(@Param("tenantId") Tenant tenantId, @Param("mediaId") Long mediaId);
+	
+	@Query(findHomeMediaForTenantQuery)
+	List<HomePageMedia> findHomeMediaForTenant(@Param("tenantId") Tenant tenantId);
+	
+	@Query(findHomeBannerForTenantQuery)
+	List<HomePageMedia> findHomeBannerForTenantQuery(@Param("tenantId") Tenant tenantId);
 
 }

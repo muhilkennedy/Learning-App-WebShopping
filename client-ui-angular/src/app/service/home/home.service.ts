@@ -9,11 +9,21 @@ import { environment } from 'src/environments/environment';
 export class HomeService {
 
   homemediaEndPoint = "/base/homeMedia";
+  homeInfoMediaEndpoint = "/base/homeInfoMedia";
+  homeBannerMediaEndpoint = "/base/homeBannerMedia";
 
   constructor(private http: HttpClient) { }
 
   getAllHomeMedia(): Observable<any>{
     return this.http.get(environment.backendBaseUrl+this.homemediaEndPoint);
+  }
+
+  getHomeInfoMedia(): Observable<any>{
+    return this.http.get(environment.backendBaseUrl+this.homeInfoMediaEndpoint);
+  }
+
+  getHomeBannerMedia(): Observable<any>{
+    return this.http.get(environment.backendBaseUrl+this.homeBannerMediaEndpoint);
   }
 
 }
