@@ -79,6 +79,7 @@ export class PosComponent implements OnInit {
   addItem(){
     let newProd:PosProduct = new PosProduct();
     newProd.mrp = 0;
+    newProd.sellingCost = 0
     newProd.discount = 0;
     newProd.quantity = 0;
     this.itemList.push(newProd);
