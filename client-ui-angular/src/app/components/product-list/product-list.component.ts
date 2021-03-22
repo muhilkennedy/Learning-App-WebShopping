@@ -205,6 +205,7 @@ export class ProductListComponent implements OnInit {
                           if(resp.statusCode === 200){
                             this.products.length = 0;
                             this.products = resp.dataList;
+                            this.isCatCollapsed = true;
                           }
                           else{
                             this._snackBar.open('Failed : ' + resp.errorMessages, 'OK', this.commonService.alertoptionsError);

@@ -131,7 +131,7 @@ export class TenantInitializer {
                 },
                 (error:any) => {
                     console.log("error in loading tenant");
-                    alert("Tenant Server not Reachable at the moment! Please try again later!");
+                    alert("Tenant Server not Reachable at the moment! Please try again later! Please Contact - "+ environment.primaryContact +" / " + environment.secondaryContact + " for more details!");
                 }
               );
               //early resolve to show loading page
@@ -245,7 +245,7 @@ export function init_tenant(initializer: TenantInitializer) {
           {
             id: GoogleLoginProvider.PROVIDER_ID,
             provider: new GoogleLoginProvider(
-              '767085402124-vf2aeke5q445n4o6murtj8sh3c4vtqvv.apps.googleusercontent.com', googleLoginOptions
+              'clientid.apps.googleusercontent.com', googleLoginOptions
             )
           },
           {

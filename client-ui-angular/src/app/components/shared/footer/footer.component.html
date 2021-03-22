@@ -16,7 +16,7 @@
               width: 100px; padding-top: 25px;"/>
           </div>
 					<div class="col-sm-3" style="float: right; padding-top: 50px;" *ngIf="!isMobileView()">
-              <p>{{tenantStore.tenantContact}}<br/> {{tenantStore.tenantStreet}} <br/> {{tenantStore.tenantCity}} - {{tenantStore.tenantPin}}</p>
+              <p>{{primaryContact}}<br/> {{secondaryContact}}<br/> {{tenantStore.tenantStreet}} <br/> {{tenantStore.tenantCity}} - {{tenantStore.tenantPin}}</p>
 					</div>
           <!-- render for mobile view -->
           <div class="col-xs-2" *ngIf="isMobileView()">
@@ -25,7 +25,7 @@
           </div>
           <div class="col-xs-5"></div>
           <div class="col-xs-5" *ngIf="isMobileView()" style="padding-top: 50px; float: right;">
-            <p>{{tenantStore.tenantStreet}} <br/> {{tenantStore.tenantCity}}</p>
+            <p>{{primaryContact}}<br/> {{secondaryContact}}<br/><p>{{tenantStore.tenantStreet}} <br/> {{tenantStore.tenantCity}}</p>
           </div>
           <!-- <div class="col-sm-1" *ngIf="isMobileView()">
 						<p>{{tenantStore.tenantContact}}</p>
