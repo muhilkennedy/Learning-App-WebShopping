@@ -253,7 +253,7 @@ public class SQLQueryHandler {
 		}
 		
 		public SQLQueryBuilder andSetOrCondition(String fieldName, List<String> values) {
-			if(values == null) {
+			if(values == null || values.size() < 1) {
 				return this;
 			}
 			int count = 1;
@@ -336,6 +336,14 @@ public class SQLQueryHandler {
 			return this;
 		}
 		
+		public SQLQueryBuilder setLikeCondition (String fieldName, String value) {
+			if(value == null) {
+				return this;
+			}
+			this.query = this.query.concat(fieldName.concat(Key_Like).concat(value));
+			return this;
+		}
+		
 		public SQLQueryBuilder andSetLikeCondition (String fieldName, String value) {
 			if(value == null) {
 				return this;
@@ -354,6 +362,37 @@ public class SQLQueryHandler {
 			setOrCondition();
 			setStartBrace();
 			this.query = this.query.concat(fieldName.concat(Key_Like).concat(value));
+			setEndBrace();
+			return this;
+		}
+		
+		public SQLQueryBuilder andSetMultipleLikeCondition (String fieldName, List<String> value) {
+			if (value == null) {
+				return this;
+			}
+			setAndCondition();
+			setStartBrace();
+			for(int i=0; i< value.size(); i++){
+				// skip first condition operator as previous line adds a and operator.
+				if(i == 0) {
+					this.setLikeCondition(fieldName, value.get(i));
+					continue;
+				}
+				this.orSetLikeCondition(fieldName, value.get(i));
+			};
+			setEndBrace();
+			return this;
+		}
+		
+		public SQLQueryBuilder orSetMultipleLikeCondition (String fieldName, List<String> value) {
+			if (value == null) {
+				return this;
+			}
+			setOrCondition();
+			setStartBrace();
+			value.parallelStream().forEach(val -> {
+				this.orSetLikeCondition(fieldName, val);
+			});
 			setEndBrace();
 			return this;
 		}
