@@ -213,7 +213,7 @@ public class ProductDao {
 	public int getProductsCountBasedOnSearchTerm(List<Long> cIds, String SearchTerm, String limit, String offset, String sortByField, String sortBytype) throws Exception {
 		int productCount =0;
 		try (Connection con = dbUtil.getConnectionInstance()) {
-			//.setAndCondition("active", "true", true)
+			List<String> terms = getSplittedSearchText(SearchTerm);
 			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
 															.setQuery("select count(*) from product")
 															.setWhereClause()
@@ -221,9 +221,11 @@ public class ProductDao {
 															.andSetAndCondition("active", true)
 															.andSetAndCondition("isdeleted", false)
 															.andSetOrConditions("categoryid", cIds)
-															.andSetLikeCondition("searchtext", "\"%" + SearchTerm + "%\"")
-															.setOrderBy(sortByField)
-															.setSortOrder(sortBytype)
+															.setAndCondition()
+															.setStartBrace()
+															.setMultipleLikeCondition("searchtext", terms)
+															.orSetLikeCondition("brand", "\"%" + SearchTerm + "%\"")
+															.setEndBrace()
 															.build();
 			PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
 			ResultSet rs = stmt.executeQuery();

@@ -159,7 +159,6 @@ export class PosComponent implements OnInit {
     }
     if(item !== undefined && item.length > 0){
       this.incrementQuantity();
-
     }
     else{
       this.getProductFromCode(this.itemBarCode);
@@ -304,6 +303,7 @@ export class PosComponent implements OnInit {
                             newProd.mrp = 0;
                             newProd.discount = 0;
                             newProd.quantity = 0;
+                            newProd.sellingCost = 0;
                             this.itemList.push(newProd);
 
                             this.disablePayment = false;
