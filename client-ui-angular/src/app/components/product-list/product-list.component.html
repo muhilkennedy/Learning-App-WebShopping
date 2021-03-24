@@ -6,9 +6,9 @@
     <div class="row">
       <div class="col-sm-3">
         <div class="left-sidebar">
-          <h2 (click)="isCatCollapsed = !isCatCollapsed">Category
-            <i *ngIf="!isCatCollapsed" class="fa fa-toggle-up toggleIcon" ></i>
-            <i *ngIf="isCatCollapsed" class="fa fa-toggle-down toggleIcon" ></i>
+          <h2>Category
+            <i (click)="isCatCollapsed = !isCatCollapsed" *ngIf="!isCatCollapsed" style="color: brown;cursor: pointer;" class="fa fa-toggle-up toggleIcon" ></i>
+            <i (click)="isCatCollapsed = !isCatCollapsed" *ngIf="isCatCollapsed" style="color: brown;cursor: pointer;" class="fa fa-toggle-down toggleIcon" ></i>
           </h2>
           <div *ngIf="!isCatCollapsed" style="display: contents !important;">
           <div class="panel-group category-products" id="accordian"><!--category-products-->
@@ -17,7 +17,7 @@
               <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
                 <!-- use a disabled button to provide padding for tree leaf -->
                 <button mat-icon-button disabled></button>
-                <a style="cursor: pointer;" (click)="getProducts(node.catId)">{{node.catName}}</a>
+                <a style="cursor: pointer;" [ngClass]="node.catId === this.selectedCategoryId ? 'categorySeleted' : 'categoryPlain'" (click)="getProducts(node.catId)">{{node.catName}}</a>
               </mat-tree-node>
               <!-- This is the tree node template for expandable nodes -->
               <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding>
@@ -27,7 +27,7 @@
                     {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
                   </mat-icon>
                 </button>
-                <a style="cursor: pointer;" (click)="getProducts(node.catId)">{{node.catName}}</a>
+                <a style="cursor: pointer;" [ngClass]="node.catId === this.selectedCategoryId ? 'categorySeleted' : 'categoryPlain'" (click)="getProducts(node.catId)">{{node.catName}}</a>
               </mat-tree-node>
             </mat-tree>
 
@@ -191,6 +191,7 @@
                      [pageSize]="pageSize"
                      [pageSizeOptions]="pageSizeOptions"
                      (page)="action($event)"
+                     [showFirstLastButtons]=true
                      #paginator>
       </mat-paginator>
       </div>

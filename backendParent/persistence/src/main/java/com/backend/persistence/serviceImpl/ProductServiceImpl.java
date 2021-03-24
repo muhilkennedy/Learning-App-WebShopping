@@ -410,7 +410,7 @@ public class ProductServiceImpl implements ProductService {
 	
 	@Override
 	public List<Product> searchProductsByMatchingNameOrCode(String searchTerm) {
-		return productRepo.findProductByNameOrCode(baseService.getTenantInfo(), searchTerm);
+		return productRepo.findProductByNameOrCode(baseService.getTenantInfo(), "%" + searchTerm + "%");
 	}
 	
 	@Override

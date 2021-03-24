@@ -94,7 +94,7 @@
       <ngx-loading [show]="loading"></ngx-loading>
       <div class="card-body" >
         <i class="expandicon float-right fa fa-expand" (click)="editProduct(prod.productId)" ></i>
-        <div class="text-muted small text-uppercase font-weight-bold">MRP - {{prod.cost}}<small> ₹ </small> | Discount - {{prod.offer}}%
+        <div class="text-muted small text-uppercase font-weight-bold">MRP - {{prod.cost}}<small> ₹ </small> | S.COST - {{prod.sellingCost}}<small> ₹ </small> | Discount - {{prod.offer}}%
         </div>
         <div class="h2 py-3">{{prod.productName}}</div>
         <div class="h3">{{prod.productCode}}</div>

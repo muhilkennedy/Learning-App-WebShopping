@@ -58,6 +58,7 @@ export class HomeComponent implements OnInit {
                         this.manipulateImages();
                       }
                       this.loading = false;
+                      window.scroll(0,0);
                       this.homeService.getHomeBannerMedia()
                                       .subscribe((resp:any) => {
                                         if(resp.statusCode === 200){
