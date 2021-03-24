@@ -215,7 +215,8 @@ export class ProductListComponent implements OnInit {
                           else{
                             this._snackBar.open('Failed : ' + resp.errorMessages, 'OK', this.commonService.alertoptionsError);
                           }
-                            this.loading = false;
+                          window.scroll(0,0);
+                          this.loading = false;
                           },
                         (error:any) => {
                           this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
@@ -314,6 +315,7 @@ export class ProductListComponent implements OnInit {
                               this.products.length = 0;
                               this.productCount = resp.data;
                               this.products = resp.dataList;
+                              window.scroll(0,0);
                             }
                             else{
                               alert('Failed : ' + resp.errorMessages);
