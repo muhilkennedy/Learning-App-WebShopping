@@ -321,7 +321,7 @@ export class PosComponent implements OnInit {
                             }
                           }
                           this.loading = false;
-                          // this.itemBarCode = '';
+                          this.itemBarCode = '';
                         },
                         (error) => {
                           alert(error);
