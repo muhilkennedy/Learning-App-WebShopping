@@ -436,6 +436,7 @@ public class InvoiceServiceImpl implements InvoiceService{
 			
 			XWPFRun run = newRow.getCell(0).addParagraph().createRun();
 			run.setFontSize(8);
+			run.setFontFamily("Arima Madurai");
 			run.setText(line);
 
 			run = newRow.getCell(1).addParagraph().createRun();

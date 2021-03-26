@@ -110,10 +110,9 @@
           <thead class="thead-light">
             <tr>
               <th>Product Name</th>
-              <th>Code</th>
               <th>MRP</th>
+              <th>SellingCost</th>
               <th>Quantity</th>
-              <th>Discount</th>
             </tr>
           </thead>
           <tbody style="background: white;">
@@ -122,16 +121,13 @@
                 {{product.product.productName}}
               </td>
               <td>
-                {{product.product.productCode}}
-              </td>
-              <td>
                 {{product.product.cost}}
               </td>
               <td>
-                {{product.quantity}}
+                {{product.product.sellingCost}}
               </td>
               <td>
-                {{product.product.offer}}
+                {{product.quantity}}
               </td>
             </tr>
           </tbody>

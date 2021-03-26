@@ -310,9 +310,18 @@ export class PosComponent implements OnInit {
                           }
                           else if (resp.statusCode === 204){
                             this.alertService.warn("Product " + this.itemBarCode + " Not Found",this.alertoptions);
+                            let newProd:PosProduct;
+                            let doPush = false;
+                            if(this.isLastItemEmpty()){
+                              newProd = this.itemList[this.itemList.length - 1];
+                              newProd.itemCode = code;
+                            }
+                            if(doPush){
+                              this.itemList.push(newProd);
+                            }
                           }
                           this.loading = false;
-                          this.itemBarCode = '';
+                          // this.itemBarCode = '';
                         },
                         (error) => {
                           alert(error);
