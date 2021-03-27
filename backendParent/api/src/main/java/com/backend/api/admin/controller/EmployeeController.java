@@ -66,8 +66,7 @@ public class EmployeeController {
 			info = empService.findEmployeeByEmail(info.getEmailId());
 			response.setData(info);
 			if(info.isActive()) {
-				empService.updateEmployeeLoggedInStatus(info);
-				CacheService.setLoggedInSatus(info.getEmployeeId(), new Date());
+				loginService.setEmployeeLoggedStatus(info);
 				response.setStatus(Response.Status.OK);
 			}
 			else {

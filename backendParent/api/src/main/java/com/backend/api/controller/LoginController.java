@@ -73,6 +73,7 @@ public class LoginController {
 			if (empInfo != null) {
 				EmployeeInfo eInfo = (EmployeeInfo) empInfo;
 				if(eInfo.isActive()) {
+					loginService.setEmployeeLoggedStatus(eInfo);
 					JWTResponse token = new JWTResponse();
 					token.setToken(JWTUtil.generateToken(empObj.getEmailId(), CommonUtil.Key_employeeUser, userObj.isRememberMe()));
 					token.setExpiry(JWTUtil.getExpirationDateFromToken(token.getToken()).getTime());
