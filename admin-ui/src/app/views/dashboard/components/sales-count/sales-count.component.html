@@ -9,20 +9,27 @@
         <div class="row">
           <div class="col-sm-6">
             <div class="row">
-              <div class="col-sm-6">
+              <div class="col-sm-4">
                 <div class="callout callout-primary">
-                  <small class="text-muted">In-Store Sales</small>
+                  <small class="text-muted">Total In-Store Sales</small>
                   <br>
                   <strong class="h4">{{totalPOSCount}}</strong>
                 </div>
               </div><!--/.col-->
-              <div class="col-sm-6">
+              <div class="col-sm-4">
                 <div class="callout callout-warning">
-                  <small class="text-muted">Online Orders</small>
+                  <small class="text-muted">Total Online Orders</small>
                   <br>
                   <strong class="h4">{{totoalOrdersCount}}</strong>
                 </div>
               </div><!--/.col-->
+              <div class="col-sm-4">
+                <div class="callout callout-success">
+                  <small class="text-muted">Registered Customers</small>
+                  <br>
+                  <strong class="h4">{{totalCustomers}}</strong>
+                </div>
+              </div>
             </div><!--/.row-->
             <hr class="mt-0">
             <div class="chart-wrapper">
@@ -40,17 +47,19 @@
           <div class="col-md-6">
             <div class="row">
               <div class="col-sm-6">
-                <div class="callout callout-success">
-                  <small class="text-muted">Registered Customers</small>
-                  <br>
-                  <strong class="h4">{{totalCustomers}}</strong>
+                <div class="callout">
+                  <button mat-button class="btn btn-ghost-success" style="border: 1px solid;" (click)="generateReport()">
+                    <i class="fa fa-line-chart"></i> View Report For Past 7 Days
+                  </button>
                 </div>
               </div>
               <div class="col-sm-6">
                 <div class="callout">
-                  <button mat-button class="btn btn-ghost-success" style="border: 1px solid;" (click)="generateReport()">
-                    <i class="fa fa-line-chart"></i> Generate Cost Report
+                  <button mat-button class="btn btn-ghost-warning" style="border: 1px solid;" (click)="downloadReport()">
+                    <i class="fa fa-line-chart"></i> Download Detailed Report (Beta)
                   </button>
+                  <!-- <a [href]="downloadURl" download="Detailed_Report.xls">
+                    <i class="fa fa-download"></i> Download File</a> -->
                 </div>
               </div>
             </div>

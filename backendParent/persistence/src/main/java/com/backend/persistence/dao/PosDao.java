@@ -281,6 +281,24 @@ public class PosDao {
 		return orders;
 	}
 	
+	public List<POSData> getPOSProvisionedByEmployee (String tenantId, long empId) throws Exception{
+		List<POSData> json = new ArrayList<POSData>();
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			PreparedStatement stmt = con.prepareStatement("select * from pointofsale where pos->\"$.tenantId\" = ? and pos->\"$.createdById\" = ? ");
+			stmt.setString(1, tenantId);
+			stmt.setLong(2, empId);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				POSData data = new ObjectMapper().readValue(rs.getString(1), POSData.class);
+				json.add(data);
+			}
+			return json;
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+	}
+	
 	/***********
 	 * POS_SYNC 
 	 ***********/

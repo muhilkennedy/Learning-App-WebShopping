@@ -53,4 +53,6 @@ public interface OrdersService {
 	void createCustomerOrder(Long couponId, int paymentMode, Long addressId, int deliveryCharge, boolean redeemLoyality)
 			throws Exception;
 
+	List<Orders> ordersProvisionedByEmployee(long empId);
+
 }

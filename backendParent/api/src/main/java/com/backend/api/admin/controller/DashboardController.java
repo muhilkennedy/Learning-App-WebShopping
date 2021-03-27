@@ -1,6 +1,10 @@
 package com.backend.api.admin.controller;
 
+import java.io.File;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,9 +15,14 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.api.messages.GenericResponse;
@@ -78,5 +87,28 @@ public class DashboardController {
 		}
 		return response;
 	}
+	
+	@RequestMapping("/downloadReport")
+	public ResponseEntity<Resource> generateReport()throws Exception 
+	{
+		File file = null;
+		try {
+			file = reportingService.getOverallReport();
+	        HttpHeaders header = new HttpHeaders();
+	        header.add(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=report.xlsx");
+	    	Path path = Paths.get(file.getAbsolutePath());
+	        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
+	        long fileLength = file.length();
+	        CommonUtil.deleteDirectoryOrFile(file);
+	        return ResponseEntity.ok()
+	                .headers(header)
+	                .contentLength(fileLength)
+	                .contentType(MediaType.parseMediaType("application/xlsx"))
+	                .body(resource);
+		}
+		finally {
+			CommonUtil.deleteDirectoryOrFile(file);
+		}
+    }
 
 }

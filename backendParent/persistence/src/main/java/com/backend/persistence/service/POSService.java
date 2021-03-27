@@ -27,4 +27,6 @@ public interface POSService {
 
 	File getPOSInvoiceAsOnlinePdf(String id) throws Exception;
 
+	List<POSData> posProvisionedByEmployee(long empId) throws Exception;
+
 }
