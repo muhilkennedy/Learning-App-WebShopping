@@ -46,15 +46,26 @@ public class ProductReviewServiceImpl implements ProductReviewService {
 	
 	@Override
 	public List<ProductReview> createProductReview(long productId, ProductReview review) {
-		review.setTenant(baseService.getTenantInfo());
-		review.setCustomerId(((CustomerInfo)baseService.getUserInfo()).getCustomerId());
-		save(review);
-		List<ProductReview> allReviews = getReviewsForProduct(review.getProductReviewId());
+		ProductReview existingReview = reviewRepo.findReviwesForProductByCustomer(baseService.getTenantInfo(), ((CustomerInfo)baseService.getUserInfo()).getCustomerId());
+		long productReviewId = 0L;
+		if(existingReview != null) {
+			existingReview.setRating(review.getRating());
+			existingReview.setReviewHeader(review.getReviewHeader());
+			existingReview.setReviewDescription(review.getReviewDescription());
+			productReviewId = existingReview.getProductReviewId();
+		}
+		else {
+			review.setTenant(baseService.getTenantInfo());
+			review.setCustomerId(((CustomerInfo)baseService.getUserInfo()).getCustomerId());
+			save(review);
+			productReviewId = review.getProductReviewId();
+		}
+		List<ProductReview> allReviews = getReviewsForProduct(productReviewId);
 		Product product = productService.getProductById(productId);
-		
+		//calculate average of all ratings
 		List<Integer> ratingAvg = new ArrayList<Integer>();
 		for(int i=1; i<=5; i++) {
-			int count = reviewRepo.findAllReviwesForRating(baseService.getTenantInfo(), review.getProductReviewId(), i);
+			int count = reviewRepo.findAllReviwesForRating(baseService.getTenantInfo(), productReviewId, i);
 			ratingAvg.add(i*count);
 		}
 		

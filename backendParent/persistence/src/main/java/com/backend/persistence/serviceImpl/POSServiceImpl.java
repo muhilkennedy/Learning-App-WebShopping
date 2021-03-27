@@ -148,6 +148,10 @@ public class POSServiceImpl implements POSService {
 		}
 		return null;
 	}
-
+	
+	@Override
+	public List<POSData> posProvisionedByEmployee(long empId) throws Exception {
+		return posDao.getPOSProvisionedByEmployee(baseService.getTenantInfo().getTenantID(), empId);
+	}
 
 }

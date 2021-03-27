@@ -499,4 +499,9 @@ public class OrdersServiceImpl implements OrdersService {
 		save(order);
 	}
 	
+	@Override
+	public List<Orders> ordersProvisionedByEmployee(long empId) {
+		return ordersRepo.findOrdersByEmployeeQuery(baseService.getTenantInfo(), empId);
+	}
+	
 }
