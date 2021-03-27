@@ -122,7 +122,7 @@ export class ManageProductComponent implements OnInit {
     this.loading = true;
     this.productService.createOrUpdateProduct(this.fileToUpdate, this.searchCategory, null, this.pName,
                         this.brand, this.cost, this.offer, this.pDescription, this.productActive, this.pCode,
-                        this.unitsInStock, this.sellingCost)
+                        this.unitsInStock, this.sellingCost, this.pName)
                         .subscribe((resp:any) => {
                           if(resp.statusCode  === 200){
                             this.alertService.success('Product created succesfully', this.alertOptions);
