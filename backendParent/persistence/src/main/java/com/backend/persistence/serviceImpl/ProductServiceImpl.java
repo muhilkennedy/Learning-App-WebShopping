@@ -261,6 +261,9 @@ public class ProductServiceImpl implements ProductService {
 			if (product.getQuantityInStock() >= 0) {
 				newProduct.setQuantityInStock(product.getQuantityInStock());
 			}
+			if (CommonUtil.isValidStringParam(product.getSearchText())) {
+				newProduct.setSearchText(product.getSearchText());
+			}
 			//copy product images
 			actualProduct.setProductImages(null);
 			List<ProductImages> images = imageRepo.findAllImagesForProduct(baseService.getTenantInfo(), actualProduct);
@@ -280,7 +283,7 @@ public class ProductServiceImpl implements ProductService {
 			Product newProduct = new Product();
 			newProduct.setCategoryId(catService.getCategoryById(categoryId));
 			newProduct.setProductName(product.getProductName());
-			newProduct.setSearchText(product.getProductName());
+			newProduct.setSearchText(CommonUtil.isValidStringParam(product.getSearchText()) ? product.getSearchText() : product.getProductName());
 			newProduct.setActive(product.isActive());
 			newProduct.setBrandName(product.getBrandName());
 			newProduct.setCost(product.getCost());
@@ -440,7 +443,7 @@ public class ProductServiceImpl implements ProductService {
 			Product newProduct = new Product();
 			newProduct.setCategoryId(product.getCategoryId());
 			newProduct.setProductName(product.getProductName());
-			newProduct.setSearchText(product.getProductName());
+			newProduct.setSearchText(product.getSearchText());
 			newProduct.setActive(product.isActive());
 			newProduct.setBrandName(product.getBrandName());
 			newProduct.setCost(product.getCost());

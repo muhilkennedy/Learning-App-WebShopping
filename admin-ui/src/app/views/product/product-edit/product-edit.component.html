@@ -92,10 +92,18 @@
                 <mat-form-field appearance="outline" class="matitem">
                   <mat-label>Product Description</mat-label>
                   <textarea rows="3" matInput type="text" class="example-right-align" [(ngModel)]="pDescription" required></textarea>
+                  <mat-hint>Max. 500 characters</mat-hint>
                 </mat-form-field>
               </td>
             </tr>
             <tr>
+              <td>
+                <mat-form-field appearance="outline" class="matitem">
+                  <mat-label>Product Search Text</mat-label>
+                  <input matInput placeholder="Product Name" [(ngModel)]="searchText" required>
+                  <mat-hint>Comma separated search text will be used for enhanced product search (ex. productName,tamilName,...)</mat-hint>
+                </mat-form-field>
+              </td>
               <td>
                 <button mat-button [disabled]="true" style="text-align: inherit;">
                   <i class="fa fa-eye"></i>

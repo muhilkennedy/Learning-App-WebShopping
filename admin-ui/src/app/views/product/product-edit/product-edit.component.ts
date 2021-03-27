@@ -34,6 +34,7 @@ export class ProductEditComponent implements OnInit {
   pCode: string;
   unitsInStock : number;
   featuredProduct : boolean = false;
+  searchText: string;
 
   sliderImages:any = new Array();
   isUploadCollapsed: boolean = true;
@@ -80,6 +81,7 @@ export class ProductEditComponent implements OnInit {
     this.pCode = resp.dataList[0].productCode;
     this.productId = resp.dataList[0].productId;
     this.sellingCost = resp.dataList[0].sellingCost;
+    this.searchText = resp.dataList[0].searchText;
   }
 
   toggleFeaturedProduct(){
@@ -168,7 +170,7 @@ export class ProductEditComponent implements OnInit {
     this.loading = true;
     this.productService.createOrUpdateProduct(null, this.categoryId, this.productId, this.pName,
                         this.brand, this.cost, this.offer, this.pDescription, this.productActive, this.pCode,
-                        this.unitsInStock, this.sellingCost)
+                        this.unitsInStock, this.sellingCost, this.searchText)
                         .subscribe((resp:any) => {
                           if(resp.statusCode  === 200){
                             this.alertService.success('Product updated succesfully', this.alertService);

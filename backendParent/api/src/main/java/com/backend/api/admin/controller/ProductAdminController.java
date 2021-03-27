@@ -48,7 +48,8 @@ public class ProductAdminController {
 			@RequestParam(value = "active", required = false) String active,
 			@RequestParam(value = "code", required = false) String pcode,
 			@RequestParam(value = "units", required = false) String unitsInStock,
-			@RequestParam(value = "sellingCost", required = false) String sellingCost) {
+			@RequestParam(value = "sellingCost", required = false) String sellingCost,
+			@RequestParam(value = "searchText", required = false) String searchText) {
 		GenericResponse<Product> response = new GenericResponse<>();
 		try {
 			// Initial checks
@@ -69,6 +70,7 @@ public class ProductAdminController {
 			productPojo.setActive(CommonUtil.isValidStringParam(active) ? Boolean.parseBoolean(active) : false);
 			productPojo.setProductDescription(CommonUtil.isValidStringParam(description) ? description : "");
 			productPojo.setProductCode(pcode);
+			productPojo.setSearchText(searchText);
 			productPojo.setQuantityInStock(CommonUtil.isValidStringParam(offer) ? Integer.parseInt(unitsInStock) : -1);
 			Product product = productService.createOrUpdateProduct(productPojo,
 					CommonUtil.isValidStringParam(offer) ? Long.parseLong(catId) : 0,
