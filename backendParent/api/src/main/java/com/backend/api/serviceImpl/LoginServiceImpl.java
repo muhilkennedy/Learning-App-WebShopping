@@ -49,9 +49,6 @@ public class LoginServiceImpl implements LoginService {
 			EmployeeInfo empInfo = (EmployeeInfo) user;
 			EmployeeInfo actualUser = empService.findEmployeeByEmail(empInfo.getEmailId());
 			if (actualUser != null && BCrypt.checkpw(empInfo.fetchPassword(), actualUser.fetchPassword())) {
-				actualUser.setLastLogin(CommonUtil.convertToUTC(new Date().getTime()));
-				CacheService.setLoggedInSatus(actualUser.getEmployeeId(), new Date());
-				actualUser.setLoggedIn(true);
 				return actualUser;
 			}
 		}
@@ -65,6 +62,13 @@ public class LoginServiceImpl implements LoginService {
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public void setEmployeeLoggedStatus(EmployeeInfo emp) {
+		emp.setLastLogin(CommonUtil.convertToUTC(new Date().getTime()));
+		CacheService.setLoggedInSatus(emp.getEmployeeId(), new Date());
+		emp.setLoggedIn(true);
 	}
 	
 	@Override

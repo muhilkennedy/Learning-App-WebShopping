@@ -1,6 +1,7 @@
 package com.backend.api.service;
 
 import com.backend.commons.exceptions.InvalidUserException;
+import com.backend.core.entity.EmployeeInfo;
 import com.backend.core.interfaces.User;
 import com.backend.persistence.entity.CustomerInfo;
 
@@ -27,5 +28,7 @@ public interface LoginService {
 	CustomerInfo getCustomerByEmail(String email);
 
 	boolean updateCustomerPassword(String email, String newPassword);
+
+	void setEmployeeLoggedStatus(EmployeeInfo emp);
 
 }
