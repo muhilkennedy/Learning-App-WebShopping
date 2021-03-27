@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,25 +144,20 @@ public class ProductDao {
 		return Arrays.asList(terms);
 	}
 	
-	public List<ProductPOJO> getProductsBasedOnSearchTerm(List<Long> cIds, String SearchTerm, String limit, String offset, String sortByField, String sortBytype) throws Exception {
+	public List<ProductPOJO> getProductsBasedOnSearchTerm(List<Long> cIds, String SearchTerm, String limit, String offset, String sortByField, String sortBytype)throws Exception {
+		return getProductsBasedOnSearchTerm(cIds, SearchTerm, limit, offset, sortByField, sortBytype, true);
+	}
+	
+	public List<ProductPOJO> getProductsBasedOnSearchTerm(List<Long> cIds, String searchTerm, String limit, String offset, String sortByField, String sortBytype, boolean exactMatch) throws Exception {
 		List<ProductPOJO> productList = new ArrayList<ProductPOJO>();
 		try (Connection con = dbUtil.getConnectionInstance()) {
-			List<String> terms = getSplittedSearchText(SearchTerm);
-			/*SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
-															.setQuery("select * from product")
-															.setWhereClause()
-															.setAndCondition("tenantid", baseService.getTenantInfo().getTenantID())
-															.andSetAndCondition("active", true)
-															.andSetAndCondition("isdeleted", false)
-															.andSetOrConditions("categoryid", cIds)
-															.andSetLikeCondition("searchtext", "\"%" + SearchTerm + "%\"")
-															.orSetLikeCondition("brand", "\"%" + SearchTerm + "%\"")
-															.setOrderBy(sortByField)
-															.setSortOrder(sortBytype)
-														  	.setLimit(limit)
-														  	.setOffset(offset)
-															.build();*/
-			
+			List<String> terms = new ArrayList();
+			if(exactMatch) {
+				terms.add("\"%" + searchTerm + "%\"");
+			}
+			else {
+				terms = getSplittedSearchText(searchTerm);
+			}
 			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
 															.setQuery("select * from product")
 															.setWhereClause()
@@ -172,7 +168,7 @@ public class ProductDao {
 															.setAndCondition()
 															.setStartBrace()
 															.setMultipleLikeCondition("searchtext", terms)
-															.orSetLikeCondition("brand", "\"%" + SearchTerm + "%\"")
+															.orSetLikeCondition("brand", "\"%" + searchTerm + "%\"")
 															.setEndBrace()
 															.setOrderBy(sortByField)
 															.setSortOrder(sortBytype)
@@ -203,17 +199,39 @@ public class ProductDao {
 				pojo.setProductImage(pImageRepo.findAllImagesForProduct(baseService.getTenantInfo(), product));
 				productList.add(pojo);
 			}
-			return productList;
+			if(productList.size() > 0) {
+				return productList;
+			}
+			else {
+				//if current exact search returns null call back to split by space search
+				if(exactMatch) {
+					return getProductsBasedOnSearchTerm(cIds, searchTerm, limit, offset, sortByField, sortBytype, !exactMatch);
+				}
+				//remove last characters one by one to return atleast some nearby match
+				searchTerm = StringUtils.chop(searchTerm);
+				return getProductsBasedOnSearchTerm(cIds, searchTerm, limit, offset, sortByField, sortBytype, !exactMatch);
+			}
 		} catch (Exception ex) {
 			logger.error("Exception - " + ex);
 			throw new Exception(ex.getMessage());
 		}
 	}
 	
-	public int getProductsCountBasedOnSearchTerm(List<Long> cIds, String SearchTerm, String limit, String offset, String sortByField, String sortBytype) throws Exception {
+	public int getProductsCountBasedOnSearchTerm(List<Long> cIds, String searchTerm, String limit, String offset, String sortByField, String sortBytype) throws Exception {
+		return getProductsCountBasedOnSearchTerm(cIds, searchTerm, limit, offset, sortByField, sortBytype, true);
+	}
+	
+	// no point in having limit and offset as we need to find max count
+	public int getProductsCountBasedOnSearchTerm(List<Long> cIds, String searchTerm, String limit, String offset, String sortByField, String sortBytype, boolean exactMatch) throws Exception {
 		int productCount =0;
 		try (Connection con = dbUtil.getConnectionInstance()) {
-			//.setAndCondition("active", "true", true)
+			List<String> terms = new ArrayList();
+			if(exactMatch) {
+				terms.add("\"%" + searchTerm + "%\"");
+			}
+			else {
+				terms = getSplittedSearchText(searchTerm);
+			}
 			SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
 															.setQuery("select count(*) from product")
 															.setWhereClause()
@@ -221,16 +239,28 @@ public class ProductDao {
 															.andSetAndCondition("active", true)
 															.andSetAndCondition("isdeleted", false)
 															.andSetOrConditions("categoryid", cIds)
-															.andSetLikeCondition("searchtext", "\"%" + SearchTerm + "%\"")
-															.setOrderBy(sortByField)
-															.setSortOrder(sortBytype)
+															.setAndCondition()
+															.setStartBrace()
+															.setMultipleLikeCondition("searchtext", terms)
+															.orSetLikeCondition("brand", "\"%" + searchTerm + "%\"")
+															.setEndBrace()
 															.build();
 			PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
 				productCount = rs.getInt(1);
 			}
-			return productCount;
+			if(productCount > 0) {
+				return productCount;
+			}
+			else {
+				//if current exact search returns null call back to split by space search
+				if(exactMatch) {
+					return getProductsCountBasedOnSearchTerm(cIds, searchTerm, limit, offset, sortByField, sortBytype, !exactMatch);
+				}
+				searchTerm = StringUtils.chop(searchTerm);
+				return getProductsCountBasedOnSearchTerm(cIds, searchTerm, limit, offset, sortByField, sortBytype, exactMatch);
+			}
 		} catch (Exception ex) {
 			logger.error("Exception - " + ex);
 			throw new Exception(ex.getMessage());
