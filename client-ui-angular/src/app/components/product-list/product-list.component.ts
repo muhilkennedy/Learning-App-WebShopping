@@ -345,6 +345,7 @@ export class ProductListComponent implements OnInit {
   searchAction(){
     this.pageSize = 10;
     this.offset = 0;
+    this.paginator.pageIndex = 0;
     this.getProductFromMatchingText(this.productSearched, null, null);
   }
 
