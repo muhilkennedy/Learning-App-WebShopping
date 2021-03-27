@@ -5,14 +5,16 @@
 export const environment = {
   production: false,
   BuildOrigin: "web",
-  tenantId: "devTenant",
+  tenantId: "ria.mpm",
   // backendBaseUrl:"https://riabackend.staqlab-tunnel.com",
   backendBaseUrl:"http://localhost:8080",
   contextPath:"",
-  // origin:"https://riagroceries-mpm.web.app",
-  origin:"http://localhost:4200",
+  origin:"https://riagroceries-mpm.web.app",
+  // origin:"http://localhost:4200",
   orgName1: "Ria",
-  orgName2: "Groceries"
+  orgName2: "Groceries",
+  primaryContact: "9962427006",
+  secondaryContact: "9962747005"
 };
 
 /*

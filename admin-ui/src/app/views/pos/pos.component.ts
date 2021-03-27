@@ -79,6 +79,7 @@ export class PosComponent implements OnInit {
   addItem(){
     let newProd:PosProduct = new PosProduct();
     newProd.mrp = 0;
+    newProd.sellingCost = 0
     newProd.discount = 0;
     newProd.quantity = 0;
     this.itemList.push(newProd);
@@ -158,7 +159,6 @@ export class PosComponent implements OnInit {
     }
     if(item !== undefined && item.length > 0){
       this.incrementQuantity();
-
     }
     else{
       this.getProductFromCode(this.itemBarCode);
@@ -303,12 +303,22 @@ export class PosComponent implements OnInit {
                             newProd.mrp = 0;
                             newProd.discount = 0;
                             newProd.quantity = 0;
+                            newProd.sellingCost = 0;
                             this.itemList.push(newProd);
 
                             this.disablePayment = false;
                           }
                           else if (resp.statusCode === 204){
                             this.alertService.warn("Product " + this.itemBarCode + " Not Found",this.alertoptions);
+                            let newProd:PosProduct;
+                            let doPush = false;
+                            if(this.isLastItemEmpty()){
+                              newProd = this.itemList[this.itemList.length - 1];
+                              newProd.itemCode = code;
+                            }
+                            if(doPush){
+                              this.itemList.push(newProd);
+                            }
                           }
                           this.loading = false;
                           this.itemBarCode = '';

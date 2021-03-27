@@ -19,7 +19,7 @@ export class UserStoreService {
   private _loyalityPoints: number;
   private _loginMode: string;
   private _cartCount: number;
-  private _cartItems: any[];
+  private _cartItems: any[] = new Array();
 
   constructor() { }
 

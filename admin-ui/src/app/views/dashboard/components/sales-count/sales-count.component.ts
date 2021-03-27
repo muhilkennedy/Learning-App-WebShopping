@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
 import { ReportService } from '../../../../shared/report/report.service';
 
@@ -75,7 +76,7 @@ export class SalesCountComponent implements OnInit {
   public brandBoxChartType = 'line';
 
   // Doughnut
-  public doughnutChartLabels: string[] = ['In-Store Sales', 'Online Sales'];
+  public doughnutChartLabels: string[] = ['In-Store Sales Today', 'Online Sales Today'];
   public doughnutChartData: number[] = [];
   public doughnutChartType = 'doughnut';
   public pieChartColors: Array < any > = [{
@@ -109,7 +110,9 @@ export class SalesCountComponent implements OnInit {
 
   weeklyReportGenrated = false;
 
-  constructor(private reportService: ReportService) { }
+  downloadURl;
+
+  constructor(private reportService: ReportService, private sanitizer: DomSanitizer) { }
 
   ngOnInit(): void {
     this.donutLoading = true;
@@ -159,6 +162,20 @@ export class SalesCountComponent implements OnInit {
                         alert("Something went wrong!");
                         this.barLoading = false;
                       })
+  }
+
+  downloadReport(){
+    this.donutLoading = true;
+    this.reportService.getExcelFile()
+                      .subscribe((resp: any) => {
+                          const blob = new Blob([resp], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                          const url= window.URL.createObjectURL(blob);
+                          window.open(url);
+                          this.donutLoading = false;
+                        },
+                      (error) => {
+                        alert("Something went wrong!");
+                      });
   }
 
 }

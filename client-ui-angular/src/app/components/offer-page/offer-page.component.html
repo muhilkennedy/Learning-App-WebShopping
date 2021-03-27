@@ -59,6 +59,24 @@
             <li>
               <small>T&C applied</small>
             </li>
+            <br/>
+            <li>
+              Earned Loyality Points - ₹ {{userStore.loyalityPoints}}
+              <br/>
+              <mat-hint *ngIf="(userStore.loyalityPoints < 100)">
+                (1₹ for every 200₹ spent)
+              </mat-hint>
+            </li>
+            <li>
+              <span>
+                <input type="checkbox" [disabled]="(userStore.loyalityPoints < 100)"
+                       name="redeemLoyality" [(ngModel)]="redeemLoyality"/>
+                Redeem Loyality Points
+              </span>
+              <mat-hint *ngIf="(userStore.loyalityPoints < 100)">
+                (Loyality Points can be redeemed after 100₹ points)
+              </mat-hint>
+            </li>
           </ul>
           <!-- <a class="btn btn-default check_out" href="">Apply</a> -->
         </div>
@@ -69,6 +87,11 @@
             <li>Cart Sub Total <span><strong>₹ {{cartTotal}}</strong></span></li>
             <li *ngIf="this.couponDetails !== undefined && this.couponDetails !== null">
               Coupon Applied - <strong>({{this.couponDetails.discount}}% Off)</strong> <span>₹ {{calculateCouponApplied()}}</span>
+            </li>
+            <li *ngIf="redeemLoyality">
+              Loyality Points Applied
+              <span *ngIf="cartTotal >= userStore.loyalityPoints"><strong>₹ {{userStore.loyalityPoints}}</strong></span>
+              <span *ngIf="cartTotal < userStore.loyalityPoints"><strong>₹ {{cartTotal}}</strong></span>
             </li>
             <li>Delivery Charge <span>{{getDeliveryCharge()}}</span></li>
             <li>Total <span><strong>₹ {{calculateTotalWithDeliveryCharge()}}</strong></span></li>

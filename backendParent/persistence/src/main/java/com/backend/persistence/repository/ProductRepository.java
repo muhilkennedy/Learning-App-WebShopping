@@ -28,7 +28,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>{
 	String findProductByCodeQuery = "select p from Product p where p.tenant = :tenant and p.productCode = :pCode";
 	String findProductByIdsQuery = "select p from Product p where p.tenant = :tenant and p.productId in :pIds";
 	String findProductByNameQuery = "select p from Product p where p.tenant = :tenant and p.active = true and p.searchText like :searchTerm%";
-	String findProductByNameOrCodeQuery = "select p from Product p where p.tenant = :tenant and p.active = true and p.searchText like :searchTerm% or p.productCode like :searchTerm%";
+	String findProductByNameOrCodeQuery = "select p from Product p where p.tenant = :tenant and p.active = true and (p.searchText like :searchTerm or p.productCode like :searchTerm)";
 	
 	@Query(findAllProductsQuery)
 	List<Product> findAllProducts(@Param("tenant") Tenant realm);

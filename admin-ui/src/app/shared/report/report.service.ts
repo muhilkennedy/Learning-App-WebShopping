@@ -10,6 +10,7 @@ export class ReportService {
 
   dashboardReportEndpoint = "/secure/admin/dashboard/getDashboardReport";
   dashboardWeeklyReportEndpoint = "/secure/admin/dashboard/getDashboardWeeklyReport";
+  downloadReportEndpoint = "/secure/admin/dashboard/downloadReport";
 
   constructor(private http: HttpClient) { }
 
@@ -19,6 +20,15 @@ export class ReportService {
 
   getDashboardweeklyReport(): Observable<any>{
     return this.http.get(environment.backendBaseUrl+this.dashboardWeeklyReportEndpoint);
+  }
+
+  downloadReport(): Observable<any>{
+    return this.http.get(environment.backendBaseUrl+this.dashboardWeeklyReportEndpoint);
+  }
+
+  getExcelFile(){
+    const options = { responseType: Blob  };
+    return this.http.get<any>(environment.backendBaseUrl+this.downloadReportEndpoint, { responseType: 'arraybuffer' as 'json', params : {} });
   }
 
 }

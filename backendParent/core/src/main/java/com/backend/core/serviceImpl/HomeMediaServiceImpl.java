@@ -51,6 +51,16 @@ public class HomeMediaServiceImpl implements HomeMediaService{
 	}
 	
 	@Override
+	public List<HomePageMedia> getHomePageMediaForTenant() {
+		return mediaRepo.findHomeMediaForTenant(baseService.getTenantInfo());
+	}
+	
+	@Override
+	public List<HomePageMedia> getHomePageBannerMedia() {
+		return mediaRepo.findHomeBannerForTenantQuery(baseService.getTenantInfo());
+	}
+	
+	@Override
 	public HomePageMedia getMediaById(Long id) {
 		return mediaRepo.findMediaById(baseService.getTenantInfo(), id);
 	}

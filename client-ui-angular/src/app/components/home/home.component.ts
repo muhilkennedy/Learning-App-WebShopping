@@ -51,17 +51,28 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.onResize("event");
     this.commonService.globalLoading = false;
-    this.homeService.getAllHomeMedia()
+    this.homeService.getHomeInfoMedia()
                     .subscribe((resp:any) => {
                       if(resp.statusCode === 200){
                         this.mediaArray = resp.dataList;
                         this.manipulateImages();
                       }
                       this.loading = false;
+                      window.scroll(0,0);
+                      this.homeService.getHomeBannerMedia()
+                                      .subscribe((resp:any) => {
+                                        if(resp.statusCode === 200){
+                                          this.mediaArray = resp.dataList;
+                                          this.manipulateImages();
+                                        }
+                                      },
+                                      (error: any) => {
+                                        this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
+                                      });
                     },
                     (error: any) => {
                       this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
-                    })
+                    });
     this.productService.getAllFeaturedProducts()
                        .subscribe((resp:any) => {
                           if(resp.statusCode === 200){
@@ -163,5 +174,9 @@ export class HomeComponent implements OnInit {
     this.commonService.isContactClicked = contact;
   }
 
+  viewDetailPage(product){
+    this.commonService.selectedProduct = product;
+    this.router.navigate(['/productDetail'], { queryParams: { productId: product.productId }});
+  }
 
 }

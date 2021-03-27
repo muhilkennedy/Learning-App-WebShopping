@@ -94,12 +94,15 @@
       <ngx-loading [show]="loading"></ngx-loading>
       <div class="card-body" >
         <i class="expandicon float-right fa fa-expand" (click)="editProduct(prod.productId)" ></i>
-        <div class="text-muted small text-uppercase font-weight-bold">MRP - {{prod.cost}}<small> ₹ </small> | Discount - {{prod.offer}}%
+        <div class="text-muted small text-uppercase font-weight-bold">MRP - {{prod.cost}}<small> ₹ </small> | S.COST - {{prod.sellingCost}}<small> ₹ </small> | Discount - {{prod.offer}}%
         </div>
         <div class="h2 py-3">{{prod.productName}}</div>
         <div class="h3">{{prod.productCode}}</div>
         <div class="chart-wrapper mx-auto">
           <p>{{prod.brandName}}</p>
+        </div>
+        <div>
+          <p>ID : {{prod.productId}}</p>
         </div>
         <div class="float-left">
           <i *ngIf="!(prod.quantityInStock > 0)" class="expandexclamicon fa fa-exclamation-circle" matTooltip="OUT OF STOCK"></i>

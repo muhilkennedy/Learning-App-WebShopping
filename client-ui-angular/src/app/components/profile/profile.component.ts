@@ -26,7 +26,10 @@ export class ProfileComponent implements OnInit {
                         .subscribe((resp:any) => {
                         if(resp.statusCode !== 200){
                           this._snackBar.open('Failed : ' + resp.errorMessages, 'OK', this.commonService.alertoptionsError);
+                          this.loading = false;
+                          return;
                         }
+                        this._snackBar.open('Updated Successfully !', 'OK', this.commonService.alertoptionsSuccess);
                         this.loading = false;
                         },
                         (error:any) => {
@@ -49,7 +52,10 @@ export class ProfileComponent implements OnInit {
                         .subscribe((resp:any) => {
                         if(resp.statusCode !== 200){
                           this._snackBar.open('Failed : ' + resp.errorMessages, 'OK', this.commonService.alertoptionsError);
+                          this.loading = false;
+                          return;
                         }
+                        this._snackBar.open('Updated Successfully !', 'OK', this.commonService.alertoptionsSuccess);
                         this.loading = false;
                         },
                         (error:any) => {

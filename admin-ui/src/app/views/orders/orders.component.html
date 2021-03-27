@@ -37,6 +37,7 @@
                 <th>OrderDate</th>
                 <th>Customer</th>
                 <th>Items</th>
+                <th>Coupon Discount</th>
                 <th>SubTotal</th>
                 <th>Status</th>
               </tr>
@@ -49,21 +50,12 @@
                 <td>{{order.orderDate | date : 'dd-MM-yyyy hh:mm a'}}</td>
                 <td><div class="alink" (click)="getCustomerDetails(order.customerId, order.customerAddressId);secondaryModal.show()">{{order.customerId}}</div></td>
                 <td><i class="producticon fa fa-shopping-basket" (click)="setProductData(order);primaryModal.show()"></i></td>
+                <td>{{order.couponDiscount}}</td>
                 <td>{{order.subTotal}}</td>
                 <td>
                   <i class="float-right fa fa-remove removeStyle" (click)="rejectOrder(order.orderId)"></i>
                   <i class="float-right fa fa-motorcycle acceptStyle" (click)="outForDelivery(order)"></i>
                 </td>
-                <!-- <td>
-                  <select id="select1" name="select1" class="form-control" [(value)]="selectedValue" (change)="changeSlected($event)">
-                    <option disabled value="">Order Status</option>
-                    <option value="OutForDelivery">Out For Delivery</option>
-                    <option value="Cancelled">Cancelled</option>
-                    <option value="Delayed">Delayed</option>
-                    <option value="Delivered">Delivered</option>
-                    <option value="Shipped">Shipped</option>
-                  </select>
-                </td> -->
               </tr>
             </tbody>
           </table>
@@ -145,10 +137,10 @@
           <thead class="thead-light">
             <tr>
               <th>Name</th>
-              <th>Code</th>
               <th>MRP</th>
               <th>Selling Cost</th>
               <th>Quantity</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody style="background: white;">
@@ -157,16 +149,24 @@
                 {{product.product.productName}}
               </td>
               <td>
-                {{product.product.productCode}}
-              </td>
-              <td>
                 {{product.product.cost}}
               </td>
               <td>
                 {{product.product.sellingCost}}
               </td>
               <td>
-                {{product.quantity}}
+                <div class="input-group">
+                  <ngx-loading [show]="loadQuantity"></ngx-loading>
+                  <input [disabled]="!editQuantity" type="number" id="tenantemail" name="tenantemail" class="form-control" placeholder="Tenant Email" [(ngModel)] = "product.quantity">
+                  <span class="input-group-append">
+                    <button *ngIf="!editQuantity" type="button" class="btn btn-outline-primary" (click)="editQuantity = true"><i class="fa fa-edit"></i></button>
+                    <button *ngIf="editQuantity" type="button" class="btn btn-outline-danger" (click)="editQuantity = false"><i class="fa fa-remove"></i></button>
+                    <button *ngIf="editQuantity" type="button" class="btn btn-outline-success" (click)="editQuantity = true ; updateProductQuantity(product, product.quantity)"><i class="fa fa-check"></i></button>
+                  </span>
+                </div>
+              </td>
+              <td>
+                <i class="fa fa-remove removeStyle" (click)="removeProduct(product)"></i>
               </td>
             </tr>
           </tbody>
@@ -174,8 +174,16 @@
       </div>
       <div class="modal-footer">
         <div>
-          <button type="button" class="btn btn-success" (click)="primaryModal.hide()">
-            <i class="fa fa-check"></i> OK
+          <mat-form-field style="width: inherit;" class="matitem">
+            <input type="text"
+                   placeholder="Product Id"
+                   matInput
+                   [(ngModel)]="newProductId">
+            <button matSuffix type="button" class="btn btn-primary" (click)="addProductToOrder()">
+              <i class="fa fa-cart-plus"></i> Add Product </button>
+          </mat-form-field>
+          <button type="button" class="btn btn-success" (click)="reassembleInvoice();primaryModal.hide()">
+            <i class="fa fa-check"></i> Update Invoice
           </button>
         </div>
       </div>

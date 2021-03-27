@@ -94,7 +94,7 @@
     <div class="row">
       <div class="col-sm-12 padding-right">
         <div class="features_items"><!--features_items-->
-          <h2 class="title text-center">Features Products</h2>
+          <h2 class="title text-center">Featured Products</h2>
           <div class="col-sm-4" *ngFor="let prod of featuresProducts">
             <div class="product-image-wrapper" style="border-color: antiquewhit" *ngIf="prod.productContent.active">
               <div class="single-products">
@@ -103,7 +103,7 @@
                     <div *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0" class="vc">
                       <p>{{prod.productContent.offer}}% Off</p>
                      </div>
-                    <img style="object-fit: cover;" width="250px" height="300px" src={{getProductImage(prod)}} alt="" />
+                    <img (click)="viewDetailPage(prod)" style="object-fit: cover;" width="250px" height="300px" src={{getProductImage(prod)}} alt="" />
                     <h3>{{prod.productContent.productName}}</h3>
                     <p>{{prod.productContent.brandName}}</p>
                     <span *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0" style="text-decoration: line-through;">₹ {{prod.productContent.cost}} </span>
@@ -133,14 +133,14 @@
         <div class="features_items"><!--features_items-->
           <h2 class="title text-center">Features Products</h2>
           <div class="col-xs-6" *ngFor="let prod of featuresProducts">
-            <div class="product-image-wrapper" style="border-color: antiquewhite; height: 400px;" *ngIf="prod.productContent.active">
+            <div class="product-image-wrapper" style="border-color: antiquewhite; height: 450px;" *ngIf="prod.productContent.active">
               <div class="single-products">
                 <div class="productinfo text-center">
                   <div class="productinfo text-center">
                     <div *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0" class="vc">
                       <p>{{prod.productContent.offer}}% Off</p>
                      </div>
-                    <img style="object-fit: cover;" width="150px" height="200px" src={{getProductImage(prod)}} alt="" />
+                    <img (click)="viewDetailPage(prod)" style="object-fit: cover;" width="150px" height="200px" src={{getProductImage(prod)}} alt="" />
                     <h3>{{prod.productContent.productName}}</h3>
                     <p>{{prod.productContent.brandName}}</p>
                     <span *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0" style="text-decoration: line-through;">₹ {{prod.productContent.cost}} </span>

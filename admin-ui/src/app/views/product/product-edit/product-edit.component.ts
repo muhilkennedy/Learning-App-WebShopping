@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { ProductService } from '../../../shared/product/product.service';
@@ -26,7 +26,7 @@ export class ProductEditComponent implements OnInit {
   cost: number;
   offer: number = 0;
   sellingCost: number ;
-  pDescription: string;
+  pDescription: string = '';
   productActive: boolean = true;
   fileToUpdate: File;
   productPic: string;
@@ -40,10 +40,16 @@ export class ProductEditComponent implements OnInit {
   isEditCardCollapsed: boolean = false;
   isImageCardCollapsed: boolean = true;
 
+  alertoptions = {
+    autoClose: true,
+    keepAfterRouteChange: false
+  };
+
   constructor(private route: ActivatedRoute,
               private alertService: AlertService,
               private productService: ProductService,
-              private sanitizer: DomSanitizer) { }
+              private sanitizer: DomSanitizer,
+              private router: Router) { }
 
   ngOnInit(): void {
     this.paramSubscription = this.route.params.subscribe(params => {
@@ -165,10 +171,50 @@ export class ProductEditComponent implements OnInit {
                         this.unitsInStock, this.sellingCost)
                         .subscribe((resp:any) => {
                           if(resp.statusCode  === 200){
-                            this.alertService.success('Product updated succesfully');
-                            this.alertService.info('Please note a new product will be created for every update and the previous version will be deactivated!');
+                            this.alertService.success('Product updated succesfully', this.alertService);
+                            this.alertService.info('Please note a new product will be created for every update and the previous version will be deactivated!', this.alertService);
                             this.setProductData(resp);
                             this.featuredProduct = false;
+                          }
+                          else{
+                            this.alertService.error('Failed : ' + resp.errorMessages);
+                          }
+                          this.loading = false;
+                        },
+                        (error:any) => {
+                          this.alertService.error("something went wrong!");
+                          this.loading = false;
+                        });
+  }
+
+  cloneProduct(){
+    this.loading = true;
+    this.productService.cloneProduct(this.productId)
+                        .subscribe((resp:any) => {
+                          if(resp.statusCode  === 200){
+                            this.alertService.success('New Product Cloned Successfully !', this.alertService);
+                            this.setProductData(resp);
+                            this.featuredProduct = false;
+                          }
+                          else{
+                            this.alertService.error('Failed : ' + resp.errorMessages);
+                          }
+                          this.loading = false;
+                        },
+                        (error:any) => {
+                          this.alertService.error("something went wrong!");
+                          this.loading = false;
+                        });
+  }
+
+  deleteProduct(){
+    this.loading = true;
+    this.productService.deleteProduct(this.productId)
+                        .subscribe((resp:any) => {
+                          if(resp.statusCode  === 200){
+                            this.alertService.info('Product Deleted Successfully !', this.alertService);
+                            this.featuredProduct = false;
+                            this.router.navigate(['/product/product-list']);
                           }
                           else{
                             this.alertService.error('Failed : ' + resp.errorMessages);
@@ -216,7 +262,7 @@ export class ProductEditComponent implements OnInit {
     this.productService.uploadProductImage(this.productId, this.fileToUpdate)
                         .subscribe((resp:any) => {
                           if(resp.statusCode  === 200){
-                            this.alertService.success('Product Image Uploaded succesfully');
+                            this.alertService.success('Product Image Uploaded succesfully', this.alertService);
                             this.setSliderImages();
                           }
                           else{
@@ -234,7 +280,7 @@ export class ProductEditComponent implements OnInit {
     this.productService.removeProductImage(imageId)
                         .subscribe((resp:any) => {
                           if(resp.statusCode  === 200){
-                            this.alertService.warn('Product Image removed succesfully');
+                            this.alertService.warn('Product Image removed succesfully', this.alertService);
                             this.setSliderImages();
                           }
                           else{

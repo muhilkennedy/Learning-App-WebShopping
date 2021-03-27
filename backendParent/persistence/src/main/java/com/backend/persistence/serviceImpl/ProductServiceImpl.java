@@ -145,32 +145,56 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public List<ProductPOJO> getProductsWithSearchTerm(List<Long> cIds, String SearchTerm, String limit, String offset,
 			String sortByField, String sortByType) throws Exception {
+		if(!CommonUtil.isValidStringParam(SearchTerm)){
+			SearchTerm = "";
+		}
 		// considering always only one category will be sent from client
-		if (cIds != null && cIds.size() > 0) {
-			cIds = getProductRecursiveByCategoryId(cIds.get(0));
+		List<Long> allIds = null;
+		if(cIds != null) {
+			allIds = new ArrayList<Long>();
+			allIds.addAll(cIds);
+			for (Long cId : cIds) {
+				allIds.addAll(getProductRecursiveByCategoryId(cId));
+			}
 		}
 		if (CommonUtil.isValidStringParam(sortByField) && CommonUtil.isValidStringParam(sortByType)) {
-			return productDao.getProductsBasedOnSearchTerm(cIds, SearchTerm, limit, offset, sortByField, sortByType);
+			return productDao.getProductsBasedOnSearchTerm(allIds, SearchTerm, limit, offset, sortByField, sortByType);
 		}
-		return productDao.getProductsBasedOnSearchTerm(cIds, SearchTerm, limit, offset, null, null);
+		return productDao.getProductsBasedOnSearchTerm(allIds, SearchTerm, limit, offset, null, null);
 	}
 	
 	@Override
 	public int getProductsCountWithSearchTerm(List<Long> cIds, String SearchTerm, String limit, String offset,
 			String sortByField, String sortByType) throws Exception {
+		if(!CommonUtil.isValidStringParam(SearchTerm)){
+			SearchTerm = "";
+		}
 		// considering always only one category will be sent from client
-		if (cIds != null && cIds.size() > 0) {
-			cIds = getProductRecursiveByCategoryId(cIds.get(0));
+		List<Long> allIds = null;
+		if(cIds != null) {
+			allIds = new ArrayList<Long>();
+			allIds.addAll(cIds);
+			for (Long cId : cIds) {
+				allIds.addAll(getProductRecursiveByCategoryId(cId));
+			}
 		}
 		if (CommonUtil.isValidStringParam(sortByField) && CommonUtil.isValidStringParam(sortByType)) {
-			return productDao.getProductsCountBasedOnSearchTerm(cIds, SearchTerm, limit, offset, sortByField, sortByType);
+			return productDao.getProductsCountBasedOnSearchTerm(allIds, SearchTerm, limit, offset, sortByField, sortByType);
 		}
-		return productDao.getProductsCountBasedOnSearchTerm(cIds, SearchTerm, limit, offset, null, null);
+		return productDao.getProductsCountBasedOnSearchTerm(allIds, SearchTerm, limit, offset, null, null);
 	}
 	
 	@Override
 	public int getProductsCount(List<Long> cIds, boolean includeInactive) throws Exception {
-		return productDao.getProductsCount(cIds, includeInactive);
+		List<Long> allIds = null;
+		if(cIds != null) {
+			allIds = new ArrayList<Long>();
+			allIds.addAll(cIds);
+			for (Long cId : cIds) {
+				allIds.addAll(getProductRecursiveByCategoryId(cId));
+			}
+		}
+		return productDao.getProductsCount(allIds, includeInactive);
 	}
 	
 	@Override
@@ -218,6 +242,7 @@ public class ProductServiceImpl implements ProductService {
 			if (!StringUtils.isEmpty(product.getBrandName())) {
 				newProduct.setBrandName(product.getBrandName());
 			}
+			newProduct.setProductDescription("");
 			if (!StringUtils.isEmpty(product.getProductDescription())) {
 				newProduct.setProductDescription(product.getProductDescription());
 			}
@@ -306,6 +331,7 @@ public class ProductServiceImpl implements ProductService {
 	private void markProductDeleted(Product product) {
 		product.setActive(false);
 		product.setDeleted(true);
+		product.setSearchText(null);
 		product.setProductCode(product.getProductCode() + ":" + System.currentTimeMillis());
 		product.setLastModified(CommonUtil.convertToUTC(new Date().getTime()));
 		product.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
@@ -384,7 +410,7 @@ public class ProductServiceImpl implements ProductService {
 	
 	@Override
 	public List<Product> searchProductsByMatchingNameOrCode(String searchTerm) {
-		return productRepo.findProductByNameOrCode(baseService.getTenantInfo(), searchTerm);
+		return productRepo.findProductByNameOrCode(baseService.getTenantInfo(), "%" + searchTerm + "%");
 	}
 	
 	@Override
@@ -405,6 +431,44 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public boolean isFeaturedProduct(Long pId) throws Exception {
 		return productDao.isFeaturedProduct(pId);
+	}
+	
+	@Override
+	public Product cloneProduct(long productId) throws Exception {
+		Product product = getProductById(productId);
+		if (product != null) {
+			Product newProduct = new Product();
+			newProduct.setCategoryId(product.getCategoryId());
+			newProduct.setProductName(product.getProductName());
+			newProduct.setSearchText(product.getProductName());
+			newProduct.setActive(product.isActive());
+			newProduct.setBrandName(product.getBrandName());
+			newProduct.setCost(product.getCost());
+			newProduct.setSellingCost(product.getSellingCost());
+			newProduct.setOffer(product.getOffer());
+			newProduct.setProductDescription(product.getProductDescription());
+			newProduct.setQuantityInStock(product.getQuantityInStock());
+			newProduct.setLastModified(CommonUtil.convertToUTC(new Date().getTime()));
+			newProduct.setLastModifiedById(((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
+			newProduct.setTenant(baseService.getTenantInfo());
+			newProduct.setProductCode(String.valueOf(product.getProductId()) + System.currentTimeMillis());
+			saveAndFlush(newProduct);
+			// copy product images
+			List<ProductImages> productImages = new ArrayList<>();
+			ProductImages prodImages = new ProductImages();
+			List<ProductImages> images = imageRepo.findAllImagesForProduct(baseService.getTenantInfo(), product);
+			images.parallelStream().forEach(image -> {
+				prodImages.setImage(image.getBlobImage());
+				prodImages.setProductId(newProduct);
+				prodImages.setTenant(baseService.getTenantInfo());
+				prodImages.setPrimaryImage(image.isPrimaryImage());
+				productImages.add(prodImages);
+			});
+			newProduct.setProductImages(productImages);
+			return newProduct;
+		} else {
+			throw new Exception("Product not found !");
+		}
 	}
 
 }

@@ -74,9 +74,8 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 		CustomerInfo customer = (CustomerInfo) baseService.getUserInfo();
 		List<CustomerCart> cartItems = cartDao.userCartItems(customer.getCustomerId());
 		for(CustomerCart cartItem: cartItems) {
-			System.out.println(cartItem.getProduct().getProductId());
 			if(cartItem.getProduct().getProductId().longValue() == productId.longValue()) {
-				quantity = cartItem.getQuantity() + 1;
+				quantity = cartItem.getQuantity() + quantity;
 				updateProductQuantity(productId, quantity);
 				return;
 			}
@@ -158,6 +157,14 @@ public class CustomerInfoServiceImpl implements CustomerInfoService{
 	@Override
 	public void updateLoyalityPointByCustomerMobile(String mobile, float subTotal) {
 		CustomerInfo customer = getCustomerByMobile(mobile);
+		if (customer != null) {
+			updateLoyalityPoint(customer, subTotal);
+		}
+	}
+	
+	@Override
+	public void updateLoyalityPointByCustomerEmail(String email, float subTotal) {
+		CustomerInfo customer = getCustomerByEmail(email);
 		if (customer != null) {
 			updateLoyalityPoint(customer, subTotal);
 		}

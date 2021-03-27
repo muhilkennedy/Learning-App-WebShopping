@@ -20,7 +20,7 @@ public interface ProductNotificationRepository extends JpaRepository<ProductNoti
 
 	String findProductNotificationByIdQuery = "select pn from ProductNotification pn where pn.tenant = :tenant and pn.notificationId = :id";
 	String findAllProductNotificationByIdQuery = "select pn from ProductNotification pn where pn.tenant = :tenant and pn.adminid = :employeeid";
-	String findAllProductNotificationAdminQuery = "select pn from ProductNotification pn where pn.tenant = :tenant and pn.adminid = :employeeid or pn.adminid=0";
+	String findAllProductNotificationAdminQuery = "select pn from ProductNotification pn where pn.tenant = :tenant and (pn.adminid = :employeeid or pn.adminid=0)";
 	String findAllProductNotificationClientQuery = "select pn from ProductNotification pn where pn.tenant = :tenant and pn.clientid = :clientid";
 	String deleteNotificationQuery = "delete from ProductNotification where tenant = :tenant and notificationId = :id";
 	

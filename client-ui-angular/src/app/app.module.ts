@@ -131,7 +131,7 @@ export class TenantInitializer {
                 },
                 (error:any) => {
                     console.log("error in loading tenant");
-                    alert("Tenant Server not Reachable at the moment! Please try again later!");
+                    alert("Tenant Server not Reachable at the moment! Please try again later! Please Contact - "+ environment.primaryContact +" / " + environment.secondaryContact + " for more details!");
                 }
               );
               //early resolve to show loading page

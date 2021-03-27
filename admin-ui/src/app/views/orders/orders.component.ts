@@ -28,10 +28,16 @@ export class OrdersComponent implements OnInit {
   acceptedOrders: any[] = new Array();
   shippedOrders: any[] = new Array();
   productList: any[] = new Array();
+  orderData: any;
 
   selectedOrder: any;
   paymentTypes: string[] = ['Cash', 'Card', 'GooglePay', 'Phonepe', 'Paytm', 'NetBanking', 'Others'];
   paymentMode: string = this.paymentTypes[0];
+
+  editQuantity = false;
+  loadQuantity = false;
+
+  newProductId = '';
 
   constructor(private orderService: OrdersService,
              private alertService: AlertService,
@@ -138,7 +144,8 @@ export class OrdersComponent implements OnInit {
     let data: any[] = order.orderDetails;
     data.forEach(element => {
       this.productList.push(element);
-    })
+    });
+    this.orderData = order;
   }
 
   getCustomerDetails(id, addressId){
@@ -220,6 +227,85 @@ export class OrdersComponent implements OnInit {
       return this.selectedOrder.subTotal;
     }
     return 0;
+  }
+
+  updateProductQuantity(product){
+    this.loadQuantity = true;
+    this.orderService.productQuantityUpdate(this.orderData.orderId, product.product.productId, product.quantity)
+                      .subscribe((resp:any)=>{
+                        if(resp.statusCode === 200){
+                          this.editQuantity = false;
+                        }
+                        else{
+                          this.alertService.error("Failed: "  + resp.errorMessages);
+                        }
+                        this.loadQuantity = false;
+                    },
+                    (error:any)=>{
+                      this.alertService.error("Something Went Wrong!");
+                      this.loadQuantity = false;
+                    })
+  }
+
+  removeProduct(product){
+    this.acceptedLoading = true;
+    this.orderService.removeProduct(this.orderData.orderId, product.product.productId)
+                      .subscribe((resp:any)=>{
+                        if(resp.statusCode === 200){
+                          let i = 0;
+                          this.productList.forEach(prod => {
+                            if(prod.product.productId === product.product.productId){
+                              this.productList.splice(i,1);
+                            }
+                            i++;
+                          })
+                        }
+                        else{
+                          this.alertService.error("Failed: "  + resp.errorMessages);
+                        }
+                        this.acceptedLoading = false;
+                      },
+                      (error:any)=>{
+                        this.alertService.error("Something Went Wrong!");
+                        this.acceptedLoading = false;
+                      })
+  }
+
+  addProductToOrder(){
+    this.acceptedLoading = true;
+    this.orderService.addProductToOrder(this.orderData.orderId, this.newProductId)
+                      .subscribe((resp:any)=>{
+                        if(resp.statusCode === 200){
+                          this.productList.push(resp.data);
+                        }
+                        else{
+                          this.alertService.error("Failed: "  + resp.errorMessages);
+                        }
+                        this.acceptedLoading = false;
+                      },
+                      (error:any)=>{
+                        this.alertService.error("Something Went Wrong!");
+                        this.acceptedLoading = false;
+                      })
+  }
+
+  reassembleInvoice(){
+    this.getAcceptedOrders();
+    this.acceptedLoading = true;
+    this.orderService.reassembleInvoice(this.orderData.orderId)
+                      .subscribe((resp:any)=>{
+                        if(resp.statusCode === 200){
+                          //do nothing
+                        }
+                        else{
+                          this.alertService.error("Failed: "  + resp.errorMessages);
+                        }
+                        this.acceptedLoading = false;
+                      },
+                      (error:any)=>{
+                        this.alertService.error("Something Went Wrong!");
+                        this.acceptedLoading = false;
+                      })
   }
 
 }

@@ -39,7 +39,7 @@ export class ProductListComponent implements OnInit {
    offset = 0;
    totalRecords = 100;
    pageSize = 25;
-   pageSizeOptions: number[] = [25, 50, 75];
+   pageSizeOptions: number[] = [25, 50, 75, 100, 250, 500, 1000];
    // MatPaginator Output
    pageEvent: PageEvent;
 

@@ -1,5 +1,5 @@
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
@@ -12,6 +12,7 @@ import { CommonsService } from 'src/app/service/shared/commons/commons.service';
 import { UserStoreService } from 'src/app/service/shared/user-store/user-store.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FeatureService } from 'src/app/service/feature/feature.service';
+import {MatPaginator} from '@angular/material/paginator';
 
 export class ItemNode {
   children: ItemNode[];
@@ -76,6 +77,7 @@ export class ProductListComponent implements OnInit {
   pageSizeOptions: number[] = [10, 15, 25];
   // MatPaginator Output
   pageEvent: PageEvent;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   action(event){
     this.loading = true;
@@ -86,8 +88,14 @@ export class ProductListComponent implements OnInit {
       this.nextAction();
     }
     else{
-      this.setProducts(new Array(), null, null);
+      if(this.selectedCategoryId !== undefined && this.selectedCategoryId > -1){
+        this.setProducts(this.selectedCategoryId, null, null);
+      }
+      else{
+        this.setProducts(new Array(), null, null);
+      }
     }
+    window.scroll(0,0);
   }
 
   //autoComplete
@@ -182,7 +190,7 @@ export class ProductListComponent implements OnInit {
       this.dataSource.data = this.categoryTree;
     }
 
-    this.featureService.getFeatureStatus(this.productDetailsPage)
+    /*this.featureService.getFeatureStatus(this.productDetailsPage)
                             .subscribe((resp:any) => {
                               if(resp.statusCode === 200){
                                 this.productDetailsPage = resp.data.featureStatus;
@@ -190,7 +198,7 @@ export class ProductListComponent implements OnInit {
                             },
                             (error:any) => {
                               this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
-                            });
+                            });*/
   }
 
   setProducts(cIds, sortField, SortType){
@@ -200,11 +208,15 @@ export class ProductListComponent implements OnInit {
                           if(resp.statusCode === 200){
                             this.products.length = 0;
                             this.products = resp.dataList;
+                            if(this.isMobileView()){
+                              this.isCatCollapsed = true;
+                            }
                           }
                           else{
                             this._snackBar.open('Failed : ' + resp.errorMessages, 'OK', this.commonService.alertoptionsError);
                           }
-                            this.loading = false;
+                          window.scroll(0,0);
+                          this.loading = false;
                           },
                         (error:any) => {
                           this._snackBar.open('Something went wrong!', 'OK', this.commonService.alertoptionsError);
@@ -261,8 +273,14 @@ export class ProductListComponent implements OnInit {
   }
 
   getProducts(catId){
+    if(this.selectedCategoryId !== catId){
+      this.offset = 0;
+      this.paginator.pageIndex = 0;
+    }
     this.setProducts(catId, null, null);
     this.selectedCategoryId = catId;
+    this.productSearched = "";
+    window.scroll(0,0);
   }
 
   addToCart(prod){
@@ -291,12 +309,13 @@ export class ProductListComponent implements OnInit {
 
   getProductFromMatchingText(searchTerm, sortField, sortType){
       this.loading = true;
-      this.productService.getProductsBySearchTerm(this.selectedCategoryId , searchTerm, this.pageSize, this.offset, sortField, sortType)
+      this.productService.getProductsBySearchTerm(null , searchTerm, this.pageSize, this.offset, sortField, sortType)
                           .subscribe((resp:any) => {
                             if(resp.statusCode  === 200){
                               this.products.length = 0;
                               this.productCount = resp.data;
                               this.products = resp.dataList;
+                              window.scroll(0,0);
                             }
                             else{
                               alert('Failed : ' + resp.errorMessages);
@@ -359,8 +378,9 @@ export class ProductListComponent implements OnInit {
 
   viewDetailPage(product){
     this.commonService.selectedProduct = product;
-    if(this.productDetailsPage){
-      this.router.navigate(['/productDetail'], { queryParams: { productId: product.productId }});
-    }
+    //comented this check as dev is completed
+    //if(this.productDetailsPage){
+    this.router.navigate(['/productDetail'], { queryParams: { productId: product.productId }});
+    // }
   }
 }

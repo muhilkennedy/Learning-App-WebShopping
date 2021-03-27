@@ -6,18 +6,18 @@
     <div class="row">
       <div class="col-sm-3">
         <div class="left-sidebar">
-          <h2 (click)="isCatCollapsed = !isCatCollapsed">Category
-            <i *ngIf="!isCatCollapsed" class="fa fa-toggle-up toggleIcon" ></i>
-            <i *ngIf="isCatCollapsed" class="fa fa-toggle-down toggleIcon" ></i>
+          <h2>Category
+            <i (click)="isCatCollapsed = !isCatCollapsed" *ngIf="!isCatCollapsed" style="color: brown;cursor: pointer;" class="fa fa-toggle-up toggleIcon" ></i>
+            <i (click)="isCatCollapsed = !isCatCollapsed" *ngIf="isCatCollapsed" style="color: brown;cursor: pointer;" class="fa fa-toggle-down toggleIcon" ></i>
           </h2>
-          <div [collapse]="isCatCollapsed">
+          <div *ngIf="!isCatCollapsed" style="display: contents !important;">
           <div class="panel-group category-products" id="accordian"><!--category-products-->
             <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
               <!-- This is the tree node template for leaf nodes -->
               <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
                 <!-- use a disabled button to provide padding for tree leaf -->
                 <button mat-icon-button disabled></button>
-                <a style="cursor: pointer;" (click)="getProducts(node.catId)">{{node.catName}}</a>
+                <a style="cursor: pointer;" [ngClass]="node.catId === this.selectedCategoryId ? 'categorySeleted' : 'categoryPlain'" (click)="getProducts(node.catId)">{{node.catName}}</a>
               </mat-tree-node>
               <!-- This is the tree node template for expandable nodes -->
               <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding>
@@ -27,7 +27,7 @@
                     {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
                   </mat-icon>
                 </button>
-                <a style="cursor: pointer;" (click)="getProducts(node.catId)">{{node.catName}}</a>
+                <a style="cursor: pointer;" [ngClass]="node.catId === this.selectedCategoryId ? 'categorySeleted' : 'categoryPlain'" (click)="getProducts(node.catId)">{{node.catName}}</a>
               </mat-tree-node>
             </mat-tree>
 
@@ -47,8 +47,8 @@
           <!-- FILTERS -->
           <div class="price-range" *ngIf="!isMobileView()">
             <h2>Filters
-              <i *ngIf="!isFilterCollapsed" class="fa fa-toggle-up toggleIcon" (click)="isFilterCollapsed = !isFilterCollapsed"></i>
-            <i *ngIf="isFilterCollapsed" class="fa fa-toggle-down toggleIcon" (click)="isFilterCollapsed = !isFilterCollapsed"></i>
+            <!-- <i *ngIf="!isFilterCollapsed" class="fa fa-toggle-up toggleIcon" (click)="isFilterCollapsed = !isFilterCollapsed"></i>
+            <i *ngIf="isFilterCollapsed" class="fa fa-toggle-down toggleIcon" (click)="isFilterCollapsed = !isFilterCollapsed"></i> -->
             </h2>
             <div [collapse]="isFilterCollapsed">
             <div class="well" style="width: 100%;">
@@ -158,7 +158,7 @@
           <ngx-loading [show]="productLoading"></ngx-loading>
           <h2 class="title text-center">PRODUCTS</h2>
           <div class="col-xs-6" *ngFor="let prod of products">
-            <div class="product-image-wrapper" style="height: 400px;">
+            <div class="product-image-wrapper" style="height: 450px;">
               <div class="single-products">
                 <div class="productinfo text-center">
                   <span class="offer-overlay" *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0">
@@ -190,7 +190,9 @@
       <mat-paginator [length]="productCount"
                      [pageSize]="pageSize"
                      [pageSizeOptions]="pageSizeOptions"
-                     (page)="action($event)">
+                     (page)="action($event)"
+                     [showFirstLastButtons]=true
+                     #paginator>
       </mat-paginator>
       </div>
     </div>

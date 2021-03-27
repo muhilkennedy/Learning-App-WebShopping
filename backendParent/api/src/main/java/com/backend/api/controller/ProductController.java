@@ -256,9 +256,10 @@ public class ProductController {
 			response.setData(productService.getProductsCountWithSearchTerm(
 					CommonUtil.isValidStringParam(cId) ? Arrays.asList(Long.parseLong(cId)) : null, searchTerm, limit,
 					offset, sortByField, sortByType));
-			response.setDataList(productService.getProductsWithSearchTerm(
+			List<ProductPOJO> products = productService.getProductsWithSearchTerm(
 					CommonUtil.isValidStringParam(cId) ? Arrays.asList(Long.parseLong(cId)) : null, searchTerm, limit,
-					offset, sortByField, sortByType));
+					offset, sortByField, sortByType); 
+			response.setDataList(products);
 			response.setStatus(Response.Status.OK);
 		} catch (Exception ex) {
 			logger.error("getProductsBySearchText : " + ex);

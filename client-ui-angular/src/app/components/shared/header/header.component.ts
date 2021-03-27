@@ -83,6 +83,13 @@ export class HeaderComponent implements OnInit {
     this.router.navigate(['/cart']);
   }
 
+  getCartCount(){
+    if(this.userStore.cartItems !== undefined && this.userStore.cartItems !== null){
+      return this.userStore.cartItems.length;
+    }
+    return null;
+  }
+
   openOrders(){
     this.router.navigate(['/orders']);
   }

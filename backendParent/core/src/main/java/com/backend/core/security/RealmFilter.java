@@ -49,7 +49,7 @@ public class RealmFilter implements Filter {
 				//load teants on static variable and use it through the app lifecycle!
 				TenantUtil.loadAllTenantsMap();
 			}
-			logger.info("doFilter :: Realm Filter :: URI - " + req.getRequestURI() + " (Requested IP : " + requestIP + ")");
+			logger.info("doFilter :: Realm Filter :: Realm - " + tenantId + " URI - " + req.getRequestURI() + " (Requested IP : " + requestIP + ")");
 			//verify for DOS attack (Ideally should be configured as server level config)
 			CacheService.setIpCache(requestIP, req.getRequestURI());
 			//Allow access for cross site request due to multiple deployments.
@@ -144,6 +144,7 @@ public class RealmFilter implements Filter {
 				chain.doFilter(request, response);
 			}
 		} catch (Exception ex) {
+			logger.error("Exception in Request : " + ex.getMessage());
 			((HttpServletResponse) response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
 			return;
 		}
