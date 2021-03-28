@@ -451,6 +451,7 @@ export class PosComponent implements OnInit {
                         window.open(window.URL.createObjectURL( new Blob([resp], { type: 'application/pdf' })),"_blank");
                         this.loading = false;
                         this.myModal.hide();
+                        window.location.reload();
                     },
                     (error) => {
                       this.alertService.error("Something went wrong!", error)
@@ -465,10 +466,16 @@ export class PosComponent implements OnInit {
                         window.open(window.URL.createObjectURL( new Blob([resp], { type: 'application/pdf' })),"_blank");
                         this.loading = false;
                         this.myModal.hide();
+                        window.location.reload();
                     },
                     (error) => {
                       this.alertService.error("Something went wrong!", error)
                     });
+  }
+
+  closePdfWindow(){
+    this.myModal.hide();
+    window.location.reload();
   }
 
 }
