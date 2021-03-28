@@ -501,6 +501,7 @@ public class OrdersServiceImpl implements OrdersService {
 	
 	@Override
 	public List<Orders> ordersProvisionedByEmployee(long empId) {
+		//return all orders except cancelled
 		return ordersRepo.findOrdersByEmployeeQuery(baseService.getTenantInfo(), empId);
 	}
 	

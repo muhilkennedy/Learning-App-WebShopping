@@ -147,12 +147,35 @@
                     </mat-select>
                   </mat-form-field>
                 </td>
-                <td><button [disabled]="disablePaid()" class="btn btn-success" (click)="processBill()"> <i class="fa fa-dollar"></i> PAID </button></td>
+                <td><button [disabled]="disablePaid()" class="btn btn-success" (click)="confirmPayModal.show()"> <i class="fa fa-rupee"></i> PAY </button></td>
                 <td></td>
               </tr>
             </tbody>
           </table>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- confirm payment dialog -->
+<div bsModal #confirmPayModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-primary" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Confirm Payment</h4>
+      </div>
+      <div class="modal-body">
+        <h3>Do you want to Continue ?</h3>
+        <h4>Payment of <strong style="color: orangered">{{calculateRoundedSubtotal()}} ₹
+        </strong> recived via <strong style="color: orangered">{{paymentMode}}</strong> !
+        </h4>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="confirmPayModal.hide()">Close</button>
+        <button [disabled]="disablePaid()" class="btn btn-success" (click)="processBill()">
+          <i class="fa fa-rupee"></i> PAID
+        </button>
       </div>
     </div>
   </div>
@@ -170,7 +193,7 @@
         <h3>Do you want to Print POS Bill ?</h3>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="primaryModal.hide()">Close</button>
+        <button type="button" class="btn btn-secondary" (click)="closePdfWindow()">Close</button>
         <button type="button" class="btn btn-warning" (click)="printAsPdf()">
           <i class="fa fa-print"></i> Print As Online Bill
         </button>

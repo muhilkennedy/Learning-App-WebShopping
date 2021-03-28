@@ -25,7 +25,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
 	String findCustomerOrdersQuery = "select * from orders where tenantid = ?1 and customerid= ?2";
 	String findCouponAppliedCountQuery = "select count(*) from Orders order where order.tenant = :tenant and order.customerId = :customerId and order.couponId = :couponId";
 	
-	String findOrdersByEmployeeQuery = "select order from Orders order where order.tenant = :tenant and order.employeeId = :employeeId";
+	String findOrdersByEmployeeQuery = "select order from Orders order where order.tenant = :tenant and order.employeeId = :employeeId and order.status <> 'cancelled'";
 	
 	@Query(findOrdersByIdQuery)
 	Orders findOrdersById(@Param("tenant") Tenant realm, @Param("orderId") Long orderId);
