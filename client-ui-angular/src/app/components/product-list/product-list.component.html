@@ -137,8 +137,8 @@
                   <span class="offer-overlay" *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0">
                     {{prod.productContent.offer}}% Off
                   </span>
-                  <img (click)="viewDetailPage(prod)" style="object-fit: cover; cursor: pointer;" width="250px" height="300px" src={{getProductImage(prod)}} alt="product Image" />
-                  <h3>{{prod.productContent.productName}}</h3>
+                  <img (click)="viewDetailPage(prod)" style="object-fit: contain; cursor: pointer;" width="250px" height="300px" src={{getProductImage(prod)}} alt="product Image" />
+                  <h3 (click)="viewDetailPage(prod)" style="cursor: pointer;">{{prod.productContent.productName}}</h3>
                   <p>{{prod.productContent.brandName}}</p>
                   <span *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0" style="text-decoration: line-through;">₹ {{prod.productContent.cost}} </span>
                   <span class="regular-price"> ₹{{prod.productContent.sellingCost}}</span>
@@ -164,8 +164,8 @@
                   <span class="offer-overlay" *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0">
                     {{prod.productContent.offer}}% Off
                   </span>
-                  <img (click)="viewDetailPage(prod)" style="object-fit: cover;" width="150px" height="200px" src={{getProductImage(prod)}} alt="product Image" />
-                  <h3>{{prod.productContent.productName}}</h3>
+                  <img (click)="viewDetailPage(prod)" style="object-fit: contain;" width="150px" height="200px" src={{getProductImage(prod)}} alt="product Image" />
+                  <h3 (click)="viewDetailPage(prod)" style="cursor: pointer;">{{prod.productContent.productName}}</h3>
                   <p>{{prod.productContent.brandName}}</p>
                   <span *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0" style="text-decoration: line-through;">₹ {{prod.productContent.cost}} </span>
                   <span class="regular-price"> ₹{{prod.productContent.sellingCost}}</span>

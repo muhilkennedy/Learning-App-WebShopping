@@ -103,8 +103,8 @@
                     <div *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0" class="vc">
                       <p>{{prod.productContent.offer}}% Off</p>
                      </div>
-                    <img (click)="viewDetailPage(prod)" style="object-fit: cover;" width="250px" height="300px" src={{getProductImage(prod)}} alt="" />
-                    <h3>{{prod.productContent.productName}}</h3>
+                    <img (click)="viewDetailPage(prod)" style="object-fit: contain; cursor: pointer;" width="250px" height="300px" src={{getProductImage(prod)}} alt="" />
+                    <h3 (click)="viewDetailPage(prod)" style="cursor: pointer;">{{prod.productContent.productName}}</h3>
                     <p>{{prod.productContent.brandName}}</p>
                     <span *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0" style="text-decoration: line-through;">₹ {{prod.productContent.cost}} </span>
                     <span class="regular-price"> ₹{{prod.productContent.sellingCost}}</span>
@@ -140,8 +140,8 @@
                     <div *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0" class="vc">
                       <p>{{prod.productContent.offer}}% Off</p>
                      </div>
-                    <img (click)="viewDetailPage(prod)" style="object-fit: cover;" width="150px" height="200px" src={{getProductImage(prod)}} alt="" />
-                    <h3>{{prod.productContent.productName}}</h3>
+                    <img (click)="viewDetailPage(prod)" style="object-fit: contain; cursor: pointer;" width="150px" height="200px" src={{getProductImage(prod)}} alt="" />
+                    <h3 (click)="viewDetailPage(prod)" style="cursor: pointer;">{{prod.productContent.productName}}</h3>
                     <p>{{prod.productContent.brandName}}</p>
                     <span *ngIf="prod.productContent.offer !== undefined && prod.productContent.offer > 0" style="text-decoration: line-through;">₹ {{prod.productContent.cost}} </span>
                     <span class="regular-price"> ₹{{prod.productContent.sellingCost}}</span>

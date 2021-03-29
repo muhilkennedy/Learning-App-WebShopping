@@ -142,6 +142,7 @@ export class HomeComponent implements OnInit {
       // this.router.navigate(['/login']);
     }
     else{
+      this.loading = true;
       this.cartService.addProducToCart(prod.productId)
                       .subscribe((resp:any) => {
                         if(resp.statusCode === 200){
@@ -154,6 +155,7 @@ export class HomeComponent implements OnInit {
                         this.loading = false;                      },
                       (error: any) => {
                         this._snackBar.open('Failed to Add in Cart!', '', this.commonService.alertoptionsError);
+                        this.loading = false;
                       })
     }
   }
