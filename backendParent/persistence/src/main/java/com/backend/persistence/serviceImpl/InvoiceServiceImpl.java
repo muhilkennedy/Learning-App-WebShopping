@@ -253,7 +253,12 @@ public class InvoiceServiceImpl implements InvoiceService{
 		for(OrderDetails item: items) {
 			Product product = item.getProduct();
 			XWPFTableRow newRow = productTable.createRow();
-			newRow.getCell(0).setText(product.getProductName());
+			List<XWPFParagraph> paras = newRow.getCell(0).getParagraphs();
+			paras.forEach(para -> {
+				XWPFRun run = para.createRun();
+				run.setFontFamily("Arima Madurai");
+				run.setText(product.getProductName());
+			});
 			newRow.getCell(1).setText(String.valueOf(item.getQuantity()));
 			newRow.getCell(2).setText(product.getCost().toString());
 			newRow.getCell(3).setText(product.getOffer().setScale(0, RoundingMode.CEILING).toString()+"%");
@@ -561,7 +566,12 @@ public class InvoiceServiceImpl implements InvoiceService{
 		List<PosProduct> items = posData.getPosProduct();
 		for(PosProduct item: items) {
 			XWPFTableRow newRow = productTable.createRow();
-			newRow.getCell(0).setText(item.getItemName());
+			List<XWPFParagraph> paras = newRow.getCell(0).getParagraphs();
+			paras.forEach(para -> {
+				XWPFRun run = para.createRun();
+				run.setFontFamily("Arima Madurai");
+				run.setText(item.getItemName());
+			});
 			newRow.getCell(1).setText(String.valueOf(item.getQuantity()));
 			newRow.getCell(2).setText(String.format("%.2f",item.getMrp()));
 			newRow.getCell(3).setText(String.format("%.0f",item.getDiscount())+"%");
@@ -569,7 +579,7 @@ public class InvoiceServiceImpl implements InvoiceService{
 			float total = 0;
 			if (item.getSellingCost() != item.getMrp()) {
 				float singleOffer = item.getMrp() - item.getSellingCost();
-				totalDiscount += singleOffer; 
+				totalDiscount += (singleOffer * item.getQuantity()); 
 			}
 			total = item.getSellingCost()*item.getQuantity();
 			subTotal += total;
