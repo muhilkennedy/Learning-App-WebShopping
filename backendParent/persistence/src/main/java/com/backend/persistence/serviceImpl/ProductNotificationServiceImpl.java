@@ -1,5 +1,6 @@
 package com.backend.persistence.serviceImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -52,7 +53,6 @@ public class ProductNotificationServiceImpl implements ProductNotificationServic
 	
 	@Override
 	public List<ProductNotification> getAllNotificationsForAdmin() {
-		String tennt = baseService.getTenantInfo().getTenantID();
 		return notificationRepo.findAllProductNotificationAdmin(baseService.getTenantInfo(),
 				((EmployeeInfo) baseService.getUserInfo()).getEmployeeId());
 	}
@@ -63,10 +63,22 @@ public class ProductNotificationServiceImpl implements ProductNotificationServic
 	}
 	
 	@Override
+	public ProductNotification getNotificationById(Long id) {
+		return notificationRepo.findProductNotificationById(baseService.getTenantInfo(), id);
+	}
+	
+	@Override
 	public void deleteNotifications(List<String> ids) {
-		ids.parallelStream().forEach(id -> {
-			 notificationRepo.deleteProductNotification(baseService.getTenantInfo(), Long.parseLong(id));
-		 });
+		List<String> actualIds = new ArrayList<String>();
+		ids.stream().forEach(id -> {
+			ProductNotification notification = getNotificationById(Long.parseLong(id));
+			if(notification != null) {
+				actualIds.add(id);
+			}
+		});
+		actualIds.stream().forEach(id -> {
+			notificationRepo.deleteProductNotification(baseService.getTenantInfo(), Long.parseLong(id));
+		});
 	}
 
 }
