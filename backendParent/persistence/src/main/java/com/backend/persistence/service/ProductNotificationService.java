@@ -18,4 +18,6 @@ public interface ProductNotificationService {
 
 	void deleteNotifications(List<String> ids);
 
+	ProductNotification getNotificationById(Long id);
+
 }

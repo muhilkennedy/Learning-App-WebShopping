@@ -114,8 +114,8 @@ export class PushNotificationComponent implements OnInit {
     this.notifications.forEach(notification => {
       if(notification.notificationId === notifyId){
         this.notifications.splice(i, 1);
-        i++;
       }
+      i++;
     });
   }
 
@@ -170,6 +170,22 @@ export class PushNotificationComponent implements OnInit {
                                 this.emitNotificationChanges();
                               });
     }
+  }
+
+  clearAll(){
+    let notificationIds = new Array();
+    notificationIds.push(10);
+    this.notifications.forEach(notification => {
+      notificationIds.push(notification.notificationId);
+    });
+    this.notificationService.deleteProductNotification(notificationIds)
+                              .subscribe((resp:any) => {
+                                if(resp.statusCode === 200){
+                                  this.notificationCount = 0;
+                                  this.notifications.length = 0;
+                                }
+                                this.emitNotificationChanges();
+                              });
   }
 
   updateLoggedInStatus(){
