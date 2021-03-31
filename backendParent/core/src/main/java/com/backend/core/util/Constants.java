@@ -23,6 +23,7 @@ public class Constants {
 	public static final String DATETIMEFORMAT_1 = "dd MMM yyyy HH:mm:ss z";
 	public static final String DATETIMEFORMAT_2 = "dd MMM";
 	public static final String DATETIMEFORMAT_3 = "dd-MM-yyy";
+	public static final String DATETIMEFORMAT_Report = "dd-MM-yyy EEE";
 	public static final String Timezone_UTC = "UTC";
 	public static final String Timezone_GMT = "GMT";
 	public static final String Timezone_IST = "IST";
