@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +39,10 @@ import com.backend.persistence.service.ReportingService;
 public class ReportingServiceImpl implements ReportingService {
 	
 	private Logger logger = LoggerFactory.getLogger(ReportingServiceImpl.class);
+	
+	private enum Days {
+		Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
+	}
 	
 	@Autowired
 	private BaseService baseService;
@@ -83,7 +89,6 @@ public class ReportingServiceImpl implements ReportingService {
 		rowhead.createCell(5).setCellValue("POS Sales");
 		rowhead.createCell(6).setCellValue("Online Orders Count");
 		rowhead.createCell(7).setCellValue("Online Sales");
-
 		List<EmployeeInfo> employees = empService.findAllEmployeeForTenant();
 		for (int i = 0; i < employees.size(); i++) {
 			EmployeeInfo employee = employees.get(i);
@@ -145,6 +150,126 @@ public class ReportingServiceImpl implements ReportingService {
 		posRowhead.createCell(1).setCellValue("Date");
 		posRowhead.createCell(2).setCellValue("Sales Count");
 		posRowhead.createCell(3).setCellValue("Txn Done");
+		//Day wise sales
+		posRowhead.createCell(6).setCellValue("Day");
+		posRowhead.createCell(7).setCellValue("Sales Count");
+		posRowhead.createCell(8).setCellValue("Txn Done");
+		Map<String, List<String>> posDateReportMap = posService.getPosDateWiseReport();
+		if(posDateReportMap != null) {
+			Map<String, List<String>> dayTxns = intializeDaysMap();
+			int i = 0;
+			for (Map.Entry<String, List<String>> entry : posDateReportMap.entrySet())  {
+				XSSFRow row = posSheet.createRow((short) (i + 1));
+				row.createCell(0).setCellValue(i + 1);
+				row.createCell(1).setCellValue(entry.getKey());
+				List<String> values = entry.getValue();
+				String[] days = entry.getKey().split(" ");
+				int count;
+				int txns;
+				List<String> existingValues = new ArrayList();
+				switch(days[1]) {
+					case "Mon" :count = Integer.parseInt(values.get(0));
+								txns = Integer.parseInt(values.get(1));
+								existingValues = dayTxns.get(Days.Monday.toString());
+								if(existingValues.size() > 0) {
+									int oldCount = Integer.parseInt(existingValues.get(0));
+									int oldTxns = Integer.parseInt(existingValues.get(1));
+									dayTxns.replace(Days.Monday.toString(), Arrays.asList(String.valueOf(count+oldCount) , String.valueOf(txns+oldTxns)));
+								}
+								else {
+									dayTxns.put(Days.Monday.toString(), Arrays.asList(String.valueOf(count) , String.valueOf(txns)));
+								}
+								break;
+					case "Tue" :count = Integer.parseInt(values.get(0));
+								txns = Integer.parseInt(values.get(1));
+								existingValues = dayTxns.get(Days.Tuesday.toString());
+								if(existingValues.size() > 0) {
+									int oldCount = Integer.parseInt(existingValues.get(0));
+									int oldTxns = Integer.parseInt(existingValues.get(1));
+									dayTxns.replace(Days.Tuesday.toString(), Arrays.asList(String.valueOf(count+oldCount) , String.valueOf(txns+oldTxns)));
+								}
+								else {
+									dayTxns.put(Days.Tuesday.toString(), Arrays.asList(String.valueOf(count) , String.valueOf(txns)));
+								}
+								break;
+					case "Wed" :count = Integer.parseInt(values.get(0));
+								txns = Integer.parseInt(values.get(1));
+								existingValues = dayTxns.get(Days.Wednesday.toString());
+								if(existingValues.size() > 0) {
+									int oldCount = Integer.parseInt(existingValues.get(0));
+									int oldTxns = Integer.parseInt(existingValues.get(1));
+									dayTxns.replace(Days.Wednesday.toString(), Arrays.asList(String.valueOf(count+oldCount) , String.valueOf(txns+oldTxns)));
+								}
+								else {
+									dayTxns.put(Days.Wednesday.toString(), Arrays.asList(String.valueOf(count) , String.valueOf(txns)));
+								}
+								break;
+					case "Thu" :count = Integer.parseInt(values.get(0));
+								txns = Integer.parseInt(values.get(1));
+								existingValues = dayTxns.get(Days.Thursday.toString());
+								if(existingValues.size() > 0) {
+									int oldCount = Integer.parseInt(existingValues.get(0));
+									int oldTxns = Integer.parseInt(existingValues.get(1));
+									dayTxns.replace(Days.Thursday.toString(), Arrays.asList(String.valueOf(count+oldCount) , String.valueOf(txns+oldTxns)));
+								}
+								else {
+									dayTxns.put(Days.Thursday.toString(), Arrays.asList(String.valueOf(count) , String.valueOf(txns)));
+								}
+								break;
+					case "Fri" :count = Integer.parseInt(values.get(0));
+								txns = Integer.parseInt(values.get(1));
+								existingValues = dayTxns.get(Days.Friday.toString());
+								if(existingValues.size() > 0) {
+									int oldCount = Integer.parseInt(existingValues.get(0));
+									int oldTxns = Integer.parseInt(existingValues.get(1));
+									dayTxns.replace(Days.Friday.toString(), Arrays.asList(String.valueOf(count+oldCount) , String.valueOf(txns+oldTxns)));
+								}
+								else {
+									dayTxns.put(Days.Friday.toString(), Arrays.asList(String.valueOf(count) , String.valueOf(txns)));
+								}
+								break;
+					case "Sat" :count = Integer.parseInt(values.get(0));
+								txns = Integer.parseInt(values.get(1));
+								existingValues = dayTxns.get(Days.Saturday.toString());
+								if(existingValues.size() > 0) {
+									int oldCount = Integer.parseInt(existingValues.get(0));
+									int oldTxns = Integer.parseInt(existingValues.get(1));
+									dayTxns.replace(Days.Saturday.toString(), Arrays.asList(String.valueOf(count+oldCount) , String.valueOf(txns+oldTxns)));
+								}
+								else {
+									dayTxns.put(Days.Saturday.toString(), Arrays.asList(String.valueOf(count) , String.valueOf(txns)));
+								}
+								break;
+					case "Sun" :count = Integer.parseInt(values.get(0));
+								txns = Integer.parseInt(values.get(1));
+								existingValues = dayTxns.get(Days.Sunday.toString());
+								if(existingValues.size() > 0) {
+									int oldCount = Integer.parseInt(existingValues.get(0));
+									int oldTxns = Integer.parseInt(existingValues.get(1));
+									dayTxns.replace(Days.Sunday.toString(), Arrays.asList(String.valueOf(count+oldCount) , String.valueOf(txns+oldTxns)));
+								}
+								else {
+									dayTxns.put(Days.Sunday.toString(), Arrays.asList(String.valueOf(count) , String.valueOf(txns)));
+								}
+								break;
+					
+				}
+				
+				row.createCell(2).setCellValue(values.get(0));
+				row.createCell(3).setCellValue(values.get(1));
+				i++;
+			}
+			
+			i=0;
+			for (Map.Entry<String, List<String>> entry : dayTxns.entrySet())  {
+				XSSFRow row = posSheet.getRow((short) (i + 1));
+				List<String> values = entry.getValue();
+				row.createCell(6).setCellValue(entry.getKey());
+				row.createCell(7).setCellValue(values.get(0));
+				row.createCell(8).setCellValue(values.get(1));
+				i++;
+			}
+		}
 
 		// Online Date Report Sheet
 		XSSFSheet onlineSheet = workbook.createSheet("Online Date Report");
@@ -168,5 +293,17 @@ public class ReportingServiceImpl implements ReportingService {
 		// prints the message on the console
 		logger.info("Excel Report has been generated successfully!");
 		return tempFile;
+	}
+	
+	private Map<String, List<String>> intializeDaysMap(){
+		Map<String, List<String>> dayTxns = new HashMap();
+		dayTxns.put(Days.Monday.toString(), new ArrayList());
+		dayTxns.put(Days.Tuesday.toString(), new ArrayList());
+		dayTxns.put(Days.Wednesday.toString(), new ArrayList());
+		dayTxns.put(Days.Thursday.toString(), new ArrayList());
+		dayTxns.put(Days.Friday.toString(), new ArrayList());
+		dayTxns.put(Days.Saturday.toString(), new ArrayList());
+		dayTxns.put(Days.Sunday.toString(), new ArrayList());
+		return dayTxns;
 	}
 }
