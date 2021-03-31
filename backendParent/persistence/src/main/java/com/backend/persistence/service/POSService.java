@@ -29,4 +29,6 @@ public interface POSService {
 
 	List<POSData> posProvisionedByEmployee(long empId) throws Exception;
 
+	Map<String, List<String>> getPosDateWiseReport() throws Exception;
+
 }

@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -86,6 +87,22 @@ public class PosDao {
 			while (rs.next()) {
 				POSData data = new ObjectMapper().readValue(rs.getString(1), POSData.class);
 				json.add(data);
+			}
+			return json;
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+	}
+	
+	public POSData getFirstPOS (String tenantId) throws Exception{
+		POSData json = null;
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			PreparedStatement stmt = con.prepareStatement("select * from pointofsale where pos->\"$.tenantId\" = ? order by pos->\"$.timeCreated\" limit 1");
+			stmt.setString(1, tenantId);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				json = new ObjectMapper().readValue(rs.getString(1), POSData.class);
 			}
 			return json;
 		} catch (Exception ex) {
@@ -273,6 +290,60 @@ public class PosDao {
 				orders.put(tDate, subTotal);
 				calendar.add(Calendar.DAY_OF_YEAR, -2);
 			}
+
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+		return orders;
+	}
+	
+	public Map<String, List<String>> getPosFullReport(String tenantId, long endDate) throws Exception {
+		Map<String, List<String>> orders = new LinkedHashMap<String, List<String>>();
+		Date curdate = new Date();
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(Constants.Asia_Calcutta));
+		calendar.set(curdate.getYear() + 1900, curdate.getMonth(), curdate.getDate(), 0, 0, 0);
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			int canContinue = 0;
+			do {
+				int count= 0;
+				SimpleDateFormat df = new SimpleDateFormat(Constants.DATETIMEFORMAT_Report);
+				df.setTimeZone(TimeZone.getTimeZone(Constants.Timezone_IST));
+				String tDate = df.format(calendar.getTime());
+				long todaysDate = CommonUtil.convertToUTC(calendar.getTimeInMillis());
+				calendar.add(Calendar.DAY_OF_YEAR, 1);
+				long nextDate = CommonUtil.convertToUTC(calendar.getTimeInMillis());
+				SQLQueryHandler sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+						.setQuery("select * from pointofsale")
+						.setWhereClause()
+						.setAndCondition("pos->\"$.tenantId\"", tenantId)
+						.andSetGreaterThanCondition("pos->\"$.timeCreated\"", todaysDate)
+						.andSetLessThanCondition("pos->\"$.timeCreated\"", nextDate)
+						.build();
+				PreparedStatement stmt = con.prepareStatement(sqlHandler.getQuery());
+				ResultSet rs = stmt.executeQuery();
+				BigDecimal subTotal = new BigDecimal(0);
+				while (rs.next()) {
+					count++;
+					POSData data = new ObjectMapper().readValue(rs.getString(1), POSData.class);
+					subTotal = subTotal.add(new BigDecimal(data.getSubTotal()));
+				}
+				List<String> values = Arrays.asList(String.valueOf(count), subTotal.toPlainString());
+				orders.put(tDate, values);
+				calendar.add(Calendar.DAY_OF_YEAR, -2);
+				
+				sqlHandler = new SQLQueryHandler.SQLQueryBuilder()
+						.setQuery("select count(*) from pointofsale")
+						.setWhereClause()
+						.setAndCondition("pos->\"$.tenantId\"", tenantId)
+						.andSetLessThanCondition("pos->\"$.timeCreated\"", todaysDate)
+						.build();
+				PreparedStatement stmt1 = con.prepareStatement(sqlHandler.getQuery());
+				ResultSet rs1 = stmt1.executeQuery();
+				if (rs1.next()) {
+					canContinue = rs1.getInt(1);
+				}
+			}while(canContinue>0);
 
 		} catch (Exception ex) {
 			logger.error("Exception - " + ex);

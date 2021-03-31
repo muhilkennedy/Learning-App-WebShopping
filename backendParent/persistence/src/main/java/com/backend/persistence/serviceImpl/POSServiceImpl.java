@@ -2,6 +2,7 @@ package com.backend.persistence.serviceImpl;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -153,5 +154,22 @@ public class POSServiceImpl implements POSService {
 	public List<POSData> posProvisionedByEmployee(long empId) throws Exception {
 		return posDao.getPOSProvisionedByEmployee(baseService.getTenantInfo().getTenantID(), empId);
 	}
+	
+	private POSData getFirstPOSEntryForTenant() throws Exception {
+		return posDao.getFirstPOS(baseService.getTenantInfo().getTenantID());
+	}
 
+	/**
+	 *@return map of date and list 0-count 1-subtotal
+	 */
+	@Override
+	public Map<String, List<String>> getPosDateWiseReport() throws Exception{
+		POSData firstPos = getFirstPOSEntryForTenant();
+		if(firstPos != null) {
+			Map<String, List<String>> result = posDao.getPosFullReport(baseService.getTenantInfo().getTenantID(), firstPos.getTimeCreated());
+			return result;
+		}
+		return null;
+	}
+	
 }

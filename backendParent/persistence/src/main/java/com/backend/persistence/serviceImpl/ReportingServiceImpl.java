@@ -83,7 +83,6 @@ public class ReportingServiceImpl implements ReportingService {
 		rowhead.createCell(5).setCellValue("POS Sales");
 		rowhead.createCell(6).setCellValue("Online Orders Count");
 		rowhead.createCell(7).setCellValue("Online Sales");
-
 		List<EmployeeInfo> employees = empService.findAllEmployeeForTenant();
 		for (int i = 0; i < employees.size(); i++) {
 			EmployeeInfo employee = employees.get(i);
@@ -145,6 +144,19 @@ public class ReportingServiceImpl implements ReportingService {
 		posRowhead.createCell(1).setCellValue("Date");
 		posRowhead.createCell(2).setCellValue("Sales Count");
 		posRowhead.createCell(3).setCellValue("Txn Done");
+		Map<String, List<String>> posDateReportMap = posService.getPosDateWiseReport();
+		if(posDateReportMap != null) {
+			int i = 0;
+			for (Map.Entry<String, List<String>> entry : posDateReportMap.entrySet())  {
+				XSSFRow row = posSheet.createRow((short) (i + 1));
+				row.createCell(0).setCellValue(i + 1);
+				row.createCell(1).setCellValue(entry.getKey());
+				List<String> values = entry.getValue();
+				row.createCell(2).setCellValue(values.get(0));
+				row.createCell(3).setCellValue(values.get(1));
+				i++;
+			}
+		}
 
 		// Online Date Report Sheet
 		XSSFSheet onlineSheet = workbook.createSheet("Online Date Report");
