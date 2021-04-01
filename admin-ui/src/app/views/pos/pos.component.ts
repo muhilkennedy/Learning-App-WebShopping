@@ -53,6 +53,8 @@ export class PosComponent implements OnInit {
 
   focusElementReference: any
 
+  tempId = 1;
+
   paymentTypes: string[] = ['Cash', 'Card', 'GooglePay', 'Phonepe', 'Paytm', 'NetBanking', 'Others'];
   paymentMode: string = this.paymentTypes[0];
 
@@ -314,7 +316,7 @@ export class PosComponent implements OnInit {
                             let doPush = false;
                             if(this.isLastItemEmpty()){
                               newProd = this.itemList[this.itemList.length - 1];
-                              newProd.itemCode = code;
+                              newProd.itemCode = "NA"+this.tempId++;
                             }
                             if(doPush){
                               this.itemList.push(newProd);
