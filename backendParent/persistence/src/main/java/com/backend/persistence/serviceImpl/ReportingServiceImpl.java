@@ -296,7 +296,7 @@ public class ReportingServiceImpl implements ReportingService {
 	}
 	
 	private Map<String, List<String>> intializeDaysMap(){
-		Map<String, List<String>> dayTxns = new HashMap();
+		Map<String, List<String>> dayTxns = new LinkedHashMap<String, List<String>>();
 		dayTxns.put(Days.Monday.toString(), new ArrayList());
 		dayTxns.put(Days.Tuesday.toString(), new ArrayList());
 		dayTxns.put(Days.Wednesday.toString(), new ArrayList());
