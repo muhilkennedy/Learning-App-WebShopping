@@ -9,8 +9,35 @@ import { AlertService } from '../../shared/_alert';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CookieService } from 'ngx-cookie-service';
 import { constants } from 'buffer';
+import { mixinInitialized } from '@angular/material/core';
 
 declare var rsaencrypt: Function;
+
+export function logdecorator(target, name, descriptor){
+ const original = descriptor.value;
+
+ descriptor.value = function(...args){
+  console.log("Aruguments " + args + " were passed to " + name);
+  const result = original.apply(this,args);
+  return result;
+ }
+
+ return descriptor;
+}
+
+/*export function logClassdecorator(className){
+  return (...args) => {
+   console.log("Aruguments " + args + " were passed to Class" + className);
+   return new className(args);
+  }
+ }
+ @logClassdecorator
+class test{
+  constructor(arg){
+    console.log("test class");
+  }
+}
+const testClass = new test("test");*/
 
 @Component({
   selector: 'app-dashboard',
@@ -48,6 +75,12 @@ export class LoginComponent {
       private cookieService: CookieService){
         this.tenantLogo = this.tenantStore.tenantLogo;
         this.tenantName = this.tenantStore.tenantName;
+        this.initializeLogin();
+  }
+
+  @logdecorator
+  initializeLogin(){
+    console.log("Initialized Login Component");
   }
 
   emailFormControl = new FormControl('', [
