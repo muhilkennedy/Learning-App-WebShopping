@@ -30,6 +30,10 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<executable>true</executable>
+				<jvmArguments>
+                			-Xms2048m
+                			-Xmx4096m
+            			</jvmArguments>
 				</configuration>
 			</plugin>
           
