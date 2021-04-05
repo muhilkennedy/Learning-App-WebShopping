@@ -12,6 +12,8 @@ export class PosService {
   getPOSdataEndpoint = "/secure/admin/pos/getPOS";
   viewPDFEndpoint = "/secure/admin/pos/viewPdf";
   viewPDFDocumentEndpoint = "/secure/admin/pos/viewPdfInvoice";
+  getPosbyIdEndpoint = "/secure/admin/pos/getPOSById";
+  updatePOSEndpoint = "/secure/admin/pos/updatePOS";
 
   constructor(private http: HttpClient){}
 
@@ -32,6 +34,37 @@ export class PosService {
       }),
     };
     return this.http.post(environment.backendBaseUrl+this.createPOSEndpoint, body, httpOptions);
+   }
+
+   updatePOS(posId, totalQty, mobile, payment, subTotal, actualSubTotal, totalDiscount, products): Observable<any>{
+    const body = {
+      timeCreated: new Date().getTime(),
+      mobile: mobile,
+      paymentMode: payment,
+      subTotal: subTotal,
+      actualSubTotal: actualSubTotal,
+      totalQuantity: totalQty,
+      posProduct: products,
+      moneySaved: totalDiscount
+     };
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+      params: {
+        posId: posId
+      }
+    };
+    return this.http.post(environment.backendBaseUrl+this.updatePOSEndpoint, body, httpOptions);
+   }
+
+   getPOSDataById(posId){
+    const httpOptions = {
+      params: {
+        posId: posId
+      }
+    }
+    return this.http.get(environment.backendBaseUrl+this.getPosbyIdEndpoint, httpOptions);
    }
 
    getPOSData(limit, offset, dateCondition, date){

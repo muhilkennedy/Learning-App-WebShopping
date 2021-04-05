@@ -65,6 +65,29 @@ public class POSController {
 		return response;
 	}
 	
+	@RequestMapping(value = "/updatePOS", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<String> updatePOS(HttpServletRequest request,
+			@RequestParam(value = "posId", required = true) String id,
+			@RequestBody POSData posData) {
+		GenericResponse<String> response = new GenericResponse<String>();
+		try {
+			String posKey = posService.updatePOS(id, posData);
+			if(posKey != null) {
+				response.setData(posKey);
+				response.setStatus(Response.Status.OK);
+			}
+			else {
+				response.setStatus(Response.Status.ERROR);
+			}
+		} catch (Exception ex) {
+			logger.error("updatePOS : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+	
 	@RequestMapping("/viewPdf")
 	public ResponseEntity<Resource> viewPdf( @RequestParam(value = "id", required = true) String id)throws Exception 
 	{
@@ -111,6 +134,22 @@ public class POSController {
 			CommonUtil.deleteDirectoryOrFile(file);
 		}
     }
+	
+	@RequestMapping(value = "/getPOSById", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<POSData> getPOSById(HttpServletRequest request,
+			@RequestParam(value = "posId", required = false) String posId) {
+		GenericResponse<POSData> response = new GenericResponse<POSData>();
+		try {
+			response.setData(posService.getPOSDATAById(posId));
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("getPOSById : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
 	
 	@RequestMapping(value = "/getPOS", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public GenericResponse<String> getPOS(HttpServletRequest request,

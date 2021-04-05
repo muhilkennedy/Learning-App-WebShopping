@@ -10,6 +10,7 @@ public class POSData {
 
 	public static String Key_CreatedBy = "createdBy";
 	public static String Key_CreatedById = "createdById";
+	public static String Key_PreviousVersion = "previousVersion";
 	
 	private String primaryKey;
 	private String tenantId;
@@ -23,6 +24,27 @@ public class POSData {
 	private String moneySaved;
 	private List<PosProduct> posProduct;
 	private String totalQuantity;
+	private String previousVersion;
+	
+	public POSData() {
+		
+	}
+	
+	public POSData(POSData pos) {
+		this.tenantId = pos.getTenantId();
+		this.mobile = pos.getMobile();
+		this.timeCreated = pos.getTimeCreated();
+		this.createdById = pos.getCreatedById();
+		this.createdBy = pos.getCreatedBy();
+		this.paymentMode = pos.getPaymentMode();
+		this.actualSubTotal = pos.getActualSubTotal();
+		this.subTotal = pos.getSubTotal();
+		this.moneySaved = pos.getMoneySaved();
+		this.totalQuantity = pos.getTotalQuantity();
+		this.posProduct = pos.getPosProduct();
+		//previous version would be the current pos passed
+		this.previousVersion = pos.getPreviousVersion();
+	}
 	
 	public String getActualSubTotal() {
 		return actualSubTotal;
@@ -118,6 +140,14 @@ public class POSData {
 
 	public void setMoneySaved(String moneySaved) {
 		this.moneySaved = moneySaved;
+	}
+
+	public String getPreviousVersion() {
+		return previousVersion;
+	}
+
+	public void setPreviousVersion(String previousVersion) {
+		this.previousVersion = previousVersion;
 	}
 
 	public static class PosProduct {

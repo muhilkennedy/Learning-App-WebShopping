@@ -77,6 +77,18 @@ public class PosDao {
 		}
 	}
 	
+	public void removePOS(String id, String tenantId) throws Exception{
+		try (Connection con = dbUtil.getConnectionInstance()) {
+			PreparedStatement stmt = con.prepareStatement("delete from pointofsale where pos->\"$.tenantId\" = ? and pos->\"$.primaryKey\" = ?");
+			stmt.setString(1, tenantId);
+			stmt.setString(2, id);
+			stmt.executeUpdate();
+		} catch (Exception ex) {
+			logger.error("Exception - " + ex);
+			throw new Exception(ex.getMessage());
+		}
+	}
+	
 	public List<POSData> getPOS (String mobile, String tenantId) throws Exception{
 		List<POSData> json = new ArrayList<POSData>();
 		try (Connection con = dbUtil.getConnectionInstance()) {

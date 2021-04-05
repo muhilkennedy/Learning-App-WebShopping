@@ -2,7 +2,6 @@ package com.backend.persistence.serviceImpl;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,6 +56,11 @@ public class POSServiceImpl implements POSService {
 	
 	@Override
 	public String createPOS(POSData data) throws Exception {
+		return createPOS(data, null);
+	}
+	
+	@Override
+	public String createPOS(POSData data, POSData previous) throws Exception {
 		data.setTimeCreated(CommonUtil.convertToUTC(data.getTimeCreated()));
 		JSONObject json = new JSONObject(data);
 		json.put(TenantUtil.Key_TenantId, baseService.getTenantInfo().getTenantID());
@@ -64,27 +68,42 @@ public class POSServiceImpl implements POSService {
 		json.put(DBUtil.Key_PrimaryKey, posKey);
 		json.put(POSData.Key_CreatedBy, ((EmployeeInfo)baseService.getUserInfo()).getFirstName());
 		json.put(POSData.Key_CreatedById, ((EmployeeInfo)baseService.getUserInfo()).getEmployeeId());
+		if(previous != null) {
+			JSONObject jsonObject = new JSONObject(previous);
+			json.put(POSData.Key_PreviousVersion, jsonObject.toString());
+		}
 		posDao.createPOS(json);
 		data.getPosProduct().stream().forEach(product -> {
 			Product actualProduct = productService.getProductById(product.getItemID());
 			if (actualProduct != null) {
-				actualProduct.setQuantityInStock(actualProduct.getQuantityInStock() - product.getQuantity());
-				productService.save(actualProduct);
-				if (actualProduct.getQuantityInStock() < 1) {
-					productNotification.createNotification(actualProduct.getProductName() + " Ran Out of Stock !",
-							actualProduct.getProductId(), 0L, null);
+				if(previous != null){
+					//handle logic for inventory management
 				}
-				else if (actualProduct.getQuantityInStock() <= 3) {
-					productNotification.createNotification(actualProduct.getProductName() + " Running Out of Stock ! ("
-							+ actualProduct.getQuantityInStock() + ")", actualProduct.getProductId(), 0L, null);
+				else {
+					actualProduct.setQuantityInStock(actualProduct.getQuantityInStock() - product.getQuantity());
+					productService.save(actualProduct);
+					if (actualProduct.getQuantityInStock() < 1) {
+						productNotification.createNotification(actualProduct.getProductName() + " Ran Out of Stock !",
+								actualProduct.getProductId(), 0L, null);
+					}
+					else if (actualProduct.getQuantityInStock() <= 3) {
+						productNotification.createNotification(actualProduct.getProductName() + " Running Out of Stock ! ("
+								+ actualProduct.getQuantityInStock() + ")", actualProduct.getProductId(), 0L, null);
+					}
 				}
 			}
 		});
-		DashboardStatusUtil.incrementPosCount(baseService.getTenantInfo());
+		//increment only for new pos
+		if(previous == null) {
+			DashboardStatusUtil.incrementPosCount(baseService.getTenantInfo());
+		}
 		if(CommonUtil.isValidStringParam(data.getMobile())) {
 			CustomerInfo customer = customerService.getCustomerByMobile(data.getMobile());
 			if(customer != null) {
-				customerService.updateLoyalityPointByCustomerMobile(data.getMobile(), data.getSubTotal());
+				//calculate only for new pos
+				if(previous == null) {
+					customerService.updateLoyalityPointByCustomerMobile(data.getMobile(), data.getSubTotal());
+				}
 				emailService.sendPOSEmail(json.getString(DBUtil.Key_PrimaryKey), data.getSubTotal(), data.getTimeCreated(), data.getPaymentMode(), 
 										customer.getEmailId(), customer.getFirstName(), customer.getLastName(), baseService.getOrigin(), getPOSInvoice(json.getString(DBUtil.Key_PrimaryKey)));
 			}
@@ -160,16 +179,25 @@ public class POSServiceImpl implements POSService {
 	}
 
 	/**
-	 *@return map of date and list 0-count 1-subtotal
+	 *@return map of date and list (0)-count (1)-subtotal
 	 */
 	@Override
-	public Map<String, List<String>> getPosDateWiseReport() throws Exception{
+	public Map<String, List<String>> getPosDateWiseReport() throws Exception {
 		POSData firstPos = getFirstPOSEntryForTenant();
 		if(firstPos != null) {
 			Map<String, List<String>> result = posDao.getPosFullReport(baseService.getTenantInfo().getTenantID(), firstPos.getTimeCreated());
 			return result;
 		}
 		return null;
+	}
+	
+	@Override
+	public String updatePOS(String primaryKey, POSData data) throws Exception {
+		POSData pos = getPOSDATAById(primaryKey);
+		String newPrimaryKey = createPOS(data, pos);
+		//remove old version as its no longer needed
+		posDao.removePOS(primaryKey, baseService.getTenantInfo().getTenantID());
+		return newPrimaryKey;
 	}
 	
 }
