@@ -31,4 +31,8 @@ public interface POSService {
 
 	Map<String, List<String>> getPosDateWiseReport() throws Exception;
 
+	String updatePOS(String primaryKey, POSData data) throws Exception;
+
+	String createPOS(POSData data, POSData previous) throws Exception;
+
 }

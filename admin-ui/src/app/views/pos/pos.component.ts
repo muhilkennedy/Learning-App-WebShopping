@@ -40,6 +40,11 @@ export class PosComponent implements OnInit {
   customerEmail: string;
   customerLoyality: string;
 
+  existingPosdata: any;
+  existingPosId: string;
+
+  updatePos = false;
+
   totalDiscount: number = 0;
   disablePayment: boolean = true;
   subTotal: number = 0;
@@ -478,6 +483,45 @@ export class PosComponent implements OnInit {
   closePdfWindow(){
     this.myModal.hide();
     window.location.reload();
+  }
+
+  getPosDetail(){
+    this.loading = true;
+    this.posService.getPOSDataById(this.existingPosId)
+                    .subscribe((resp: any) => {
+                      if(resp.data !== null && resp.data.posProduct !== undefined &&
+                         resp.data.posProduct !== null){
+                          this.itemList = resp.data.posProduct;
+                          this.paymentMode = resp.data.paymentMode;
+                          this.customerMobile = resp.data.mobile;
+                      }
+                      this.loading = false;
+                      this.updatePos = true;
+                    },
+                    (error) => {
+                      this.alertService.error("Something went wrong!", error);
+                      this.loading = false;
+                    });
+  }
+
+  updatePOS(){
+    this.loading = true;
+    this.cleanseItemList();
+    this.posService.updatePOS(this.existingPosId, this.calculateTotalQuantity(), this.customerMobile, this.paymentMode, this.calculateRoundedSubtotal(), this.subTotal, this.calculateTotalDiscount(), this.itemList)
+                    .subscribe((resp: any) => {
+                      if(resp.statusCode === 200){
+                        this.posId = resp.data;
+                        this.myModal.show();
+                      }
+                      else{
+                        alert("Failed");
+                      }
+                      this.loading = false;
+                    },
+                    (error) => {
+                      alert("failed!");
+                      this.loading = false;
+                    })
   }
 
 }

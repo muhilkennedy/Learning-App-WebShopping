@@ -40,11 +40,13 @@
           <div [hidden]="!barcodeValue">
             {{ barcodeValue }}
           </div> -->
-          <div *ngIf="!newCustomer" class="blink"><label> </label></div><!-- just some space filler-->
+          <!-- <div *ngIf="!newCustomer" class="blink"><label> </label></div>just some space filler -->
           <div *ngIf="newCustomer" class="blink"><small><strong><i class="fa fa-user"></i> New Customer</strong></small></div>
-          <label>Total : </label><strong> {{calculateRoundedSubtotal()}} ₹</strong>
+          <!-- <label>Total : </label><strong> {{calculateRoundedSubtotal()}} ₹</strong> -->
+          <input type="text" class="form-control" matInput placeholder="POS ID" id="posid" name="posDetail" [(ngModel)]="existingPosId">
           <br/>
-          <button mat-button class="btn btn-warning" (click)="clearData()">Clear</button>
+          <!-- <button mat-button class="btn btn-warning" (click)="clearData()">Clear</button> -->
+          <button mat-button class="btn btn-warning" (click)="getPosDetail()">EDIT POS</button>
         </div>
       </div>
     </div>
@@ -147,7 +149,16 @@
                     </mat-select>
                   </mat-form-field>
                 </td>
-                <td><button [disabled]="disablePaid()" class="btn btn-success" (click)="confirmPayModal.show()"> <i class="fa fa-rupee"></i> PAY </button></td>
+                <td>
+                  <button *ngIf="!updatePos" [disabled]="disablePaid()" class="btn btn-success" (click)="confirmPayModal.show()">
+                  <i class="fa fa-rupee"></i>
+                    <strong>PAY</strong>
+                  </button>
+                  <button *ngIf="updatePos" class="btn btn-success" (click)="confirmPayModal.show()">
+                    <i class="fa fa-rupee"></i>
+                      <strong>UPDATE</strong>
+                    </button>
+                </td>
                 <td></td>
               </tr>
             </tbody>
@@ -165,16 +176,25 @@
       <div class="modal-header">
         <h4 class="modal-title">Confirm Payment</h4>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" *ngIf="!updatePos">
         <h3>Do you want to Continue ?</h3>
+        <h4>Payment of <strong style="color: orangered">{{calculateRoundedSubtotal()}} ₹
+        </strong> recived via <strong style="color: orangered">{{paymentMode}}</strong> !
+        </h4>
+      </div>
+      <div class="modal-body" *ngIf="updatePos">
+        <h3>Do you want to Continue Updating POS (Please Note this is a one time action) ?</h3>
         <h4>Payment of <strong style="color: orangered">{{calculateRoundedSubtotal()}} ₹
         </strong> recived via <strong style="color: orangered">{{paymentMode}}</strong> !
         </h4>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="confirmPayModal.hide()">Close</button>
-        <button [disabled]="disablePaid()" class="btn btn-success" (click)="processBill()">
+        <button *ngIf="!updatePos" [disabled]="disablePaid()" class="btn btn-success" (click)="processBill(); confirmPayModal.hide()">
           <i class="fa fa-rupee"></i> PAID
+        </button>
+        <button *ngIf="updatePos" class="btn btn-success" (click)="updatePOS(); confirmPayModal.hide()">
+          <i class="fa fa-rupee"></i> Update POS
         </button>
       </div>
     </div>

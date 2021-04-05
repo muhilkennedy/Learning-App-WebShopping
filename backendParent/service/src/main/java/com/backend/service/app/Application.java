@@ -40,6 +40,9 @@ public class Application {
 	public static void main(String[] args) {
 		logger.info("Starting SpringBoot Application");
 		SpringApplication.run(Application.class, args);
+		logger.info("Heap Size = " + (Runtime.getRuntime().totalMemory()/1000000000.0) + " GB");
+		logger.info("Max Memory Size = " + (Runtime.getRuntime().maxMemory()/1000000000.0) + " GB");
+		logger.info("Total Memory Size = " + (Runtime.getRuntime().freeMemory()/1000000000.0) + " GB");
 	}
 
 }
