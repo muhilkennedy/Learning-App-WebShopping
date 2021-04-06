@@ -54,9 +54,10 @@ public class ProductServiceImpl implements ProductService {
 		productRepo.save(product);
 	}
 	
+	@Override
 	// save might stay just in memory, until flush or commit commands are issued,
 	// hence save and flush will fire DB query immedietly.
-	private void saveAndFlush(Product product) {
+	public void saveAndFlush(Product product) {
 		productRepo.saveAndFlush(product);
 	}
 	

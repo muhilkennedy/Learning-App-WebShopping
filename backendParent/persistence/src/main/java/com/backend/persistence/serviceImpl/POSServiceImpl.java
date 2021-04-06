@@ -20,6 +20,7 @@ import com.backend.persistence.dao.PosDao;
 import com.backend.persistence.entity.CustomerInfo;
 import com.backend.persistence.entity.Product;
 import com.backend.persistence.helper.POSData;
+import com.backend.persistence.helper.POSData.PosProduct;
 import com.backend.persistence.service.CustomerInfoService;
 import com.backend.persistence.service.InvoiceService;
 import com.backend.persistence.service.POSService;
@@ -68,31 +69,53 @@ public class POSServiceImpl implements POSService {
 		json.put(DBUtil.Key_PrimaryKey, posKey);
 		json.put(POSData.Key_CreatedBy, ((EmployeeInfo)baseService.getUserInfo()).getFirstName());
 		json.put(POSData.Key_CreatedById, ((EmployeeInfo)baseService.getUserInfo()).getEmployeeId());
-		if(previous != null) {
-			JSONObject jsonObject = new JSONObject(previous);
-			json.put(POSData.Key_PreviousVersion, jsonObject.toString());
-		}
 		posDao.createPOS(json);
-		data.getPosProduct().stream().forEach(product -> {
+		for (PosProduct product : data.getPosProduct()) {
 			Product actualProduct = productService.getProductById(product.getItemID());
 			if (actualProduct != null) {
 				if(previous != null){
+					List<PosProduct> oldProducts = previous.getPosProduct();
 					//handle logic for inventory management
+					boolean newItem = true;
+					int i = 0;
+					for (PosProduct oldProduct : oldProducts) {
+						if(product.getItemID().equals(oldProduct.getItemID())) {
+							//if quantity is decreased update inventory by adding back excess quantity
+							if (oldProduct.getQuantity() > product.getQuantity()) {
+								actualProduct.setQuantityInStock(actualProduct.getQuantityInStock()
+										+ (oldProduct.getQuantity() - product.getQuantity()));
+								productService.saveAndFlush(actualProduct);
+							}
+							//if quantity is increased update inventory by reducing newly added quantity
+							else if (oldProduct.getQuantity() < product.getQuantity()){
+								actualProduct.setQuantityInStock(actualProduct.getQuantityInStock()
+										- (product.getQuantity() - oldProduct.getQuantity()));
+								productService.saveAndFlush(actualProduct);
+							}
+							newItem = false;
+							break;
+						}
+						i++;
+					}
+					if(newItem) {
+						actualProduct.setQuantityInStock(actualProduct.getQuantityInStock() - product.getQuantity());
+						productService.saveAndFlush(actualProduct);
+					}
 				}
 				else {
 					actualProduct.setQuantityInStock(actualProduct.getQuantityInStock() - product.getQuantity());
-					productService.save(actualProduct);
-					if (actualProduct.getQuantityInStock() < 1) {
-						productNotification.createNotification(actualProduct.getProductName() + " Ran Out of Stock !",
-								actualProduct.getProductId(), 0L, null);
-					}
-					else if (actualProduct.getQuantityInStock() <= 3) {
-						productNotification.createNotification(actualProduct.getProductName() + " Running Out of Stock ! ("
-								+ actualProduct.getQuantityInStock() + ")", actualProduct.getProductId(), 0L, null);
-					}
+					productService.saveAndFlush(actualProduct);
+				}
+				if (actualProduct.getQuantityInStock() < 1) {
+					productNotification.createNotification(actualProduct.getProductName() + " Ran Out of Stock !",
+							actualProduct.getProductId(), 0L, null);
+				}
+				else if (actualProduct.getQuantityInStock() <= 3) {
+					productNotification.createNotification(actualProduct.getProductName() + " Running Out of Stock ! ("
+							+ actualProduct.getQuantityInStock() + ")", actualProduct.getProductId(), 0L, null);
 				}
 			}
-		});
+		}
 		//increment only for new pos
 		if(previous == null) {
 			DashboardStatusUtil.incrementPosCount(baseService.getTenantInfo());
@@ -101,11 +124,18 @@ public class POSServiceImpl implements POSService {
 			CustomerInfo customer = customerService.getCustomerByMobile(data.getMobile());
 			if(customer != null) {
 				//calculate only for new pos
-				if(previous == null) {
+				if (previous == null) {
 					customerService.updateLoyalityPointByCustomerMobile(data.getMobile(), data.getSubTotal());
+					emailService.sendPOSEmail(json.getString(DBUtil.Key_PrimaryKey), data.getSubTotal(),
+							data.getTimeCreated(), data.getPaymentMode(), customer.getEmailId(),
+							customer.getFirstName(), customer.getLastName(), baseService.getOrigin(),
+							getPOSInvoice(json.getString(DBUtil.Key_PrimaryKey)));
+				} else {
+					emailService.sendPOSEmailUpdate(json.getString(DBUtil.Key_PrimaryKey), data.getSubTotal(),
+							data.getTimeCreated(), data.getPaymentMode(), customer.getEmailId(),
+							customer.getFirstName(), customer.getLastName(), baseService.getOrigin(),
+							getPOSInvoice(json.getString(DBUtil.Key_PrimaryKey)));
 				}
-				emailService.sendPOSEmail(json.getString(DBUtil.Key_PrimaryKey), data.getSubTotal(), data.getTimeCreated(), data.getPaymentMode(), 
-										customer.getEmailId(), customer.getFirstName(), customer.getLastName(), baseService.getOrigin(), getPOSInvoice(json.getString(DBUtil.Key_PrimaryKey)));
 			}
 		}
 		return posKey;

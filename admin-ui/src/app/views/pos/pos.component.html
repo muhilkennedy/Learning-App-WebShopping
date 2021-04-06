@@ -103,7 +103,7 @@
                 <td>{{calculateTotal(item) | number:'1.2-2'}}</td>
                 <td>
                   <i *ngIf="(itemList.length === i+1)" class="addicon fa fa-plus-circle" (click)="addItem()"></i>
-                  <i class="removeicon fa fa-minus-circle" (click)="removeItem(i)"></i>
+                  <i *ngIf="!updatePos" class="removeicon fa fa-minus-circle" (click)="removeItem(i)"></i>
                 </td>
               </tr>
               <tr>

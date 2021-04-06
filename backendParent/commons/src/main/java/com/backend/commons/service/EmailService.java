@@ -25,4 +25,7 @@ public interface EmailService {
 
 	void sendOrderAlertMailToAdmin() throws Exception;
 
+	void sendPOSEmailUpdate(String posId, String subtotal, long createdTime, String paymentMode, String recipientEmail,
+			String fname, String lname, String origin, File invoiceDoc);
+
 }

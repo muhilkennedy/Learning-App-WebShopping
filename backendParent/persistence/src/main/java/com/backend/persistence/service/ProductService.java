@@ -89,4 +89,6 @@ public interface ProductService {
 
 	Product cloneProduct(long productId) throws Exception;
 
+	void saveAndFlush(Product product);
+
 }

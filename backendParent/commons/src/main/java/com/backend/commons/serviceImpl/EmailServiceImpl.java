@@ -167,6 +167,33 @@ public class EmailServiceImpl implements EmailService {
 		}
 	}
 	
+	@Override
+	public void sendPOSEmailUpdate(String posId, String subtotal, long createdTime, String paymentMode, String recipientEmail, String fname, String lname,
+			String origin, File invoiceDoc) {
+		File tempFile = null;
+		try {
+			String subject = " Purchase Information Updated ";
+			tempFile = File.createTempFile(CommonUtil.Icon_name, CommonUtil.Png_Extension);
+			InputStream is = baseService.getTenantInfo().getTenantDetail().fetchTenantLogoBlob().getBinaryStream();
+			FileUtils.copyInputStreamToFile(is, tempFile);
+			Map<String, File> inlineImages = new HashMap<String, File>();
+			inlineImages.put(tempFile.getName(), tempFile);
+			SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIMEFORMAT_1);
+	        sdf.setTimeZone(TimeZone.getTimeZone(Constants.Timezone_IST));
+			String body = constructPOSEmailBody(tempFile, posId, subtotal, sdf.format(new Date(createdTime)), paymentMode);
+			//send email in separate thread
+			Runnable emailRunnable = new EmailThread(baseService.getTenantInfo().getUniqueName(),
+					baseService.getTenantInfo().getTenantID(),
+					baseService.getTenantInfo().getTenantDetail().getBusinessEmail(),
+					baseService.getTenantInfo().getTenantDetail().getBusinessEmailPassword(),
+					Arrays.asList(recipientEmail), subject, body, inlineImages, invoiceDoc != null ? Arrays.asList(invoiceDoc) : null);
+			new Thread(emailRunnable).start();
+		}
+		catch (Exception e) {
+			logger.error("sendOnboardingEmail : Failed to generate Email Body - Exception - " + e.getMessage());
+		}
+	}
+	
 	private String constructPOSEmailBody(File logo, String posId, String subtotal, String createdTime, String paymentMode ) {
 		try {
 			Template template = freeMarkerConfig.getTemplate(EmailConstants.orderStatusTemplate);
