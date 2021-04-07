@@ -90,6 +90,7 @@ export class PosComponent implements OnInit {
     newProd.discount = 0;
     newProd.quantity = 0;
     this.itemList.push(newProd);
+    this.changeFocus();
   }
 
   constructor(private printService: PrintService, private productService: ProductService,
@@ -177,7 +178,7 @@ export class PosComponent implements OnInit {
     if ((this.focusElementReference === undefined || this.focusElementReference instanceof HTMLElement)
           && this.focusElementReference != focusElementReferenceLocal ) {
           this.focusElementReference = focusElementReferenceLocal;
-          this.focusElementReference != null ? this.focusElementReference.focus() : null;
+          this.focusElementReference =  this.focusElementReference.focus();
     }
   }
 

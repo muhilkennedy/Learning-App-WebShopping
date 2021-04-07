@@ -62,7 +62,12 @@ public class POSServiceImpl implements POSService {
 	
 	@Override
 	public String createPOS(POSData data, POSData previous) throws Exception {
-		data.setTimeCreated(CommonUtil.convertToUTC(data.getTimeCreated()));
+		if(previous != null) {
+			data.setTimeCreated(previous.getTimeCreated());
+		}
+		else {
+			data.setTimeCreated(CommonUtil.convertToUTC(data.getTimeCreated()));
+		}
 		JSONObject json = new JSONObject(data);
 		json.put(TenantUtil.Key_TenantId, baseService.getTenantInfo().getTenantID());
 		String posKey = posDao.getPOSKEY();
