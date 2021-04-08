@@ -80,7 +80,7 @@
                 <td>{{i+1}}</td>
                 <td *ngIf="!(item.itemCode === null || item.itemCode === undefined)"><input type="text" class="form-control" matInput placeholder="Product Code" id="pcode-{{i}}" name="pcode-{{i}}" [(ngModel)]="item.itemCode"></td>
                 <td *ngIf="(item.itemCode === null || item.itemCode === undefined)"><input autofocus type="text" class="form-control" matInput placeholder="Product BAR Code" id="pbcode-{{i}}" name="pbcode-{{i}}" [(ngModel)]="itemBarCode" (change)="codeDetected()"></td>
-                <td *ngIf="(item.itemCode === null || item.itemCode === undefined)">
+                <td *ngIf="isNA(item) else nxt">
                     <input type="text"
                            class="form-control" matInput placeholder="Product Name"
                            id="pname-{{i}}" name="pname-{{i}}"
@@ -95,7 +95,9 @@
                       </mat-option>
                     </mat-autocomplete>
                 </td>
-                <td *ngIf="!(item.itemCode === null || item.itemCode === undefined)"><input type="text" class="form-control" matInput placeholder="Product Name" id="pname-{{i}}" name="pname-{{i}}" [(ngModel)]="item.itemName"></td>
+                <ng-template  #nxt>
+                  <td><input type="text" class="form-control" matInput placeholder="Product Name" id="pname1-{{i}}" name="pname1-{{i}}" [(ngModel)]="item.itemName"></td>
+                </ng-template>
                 <td><input type="number" class="form-control" style="width: 75%;" matInput placeholder="MRP" id="mrp-{{i}}" name="mrp-{{i}}" [(ngModel)]="item.mrp" min="0"></td>
                 <td><input type="number" class="form-control" style="width: 75%;" matInput placeholder="MRP" id="mrp-{{i}}" name="mrp-{{i}}" [(ngModel)]="item.sellingCost" min="0"></td>
                 <td><input type="number" class="form-control" style="width: 75%;" matInput placeholder="Quantity" id="q-{{i}}" name="q-{{i}}" [(ngModel)]="item.quantity" min="0"></td>
@@ -104,6 +106,7 @@
                 <td>
                   <i *ngIf="(itemList.length === i+1)" class="addicon fa fa-plus-circle" (click)="addItem()"></i>
                   <i *ngIf="!updatePos" class="removeicon fa fa-minus-circle" (click)="removeItem(i)"></i>
+                  <i *ngIf="updatePos" class="removeicon fa fa-minus-circle" (click)="deleteItem(item.itemCode)"></i>
                 </td>
               </tr>
               <tr>

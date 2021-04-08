@@ -175,5 +175,22 @@ public class POSController {
 		}
 		return response;
 	}
+	
+	@RequestMapping(value = "/removeItem", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public GenericResponse<POSData> removeItem(HttpServletRequest request,
+			@RequestParam(value = "posId", required = true) String id,
+			@RequestParam(value = "itemId", required = true) String itemId) {
+		GenericResponse<POSData> response = new GenericResponse<POSData>();
+		try {
+			response.setData(posService.removeItem(id, itemId));
+			response.setStatus(Response.Status.OK);
+		} catch (Exception ex) {
+			logger.error("removeItem : " + ex);
+			List<String> msg = Arrays.asList(ex.getMessage());
+			response.setErrorMessages(msg);
+			response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
 
 }

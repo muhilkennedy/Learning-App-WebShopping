@@ -14,6 +14,7 @@ export class PosService {
   viewPDFDocumentEndpoint = "/secure/admin/pos/viewPdfInvoice";
   getPosbyIdEndpoint = "/secure/admin/pos/getPOSById";
   updatePOSEndpoint = "/secure/admin/pos/updatePOS";
+  deleteItemPOSEndpoint = "/secure/admin/pos/removeItem";
 
   constructor(private http: HttpClient){}
 
@@ -65,6 +66,16 @@ export class PosService {
       }
     }
     return this.http.get(environment.backendBaseUrl+this.getPosbyIdEndpoint, httpOptions);
+   }
+
+   deleteItem(posId, itemId){
+    const httpOptions = {
+      params: {
+        posId: posId,
+        itemId: itemId
+      }
+    }
+    return this.http.delete(environment.backendBaseUrl+this.deleteItemPOSEndpoint, httpOptions);
    }
 
    getPOSData(limit, offset, dateCondition, date){
