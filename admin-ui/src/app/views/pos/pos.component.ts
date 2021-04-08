@@ -57,6 +57,7 @@ export class PosComponent implements OnInit {
   posId:string;
 
   focusElementReference: any
+  focusInputElementReference : any;
 
   tempId = 1;
 
@@ -110,7 +111,15 @@ export class PosComponent implements OnInit {
   ngOnInit(): void {
     let newProd:PosProduct = new PosProduct();
     this.itemList.push(newProd);
-    let notificationInterval = setInterval(() => { this.changeFocus() }, 500);
+    let inputTypeAhead = document.getElementById('pname-'+(this.itemList.length-1));
+    let notificationInterval = setInterval(() => {
+      if (inputTypeAhead === document.activeElement) {
+        this.focusInput();
+      }
+      else{
+        this.changeFocus();
+      }
+    }, 500);
   }
 
   ngAfterViewInit(){
@@ -179,6 +188,24 @@ export class PosComponent implements OnInit {
           && this.focusElementReference != focusElementReferenceLocal ) {
           this.focusElementReference = focusElementReferenceLocal;
           this.focusElementReference =  this.focusElementReference.focus();
+    }
+  }
+
+  focusInput(){
+    let focusElementReferenceLocal = document.getElementById('pname-'+(this.itemList.length-1));
+    if ((this.focusInputElementReference === undefined || this.focusInputElementReference instanceof HTMLElement)
+          && this.focusInputElementReference != focusElementReferenceLocal ) {
+          this.focusInputElementReference = focusElementReferenceLocal;
+          this.focusInputElementReference =  this.focusInputElementReference.focus();
+    }
+  }
+
+  isNA(value){
+    if(value === undefined || value === null || value.quantity === 0){
+      return true;
+    }
+    else{
+      return false;
     }
   }
 
@@ -274,7 +301,7 @@ export class PosComponent implements OnInit {
     prod.mrp = option.cost;
     prod.quantity = 1;
     prod.sellingCost = option.sellingCost;
-    this.itemList.push(prod);
+    this.itemList.splice(this.itemList.length - 1,1,prod);
     this.cleanseItemList();
   }
 
@@ -322,7 +349,7 @@ export class PosComponent implements OnInit {
                             let doPush = false;
                             if(this.isLastItemEmpty()){
                               newProd = this.itemList[this.itemList.length - 1];
-                              newProd.itemCode = "NA"+this.tempId++;
+                              newProd.itemCode = "N/A-"+this.tempId++;
                             }
                             if(doPush){
                               this.itemList.push(newProd);
@@ -408,6 +435,26 @@ export class PosComponent implements OnInit {
 
   removeItem(index:number){
     this.itemList.splice(index, 1);
+  }
+
+  deleteItem(itemCode){
+    this.loading = true;
+    this.posService.deleteItem(this.existingPosId, itemCode)
+                    .subscribe((resp: any) => {
+                      if(resp.data !== null && resp.data.posProduct !== undefined &&
+                         resp.data.posProduct !== null){
+                          this.itemList = resp.data.posProduct;
+                          this.paymentMode = resp.data.paymentMode;
+                          this.customerMobile = resp.data.mobile;
+                          this.existingPosId = resp.data.primaryKey;
+                      }
+                      this.loading = false;
+                      this.updatePos = true;
+                    },
+                    (error) => {
+                      this.alertService.error("Something went wrong!", error);
+                      this.loading = false;
+                    });
   }
 
   clearData(){

@@ -235,4 +235,34 @@ public class POSServiceImpl implements POSService {
 		return newPrimaryKey;
 	}
 	
+	@Override
+	public POSData removeItem(String primaryKey, String itemId) throws Exception {
+		POSData pos = getPOSDATAById(primaryKey);
+		if(pos != null && pos.getPosProduct() != null) {
+			int removeIndex = 0;
+			boolean itemFound = false;
+			int index = 0;
+			for(PosProduct prod : pos.getPosProduct() ) {
+				if(prod.getItemCode().equals(itemId)) {
+					removeIndex = index;
+					itemFound = true;
+					break;
+				}
+			}
+			if(itemFound) {
+				pos.getPosProduct().remove(removeIndex);
+				JSONObject json = new JSONObject(pos);
+				String posKey = posDao.getPOSKEY();
+				json.put(DBUtil.Key_PrimaryKey, posKey);
+				posDao.createPOS(json);
+				pos.setPrimaryKey(posKey);
+				posDao.removePOS(primaryKey, baseService.getTenantInfo().getTenantID());
+			}
+		}
+		else {
+			throw new Exception("POS NOT FOUND!");
+		}
+		return pos;
+	}
+	
 }

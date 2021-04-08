@@ -35,4 +35,6 @@ public interface POSService {
 
 	String createPOS(POSData data, POSData previous) throws Exception;
 
+	POSData removeItem(String primaryKey, String itemId) throws Exception;
+
 }
