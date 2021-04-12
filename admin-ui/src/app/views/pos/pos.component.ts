@@ -201,7 +201,7 @@ export class PosComponent implements OnInit {
   }
 
   isNA(value){
-    if(value === undefined || value === null || value.quantity === 0){
+    if(value === undefined || value === null || value.quantity === undefined || value.quantity === 0){
       return true;
     }
     else{
