@@ -38,7 +38,7 @@ export const navItems: INavData[] = [
     icon: 'icon-note',
   },
   {
-    name: 'Sales',
+    name: 'Sales History',
     url: '/sales',
     icon: 'icon-wallet',
     children: [
