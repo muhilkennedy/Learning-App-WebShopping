@@ -18,3 +18,5 @@ Learning Angular, React, ionic cordova and Spring-Boot in this project using a e
 Deployed for production use in local supermarket!
 Angular UI hosted in firebase
 Spring-Boot hosted in local machine as tunnel site using Staq-lab
+
+Updated!
